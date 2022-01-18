@@ -1,20 +1,43 @@
+import Index from "pages/Index.vue";
+import About from "pages/About.vue";
+import Product from "pages/Product.vue";
+import Register from "pages/Register.vue";
+import Login from "pages/Login.vue";
+import Dashboard from "src/pages/dashboard/Dashboard.vue";
 
 const routes = [
   {
-    path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    path: "/",
+    component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: '', component: () => import('pages/Index.vue') },
-      { path: '/about', component: () => import('pages/About.vue') },
-    ]
+      { path: "/", component: Index },
+      { path: "/register", component: Register },
+      { path: "/about", component: About },
+      { path: "/product", component: Product },
+      { path: "/login", component: Login },
+    ],
+  },
+
+  {
+    path: "/dashboard",
+    component: () => import("layouts/Dashboard.vue"),
+    meta: { requireLogin: true },
+    children: [{ path: "home", component: Dashboard }],
+  },
+
+  {
+    name: "LoginIn",
+    path: "/login",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [{ path: "", component: Login }],
   },
 
   // Always leave this as last one,
   // but you can also remove it
   {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/Error404.vue')
-  }
-]
+    path: "/:catchAll(.*)*",
+    component: () => import("pages/Error404.vue"),
+  },
+];
 
-export default routes
+export default routes;
