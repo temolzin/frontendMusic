@@ -11,7 +11,7 @@ export default defineComponent({
     this.$store.dispatch('auth/init')
     const token = localStorage.getItem("token");
     //const token = this.$store.getters.getToken
-    console.log(token)
+    //console.log(token)
     if (token) {
       api.defaults.headers.common.Authorization = 'JWT ' + token.access_token
     } else {

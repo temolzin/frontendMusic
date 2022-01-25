@@ -3,9 +3,11 @@ import About from "pages/About.vue";
 import Product from "pages/Product.vue";
 import Register from "pages/Register.vue";
 import Login from "pages/Login.vue";
-import Dashboard from "src/pages/dashboard/Dashboard.vue";
+//import Login from "pages/Auth/Login.vue";
+import Dashboard from "pages/dashboard/Dashboard.vue";
 
 const routes = [
+
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
@@ -14,8 +16,13 @@ const routes = [
       { path: "/register", component: Register },
       { path: "/about", component: About },
       { path: "/product", component: Product },
-      { path: "/login", component: Login },
     ],
+  },
+
+  {
+    name: "LoginIn",
+    path: "/login",
+    component: () => Login,
   },
 
   {
@@ -23,13 +30,6 @@ const routes = [
     component: () => import("layouts/Dashboard.vue"),
     meta: { requireLogin: true },
     children: [{ path: "home", component: Dashboard }],
-  },
-
-  {
-    name: "LoginIn",
-    path: "/login",
-    component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: Login }],
   },
 
   // Always leave this as last one,

@@ -31,9 +31,8 @@ export default route(function ({ store, ssrContext }) {
     if (to.matched.some((record) => record.meta.requireLogin) && !auth.isAuthenticated) {
       next({
         name: "LoginIn",
-        to: to.path,
-        path: '/login',
-      });
+        redirect: to.fullPath
+      })
     } 
     else next();
   }
