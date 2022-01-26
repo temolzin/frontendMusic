@@ -9,13 +9,19 @@ export const doLogin = async ({ commit, dispatch }, payload) => {
   });
 };
 
+export const registerUser = async ({ commit, dispatch }, payload) => {
+  await api.post("/api/register", payload).then((response) => {
+    console.log(response.data);
+  });
+};
+
 export const signOut = async ({ commit }, token) => {
   token = localStorage.getItem("token");
   token = JSON.parse(token).access_token;
   await api.get("/api/logout", { params: { token } }).then((response) => {
     api.defaults.headers.common.Authorization = "";
     commit("removeToken");
-    commit("setMe", '');
+    commit("setMe", "");
   });
 };
 
@@ -30,7 +36,8 @@ export const init = async ({ commit, dispatch }) => {
   const token = localStorage.getItem("token");
   if (token) {
     await commit("setToken", JSON.parse(token));
-    api.defaults.headers.common.Authorization = "JWT " + JSON.parse(token).access_token;
+    api.defaults.headers.common.Authorization =
+      "JWT " + JSON.parse(token).access_token;
     dispatch("getMe", JSON.parse(token));
   } else {
     commit("removeToken");

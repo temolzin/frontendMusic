@@ -4,7 +4,7 @@
       'justify-center': $q.screen.md || $q.screen.sm || $q.screen.xs,
     }"
     class="col-12 col-md-6 flex content-center bg-primary"
-    v-bind:style="{ height: '52em' }"
+    v-bind:style="{ height: '63em' }"
   >
     <q-card
       class="my-card shadow-box shadow-2"
@@ -15,7 +15,7 @@
       <q-card-section horizontal>
         <q-img
           class="col-5 col-sm-1 col-md-5"
-          src="https://cdn.pixabay.com/photo/2019/12/18/04/11/dj-4702977_960_720.jpg"
+          src="https://cdn.pixabay.com/photo/2021/01/29/08/10/musician-5960112_960_720.jpg"
           v-bind:style="$q.screen.lt.sm ? { width: '0%' } : { width: '40%' }"
         />
 
@@ -26,26 +26,36 @@
           <div class="col-6 text-right q-px-md" style="font-size: 2em">
             <q-btn round color="primary" icon="shopping_cart" to="/" />
           </div>
-         
-
           <q-form
             class="q-gutter-md q-px-lg q-py-lg q-px-xl"
             @submit.prevent="submitForm"
           >
-            <h3 class="text-center text-weight-medium">Sign Up</h3>
+            <h3 class="text-center text-weight-medium">Create your account</h3>
             <p class="text-center q-mb-lg text-weight-light">
               In the example below, when using the icon-selected prop.
             </p>
 
-            <q-input label="Email Adress" v-model="login.email"> </q-input>
-            <q-input label="Password" type="password" v-model="login.password">
+            <q-input label="Name" v-model="user.name"> </q-input>
+            <q-input label="Email Adress" v-model="user.email"> </q-input>
+            <q-input
+              v-model="user.password"
+              :type="isPwd ? 'password' : 'text'"
+              hint="Password with toggle"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isPwd = !isPwd"
+                />
+              </template>
             </q-input>
 
             <div class="q-pt-lg">
               <q-btn
                 class="full-width"
                 color="primary"
-                label="Login"
+                label="Create my account"
                 type="submit"
                 rounded
               ></q-btn>
@@ -67,20 +77,12 @@
               </div>
 
               <div class="text-center q-mt-lg q-mb-lg q-gutter-lg">
-                <div class="row">
-                  <router-link
-                    class="text-dark col-12 col-sm-12 col-md-6 q-mt-sm"
-                    to="/login"
-                  >
-                    Olvide mi contraseña
-                  </router-link>
-                  <router-link
-                    class="text-dark col-12 col-sm-12 col-md-6 q-mt-sm"
-                    to="/register"
-                  >
-                    Crear cuenta
-                  </router-link>
-                </div>
+                <router-link
+                  class="text-dark col-12 col-sm-12 col-md-6 q-mt-sm"
+                  to="/login"
+                >
+                  Already have an account? Sign in
+                </router-link>
               </div>
             </div>
           </q-form>
@@ -101,30 +103,32 @@ export default {
   name: "Login",
   data() {
     return {
-      login: {
-        email: "angel@gmail.com",
-        password: "angel",
+      isPwd: ref(true),
+      user: {
+        name:"Juan Alberto",
+        email: "juan@gmail.com",
+        password: "juan",
       },
     };
   },
   methods: {
-    ...mapActions("auth", ["doLogin"]),
+    ...mapActions("auth", ["registerUser"]),
     async submitForm() {
-      if (!this.login.email || !this.login.password) {
+      if (!this.user.email || !this.user.password || !this.user.name) {
         $q.notify({
           type: "negative",
           message: "Los datos no son validos.",
         });
-      } else if (this.login.password.length < 4) {
+      } else if (this.user.password.length < 4) {
         $q.notify({
           type: "negative",
           message: "La contraseña debe de ser mayor a 6 carácteres.",
-        });
+        }); 
       } else {
         try {
-          await this.doLogin(this.login);
-          const toPath = this.$route.query.to || "/dashboard/home";
 
+          await this.registerUser(this.user);
+          const toPath = this.$route.query.to || "/login";
           this.$router.push(toPath);
         } catch (err) {
           if (err.response.data.error) {
@@ -135,6 +139,10 @@ export default {
           }
         }
       }
+    },
+
+    showPassword() {
+      password = login.password;
     },
   },
   mounted() {

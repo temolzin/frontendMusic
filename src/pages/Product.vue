@@ -164,10 +164,10 @@ export default {
       try {
         await this.getProducts();
       } catch (err) {
-        if (err.response.data.error) {
+        if (err.response.data.message) {
           $q.notify({
             type: "negative",
-            message: err.response.data.error,
+            message: err.response.data.message,
           });
         }
       }
@@ -190,10 +190,10 @@ export default {
                 message: `Producto eliminado correctamente`,
               });
             } catch (err) {
-              if (err.response.data.error) {
-                $q.notify({
+              if (err.response.data.message) {
+                  $q.notify({
                   type: "negative",
-                  message: err.response.data.error,
+                  message: err.response.data.message,
                 });
               }
             }

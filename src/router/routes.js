@@ -1,9 +1,9 @@
 import Index from "pages/Index.vue";
 import About from "pages/About.vue";
 import Product from "pages/Product.vue";
-import Register from "pages/Register.vue";
-import Login from "pages/Login.vue";
-//import Login from "pages/Auth/Login.vue";
+import Register from "pages/Auth/Register.vue";
+import Login from "pages/Auth/Login.vue";
+//import Login from "pages/Login.vue";
 import Dashboard from "pages/dashboard/Dashboard.vue";
 
 const routes = [
@@ -13,7 +13,6 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       { path: "/", component: Index },
-      { path: "/register", component: Register },
       { path: "/about", component: About },
       { path: "/product", component: Product },
     ],
@@ -23,6 +22,10 @@ const routes = [
     name: "LoginIn",
     path: "/login",
     component: () => Login,
+  },
+  {
+    path: "/register",
+    component: () => Register,
   },
 
   {
