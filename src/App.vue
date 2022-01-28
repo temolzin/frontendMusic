@@ -13,7 +13,7 @@ export default defineComponent({
     //const token = this.$store.getters.getToken
     //console.log(token)
     if (token) {
-      api.defaults.headers.common.Authorization = 'JWT ' + token.access_token
+      api.defaults.headers.common.Authorization = 'Bearer ' + token.access_token
     } else {
       api.defaults.headers.common.Authorization = ''
     }

@@ -62,8 +62,8 @@
             <q-avatar size="70px" class="q-mb-sm">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
-            <div class="text-weight-bold">{{ getMe.user.name }}</div>
-            <div>{{ getMe.user.email }}</div>
+            <div class="text-weight-bold">{{ getMe.name }}</div>
+            <div>{{ getMe.email }}</div>
           </div>
         </q-img>
       </q-drawer>

@@ -1,5 +1,6 @@
 <template>
   <h1>Protected route</h1>
+  {{ getMe }}
 </template>
 
 <script>

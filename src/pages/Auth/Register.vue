@@ -100,14 +100,14 @@ import { mapGetters } from "vuex";
 let $q;
 
 export default {
-  name: "Login",
+  name: "Register",
   data() {
     return {
       isPwd: ref(true),
       user: {
-        name:"Juan Alberto",
-        email: "juan@gmail.com",
-        password: "juan",
+        name: "Miguel Angel Gómez Gómez",
+        email: "angel@gmail.com",
+        password: "angel",
       },
     };
   },
@@ -123,14 +123,22 @@ export default {
         $q.notify({
           type: "negative",
           message: "La contraseña debe de ser mayor a 6 carácteres.",
-        }); 
+        });
       } else {
         try {
-
           await this.registerUser(this.user);
+          $q.notify({
+            type: "positive",
+            message: "User added",
+          });
           const toPath = this.$route.query.to || "/login";
           this.$router.push(toPath);
         } catch (err) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.errors.email,
+          });
+
           if (err.response.data.error) {
             $q.notify({
               type: "negative",
@@ -139,10 +147,6 @@ export default {
           }
         }
       }
-    },
-
-    showPassword() {
-      password = login.password;
     },
   },
   mounted() {
