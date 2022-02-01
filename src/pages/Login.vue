@@ -113,7 +113,7 @@ export default {
   },
   created() {
     if (this.isAuthenticated) {
-      const toPath = this.$route.query.to || "/product";
+      const toPath = this.$route.query.to || "/dashboard/home";
       this.$router.push(toPath);
       //console.log("SESSION");
     } 

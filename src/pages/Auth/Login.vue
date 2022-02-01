@@ -26,7 +26,6 @@
           <div class="col-6 text-right q-px-md" style="font-size: 2em">
             <q-btn round color="primary" icon="shopping_cart" to="/" />
           </div>
-         
 
           <q-form
             class="q-gutter-md q-px-lg q-py-lg q-px-xl"
@@ -47,15 +46,35 @@
                 color="primary"
                 label="Login"
                 type="submit"
+                v-if="loading"
+                rounded
+              ></q-btn>
+              <q-btn
+                class="full-width"
+                color="primary"
+                label="Loading..."
+                disable
+                type="button"
+                v-else
                 rounded
               ></q-btn>
 
               <div class="q-mt-md text-center">
                 <p><u>Or</u></p>
                 <div class="col-12 col-sm-6 col-md-6">
-                  <q-btn outline style="color: red" no-caps>
+                  <q-btn
+                    v-if="loadingGmail"
+                    outline
+                    style="color: red"
+                    no-caps
+                    @click="loginGmail"
+                  >
                     <q-icon left size="1.5em" name="email" />
                     <label>Sign Up with Google</label>
+                  </q-btn>
+                  <q-btn outline disable style="color: red" no-caps v-else>
+                    <q-icon left size="1.5em" name="email" />
+                    <label>Loading...</label>
                   </q-btn>
                 </div>
                 <div class="col-12 col-sm-6 col-md-6">
@@ -105,21 +124,27 @@ export default {
         email: "angel@gmail.com",
         password: "angel",
       },
+      loading: true,
+      loadingGmail: true,
     };
   },
   methods: {
     ...mapActions("auth", ["doLogin"]),
+    ...mapActions("auth", ["doLoginGmail"]),
     async submitForm() {
+      this.loading = false;
       if (!this.login.email || !this.login.password) {
         $q.notify({
           type: "negative",
           message: "Los datos no son validos.",
         });
+        this.loading = true;
       } else if (this.login.password.length < 4) {
         $q.notify({
           type: "negative",
           message: "La contraseña debe de ser mayor a 6 carácteres.",
         });
+        this.loading = true;
       } else {
         try {
           await this.doLogin(this.login);
@@ -133,8 +158,14 @@ export default {
               message: err.response.data.error,
             });
           }
+          this.loading = true;
         }
       }
+    },
+    async loginGmail() {
+      this.loadingGmail = false;
+      await this.doLoginGmail();
+      this.loadingGmail = true;
     },
   },
   mounted() {
@@ -142,9 +173,9 @@ export default {
   },
   created() {
     if (this.isAuthenticated) {
-      const toPath = this.$route.query.to || "/product";
-      this.$router.push(toPath);
-      //console.log("SESSION");
+      // const toPath = this.$route.query.to || "/product";
+      // this.$router.push(toPath);
+      console.log("SESSION");
     }
   },
   computed: {

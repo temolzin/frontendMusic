@@ -26,18 +26,41 @@ export default route(function ({ store, ssrContext }) {
     ),
   });
 
-  Router.beforeEach((to, from, next) => {
-    const auth = store.state.auth;
-    if (to.matched.some((record) => record.meta.requireLogin) && !auth.isAuthenticated) {
-      next({
-        name: "LoginIn",
-        redirect: to.fullPath
-      })
-    } 
-    else next();
+  function nextCheck(context, middleware, index){
+
+    const nextMiddleware = middleware[index];
+
+    if(!nextMiddleware) return context.next;
+
+    return(...parameters)=>{
+      context.next(...parameters);
+      const nextMidd = nextCheck(context, middleware, index + 1);
+
+      nextMiddleware({...context, next: nextMidd});
+    }
+
   }
+
+  Router.beforeEach((to, from, next) => {
+    if(to.meta.middleware){
+      const middleware = Array.isArray(to.meta.middleware)  ? to.meta.middleware : [to.meta.middleware];
+        const context = {
+          from,
+          next,
+          Router,
+          to,
+        };
+        const nextMiddleware = nextCheck(context, middleware, 1);
+
+        return middleware[0]({ ...context, next: nextMiddleware });
+
+    }else{
+      return next();
+    }
+
   
-  );
+
+  });
 
   return Router;
 });

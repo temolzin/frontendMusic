@@ -19,7 +19,7 @@
           "
         >
           <q-list padding>
-            <q-item active clickable v-ripple>
+            <q-item active clickable v-ripple to="/">
               <q-item-section avatar>
                 <q-icon name="inbox" />
               </q-item-section>
@@ -89,7 +89,8 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch("auth/signOut");
-      this.$router.push("/login");
+      const toPath = this.$route.query.to || "/";
+      this.$router.push(toPath);
     },
   },
   computed: {

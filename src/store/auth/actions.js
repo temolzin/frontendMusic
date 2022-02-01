@@ -44,3 +44,21 @@ export const init = async ({ commit, dispatch }) => {
     commit("removeToken");
   }
 };
+
+
+export const doLoginGmail = async ({ commit, dispatch }) => {
+  await api.get("/api/authorize/google/redirect").then((response) => {
+    if(response.data.url){
+      window.location.href = response.data.url
+    }
+  });
+};
+
+export const doLoginGmailCallback = async ({ commit, dispatch }, payload) => {
+  await api.get("/api/authorize/google/callback" , { params: payload }).then((response) => {
+    const token = response.data;
+    dispatch("getMe", token);
+    commit("setToken", token);
+    api.defaults.headers.common.Authorization = "Bearer " + token.access_token;
+  });
+};

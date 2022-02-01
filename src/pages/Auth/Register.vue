@@ -58,14 +58,36 @@
                 label="Create my account"
                 type="submit"
                 rounded
-              ></q-btn>
+                v-if="loading"
+              >
+              </q-btn>
+              <q-btn
+                class="full-width"
+                color="primary"
+                label="Loading..."
+                disable
+                type="button"
+                rounded
+                v-else
+              >
+              </q-btn>
 
               <div class="q-mt-md text-center">
                 <p><u>Or</u></p>
                 <div class="col-12 col-sm-6 col-md-6">
-                  <q-btn outline style="color: red" no-caps>
+                  <q-btn
+                    v-if="loadingGmail"
+                    outline
+                    style="color: red"
+                    no-caps
+                    @click="loginGmail"
+                  >
                     <q-icon left size="1.5em" name="email" />
                     <label>Sign Up with Google</label>
+                  </q-btn>
+                  <q-btn outline disable style="color: red" no-caps v-else>
+                    <q-icon left size="1.5em" name="email" />
+                    <label>Loading...</label>
                   </q-btn>
                 </div>
                 <div class="col-12 col-sm-6 col-md-6">
@@ -109,11 +131,15 @@ export default {
         email: "angel@gmail.com",
         password: "angel",
       },
+      loading: true,
+      loadingGmail: true,
     };
   },
   methods: {
     ...mapActions("auth", ["registerUser"]),
+    ...mapActions("auth", ["doLoginGmail"]),
     async submitForm() {
+      this.loading = false;
       if (!this.user.email || !this.user.password || !this.user.name) {
         $q.notify({
           type: "negative",
@@ -133,6 +159,7 @@ export default {
           });
           const toPath = this.$route.query.to || "/login";
           this.$router.push(toPath);
+          this.loading = true;
         } catch (err) {
           $q.notify({
             type: "negative",
@@ -145,8 +172,15 @@ export default {
               message: err.response.data.error,
             });
           }
+          this.loading = true;
         }
       }
+    },
+
+    async loginGmail() {
+      this.loadingGmail = false;
+      await this.doLoginGmail();
+      this.loadingGmail = true;
     },
   },
   mounted() {
