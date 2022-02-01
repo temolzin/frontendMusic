@@ -51,9 +51,7 @@ export default route(function ({ store, ssrContext }) {
           to,
         };
         const nextMiddleware = nextCheck(context, middleware, 1);
-
         return middleware[0]({ ...context, next: nextMiddleware });
-
     }else{
       return next();
     }
