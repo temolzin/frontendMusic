@@ -155,7 +155,7 @@ export default {
           await this.registerUser(this.user);
           $q.notify({
             type: "positive",
-            message: "User added",
+            message: "Usuario registrado",
           });
           const toPath = this.$route.query.to || "/login";
           this.$router.push(toPath);

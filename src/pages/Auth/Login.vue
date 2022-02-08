@@ -111,13 +111,12 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions } from "vuex";
-import { ref } from "vue";
 import { mapGetters } from "vuex";
 
 let $q;
 
 export default {
-  name: "Login",
+  name: "LoginIn",
   data() {
     return {
       login: {
@@ -147,10 +146,10 @@ export default {
         this.loading = true;
       } else {
         try {
-          await this.doLogin(this.login);
-          const toPath = this.$route.query.to || "/dashboard/home";
-
-          this.$router.push(toPath);
+          await this.doLogin(this.login).then(() => {
+            const toPath = this.$route.query.to || "/authorize/login";
+            this.$router.push(toPath);
+          });
         } catch (err) {
           if (err.response.data.error) {
             $q.notify({

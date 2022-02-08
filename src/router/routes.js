@@ -13,6 +13,7 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
+        name: "Home",
         path: "/",
         component: Index,
       },
@@ -49,8 +50,9 @@ const routes = [
     path: "/dashboard",
     component: () => import("layouts/Dashboard.vue"),
     meta: {
-      middleware: [Middlewares.auth],
+      middleware: [Middlewares.auth, Middlewares.checkPermissions],
       requireLogin: true,
+      permissions: ["view-dashboard"],
     },
     children: [
       {
@@ -58,16 +60,28 @@ const routes = [
         path: "home",
         component: Dashboard,
         meta: {
-          middleware: [Middlewares.auth],
+          middleware: [Middlewares.auth, Middlewares.checkPermissions],
           requireLogin: true,
+          permissions: ["view-dashboard"],
         },
       },
     ],
   },
 
   {
+    name: "dashboard.Admin",
+    path: "/dashboard-admin",
+    component: () => import("layouts/DashboardAdmin.vue"),
+  },
+
+  {
     path: "/authorize/google/callback",
     component: () => import("pages/Auth/LoginGoogle.vue"),
+  },
+
+  {
+    path: "/authorize/login",
+    component: () => import("pages/Auth/LoginForm.vue"),
   },
 
   // Always leave this as last one,

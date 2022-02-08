@@ -27,20 +27,20 @@
               <q-item-section> Inicio </q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple>
+            <q-item clickable v-ripple to="/dashboard-admin">
               <q-item-section avatar>
                 <q-icon name="star" />
               </q-item-section>
 
-              <q-item-section> Star </q-item-section>
+              <q-item-section> Dashboard 2.0 </q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple>
+            <q-item clickable v-ripple v-if="$can('view-users')">
               <q-item-section avatar>
                 <q-icon name="send" />
               </q-item-section>
 
-              <q-item-section> Send </q-item-section>
+              <q-item-section> Hola </q-item-section>
             </q-item>
 
             <q-item clickable v-ripple>
@@ -69,6 +69,9 @@
       </q-drawer>
 
       <q-page-container>
+        <h6 v-if="$can('view-users')">
+          Solo puedes ver si puedes editar usuarios
+        </h6>
         <router-view />
       </q-page-container>
     </q-layout>
@@ -77,7 +80,8 @@
 
 <script>
 import { ref } from "vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import can from "./../helpers/can";
 
 export default {
   name: "Dashboard",
@@ -87,12 +91,24 @@ export default {
     };
   },
   methods: {
+    ...mapActions("auth", ["getMeUser"]),
+
     logout() {
       this.$store.dispatch("auth/signOut");
       const toPath = this.$route.query.to || "/";
       this.$router.push(toPath);
     },
+
+    // async getUser() {
+    //   await this.getMeUser().then(() => {
+    //     console.log(can("view-developer-dashboard"));
+    //   });
+    // },
   },
+  mounted() {
+    // this.getUser();
+  },
+
   computed: {
     ...mapGetters("auth", ["isAuthenticated"]),
     ...mapGetters("auth", ["getMe"]),
