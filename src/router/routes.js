@@ -50,7 +50,7 @@ const routes = [
     path: "/dashboard",
     component: () => import("layouts/Dashboard.vue"),
     meta: {
-      middleware: [Middlewares.auth, Middlewares.checkPermissions],
+      middleware: [Middlewares.checkPermissions],
       requireLogin: true,
       permissions: ["view-dashboard"],
     },
@@ -60,18 +60,56 @@ const routes = [
         path: "home",
         component: Dashboard,
         meta: {
-          middleware: [Middlewares.auth, Middlewares.checkPermissions],
+          middleware: [Middlewares.checkPermissions],
           requireLogin: true,
           permissions: ["view-dashboard"],
         },
+        
       },
-    ],
-  },
+      {
+        name: "admin.view-users",
+        path: "/admin/users",
+        component: import("pages/Admin/Users/index.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+        },
+        
+      },
+      {
+        name: "admin.view-roles",
+        path: "/admin/roles",
+        component: import("pages/Admin/Roles/index.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-roles"],
+        },
+      },
 
-  {
-    name: "dashboard.Admin",
-    path: "/dashboard-admin",
-    component: () => import("layouts/DashboardAdmin.vue"),
+      {
+        name: "admin.created-roles",
+        path: "/admin/roles/create",
+        component: import("pages/Admin/Roles/create.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+         permissions: ["create-roles"],
+        },
+      },
+
+      {
+        name: "edit-profile",
+        path: "/dashboard/user/profile",
+        component: import("pages/dashboard/User/userProfile.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["edit-profile"],
+        },
+      },
+
+    ],
   },
 
   {

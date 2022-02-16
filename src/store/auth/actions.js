@@ -53,3 +53,16 @@ export const doLoginGmailCallback = async ({ commit, dispatch }, payload) => {
     commit("setToken", token);
   });
 };
+
+
+export const updateDetails = async ({ dispatch }, payload) => {
+  await api.put("/api/user/change-details", payload).then((response) => {
+   dispatch("getMeUser");
+  });
+};
+
+export const updatePassword = async ({ dispatch }, payload) => {
+  await api.put("/api/user/change-password", payload).then((response) => {
+   dispatch("getMeUser");
+  });
+};
