@@ -64,8 +64,18 @@ const routes = [
           requireLogin: true,
           permissions: ["view-dashboard"],
         },
-        
       },
+      {
+        name: "edit-profile",
+        path: "/dashboard/user/profile",
+        component: import("pages/dashboard/User/userProfile.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["edit-profile"],
+        },
+      },
+      // Rutas del admin
       {
         name: "admin.view-users",
         path: "/admin/users",
@@ -74,7 +84,6 @@ const routes = [
           middleware: [Middlewares.checkPermissions],
           requireLogin: true,
         },
-        
       },
       {
         name: "admin.view-roles",
@@ -94,21 +103,36 @@ const routes = [
         meta: {
           middleware: [Middlewares.checkPermissions],
           requireLogin: true,
-         permissions: ["create-roles"],
+          permissions: ["create-roles"],
         },
       },
+      // Fin de rutas del admin
 
+      // Rutas del artista
       {
-        name: "edit-profile",
-        path: "/dashboard/user/profile",
-        component: import("pages/dashboard/User/userProfile.vue"),
+        name: "artist.view-profile-artist",
+        path: "/artist/index",
+        component: import("pages/Artist/NewArtist/index.vue"),
         meta: {
           middleware: [Middlewares.checkPermissions],
           requireLogin: true,
-          permissions: ["edit-profile"],
+          permissions: ["view-profile-artist"],
         },
       },
+      // Fin de rutas del artista
 
+      // Rutas del cliente
+      {
+        name: "client.view-card",
+        path: "/client/card",
+        component: import("pages/Client/Card/index.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-card"],
+        },
+      },
+      // Fin de rutas del cliente
     ],
   },
 
