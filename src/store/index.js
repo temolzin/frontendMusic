@@ -4,6 +4,8 @@ import auth from "./auth";
 import product from "./product";
 import users from "./admin/users";
 import roles from "./admin/roles";
+import card from "./client/card";
+import artist from "./artist/information";
 
 const Store = createStore({
   modules: {
@@ -11,6 +13,8 @@ const Store = createStore({
     product,
     users,
     roles,
+    card,
+    artist,
   },
   strict: process.env.DEBUGGING,
 });

@@ -34,14 +34,14 @@
                   <template v-slot:label>
                     <div class="row items-center no-wrap ">
                       <q-avatar size="40px">
-                        <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                        <img :src="getMe.image" />
                       </q-avatar>
                     </div>
                   </template>
-                  <div class="row no-wrap">
+                  <div class="row no-wrap q-ma-md">
                     <div class="column items-center">
                       <q-avatar size="82px">
-                        <img src="https://cdn.quasar.dev/img/boy-avatar.png" class="">
+                        <img :src="getMe.image" class="">
                       </q-avatar>
                       <div class="text-subtitle1 q-mt-md q-mb-xs">{{ getMe.name }}</div>
                       <b style="text-transform:capitalize">{{ getMe.role[0] }}</b>
@@ -49,6 +49,7 @@
 
                      <div class="row q-mt-md q-ma-sm">
                       <q-btn 
+                      outline
                       color="indigo col-5" 
                       label="Editar perfil" 
                       push size="sm" 
@@ -56,7 +57,7 @@
                       to="/dashboard/user/profile"
                       v-if="$can('edit-profile')" />
                       <div class="col-2"></div>
-                      <q-btn color="red col-5" label="Cerrar Sesión" push size="sm" v-close-popup @click="logout"/>
+                      <q-btn outline color="red col-5" label="Cerrar Sesión" push size="sm" v-close-popup @click="logout"/>
                      </div>
                     </div>
                   </div>
@@ -74,8 +75,16 @@
        <q-scroll-area style="height: calc(100% - 150px);margin-top: 120px;">
           <q-list padding class="text-white text-weight-light">
 
-            <q-item to='/dashboard/home' clickable active-class="text-accent text-weight-bold">
+            <q-item to='/dashboard/home' clickable active-class="text-accent text-weight-bold" v-if="getMe.role[0]=='administrador'">
               <q-item-section class="text-weight-bold"> DASHBOARD </q-item-section>
+            </q-item>
+
+            <q-item to='/dashboard/home' clickable active-class="text-accent text-weight-bold" v-if="getMe.role[0]=='cliente'">
+              <q-item-section class="text-weight-bold"  > COMPRAS </q-item-section>
+            </q-item>
+
+            <q-item to='/dashboard/home' clickable active-class="text-accent text-weight-bold" v-if="getMe.role[0]=='artista'">
+              <q-item-section class="text-weight-bold"  > DASHBOARD </q-item-section>
             </q-item>
               
             <q-item clickable v-ripple to='/admin/users' v-if="$can('view-users')" active-class="text-accent text-weight-bold">
@@ -93,60 +102,115 @@
               <q-item-section> Roles </q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple>
+
+
+             <q-item clickable v-ripple to="/artist/index" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold">
               <q-item-section avatar>
-                <q-icon name="fas fa-solid fa-user-tag"  />
+                <q-icon name="fas fa-solid fa-microphone"  />
               </q-item-section>
 
-              <q-item-section> Tags </q-item-section>
+              <q-item-section> Perfil de Artista </q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple>
+             <q-item clickable v-ripple to="/" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold">
               <q-item-section avatar>
-                <q-icon name="drafts"  />
+                <q-icon name="fas fa-solid fa-cart-arrow-down"  />
               </q-item-section>
 
-              <q-item-section> Drafts </q-item-section>
+              <q-item-section> Mis ventas</q-item-section>
             </q-item>
+
+             <q-item clickable v-ripple to="/" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-address-card"  />
+              </q-item-section>
+
+              <q-item-section> Mi Membrecía </q-item-section>
+            </q-item>
+
+            <q-item  to='/dashboard/home' clickable active-class="text-accent text-weight-bold" v-if="getMe.role[0]=='artista'">
+              <q-item-section class="text-weight-bold"> OTRAS CONFIGURACIONES </q-item-section>
+            </q-item>
+
+              <q-item clickable v-ripple to="/" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-microphone"  />
+              </q-item-section>
+
+              <q-item-section> Perfil de Artista </q-item-section>
+            </q-item>
+
+             <q-item clickable v-ripple to="/" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-cart-arrow-down"  />
+              </q-item-section>
+
+              <q-item-section> Mis ventas</q-item-section>
+            </q-item>
+
+             <q-item clickable v-ripple to="/" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-address-card"  />
+              </q-item-section>
+
+              <q-item-section> Mi Membrecía </q-item-section>
+            </q-item>
+            <!-- <q-item >
+              <q-item-section class="text-weight-bold" v-if="$can('create-card')"> COMPRAS </q-item-section>
+            </q-item> -->
+              
+            <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-store"  />
+              </q-item-section>
+
+              <q-item-section> Tienda </q-item-section>
+            </q-item>
+
+            <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-tags"  />
+              </q-item-section>
+
+              <q-item-section> Ofertas </q-item-section>
+            </q-item>
+
+
+            <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-heart"  />
+              </q-item-section>
+
+              <q-item-section> Favoritos </q-item-section>
+            </q-item>
+
+            <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-list-ul"  />
+              </q-item-section>
+
+              <q-item-section> Categorias </q-item-section>
+            </q-item>
+
 
             <q-item >
-              <q-item-section class="text-weight-bold"> DASHBOARD </q-item-section>
+              <q-item-section class="text-weight-bold" v-if="getMe.role[0]=='cliente'"> INFORMACIÓN </q-item-section>
             </q-item>
               
-            <q-item clickable v-ripple to="/">
+            <q-item clickable v-ripple to="/client/card" v-if="$can('create-card')" active-class="text-accent text-weight-bold">
               <q-item-section avatar>
-                <q-icon name="fas fa-solid fa-users"  />
+                <q-icon name="fas fa-solid fa-credit-card"  />
               </q-item-section>
 
-              <q-item-section> Users </q-item-section>
+              <q-item-section> Mis Tarjetas </q-item-section>
             </q-item>
 
-             <q-item clickable v-ripple to="/">
+            <q-item clickable v-ripple v-if="$can('create-card')" active-class="text-accent text-weight-bold">
               <q-item-section avatar>
-                <q-icon name="fas fa-solid fa-street-view"  />
+                <q-icon name="fas fa-solid fa-cart-arrow-down"  />
               </q-item-section>
 
-              <q-item-section> Roles </q-item-section>
-            </q-item>
-
-               <q-item >
-              <q-item-section class="text-weight-bold"> DASHBOARD </q-item-section>
-            </q-item>
-              
-            <q-item clickable v-ripple to="/">
-              <q-item-section avatar>
-                <q-icon name="fas fa-solid fa-users"  />
-              </q-item-section>
-
-              <q-item-section> Users </q-item-section>
-            </q-item>
-
-             <q-item clickable v-ripple to="/">
-              <q-item-section avatar>
-                <q-icon name="fas fa-solid fa-street-view"  />
-              </q-item-section>
-
-              <q-item-section> Roles </q-item-section>
+              <q-item-section> Mis Compras </q-item-section>
             </q-item>
 
 

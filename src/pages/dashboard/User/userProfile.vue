@@ -5,7 +5,8 @@
       <div class="col-12 col-sm-4 col-md-4">
         <h6 class="q-mb-sm q-mt-sm">Avatar público</h6>
         <p class="q-mt-none">
-          Aquí puedes cambiar tu avatar o eliminar el actual
+          Aquí puedes subir tu avatar o cambiarlo en
+          <a href="https://es.gravatar.com/">gravatar.com</a>
         </p>
       </div>
       <div class="col-12 col-sm-8 col-md-8">
@@ -14,7 +15,7 @@
             <q-card-section class="col-2 flex flex-center">
               <q-btn round>
                 <q-avatar size="80px">
-                  <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
+                  <img :src="getMe.image" />
                 </q-avatar>
               </q-btn>
             </q-card-section>
