@@ -66,3 +66,10 @@ export const updatePassword = async ({ dispatch }, payload) => {
    dispatch("getMeUser");
   });
 };
+
+export const updateImageProfile = async ({ dispatch }, payload) => {
+  await api.post("/api/user/change-image-profile", payload, 
+  {headers : {'content-type': 'multipart/form-data'}}).then((response) => {
+   dispatch("getMeUser");
+  });
+};
