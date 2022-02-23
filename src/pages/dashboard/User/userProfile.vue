@@ -20,22 +20,38 @@
               </q-btn>
             </q-card-section>
             <q-card-section class="col-10 q-pt-xs">
-              <q-form>
+              <q-form @submit="onSubmitImageProfle" @reset="onResetDetails">
                 <div class="text-overline">Subir nuevo avatar</div>
                 <div class="q-mt-sm q-mb-xs">
-                  <q-btn
-                    dark-percentage
-                    color="accent"
-                    text-color="grey-9"
-                    icon="cloud_upload"
-                    style="width: 100px"
-                  />
+                  <q-file
+                    filled
+                    bottom-slots
+                    v-model="image_profile"
+                    label="Seleccionar Imagen"
+                    accept=".jpg, .jpeg, .png"
+                    counter
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop="image_profile = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+
+                    <template v-slot:hint>
+                      La imagen puede ser jpg/jpeg/png
+                    </template>
+                  </q-file>
                 </div>
                 <div class="text-caption text-grey">
-                  El tamaño máximo de archivo permitido es de 200KB.
+                  El tamaño máximo de archivo permitido es de 1MB.
                 </div>
                 <div class="float-right">
-                  <q-btn label="Actualizar" type="submit" color="primary" />
+                  <q-btn color="primary" label="Actualizar" type="submit" />
                 </div>
               </q-form>
             </q-card-section>
@@ -196,35 +212,6 @@
       </div>
     </div>
     <!-- Fin de seccion Cambio de contraseña-->
-
-    <!-- <div class="q-pa-md row items-center justify-center">
-      <q-card class="my-card col-12 col-sm-12 col-md-6 col-lg-6">
-        <q-item>
-          <q-item-section avatar>
-            <q-avatar>
-              <img src="https://cdn.quasar.dev/img/avatar2.jpg" />
-            </q-avatar>
-          </q-item-section>
-
-          <q-item-section class="q-pa-sm">
-            <q-item-label class="text-h6 q-mt-sm">
-              {{ getMe.name }}
-              <q-btn round color="primary" icon="edit" />
-            </q-item-label>
-            <q-item-label caption>{{ getMe.email }}</q-item-label>
-          </q-item-section>
-        </q-item>
-        <hr />
-        <q-card-section>
-          <div class="text-h6">Our Changing Planet</div>
-          <div class="text-subtitle2">by John Doe</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none q-mb-sm">
-          {{ getMe }}
-        </q-card-section>
-      </q-card>
-    </div> -->
   </q-page>
 </template>
 
@@ -237,6 +224,7 @@ export default {
   name: "userProfile",
   data() {
     return {
+      image_profile: [],
       formUpdateMain: {
         name: "",
         email: "",
@@ -255,6 +243,7 @@ export default {
   methods: {
     ...mapActions("auth", ["updateDetails"]),
     ...mapActions("auth", ["updatePassword"]),
+    ...mapActions("auth", ["updateImageProfile"]),
     async onSubmitDetails() {
       try {
         await this.updateDetails(this.formUpdateMain);
@@ -287,14 +276,51 @@ export default {
         }
       }
     },
+    async onSubmitImageProfle() {
+      try {
+        if (this.image_profile.length == 0) {
+          this.$q.notify({
+            type: "negative",
+            message: `Ningún archivo seleccionado`,
+          });
+        } else {
+          if (this.image_profile.size > 1000000) {
+            this.$q.notify({
+              type: "negative",
+              message: `El tamaño de la imagen excede de lo permitido`,
+            });
+          } else {
+            let InstFormData = new FormData();
+            InstFormData.append("image_profile", this.image_profile);
+
+            await this.updateImageProfile(InstFormData);
+            this.image_profile = null;
+            this.$q.notify({
+              type: "positive",
+              message: `Información actualizada`,
+            });
+          }
+        }
+      } catch (err) {
+        if (err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
     onResetDetails() {
       this.formUpdateMain.name = this.getMe.name;
       this.formUpdateMain.email = this.getMe.email;
     },
     onResetPassword() {
-      this.formUpdatePassword.newPassword = "";
-      this.formUpdatePassword.confirmPassword = "";
-      this.formUpdatePassword.currentPassword = "";
+      this.formUpdatePassword.newPassword = null;
+      this.formUpdatePassword.confirmPassword = null;
+      this.formUpdatePassword.currentPassword = null;
+    },
+    onResetImageProfile() {
+      this.image_profile = null;
     },
   },
   computed: {
