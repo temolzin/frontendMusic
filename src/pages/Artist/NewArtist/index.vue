@@ -106,6 +106,33 @@
                 ]"
               />
 
+              <div class="col-12 col-sm-12 col-md-12 q-pa-md">
+                <p class="q-mb-sm">
+                  Ingresa una foto del grupo o tu como solista
+                </p>
+                <small class="text-center q-mt-sm q-mb-sm">
+                  Esta imagen será visualizada cuando las personas ingresen a tu
+                  perfil</small
+                >
+                <q-file
+                  v-model="formCreate.image_artist"
+                  label="Seleccionar"
+                  accept=".jpg, image/*"
+                  filled
+                  class="q-mt-sm"
+                  style="max-width: 200px"
+                  max-file-size="1000000"
+                  counter
+                  @rejected="onRejected"
+                  lazy-rules
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="attach_file" />
+                  </template>
+                  <template v-slot:hint>Máximo 1MG</template>
+                </q-file>
+              </div>
+
               <p class="text-center q-mb-sm text-weight-bold q-mt-lg col-12">
                 La siguiente información es acerca de manager para la
                 comunicación entre el cliente y él.
@@ -155,6 +182,31 @@
                 hint="Ingresa el correo frecuente del manager"
               />
 
+              <div class="col-12 col-sm-12 col-md-12 q-pa-md">
+                <p class="q-mb-sm">Ingresa una foto del Manager</p>
+                <small class="text-center q-mt-sm q-mb-sm">
+                  Esta imagen será visualizada por los usuarios cuando las
+                  personas ingresen a tu perfil</small
+                >
+                <q-file
+                  v-model="formCreate.image_manager"
+                  label="Seleccionar"
+                  accept=".jpg, image/*"
+                  filled
+                  class="q-mt-sm"
+                  style="max-width: 200px"
+                  max-file-size="1000000"
+                  counter
+                  @rejected="onRejected"
+                  lazy-rules
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="attach_file" />
+                  </template>
+                  <template v-slot:hint>Máximo 1MG</template>
+                </q-file>
+              </div>
+
               <div class="q-pt-lg col-12">
                 <q-btn
                   class="full-width"
@@ -180,26 +232,20 @@
     </div>
   </div>
   <div v-if="showInfo == 'false'">
-    <q-card class="my-card">
-      <q-parallax
-        src="https://cdn.pixabay.com/photo/2017/04/10/16/55/live-music-2219036_960_720.jpg"
-        :height="430"
+    <q-parallax
+      src="https://cdn.pixabay.com/photo/2017/04/10/16/55/live-music-2219036_960_720.jpg"
+      :height="430"
+    >
+      <div
+        class="absolute-bottom text-h3 flex flex-center title text-white barra"
       >
-        <div
-          class="absolute-bottom text-h3 flex flex-center title text-white barra"
-        >
-          {{ artist[0].name }}
-        </div>
-      </q-parallax>
-    </q-card>
+        {{ artist[0].name }}
+      </div>
+    </q-parallax>
 
     <div class="row tipogra">
       <div class="col-12 col-sm-5 col-md-5 q-pa-lg">
-        <q-img
-          src="https://cdn.pixabay.com/photo/2018/03/06/06/58/performance-3202707_960_720.jpg"
-          no-native-menu
-          class="image"
-        >
+        <q-img :src="artist[0].image_artist" no-native-menu class="image">
           <q-icon
             class="absolute all-pointer-events"
             size="32px"
@@ -207,12 +253,14 @@
             color="white"
             style="top: 8px; left: 8px"
           >
-            <q-tooltip class="title-group"> Tooltip </q-tooltip>
+            <q-tooltip class="title-group"> {{ artist[0].name }} </q-tooltip>
           </q-icon>
         </q-img>
       </div>
       <div class="col-12 col-sm-7 col-md-7 info q-pa-lg">
-        <h3 class="title-group q-mt-sm">{{ artist[0].name }}</h3>
+        <h3 class="title-group q-mt-sm">
+          <small>Acerca de </small>{{ artist[0].name }}
+        </h3>
         <p class="info q-mt-lg">"{{ artist[0].history }}"</p>
         <p>-{{ artist[0].name_manager }}</p>
       </div>
@@ -234,10 +282,7 @@
       <div class="col-12 title-group text-center">
         <h3 class="q-mb-md">Información del manager</h3>
         <q-avatar size="180px">
-          <img
-            src="https://cdn.pixabay.com/photo/2020/03/11/17/32/engineer-4922781_960_720.jpg"
-            class="avatar"
-          />
+          <img :src="artist[0].image_manager" class="avatar" />
         </q-avatar>
         <p class="info q-mb-sm q-mt-md">
           {{ artist[0].name_manager }}
@@ -302,9 +347,7 @@
                 hint="Numero de integrantes"
                 type="number"
                 lazy-rules
-                :rules="[
-                  (val) => (val && val > 0) || 'Por favor ingresa algo',
-                ]"
+                :rules="[(val) => (val && val > 0) || 'Por favor ingresa algo']"
               />
 
               <q-input
@@ -360,6 +403,30 @@
                     'Por favor ingresa un dato valido',
                 ]"
               />
+              <div class="col-12 col-sm-12 col-md-12 q-pa-md">
+                <p class="q-mb-sm">Ingresa una foto del grupo o artista</p>
+                <small class="text-center q-mt-sm q-mb-sm">
+                  Esta imagen será visualizada por los usuarios cuando las
+                  personas ingresen al perfil</small
+                >
+                <q-file
+                  v-model="formCreate.image_artist"
+                  label="Seleccionar"
+                  accept=".jpg, image/*"
+                  filled
+                  class="q-mt-sm"
+                  style="max-width: 200px"
+                  max-file-size="1000000"
+                  counter
+                  @rejected="onRejectedArtists"
+                  lazy-rules
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="attach_file" />
+                  </template>
+                  <template v-slot:hint>Máximo 1MG</template>
+                </q-file>
+              </div>
 
               <p class="text-center q-mb-sm text-weight-bold q-mt-lg col-12">
                 La siguiente información es acerca de manager para la
@@ -409,9 +476,38 @@
                 ]"
                 hint="Ingresa el correo frecuente del manager"
               />
-
+              <div class="col-12 col-sm-12 col-md-12 q-pa-md">
+                <p class="q-mb-sm">Ingresa una foto del Manager</p>
+                <small class="text-center q-mt-sm q-mb-sm">
+                  Esta imagen será visualizada por los usuarios cuando las
+                  personas ingresen al perfil</small
+                >
+                <q-file
+                  v-model="formCreate.image_manager"
+                  label="Seleccionar"
+                  accept=".jpg, image/*"
+                  filled
+                  class="q-mt-sm"
+                  style="max-width: 200px"
+                  max-file-size="1000000"
+                  counter
+                  @rejected="onRejected"
+                  lazy-rules
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="attach_file" />
+                  </template>
+                  <template v-slot:hint>Máximo 1MG</template>
+                </q-file>
+              </div>
+              <p></p>
               <div class="q-pt-lg col-12">
-                <q-btn class="q-mr-md" color="red" label="Cancelar"></q-btn>
+                <q-btn
+                  class="q-mr-md"
+                  color="red"
+                  label="Cancelar"
+                  @click="cancel"
+                ></q-btn>
                 <q-btn
                   color="primary"
                   label="Actualizar"
@@ -457,10 +553,12 @@ export default {
         history: "",
         zone: "",
         price_hour: "",
+        image_artist: [],
         extra_kilometre: "",
         name_manager: "",
         phone_manager: "",
         email_manager: "",
+        image_manager: [],
       },
       linkWhatsApp: "",
       linkCorreo: "",
@@ -476,6 +574,7 @@ export default {
         await this.getArtist();
         if (this.artist == "") {
           this.showInfo = "true";
+          this.url_img_artist = "https://placeimg.com/500/300/arch";
         } else {
           this.showInfo = "false";
           const link = this.artist[0].phone.replace(/\s+/g, "");
@@ -494,13 +593,54 @@ export default {
 
     async createNewArtist() {
       try {
-        await this.createArtist(this.formCreate);
-        this.gettArtist();
-        this.$q.notify({
-          type: "positive",
-          message: `Infromación guardada correctamente`,
-        });
-        this.onReset();
+        if (this.formCreate.image_artist.length == 0) {
+          this.$q.notify({
+            type: "negative",
+            message: `Ingresa una foto de grupo o artista`,
+          });
+        } else if (this.formCreate.image_manager.length == 0) {
+          this.$q.notify({
+            type: "negative",
+            message: `Ingresa una foto del manager`,
+          });
+        } else {
+          if (this.formCreate.image_artist.size > 1000000) {
+            this.$q.notify({
+              type: "negative",
+              message: `El tamaño de la imagen del grupo excede de lo permitido`,
+            });
+          } else if (this.formCreate.image_manager.size > 1000000) {
+            this.$q.notify({
+              type: "negative",
+              message: `El tamaño de la imagen del manager excede de lo permitido`,
+            });
+          } else {
+            let InstFormData = new FormData();
+            InstFormData.append("name", this.formCreate.name);
+            InstFormData.append("members", this.formCreate.members);
+            InstFormData.append("history", this.formCreate.history);
+            InstFormData.append("zone", this.formCreate.zone);
+            InstFormData.append("price_hour", this.formCreate.price_hour);
+            InstFormData.append("image_artist", this.formCreate.image_artist);
+            InstFormData.append(
+              "extra_kilometre",
+              this.formCreate.extra_kilometre
+            );
+            InstFormData.append("name_manager", this.formCreate.name_manager);
+            InstFormData.append("phone_manager", this.formCreate.phone_manager);
+            InstFormData.append("email_manager", this.formCreate.email_manager);
+            InstFormData.append("image_manager", this.formCreate.image_manager);
+
+            // console.log(InstFormData);
+            await this.createArtist(InstFormData);
+            this.gettArtist();
+            this.$q.notify({
+              type: "positive",
+              message: `Infromación guardada correctamente`,
+            });
+            this.onReset();
+          }
+        }
       } catch (err) {
         if (err.response.data.message) {
           $q.notify({
@@ -517,9 +657,10 @@ export default {
       this.formCreate.history = null;
       this.formCreate.zone = null;
       this.formCreate.price_hour = null;
+      this.formCreate.image_manager = [];
       this.formCreate.extra_kilometre = null;
       this.formCreate.name_manager = null;
-      this.formCreate.phone_manager = null;
+      this.formCreate.phone_manager = [];
       this.formCreate.email_manager = null;
       this.age = null;
     },
@@ -556,15 +697,56 @@ export default {
 
     async editArtist() {
       try {
-        await this.updateArtist(this.formCreate);
-        this.gettArtist();
-        this.showEdit = "false";
-        this.showInfo = "true";
-        this.$q.notify({
-          type: "positive",
-          message: `Infromación guardada correctamente`,
-        });
-        this.onReset();
+        if (this.formCreate.image_artist.size > 1000000) {
+          this.$q.notify({
+            type: "negative",
+            message: `El tamaño de la imagen del grupo excede de lo permitido`,
+          });
+        } else if (this.formCreate.image_manager.size > 1000000) {
+          this.$q.notify({
+            type: "negative",
+            message: `El tamaño de la imagen del manager excede de lo permitido`,
+          });
+        } else {
+          let InstFormData = new FormData();
+          InstFormData.append("id", this.formCreate.id);
+          InstFormData.append("name", this.formCreate.name);
+          InstFormData.append("members", this.formCreate.members);
+          InstFormData.append("history", this.formCreate.history);
+          InstFormData.append("zone", this.formCreate.zone);
+          InstFormData.append("price_hour", this.formCreate.price_hour);
+          if (this.formCreate.image_artist.size > 1) {
+            console.log("Entro 1");
+            InstFormData.append("image_artist", this.formCreate.image_artist);
+          }
+          if (this.formCreate.image_manager.size > 1) {
+            console.log("Entro 2");
+            InstFormData.append("image_manager", this.formCreate.image_manager);
+          }
+          InstFormData.append(
+            "extra_kilometre",
+            this.formCreate.extra_kilometre
+          );
+          InstFormData.append("name_manager", this.formCreate.name_manager);
+          InstFormData.append("phone_manager", this.formCreate.phone_manager);
+          InstFormData.append("email_manager", this.formCreate.email_manager);
+
+          // console.log(InstFormData);
+
+          let formUpdate = {
+            id: this.formCreate.id,
+            form: InstFormData,
+          };
+          await this.updateArtist(formUpdate);
+          this.gettArtist();
+          this.showEdit = "false";
+          this.showInfo = "false";
+          this.$q.notify({
+            type: "positive",
+            message: `Infromación guardada correctamente`,
+          });
+          this.onReset();
+        }
       } catch (err) {
         if (err.response.data.message) {
           $q.notify({
@@ -573,6 +755,27 @@ export default {
           });
         }
       }
+    },
+    onRejected() {
+      $q.notify({
+        type: "negative",
+        message: `El archivo no ha superado las restricciones de validación`,
+      });
+      this.formCreate.image_manager = [];
+    },
+    onRejectedArtists() {
+      $q.notify({
+        type: "negative",
+        message: `El archivo no ha superado las restricciones de validación`,
+      });
+      this.formCreate.image_artist = [];
+    },
+    cancel() {
+      this.gettArtist();
+      this.s
+      this.showEdit = "false";
+      this.showInfo = "false";
+      this.onReset();
     },
   },
   computed: {
@@ -851,12 +1054,13 @@ input:focus {
   text-align: center;
 }
 .image {
-  width: 100%;
-  max-height: 340px;
+  width: 90%;
+  min-height: 340;
+  max-height: 450px;
   display: block;
   margin-left: auto;
   margin-right: auto;
-  object-fit: fill;
+  object-fit: cover;
 }
 .avatar {
   object-fit: cover;
