@@ -106,6 +106,17 @@ const routes = [
           permissions: ["create-roles"],
         },
       },
+
+      {
+        name: "admin.view-musicals-genders",
+        path: "/admin/musical-genders/index",
+        component: import("pages/Admin/MusicalGenders/index.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-musicals-genders"],
+        },
+      },
       // Fin de rutas del admin
 
       // Rutas del artista

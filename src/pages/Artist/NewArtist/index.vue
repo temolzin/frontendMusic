@@ -112,8 +112,8 @@
                 </p>
                 <small class="text-center q-mt-sm q-mb-sm">
                   Esta imagen será visualizada cuando las personas ingresen a tu
-                  perfil</small
-                >
+                  perfil
+                </small>
                 <q-file
                   v-model="formCreate.image_artist"
                   label="Seleccionar"
@@ -131,6 +131,47 @@
                   </template>
                   <template v-slot:hint>Máximo 1MG</template>
                 </q-file>
+              </div>
+
+              <div class="col-11">
+                <p class="q-mb-sm">
+                  Selecciona los generos musicales a los que entras
+                </p>
+                <small class="text-center q-mt-sm q-mb-sm">
+                  Por medio de estas etiquetas, los usuarios también podrán
+                  encontrarte.
+                </small>
+                <q-select
+                  v-model="formCreate.selection"
+                  for="permission"
+                  :option-value="
+                    (opt) =>
+                      Object(opt) === opt && 'id' in opt ? opt.id : null
+                  "
+                  :option-label="
+                    (opt) =>
+                      Object(opt) === opt && 'name' in opt
+                        ? opt.name
+                        : '- Null -'
+                  "
+                  emit-value
+                  map-options
+                  multiple
+                  options-dense
+                  use-chips
+                  filled
+                  hint="Selecciona los generos musicales que perteneces"
+                  color="primary"
+                  :loading="false"
+                  clear-icon
+                  counter
+                  :rules="[
+                    (val) =>
+                      val.length > 0 ||
+                      'Por favor selecciona al menos 1 opcion',
+                  ]"
+                  :options="musicalGenders"
+                />
               </div>
 
               <p class="text-center q-mb-sm text-weight-bold q-mt-lg col-12">
@@ -236,16 +277,27 @@
       src="https://cdn.pixabay.com/photo/2017/04/10/16/55/live-music-2219036_960_720.jpg"
       :height="430"
     >
-      <div
-        class="absolute-bottom text-h3 flex flex-center title text-white barra"
-      >
-        {{ artist[0].name }}
+      <div class="barra q-pa-lg">
+        <div class="text-h3 text-white text-center title">
+          {{ artist.name }}
+        </div>
+        <div class="text-center q-mt-sm">
+          <q-badge
+            v-for="(musicalGender, id) in artist.musical_genders"
+            :key="id"
+            outline
+            align="middle"
+            :color="musicalGender.color"
+            class="q-ma-sm q-mt-none"
+          >
+            {{ musicalGender.name }}
+          </q-badge>
+        </div>
       </div>
     </q-parallax>
-
     <div class="row tipogra">
       <div class="col-12 col-sm-5 col-md-5 q-pa-lg">
-        <q-img :src="artist[0].image_artist" no-native-menu class="image">
+        <q-img :src="artist.image" no-native-menu class="image">
           <q-icon
             class="absolute all-pointer-events"
             size="32px"
@@ -253,50 +305,48 @@
             color="white"
             style="top: 8px; left: 8px"
           >
-            <q-tooltip class="title-group"> {{ artist[0].name }} </q-tooltip>
+            <q-tooltip class="title-group"> {{ artist.name }} </q-tooltip>
           </q-icon>
         </q-img>
       </div>
       <div class="col-12 col-sm-7 col-md-7 info q-pa-lg">
         <h3 class="title-group q-mt-sm">
-          <small>Acerca de </small>{{ artist[0].name }}
+          <small>Acerca de </small>{{ artist.name }}
         </h3>
-        <p class="info q-mt-lg">"{{ artist[0].history }}"</p>
-        <p>-{{ artist[0].name_manager }}</p>
+        <p class="info q-mt-lg">"{{ artist.history }}"</p>
+        <!-- <p>-{{ artist[0].name_manager }}</p> -->
       </div>
 
       <div class="col-12 title-group text-center">
         <h3 class="q-mb-md">Información de Contratación</h3>
         <p class="info q-mb-sm q-mt-md">
-          Número de integrantes: {{ artist[0].members }}
+          Número de integrantes: {{ artist.members }}
         </p>
-        <p class="info q-mb-sm q-mt-md">Zona: {{ artist[0].zone }}</p>
+        <p class="info q-mb-sm q-mt-md">Zona: {{ artist.zone }}</p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por hora: ${{ artist[0].price_hour }} pesos.
+          Precio por hora: ${{ artist.price_hour }} pesos.
         </p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por kilometro extra: ${{ artist[0].extra_kilometre }} pesos.
+          Precio por kilometro extra: ${{ artist.extra_kilometre }} pesos.
         </p>
       </div>
-
       <div class="col-12 title-group text-center">
         <h3 class="q-mb-md">Información del manager</h3>
         <q-avatar size="180px">
-          <img :src="artist[0].image_manager" class="avatar" />
+          <img :src="artist.manager.image" class="avatar" />
         </q-avatar>
         <p class="info q-mb-sm q-mt-md">
-          {{ artist[0].name_manager }}
+          {{ artist.manager.name }}
         </p>
         <p class="info q-mb-sm">
           Teléfono:
-          <a :href="linkWhatsApp" target="_blank">{{ artist[0].phone }}</a>
+          <a :href="linkWhatsApp" target="_blank">{{ artist.manager.phone }}</a>
         </p>
         <p class="info q-mb-sm">
           Correo:
-          <a :href="linkCorreo"> {{ artist[0].email }}</a>
+          <a :href="linkCorreo"> {{ artist.manager.email }}</a>
         </p>
       </div>
-
       <q-page-sticky position="bottom-right" :offset="[18, 18]">
         <q-btn fab icon="edit" color="accent" @click="showInfoArtist" />
       </q-page-sticky>
@@ -322,7 +372,7 @@
         <div class="modal__content">
           <q-form @submit="editArtist" class="q-gutter-md q-px-sm q-py-sm">
             <p class="text-center q-mb-lg text-weight-light text-h3">
-              Editar '{{ artist[0].name }}'
+              Editar '{{ artist.name }}'
             </p>
             <p class="text-center q-mb-sm text-weight-bold">
               Disfruta la nueva experiencia de contratación de servicios
@@ -426,6 +476,46 @@
                   </template>
                   <template v-slot:hint>Máximo 1MG</template>
                 </q-file>
+              </div>
+              <div class="col-11">
+                <p class="q-mb-sm">
+                  Selecciona los generos musicales a los que entras
+                </p>
+                <small class="text-center q-mt-sm q-mb-sm">
+                  Por medio de estas etiquetas, los usuarios también podrán
+                  encontrarte.
+                </small>
+                <q-select
+                  v-model="formCreate.selection"
+                  for="permission"
+                  :option-value="
+                    (opt) =>
+                      Object(opt) === opt && 'id' in opt ? opt.id : null
+                  "
+                  :option-label="
+                    (opt) =>
+                      Object(opt) === opt && 'name' in opt
+                        ? opt.name
+                        : '- Null -'
+                  "
+                  emit-value
+                  map-options
+                  multiple
+                  options-dense
+                  use-chips
+                  filled
+                  hint="Selecciona los generos musicales que perteneces"
+                  color="primary"
+                  :loading="false"
+                  clear-icon
+                  counter
+                  :rules="[
+                    (val) =>
+                      val.length > 0 ||
+                      'Por favor selecciona al menos 1 opcion',
+                  ]"
+                  :options="musicalGenders"
+                />
               </div>
 
               <p class="text-center q-mb-sm text-weight-bold q-mt-lg col-12">
@@ -559,6 +649,7 @@ export default {
         phone_manager: "",
         email_manager: "",
         image_manager: [],
+        selection: [],
       },
       linkWhatsApp: "",
       linkCorreo: "",
@@ -568,18 +659,19 @@ export default {
     ...mapActions("artist", ["getArtist"]),
     ...mapActions("artist", ["createArtist"]),
     ...mapActions("artist", ["updateArtist"]),
+    ...mapActions("musicalGenders", ["getMusicalGenders"]),
 
     async gettArtist() {
       try {
         await this.getArtist();
-        if (this.artist == "") {
+        if (this.artist == null) {
           this.showInfo = "true";
           this.url_img_artist = "https://placeimg.com/500/300/arch";
         } else {
           this.showInfo = "false";
-          const link = this.artist[0].phone.replace(/\s+/g, "");
+          const link = this.artist.manager.phone.replace(/\s+/g, "");
           this.linkWhatsApp = `https://wa.me/${link}?text=Hola%20me%20interesa%20su%20sevicios`;
-          this.linkCorreo = `mailto:${this.artist[0].email}`;
+          this.linkCorreo = `mailto:${this.artist.manager.email}`;
         }
       } catch (err) {
         if (err.response.data.message) {
@@ -590,7 +682,18 @@ export default {
         }
       }
     },
-
+    async gettMusicalGenders() {
+      try {
+        await this.getMusicalGenders();
+      } catch (err) {
+        if (err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
     async createNewArtist() {
       try {
         if (this.formCreate.image_artist.length == 0) {
@@ -630,6 +733,8 @@ export default {
             InstFormData.append("phone_manager", this.formCreate.phone_manager);
             InstFormData.append("email_manager", this.formCreate.email_manager);
             InstFormData.append("image_manager", this.formCreate.image_manager);
+            const selection = JSON.stringify(this.formCreate.selection);
+            InstFormData.append("selection", selection);
 
             // console.log(InstFormData);
             await this.createArtist(InstFormData);
@@ -638,7 +743,7 @@ export default {
               type: "positive",
               message: `Infromación guardada correctamente`,
             });
-            this.onReset();
+            //this.onReset();
           }
         }
       } catch (err) {
@@ -650,7 +755,6 @@ export default {
         }
       }
     },
-
     onReset() {
       this.formCreate.name = null;
       this.formCreate.members = null;
@@ -662,7 +766,7 @@ export default {
       this.formCreate.name_manager = null;
       this.formCreate.phone_manager = [];
       this.formCreate.email_manager = null;
-      this.age = null;
+      this.formCreate.selection = [];
     },
     isCheck() {
       if (this.check == true) {
@@ -676,23 +780,31 @@ export default {
     showInfoArtist() {
       this.showInfo = "none";
       this.showEdit = "true";
-      this.formCreate.id = this.artist[0].id;
-      this.formCreate.name = this.artist[0].name;
-      this.formCreate.members = this.artist[0].members;
-      this.formCreate.history = this.artist[0].history;
-      this.formCreate.zone = this.artist[0].zone;
-      this.formCreate.price_hour = this.artist[0].price_hour;
-      this.formCreate.extra_kilometre = this.artist[0].extra_kilometre;
+      this.formCreate.id = this.artist.id;
+      this.formCreate.name = this.artist.name;
+      this.formCreate.members = this.artist.members;
+      this.formCreate.history = this.artist.history;
+      this.formCreate.zone = this.artist.zone;
+      this.formCreate.price_hour = this.artist.price_hour;
+      this.formCreate.extra_kilometre = this.artist.extra_kilometre;
 
+      let selected = [this.artist];
+
+      for (let i = 0; i < selected.length; i++) {
+        // this.formCreate.selection.push(selected[i].id);
+        for (let j = 0; j < selected[i].musical_genders.length; j++) {
+          this.formCreate.selection.push(selected[i].musical_genders[j].id);
+        }
+      }
       if (
-        this.artist[0].email == this.getMe.email &&
-        this.artist[0].name_manager == this.getMe.name
+        this.artist.manager.email == this.getMe.email &&
+        this.artist.manager.name == this.getMe.name
       ) {
         this.check = true;
       }
-      this.formCreate.name_manager = this.artist[0].name_manager;
-      this.formCreate.phone_manager = this.artist[0].phone;
-      this.formCreate.email_manager = this.artist[0].email;
+      this.formCreate.name_manager = this.artist.manager.name;
+      this.formCreate.phone_manager = this.artist.manager.phone;
+      this.formCreate.email_manager = this.artist.manager.email;
     },
 
     async editArtist() {
@@ -730,6 +842,8 @@ export default {
           InstFormData.append("name_manager", this.formCreate.name_manager);
           InstFormData.append("phone_manager", this.formCreate.phone_manager);
           InstFormData.append("email_manager", this.formCreate.email_manager);
+          const selection = JSON.stringify(this.formCreate.selection);
+          InstFormData.append("selection", selection);
 
           // console.log(InstFormData);
 
@@ -772,7 +886,7 @@ export default {
     },
     cancel() {
       this.gettArtist();
-      this.s
+      this.s;
       this.showEdit = "false";
       this.showInfo = "false";
       this.onReset();
@@ -785,10 +899,14 @@ export default {
     ...mapState({
       getMe: (state) => state.auth.me,
     }),
+    ...mapState({
+      musicalGenders: (state) => state.musicalGenders.musicalGenders,
+    }),
   },
   mounted() {
     $q = useQuasar();
     this.gettArtist();
+    this.gettMusicalGenders();
   },
 };
 </script>
@@ -1030,6 +1148,7 @@ input:focus {
   font-size: 60px;
   font-weight: 400;
   text-transform: uppercase;
+  margin: auto;
 }
 .title-group {
   font-size: 50px;
@@ -1047,11 +1166,9 @@ input:focus {
   font-family: "Muli", sans-serif;
 }
 .barra {
-  width: 100%;
-  height: 100%;
   background-color: #14141463;
-  letter-spacing: 3px;
-  text-align: center;
+  border-radius: 10px;
+  padding: 50px;
 }
 .image {
   width: 90%;

@@ -6,6 +6,7 @@ import users from "./admin/users";
 import roles from "./admin/roles";
 import card from "./client/card";
 import artist from "./artist/information";
+import musicalGenders from "./admin/musicalGenders";
 
 const Store = createStore({
   modules: {
@@ -15,6 +16,7 @@ const Store = createStore({
     roles,
     card,
     artist,
+    musicalGenders,
   },
   strict: process.env.DEBUGGING,
 });

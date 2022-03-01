@@ -13,12 +13,6 @@ export const createArtist = async ({ dispatch }, payload) => {
   });
 };
 
-// export const deleteArtist = async ({ dispatch }, id) => {
-//   await api.delete(`/api/artist-new/${id}`).then((response) => {
-//     dispatch("getArtist");
-//   });
-// };
-
 export const updateArtist = async ({ dispatch }, formUpdate) => {
   await api.post(`/api/artist-new/up-date/${formUpdate.id}`, formUpdate.form,
   {headers : {'content-type': 'multipart/form-data'}}).then((response) => {
