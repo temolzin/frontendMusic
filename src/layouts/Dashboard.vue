@@ -94,12 +94,20 @@
               <q-item-section> Usuarios </q-item-section>
             </q-item>
 
-             <q-item clickable v-ripple to='/admin/roles' v-if="$can('create-roles')" active-class="text-accent text-weight-bold">
+             <q-item clickable v-ripple to='/admin/roles' v-if="$can('view-roles')" active-class="text-accent text-weight-bold">
               <q-item-section avatar>
                 <q-icon name="fas fa-solid fa-street-view"  />
               </q-item-section>
 
               <q-item-section> Roles </q-item-section>
+            </q-item>
+
+             <q-item clickable v-ripple to='/admin/musical-genders/index'  v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-icons"  />
+              </q-item-section>
+
+              <q-item-section> Generos Musicales </q-item-section>
             </q-item>
 
 
