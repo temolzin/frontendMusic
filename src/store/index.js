@@ -7,6 +7,7 @@ import roles from "./admin/roles";
 import card from "./client/card";
 import artist from "./artist/information";
 import musicalGenders from "./admin/musicalGenders";
+import galleryArtist from "./artist/galleryArtist";
 
 const Store = createStore({
   modules: {
@@ -17,6 +18,7 @@ const Store = createStore({
     card,
     artist,
     musicalGenders,
+    galleryArtist,
   },
   strict: process.env.DEBUGGING,
 });

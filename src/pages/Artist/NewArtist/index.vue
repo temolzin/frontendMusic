@@ -314,9 +314,12 @@
           <small>Acerca de </small>{{ artist.name }}
         </h3>
         <p class="info q-mt-lg">"{{ artist.history }}"</p>
-        <!-- <p>-{{ artist[0].name_manager }}</p> -->
       </div>
+    </div>
 
+    <notice-gallery></notice-gallery>
+
+    <div class="row tipogra">
       <div class="col-12 title-group text-center">
         <h3 class="q-mb-md">Información de Contratación</h3>
         <p class="info q-mb-sm q-mt-md">
@@ -625,10 +628,12 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import { useQuasar } from "quasar";
+import NoticeGallery from "src/components/Artist/NoticeGallery.vue";
 
 let $q = useQuasar();
 
 export default {
+  components: { NoticeGallery },
   name: "Index",
   data() {
     return {
@@ -696,6 +701,7 @@ export default {
     },
     async createNewArtist() {
       try {
+        this.btnE = false;
         if (this.formCreate.image_artist.length == 0) {
           this.$q.notify({
             type: "negative",

@@ -38,7 +38,6 @@ export default {
     async gettArtist() {
       try {
         await this.getArtist();
-        console.log(this.artist);
         if (this.artist == null) {
           this.showInfo = true;
         }
