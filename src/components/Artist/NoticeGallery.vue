@@ -22,12 +22,13 @@
                 label="Selecciona las imagenes (Max 5)"
                 max-files="5"
                 multiple
-                accept=".jpg,jpeg,png"
+                accept=".jpg, image/*"
                 :factory="uploadSubImages"
                 @rejected="onRejected"
                 color="accent"
                 max-file-size="1000000"
                 max-total-size="5000000"
+                lazy-rules
               />
               <q-card-actions align="right" class="text-primary q-mt-md">
                 <q-btn
@@ -118,7 +119,7 @@
                 label="Selecciona las imagenes (Max 5)"
                 max-files="5"
                 multiple
-                accept=".jpg,jpeg,png"
+                accept=".jpg, image/*"
                 :factory="updateSubImages"
                 @rejected="onRejected"
                 color="accent"

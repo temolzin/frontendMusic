@@ -4,7 +4,7 @@
       'justify-center': $q.screen.md || $q.screen.sm || $q.screen.xs,
     }"
     class="col-12 col-md-6 flex content-center bg-primary"
-    v-bind:style="{ height: '55em' }"
+    v-bind:style="{ height: '60em' }"
   >
     <q-card
       class="my-card shadow-box shadow-2"
