@@ -24,12 +24,14 @@
                 <div class="text-overline">Subir nuevo avatar</div>
                 <div class="q-mt-sm q-mb-xs">
                   <q-file
-                    filled
-                    bottom-slots
                     v-model="image_profile"
-                    label="Seleccionar Imagen"
-                    accept=".jpg, .jpeg, .png"
+                    label="Seleccionar"
+                    accept=".jpg, image/*"
+                    class="q-mt-sm"
+                    max-file-size="1000000"
                     counter
+                    @rejected="onRejected"
+                    lazy-rules
                   >
                     <template v-slot:prepend>
                       <q-icon name="cloud_upload" @click.stop />
@@ -321,6 +323,13 @@ export default {
     },
     onResetImageProfile() {
       this.image_profile = null;
+    },
+    onRejected() {
+      $q.notify({
+        type: "negative",
+        message: `El archivo no ha superado las restricciones de validación`,
+      });
+      this.image_profile = [];
     },
   },
   computed: {
