@@ -80,7 +80,7 @@
             </q-item>
 
             <q-item to='/dashboard/home' clickable active-class="text-accent text-weight-bold" v-if="getMe.role[0]=='cliente'">
-              <q-item-section class="text-weight-bold"  > COMPRAS </q-item-section>
+              <q-item-section class="text-weight-bold"  > INICIO </q-item-section>
             </q-item>
 
             <q-item to='/dashboard/home' clickable active-class="text-accent text-weight-bold" v-if="getMe.role[0]=='artista'">
@@ -175,6 +175,14 @@
               <q-item-section> Tienda </q-item-section>
             </q-item>
 
+            <q-item clickable v-ripple to="/client/musical-genders" v-if="$can('view-all-musicals-genders')" active-class="text-accent">
+              <q-item-section avatar>
+                <q-icon name="fas fa-solid fa-list-ul"  />
+              </q-item-section>
+
+              <q-item-section> Generos Musicales</q-item-section>
+            </q-item>
+
             <q-item clickable v-ripple to="/" v-if="$can('create-card')">
               <q-item-section avatar>
                 <q-icon name="fas fa-solid fa-tags"  />
@@ -192,13 +200,7 @@
               <q-item-section> Favoritos </q-item-section>
             </q-item>
 
-            <q-item clickable v-ripple to="/" v-if="$can('create-card')">
-              <q-item-section avatar>
-                <q-icon name="fas fa-solid fa-list-ul"  />
-              </q-item-section>
-
-              <q-item-section> Categorias </q-item-section>
-            </q-item>
+            
 
 
             <q-item >

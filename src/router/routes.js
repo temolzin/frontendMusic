@@ -142,6 +142,18 @@ const routes = [
           requireLogin: true,
           permissions: ["view-card"],
         },
+        
+      },
+      {
+        name: "client.view-all-musicals-genders",
+        path: "/client/musical-genders",
+        component: import("src/pages/Client/MusicalGenders/index.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-all-musicals-genders"],
+        },
+        
       },
       // Fin de rutas del cliente
     ],

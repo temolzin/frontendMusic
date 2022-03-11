@@ -8,6 +8,7 @@ import card from "./client/card";
 import artist from "./artist/information";
 import musicalGenders from "./admin/musicalGenders";
 import galleryArtist from "./artist/galleryArtist";
+import clientMusicalGenders from "./client/clientMusicalGenders";
 
 const Store = createStore({
   modules: {
@@ -19,6 +20,7 @@ const Store = createStore({
     artist,
     musicalGenders,
     galleryArtist,
+    clientMusicalGenders,
   },
   strict: process.env.DEBUGGING,
 });
