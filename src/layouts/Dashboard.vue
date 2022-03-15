@@ -1,4 +1,6 @@
 <template>
+<!-- Quita el error 403 de las imagenes de Gmail -->
+<meta name="referrer" content="no-referrer" />
   <q-layout view="lHh LpR fFf">
 
     <!-- Inicio de header -->
