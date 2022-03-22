@@ -142,7 +142,41 @@ const routes = [
           requireLogin: true,
           permissions: ["view-card"],
         },
+        
       },
+      {
+        name: "client.view-all-musicals-genders",
+        path: "/client/musical-genders",
+        component: import("src/pages/Client/MusicalGenders/index.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-all-musicals-genders"],
+        },
+        
+      },
+      {
+        name: "client.view-groups-by-genders-search",
+        path: "/client/musical-genders/:slug",
+        component: import("src/pages/Client/MusicalGenders/search.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-groups-by-genders"],
+        },
+        
+      },
+      {
+        name: "client.view-group-by-gender-slug",
+        path: "/client/musical-genders/:slugMG/:slugA",
+        component: import("src/pages/Client/MusicalGenders/show.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-groups-by-genders"],
+        },
+      },
+      
       // Fin de rutas del cliente
     ],
   },

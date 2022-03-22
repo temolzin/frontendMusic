@@ -16,7 +16,6 @@
       </div>
 
       <template v-slot:action>
-        <q-btn flat label="Despues" @click="showNotif" />
         <q-btn flat label="Vamos ➡" to="/client/card" />
       </template>
     </q-banner>
@@ -40,27 +39,9 @@ export default {
   },
   methods: {
     ...mapActions("card", ["getCards"]),
-    showNotif() {
-      $q.notify({
-        message:
-          "Guarda tus tarjetas de credito o debito, es totalmente seguro. Solo se te pedira el numero de cuenta y la fecha de expiración",
-        color: "red",
-
-        actions: [
-          {
-            label: "Cerrar",
-            color: "yellow",
-            handler: () => {
-              this.showCard = false;
-            },
-          },
-        ],
-      });
-    },
     async getCard() {
       try {
         await this.getCards();
-        console.log(this.cards);
         if (this.cards == "") {
           this.showInfo = true;
         }
