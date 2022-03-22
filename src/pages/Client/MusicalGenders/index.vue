@@ -3,7 +3,7 @@
     <div class="q-mb-md">
       <q-breadcrumbs>
         <q-breadcrumbs-el to="/dashboard/home" label="Inico" icon="home" />
-        <q-breadcrumbs-el  label="Generos Musicales" icon="widgets" />
+        <q-breadcrumbs-el label="Generos Musicales" icon="widgets" />
       </q-breadcrumbs>
     </div>
     <!-- <div class="q-ma-none">
@@ -62,9 +62,31 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
+import { onBeforeUnmount } from "vue";
 
 let $q;
 export default {
+  setup() {
+    const $q = useQuasar();
+    let timer;
+
+    onBeforeUnmount(() => {
+      if (timer !== void 0) {
+        clearTimeout(timer);
+        $q.loading.hide();
+      }
+    });
+
+    return {
+      showLoading() {
+        $q.loading.show();
+        timer = setTimeout(() => {
+          $q.loading.hide();
+          timer = void 0;
+        }, 2000);
+      },
+    };
+  },
   data() {
     return {
       searchSlug: null,
@@ -75,6 +97,9 @@ export default {
     ...mapActions("clientMusicalGenders", ["getMusicalGenders"]),
     gettMusicalGenders() {
       try {
+        if (this.clientMusicalGenders[0] == null) {
+          this.showLoading();
+        }
         this.getMusicalGenders();
       } catch (err) {
         if (err.response.data.message) {
@@ -86,7 +111,13 @@ export default {
       }
     },
     search(name) {
-      console.log(name);
+      // console.log(name);
+      this.$router.push({
+        name: "client.view-groups-by-genders-search",
+        params: {
+          slug: name,
+        },
+      });
     },
   },
   created() {

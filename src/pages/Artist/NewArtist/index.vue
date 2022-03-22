@@ -671,7 +671,6 @@ export default {
         await this.getArtist();
         if (this.artist == null) {
           this.showInfo = "true";
-          this.url_img_artist = "https://placeimg.com/500/300/arch";
         } else {
           this.showInfo = "false";
           const link = this.artist.manager.phone.replace(/\s+/g, "");
