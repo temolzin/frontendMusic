@@ -75,25 +75,28 @@
 
       <div class="row tipogra">
         <div class="col-12 col-sm-5 col-md-5 q-pa-lg">
-          <div class="container-img">
+          <div :class="mode?'container-img-dark':'container-img'">
             <q-img :src="artist.manager.image" class="image" />
           </div>
         </div>
         <div class="col-12 col-sm-7 col-md-7 2 q-pa-lg">
           <q-card class="my-card shadow-6">
             <q-card-section>
-              <h3 class="title-group2 q-mt-sm ellipsis">
+              <h3
+                class="q-mt-sm ellipsis"
+                :class="mode ? 'title-group2-white' : 'title-group2'"
+              >
                 <small>¡Contratame ahora! </small>{{ getMe.name }}
               </h3>
               <h4 class="q-ma-none text-center q-mt-sm text-primary">
                 $ {{ artist.price_hour }}.00
-                <span class="text-dark">pesos</span>
+                <span :class="mode?'text-white':'text-dark'">pesos</span>
                 <small
                   style="font-size: 20px; text-decoration: line-through"
-                  class="text-red"
+                  class="text-red q-ml-sm"
                 >
                   $ {{ parseFloat(artist.price_hour) + 200 }}.00
-                  <span class="text-dark">pesos</span>
+                  <span :class="mode?'text-white':'text-dark'">pesos</span>
                 </small>
               </h4>
               <h6 class="q-mt-sm text-weight-bold q-mb-sm">
@@ -112,14 +115,14 @@
               </div>
               <div class="q-mt-sm">
                 <q-icon name="money" class="q-mt-none" />
-                <span class="q-ml-sm q-mt-md"
-                  >{{ artist.price_hour }}.00 pesos por hora
+                <span class="q-ml-sm q-mt-md">
+                  $ {{ artist.price_hour }}.00 pesos por hora
                 </span>
               </div>
               <div class="q-mt-sm">
                 <q-icon name="money" class="q-mt-none" />
-                <span class="q-ml-sm q-mt-md"
-                  >{{ artist.extra_kilometre }}.00 pesos por hora extra por km
+                <span class="q-ml-sm q-mt-md">
+                  $ {{ artist.extra_kilometre }}.00 pesos por hora extra por km
                 </span>
               </div>
 
@@ -157,7 +160,10 @@
           </q-card>
 
           <div class="q-mt-md text-center">
-            <h3 class="title-group2 q-mt-xl">
+            <h3
+              class="q-mt-xl"
+              :class="mode ? 'title-group2-white' : 'title-group2'"
+            >
               <small>Hola soy </small>{{ artist.manager.name }}
             </h3>
             <p class="info2 q-mt-md">Manager del grupo {{ artist.name }}</p>
@@ -182,7 +188,7 @@
       <!-- Gallery -->
       <div v-if="artist.galery_artists[0] != null">
         <div class="q-pa-md">
-          <h3 class="title-group2 text-center q-mb-md ellipsis">
+          <h3 class="text-center q-mb-md ellipsis" :class="mode?'title-group2-white':'title-group2'">
             <small>Galeria de Imagenes de </small> {{ artist.name }}
           </h3>
           <q-carousel
@@ -282,6 +288,9 @@ export default {
     ...mapState({
       artist: (state) => state.clientMusicalGenders.artistGender,
     }),
+    mode: function () {
+      return this.$q.dark.isActive;
+    },
   },
   mounted() {
     $q = useQuasar();
@@ -328,10 +337,13 @@ export default {
 }
 .title-group2 {
   font-size: 45px;
-  font-weight: 600;
   margin-bottom: 0;
-  font-family: "Josefin Sans", sans-serif;
   color: #001d38;
+}
+.title-group2-white {
+  font-size: 45px;
+  margin-bottom: 0;
+  color: #e6e6e6;
 }
 .labels {
   z-index: 2;
@@ -358,6 +370,15 @@ export default {
     rgb(255, 255, 255)
   );
 }
+.container-img-dark {
+  height: 750px;
+  z-index: 2;
+  background: linear-gradient(
+    90deg,
+    rgba(28, 87, 248, 0) 30%,
+    rgba(20, 19, 19, 0.932)
+  );
+}
 @media (max-width: 600px) {
   .text {
     margin-top: -115vh;
@@ -376,7 +397,6 @@ export default {
     line-height: 28px;
     font-weight: 300;
     color: #727272;
-    font-family: "Muli", sans-serif;
     text-align: justify;
   }
   .title-group {
@@ -388,7 +408,6 @@ export default {
     font-size: 25px;
     font-weight: 600;
     margin-bottom: 0;
-    font-family: "Josefin Sans", sans-serif;
     color: #001d38;
   }
   .labels {

@@ -6,15 +6,18 @@
           to="/dashboard/home"
           label="Inico"
           class="text-weight-bold text-h6 uppercase"
+          :class="mode ? 'text-grey-5' : 'text-dark'"
         />
         <q-breadcrumbs-el
           to="/client/musical-genders"
           label="Generos Musicales"
           class="text-weight-bold text-h6 uppercase"
+          :class="mode ? 'text-grey-5' : 'text-dark'"
         />
         <q-breadcrumbs-el
           :label="slug"
           class="text-weight-bold text-h6 uppercase"
+          :class="mode ? 'text-grey-5' : 'text-dark'"
         />
       </q-breadcrumbs>
     </div>
@@ -65,7 +68,8 @@
       >
         <template v-slot:top-left>
           <h5
-            class="q-ma-none text-weight-bold q-mt-md text-blue-grey-7"
+            class="q-ma-none q-mt-md"
+            :class="mode ? 'text-grey-5' : 'text-modedark text-weight-medium'"
             v-if="skeleton == false"
           >
             Resultados relacionados a {{ clientMusicalGenders[0].name }}
@@ -106,7 +110,7 @@
 
                 <div class="row no-wrap items-center">
                   <div
-                    class="col text-h6 ellipsis search"
+                    class="col text-h6 ellipsis search text-weight-regular"
                     @click="search(props.row.slug)"
                   >
                     {{ props.row.name }}
@@ -120,7 +124,13 @@
                   </div>
                 </div>
 
-                <q-rating v-model="starts" :max="5" size="32px" />
+                <q-rating
+                  v-model="starts"
+                  :max="5"
+                  size="32px"
+                  no-dimming
+                  readonly
+                />
               </q-card-section>
 
               <q-card-section class="q-pt-none">
@@ -223,6 +233,9 @@ export default {
       clientMusicalGenders: (state) =>
         state.clientMusicalGenders.artistsGenders,
     }),
+    mode: function () {
+      return this.$q.dark.isActive;
+    },
   },
   mounted() {
     $q = useQuasar();

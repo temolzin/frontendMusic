@@ -9,17 +9,19 @@ import Middlewares from "../middlewares/";
 
 const routes = [
   {
-    path: "/",
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
         name: "Home",
-        path: "/",
+        path: "/index",
         component: Index,
       },
-      { path: "/about", component: About },
+      { 
+        name: "About", 
+        path: "/about", 
+        component: About },
       {
-        name: "product",
+        name: "Product",
         path: "/product",
         component: Product,
       },
@@ -142,7 +144,6 @@ const routes = [
           requireLogin: true,
           permissions: ["view-card"],
         },
-        
       },
       {
         name: "client.view-all-musicals-genders",
@@ -153,7 +154,6 @@ const routes = [
           requireLogin: true,
           permissions: ["view-all-musicals-genders"],
         },
-        
       },
       {
         name: "client.view-groups-by-genders-search",
@@ -164,7 +164,6 @@ const routes = [
           requireLogin: true,
           permissions: ["view-groups-by-genders"],
         },
-        
       },
       {
         name: "client.view-group-by-gender-slug",
@@ -176,7 +175,7 @@ const routes = [
           permissions: ["view-groups-by-genders"],
         },
       },
-      
+
       // Fin de rutas del cliente
     ],
   },
