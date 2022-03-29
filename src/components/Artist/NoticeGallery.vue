@@ -47,8 +47,8 @@
     </section>
     <!-- Fin de Formulario galeria de imagenes -->
   </div>
-  <div v-if="showGallery == true" class="q-mt-lg">
-    <h3 class="tipogra">
+  <div v-if="showGallery == true" class="q-mt-lg q-mb-none">
+    <h3 :class="mode?'tipogra-white':'tipogra'" class="q-mb-lg">
       Galeria de Imagenes
       <q-btn
         round
@@ -57,8 +57,9 @@
         @click="formGalleryEdit = true"
       />
     </h3>
-    <div class="q-pa-md">
+    <div>
       <q-carousel
+      class="q-mt-xl"
         swipeable
         animated
         thumbnails
@@ -273,6 +274,9 @@ export default {
     ...mapState({
       galleryArtist: (state) => state.galleryArtist.galleryArtist,
     }),
+    mode: function () {
+      return this.$q.dark.isActive;
+    },
   },
   mounted() {
     $q = useQuasar();
@@ -294,6 +298,19 @@ export default {
   margin-top: 0px;
   font-family: "Josefin Sans", sans-serif;
   color: #001d38;
+  text-align: center;
+}
+.tipogra-white {
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  margin-top: 3em;
+  font-size: 50px;
+  font-weight: 400;
+  margin-bottom: 0;
+  margin-top: 0px;
+  font-family: "Josefin Sans", sans-serif;
+  color: #e2e2e2;
   text-align: center;
 }
 </style>

@@ -25,3 +25,11 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+.bg-modedark {
+  background-color: #1c2331 !important;
+}
+.text-modedark {
+  color: #1c2331 !important;
+}
+</style>
