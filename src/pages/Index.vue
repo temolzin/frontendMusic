@@ -53,115 +53,77 @@
 
   <!-- Inicio de Últimos Registrados -->
   <div class="row justify-center">
-    <div class="text-center col-12 q-mt-lg">
+    <div class="text-center col-12 q-mt-lg q-mb-none">
       <h6 class="q-mt-xl q-mb-sm" style="letter-spacing: 3px">
         <small class="text-primary">NUESTROS ÚLTIMOS</small>
       </h6>
-      <h4 class="q-mt-none text-weight-bolder" style="letter-spacing: 3px">
+      <h4
+        class="q-mt-none text-weight-bolder q-mb-sm"
+        style="letter-spacing: 3px"
+      >
         GRUPOS REGISTRADOS
       </h4>
     </div>
 
-    <div class="col-12 col-xs-12 col-sm-3 col-md-3 q-mt-md">
-      <q-card class="my-card q-ma-md">
-        <q-img
-          src="https://cdn.pixabay.com/photo/2016/09/27/23/03/guitar-1699501_960_720.jpg"
-          class="card-img"
+    <div class="col-12 q-mt-none" v-if="showLatestArtist == false">
+      <div class="row justify-center">
+        <div
+          class="col-12 col-xs-12 col-sm-3 col-md-3 q-mt-md"
+          v-for="mode in 3"
+          :key="mode"
         >
-          <div class="absolute-bottom">
-            <div class="strech">
-              <div class="text-h6 text-weight-bolder title-card text-grey-3">
-                Grupo México vivo
-              </div>
-              <div class="q-gutter-md q-mb-md">
-                <q-badge outline color="primary" label="Outline" />
-                <q-badge outline color="orange" label="Outline" />
-                <q-badge outline color="secondary" label="Outline" />
-              </div>
-              <div class="text-subtitle2 text-weight-light text-grey-5">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
-              </div>
-            </div>
-          </div>
-        </q-img>
-        <q-btn
-          color="primary"
-          icon="arrow_forward"
-          class="absolute"
-          style="top: 0; right: 0px; transform: translateY(1120%)"
-        />
-      </q-card>
+          <q-card flat class="q-ma-md">
+            <q-skeleton height="450px" square />
+          </q-card>
+        </div>
+      </div>
     </div>
 
-    <div class="col-12 col-xs-12 col-sm-3 col-md-3 q-mt-md">
-      <q-card class="my-card q-ma-md">
-        <q-img
-          src="https://cdn.pixabay.com/photo/2020/07/23/11/58/man-5431169_960_720.jpg"
-          class="card-img"
+    <div class="col-12 q-mt-none" v-if="showLatestArtist == true">
+      <div class="row justify-center">
+        <div
+          class="col-12 col-xs-12 col-sm-3 col-md-3 q-mt-md"
+          v-for="(stateArtist, index) in stateArtists"
+          :key="index"
         >
-          <div class="absolute-bottom">
-            <div class="strech">
-              <div class="text-h6 text-weight-bolder title-card text-grey-3">
-                Grupo México vivo
+          <q-card class="my-card q-ma-md">
+            <q-img :src="stateArtist.image" class="card-img">
+              <div class="absolute-bottom">
+                <div class="strech" style="display: flex">
+                  <div class="center">
+                    <div
+                      class="text-h6 text-weight-bolder title-card text-grey-3"
+                    >
+                      {{ stateArtist.name }}
+                    </div>
+                    <div class="q-gutter-md q-mb-md">
+                      <q-badge
+                        v-for="(
+                          musicalGender, index
+                        ) in stateArtist.musical_genders"
+                        :key="index"
+                        :color="musicalGender.color"
+                        :label="musicalGender.name"
+                        class="q-pa-xs"
+                      />
+                    </div>
+                    <div class="text-subtitle2 text-weight-light text-grey-5">
+                      {{ stateArtist.history }}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="q-gutter-md q-mb-md">
-                <q-badge outline color="primary" label="Outline" />
-                <q-badge outline color="orange" label="Outline" />
-                <q-badge outline color="secondary" label="Outline" />
-              </div>
-              <div class="text-subtitle2 text-weight-light text-grey-5">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
-              </div>
-            </div>
-          </div>
-        </q-img>
-        <q-btn
-          color="primary"
-          icon="arrow_forward"
-          class="absolute"
-          style="top: 0; right: 0px; transform: translateY(1120%)"
-        />
-      </q-card>
-    </div>
-
-    <div class="col-12 col-xs-12 col-sm-3 col-md-3 q-mt-md">
-      <q-card class="my-card q-ma-md">
-        <q-img
-          src="https://cdn.pixabay.com/photo/2016/11/21/13/36/man-1845432_960_720.jpg"
-          class="card-img"
-        >
-          <div class="absolute-bottom">
-            <div class="strech">
-              <div class="text-h6 text-weight-bolder title-card text-grey-3">
-                Grupo México vivo
-              </div>
-              <div class="q-gutter-md q-mb-md">
-                <q-badge outline color="primary" label="Outline" />
-                <q-badge outline color="orange" label="Outline" />
-                <q-badge outline color="secondary" label="Outline" />
-              </div>
-              <div class="text-subtitle2 text-weight-light text-grey-5">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
-              </div>
-            </div>
-          </div>
-        </q-img>
-        <q-btn
-          color="primary"
-          icon="arrow_forward"
-          class="absolute"
-          style="top: 0; right: 0px; transform: translateY(1120%)"
-        />
-      </q-card>
+            </q-img>
+            <q-btn
+              :to="'/search/' + stateArtist.slug"
+              color="primary"
+              icon="arrow_forward"
+              class="absolute"
+              style="top: 0; right: 0px; transform: translateY(1120%)"
+            />
+          </q-card>
+        </div>
+      </div>
     </div>
   </div>
   <!-- Fin de Últimos Registrados -->
@@ -240,17 +202,43 @@
   <!-- Fin de aviso para registrar email -->
 </template>
 <script>
+import { useQuasar } from "quasar";
+import { mapActions, mapGetters } from "vuex";
+let $q;
 export default {
-  setup() {
+  data() {
     return {
       options: ["Google", "Facebook", "Twitter", "Apple", "Oracle"],
       email: "",
+      showLatestArtist: false,
     };
   },
+  methods: {
+    ...mapActions("lastArtist", ["getLatestArtists"]),
+    async gettLatestArtists() {
+      try {
+        await this.getLatestArtists().then(() => {
+          this.showLatestArtist = true;
+        });
+      } catch (err) {
+        $q.notify({
+          type: "negative",
+          message: err,
+        });
+      }
+    },
+  },
+  created() {
+    this.gettLatestArtists();
+  },
   computed: {
+    ...mapGetters("lastArtist", ["stateArtists"]),
     mode: function () {
       return this.$q.dark.isActive;
     },
+  },
+  mounted() {
+    $q = useQuasar();
   },
 };
 </script>
@@ -277,12 +265,16 @@ export default {
   letter-spacing: 2px;
 }
 .strech {
-  margin: 25px;
+  margin: 15px;
+  height: 389px;
 }
 .line {
   width: 40%;
   height: 3px;
   background-color: white;
   margin-bottom: 5px;
+}
+.center {
+  margin: auto;
 }
 </style>

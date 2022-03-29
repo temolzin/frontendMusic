@@ -9,6 +9,7 @@ import artist from "./artist/information";
 import musicalGenders from "./admin/musicalGenders";
 import galleryArtist from "./artist/galleryArtist";
 import clientMusicalGenders from "./client/clientMusicalGenders";
+import lastArtist from "./general/lastArtist";
 
 const Store = createStore({
   modules: {
@@ -21,6 +22,7 @@ const Store = createStore({
     musicalGenders,
     galleryArtist,
     clientMusicalGenders,
+    lastArtist,
   },
   strict: process.env.DEBUGGING,
 });
