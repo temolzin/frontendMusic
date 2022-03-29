@@ -370,7 +370,7 @@
       <!-- Inicio Icono de la marca -->
       <q-img class="absolute-top bg-transparent" style="height: 140px">
         <div class="absolute-center bg-transparent">
-          <q-avatar size="140px">
+          <q-avatar size="140px" @click="redirect" style="cursor:pointer">
             <q-icon name="fas fa-solid fa-cloud-moon" />
           </q-avatar>
         </div>
@@ -420,10 +420,13 @@ export default {
     darkMode(val) {
       this.$q.dark.set(val);
     },
+    redirect() {
+      const toPath = this.$route.query.to || "/index";
+      this.$router.push(toPath);
+    },
   },
   created() {
     this.isActiveDarkMode = this.mode;
   },
 };
 </script>
-
