@@ -106,6 +106,7 @@
                   icon="fas fa-solid fa-cart-plus"
                   class="absolute"
                   style="top: 0; right: 12px; transform: translateY(-50%)"
+                  v-on:click="onSendOrder(props.row)"
                 />
 
                 <div class="row no-wrap items-center">
@@ -179,7 +180,7 @@
 </template>
 
 <script>
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapState } from "vuex";
 import { ref } from "vue";
 
@@ -196,10 +197,12 @@ export default {
       skeleton: true,
       showResult: null,
       starts: 4,
+      listCarrito: [],
     };
   },
   methods: {
     ...mapActions("clientMusicalGenders", ["getMusicalGendersBySlug"]),
+    ...mapActions("shoppingCard", ["create_order"]),
     async gettMusicalGendersBySlug() {
       try {
         await this.getMusicalGendersBySlug(this.slug).then(() => {
@@ -222,6 +225,92 @@ export default {
           slugA: slug,
         },
       });
+    },
+
+    addCart(item) {
+      let change = false;
+      this.listCarrito.forEach(function (valor, indice) {
+        if (valor.id == item.id) {
+          valor.cant = valor.cant + 1;
+          change = true;
+        }
+      });
+
+      if (change != true) {
+        const itemcar = {
+          id: item.id,
+          name: item.name,
+          slug: item.slug,
+          cant: 1,
+          price_hour: item.price_hour,
+          zone: item.zone,
+          image: item.image,
+        };
+        this.listCarrito.push(itemcar);
+      }
+
+      //alert(JSON.stringify(item));
+    },
+    deleteItem(i) {
+      this.listCarrito.splice(i, 1);
+    },
+    changeQuantity(i, type) {
+      // sacar variable de carrito
+      const dataCar = this.listCarrito;
+
+      // sacar la cantidad de producto
+      let cantd = dataCar[i].cant;
+
+      if (type) {
+        cantd = cantd + 1;
+      } else if (type == false && cantd >= 1) {
+        cantd = cantd - 1;
+      }
+
+      if ((type == false && cantd >= 1) || type) {
+        dataCar[i].cant = cantd;
+        this.listCarrito;
+      }
+    },
+    onViewTotal() {
+      let total = 0;
+      this.listCarrito.map((data) => {
+        total = total + parseFloat(data.cant) * parseFloat(data.price_hour);
+      });
+      return total;
+    },
+    onSendOrder(artist) {
+      $q.notify({
+        spinner: QSpinnerGears,
+        message: "Agregando al carrito...",
+        timeout: 200,
+      });
+      const formData = new FormData();
+      formData.append("service_id", artist.id);
+      formData.append("name", artist.name);
+      formData.append("price", artist.price_hour);
+      formData.append("order_date_start", this.printDateStart());
+      formData.append("order_date_finish", this.printDateFinish());
+      //formData.append("total", total);
+      this.create_order(formData).then(() => {
+        $q.notify({
+          type: "positive",
+          spinner: QSpinnerAudio,
+          message: "Artista agregado",
+          timeout: 1000,
+        });
+      });
+    },
+    printDateStart: function () {
+      return new Date().toLocaleString();
+    },
+    printDateFinish: function () {
+      var d = new Date();
+      return this.sumarDias(d, 2);
+    },
+    sumarDias(fecha, dias) {
+      fecha.setDate(fecha.getDate() + dias);
+      return fecha.toLocaleString();
     },
   },
   created() {

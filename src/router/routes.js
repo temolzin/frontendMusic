@@ -176,6 +176,17 @@ const routes = [
         },
       },
 
+      {
+        name: "client.view-shopping-cart",
+        path: "/client/shopping-cart",
+        component: import("src/pages/Client/ShoppingCart/index.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-shopping-cart"],
+        },
+      },
+
       // Fin de rutas del cliente
     ],
   },
