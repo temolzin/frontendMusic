@@ -10,6 +10,7 @@ import musicalGenders from "./admin/musicalGenders";
 import galleryArtist from "./artist/galleryArtist";
 import clientMusicalGenders from "./client/clientMusicalGenders";
 import lastArtist from "./general/lastArtist";
+import shoppingCard from "./client/shoppingCard";
 
 const Store = createStore({
   modules: {
@@ -23,6 +24,7 @@ const Store = createStore({
     galleryArtist,
     clientMusicalGenders,
     lastArtist,
+    shoppingCard,
   },
   strict: process.env.DEBUGGING,
 });
