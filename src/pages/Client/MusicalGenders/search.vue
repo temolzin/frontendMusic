@@ -106,7 +106,7 @@
                   icon="fas fa-solid fa-cart-plus"
                   class="absolute"
                   style="top: 0; right: 12px; transform: translateY(-50%)"
-                  v-on:click="addCart(props.row)"
+                  v-on:click="onSendOrder(props.row)"
                 />
 
                 <div class="row no-wrap items-center">
@@ -176,86 +176,11 @@
       </div>
     </div>
     <!-- Fin de sin registros -->
-
-    <q-card class="my-card q-mb-xl">
-      <q-card-section>
-        <div class="text-h6 q-mb-xs">
-          Tu carrito de compras
-          <q-btn dense round flat icon="shopping_cart">
-            <q-badge color="red" floating transparent>
-              {{ listCarrito.length }}
-            </q-badge>
-          </q-btn>
-        </div>
-        <div class="row no-wrap items-center">
-          <!-- <q-rating size="18px" v-model="stars" :max="5" color="primary" /> -->
-          <!-- <span class="text-caption text-grey q-ml-sm">4.2 (551)</span> -->
-        </div>
-      </q-card-section>
-
-      <q-list>
-        <q-markup-table>
-          <thead>
-            <tr>
-              <th class="text-left">Nombre</th>
-              <th class="text-left">Precio</th>
-              <th class="text-left">Cantidad hr</th>
-              <th class="text-left"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(product, index) in listCarrito" :key="index">
-              <td class="text-left">{{ product.name }}</td>
-              <td class="text-left">{{ product.price_hour }}</td>
-              <td class="text-left">
-                <q-btn
-                  flat
-                  round
-                  icon="remove_circle_outline"
-                  v-on:click="changeQuantity(index, false)"
-                />
-                {{ product.cant }} hora(s)
-                <q-btn
-                  flat
-                  round
-                  icon="add_circle_outline"
-                  v-on:click="changeQuantity(index, true)"
-                />
-              </td>
-              <td>
-                <q-btn
-                  flat
-                  round
-                  icon="delete"
-                  v-on:click="deleteItem(index)"
-                />
-              </td>
-            </tr>
-            <tr class="bg-grey-9">
-              <td class="text-left">Total (Pesos)</td>
-              <td class="text-left" colspan="3">
-                <strong class="text-center">$ {{ onViewTotal() }} pesos</strong>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="4">
-                <q-btn
-                  label="Procesar Pedido"
-                  color="modedark"
-                  class="float-right"
-                  v-on:click="onSendOrder()"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </q-markup-table>
-      </q-list>
-    </q-card>
   </q-page>
 </template>
 
 <script>
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapState } from "vuex";
 import { ref } from "vue";
 
@@ -354,23 +279,27 @@ export default {
       });
       return total;
     },
-    onSendOrder() {
-      if (this.listCarrito.length >= 1) {
-        // sumar todal de los productos
-        let total = 0;
-        this.listCarrito.map((data) => {
-          total = total + data.cant * data.price_hour;
+    onSendOrder(artist) {
+      $q.notify({
+        spinner: QSpinnerGears,
+        message: "Agregando al carrito...",
+        timeout: 200,
+      });
+      const formData = new FormData();
+      formData.append("service_id", artist.id);
+      formData.append("name", artist.name);
+      formData.append("price", artist.price_hour);
+      formData.append("order_date_start", this.printDateStart());
+      formData.append("order_date_finish", this.printDateFinish());
+      //formData.append("total", total);
+      this.create_order(formData).then(() => {
+        $q.notify({
+          type: "positive",
+          spinner: QSpinnerAudio,
+          message: "Artista agregado",
+          timeout: 1000,
         });
-
-        const formData = new FormData();
-        formData.append("services", JSON.stringify(this.listCarrito));
-        formData.append("order_date_start", this.printDateStart());
-        formData.append("order_date_finish", this.printDateFinish());
-        formData.append("total", total);
-        this.create_order(formData).then(() => {
-          alert("Enviado");
-        });
-      }
+      });
     },
     printDateStart: function () {
       return new Date().toLocaleString();

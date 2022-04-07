@@ -37,7 +37,7 @@
           <!-- Icons bell and wrench -->
           <small>
             <q-icon name="fas fa-bell" class="q-mr-md" />
-            <q-icon name="fas fa-wrench" size="" />
+            <icon-cart v-if="getMe.role[0] == 'cliente'"></icon-cart>
           </small>
           <!-- FinIcons bell and wrench -->
 
@@ -318,17 +318,39 @@
           </q-item>
 
           <q-item
+            to="/client/shopping-cart"
             clickable
             v-ripple
-            to="/client/card"
-            v-if="$can('create-card')"
+            v-if="$can('view-shopping-cart')"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <q-icon name="fas fa-solid fa-credit-card" />
+              <q-btn
+                dense
+                round
+                flat
+                icon="shopping_cart"
+                class="q-ma-none"
+                v-if="stateCountListShopingCard[0] != null"
+              >
+                <q-badge color="red" floating transparent>
+                  {{ stateCountListShopingCard[0].shopping_card_detail.length }}
+                </q-badge>
+              </q-btn>
+
+              <q-btn
+                dense
+                round
+                flat
+                icon="shopping_cart"
+                class="q-ma-none"
+                v-else
+              >
+                <q-badge color="red" floating transparent> 0 </q-badge>
+              </q-btn>
             </q-item-section>
 
-            <q-item-section> Mis Tarjetas </q-item-section>
+            <q-item-section> Mi Carrito </q-item-section>
           </q-item>
 
           <q-item
@@ -342,6 +364,20 @@
             </q-item-section>
 
             <q-item-section> Mis Compras </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            to="/client/card"
+            v-if="$can('create-card')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="fas fa-solid fa-credit-card" />
+            </q-item-section>
+
+            <q-item-section> Mis Tarjetas </q-item-section>
           </q-item>
 
           <q-item clickable active-class="text-accent text-weight-bold">
@@ -370,7 +406,7 @@
       <!-- Inicio Icono de la marca -->
       <q-img class="absolute-top bg-transparent" style="height: 140px">
         <div class="absolute-center bg-transparent">
-          <q-avatar size="140px" @click="redirect" style="cursor:pointer">
+          <q-avatar size="140px" @click="redirect" style="cursor: pointer">
             <q-icon name="fas fa-solid fa-cloud-moon" />
           </q-avatar>
         </div>
@@ -388,8 +424,10 @@
 <script>
 import { ref } from "vue";
 import { mapGetters } from "vuex";
+import iconCart from "src/components/ShoppingCart/iconCart.vue";
 
 export default {
+  components: { iconCart },
   setup() {
     const leftDrawerOpen = ref(false);
 
@@ -403,13 +441,8 @@ export default {
       text: ref(""),
       mobileData: ref(false),
       bluetooth: ref(false),
+      numberShopping: 0,
     };
-  },
-  computed: {
-    ...mapGetters("auth", ["getMe"]),
-    mode: function () {
-      return this.$q.dark.isActive;
-    },
   },
   methods: {
     logout() {
@@ -423,6 +456,13 @@ export default {
     redirect() {
       const toPath = this.$route.query.to || "/index";
       this.$router.push(toPath);
+    },
+  },
+  computed: {
+    ...mapGetters("auth", ["getMe"]),
+    ...mapGetters("shoppingCard", ["stateCountListShopingCard"]),
+    mode: function () {
+      return this.$q.dark.isActive;
     },
   },
   created() {
