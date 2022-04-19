@@ -310,7 +310,7 @@
         </q-img>
       </div>
       <div class="col-12 col-sm-7 col-md-7 info q-pa-lg">
-        <h3 :class="mode?'title-group-white q-mt-sm':'title-group q-mt-sm'">
+        <h3 :class="mode ? 'title-group-white q-mt-sm' : 'title-group q-mt-sm'">
           <small>Acerca de </small>{{ artist.name }}
         </h3>
         <p class="info q-mt-lg">"{{ artist.history }}"</p>
@@ -320,7 +320,10 @@
     <notice-gallery></notice-gallery>
 
     <div class="row tipogra">
-      <div :class="mode?'title-group-white':'title-group'" class="col-12 text-center">
+      <div
+        :class="mode ? 'title-group-white' : 'title-group'"
+        class="col-12 text-center"
+      >
         <h3 class="q-mb-md">Información de Contratación</h3>
         <p class="info q-mb-sm q-mt-md">
           Número de integrantes: {{ artist.members }}
@@ -333,7 +336,10 @@
           Precio por kilometro extra: ${{ artist.extra_kilometre }} pesos.
         </p>
       </div>
-      <div :class="mode?'title-group-white':'title-group'" class="col-12 text-center">
+      <div
+        :class="mode ? 'title-group-white' : 'title-group'"
+        class="col-12 text-center"
+      >
         <h3 class="q-mb-md">Información del manager</h3>
         <q-avatar size="180px">
           <img :src="artist.manager.image" class="avatar" />
@@ -373,7 +379,11 @@
           />
         </div>
         <div class="modal__content">
-          <q-form @submit="editArtist" :class="mode?'text-white':'text-grey-4'" class="q-gutter-md q-px-sm q-py-sm">
+          <q-form
+            @submit="editArtist"
+            :class="mode ? 'text-white' : 'text-dark'"
+            class="q-gutter-md q-px-sm q-py-sm"
+          >
             <p class="text-center q-mb-lg text-weight-light text-h3">
               Editar '{{ artist.name }}'
             </p>
@@ -508,7 +518,7 @@
                   use-chips
                   filled
                   hint="Selecciona los generos musicales que perteneces"
-                  :color="mode?'info':'primary'"
+                  :color="mode ? 'info' : 'primary'"
                   :loading="false"
                   clear-icon
                   counter
@@ -623,6 +633,11 @@
       <!-- END: .modal__container -->
     </div>
   </div>
+  <center>
+    <q-inner-loading :showing="visible" class="text-center">
+      <q-spinner-ball  size="70px"  />
+    </q-inner-loading>
+  </center>
 </template>
 
 <script>
@@ -637,6 +652,7 @@ export default {
   name: "Index",
   data() {
     return {
+      visible: true,
       showInfo: "",
       showEdit: "",
       check: false,
@@ -670,9 +686,11 @@ export default {
       try {
         await this.getArtist();
         if (this.artist == null) {
+          this.visible = false;
           this.showInfo = "true";
         } else {
           this.showInfo = "false";
+          this.visible = false;
           const link = this.artist.manager.phone.replace(/\s+/g, "");
           this.linkWhatsApp = `https://wa.me/${link}?text=Hola%20me%20interesa%20su%20sevicios`;
           this.linkCorreo = `mailto:${this.artist.manager.email}`;

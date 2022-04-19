@@ -10,7 +10,7 @@
         </p>
       </div>
       <div class="col-12 col-sm-8 col-md-8">
-        <q-card class="my-card" flat>
+        <q-card class="my-card" flat :class="mode?'bg-dark':'bg-white'">
           <q-card-section horizontal>
             <q-card-section class="col-2 flex flex-center">
               <q-btn round>
@@ -69,7 +69,7 @@
         <h6 class="q-mb-sm q-mt-sm">Configuración principal</h6>
         <p class="q-mt-none">Esta información aparecerá en su perfil</p>
       </div>
-      <div class="col-12 col-sm-8 col-md-8">
+      <div class="col-12 col-sm-8 col-md-8 q-pa-md " :class="mode?'bg-dark':'bg-white'" style="border-radius: 5px;">
         <div class="q-pa-md">
           <q-form
             @submit="onSubmitDetails"
@@ -127,7 +127,7 @@
           Al cambiar su contraseña se le pedirá ingresar la actual.
         </p>
       </div>
-      <div class="col-12 col-sm-8 col-md-8">
+      <div class="col-12 col-sm-8 col-md-8 q-pa-md"  :class="mode?'bg-dark':'bg-white'"  style="border-radius: 5px;">
         <div class="q-pa-md">
           <q-form
             @submit="onSubmitPassword"
@@ -334,6 +334,9 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
+    mode: function () {
+      return this.$q.dark.isActive;
+    },
   },
   created() {
     this.formUpdateMain.name = this.getMe.name;
