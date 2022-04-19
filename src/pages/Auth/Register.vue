@@ -1,9 +1,7 @@
 <template>
   <div
-    v-bind:class="{
-      'justify-center': $q.screen.md || $q.screen.sm || $q.screen.xs,
-    }"
-    class="col-12 col-md-6 flex content-center bg-primary"
+    class="col-12 col-md-6 flex content-center justify-center"
+    :class="mode ? 'bg-modedark' : 'bg-primary'"
     v-bind:style="{ height: '63em' }"
   >
     <q-card
@@ -265,6 +263,9 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["isAuthenticated"]),
+    mode: function () {
+      return this.$q.dark.isActive;
+    },
   },
 };
 </script>

@@ -36,7 +36,6 @@
         <div class="text-right" style="color: gray">
           <!-- Icons bell and wrench -->
           <small>
-            <q-icon name="fas fa-bell" class="q-mr-md" />
             <icon-cart v-if="getMe.role[0] == 'cliente'"></icon-cart>
           </small>
           <!-- FinIcons bell and wrench -->
@@ -192,7 +191,7 @@
           <q-item
             clickable
             v-ripple
-            to="/index"
+            to="/"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
           >
@@ -206,7 +205,7 @@
           <q-item
             clickable
             v-ripple
-            to="/index"
+            to="/"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
           >
@@ -231,7 +230,7 @@
           <q-item
             clickable
             v-ripple
-            to="/index"
+            to="/"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
           >
@@ -245,7 +244,7 @@
           <q-item
             clickable
             v-ripple
-            to="/index"
+            to="/"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
           >
@@ -273,7 +272,7 @@
               <q-item-section class="text-weight-bold" v-if="$can('create-card')"> COMPRAS </q-item-section>
             </q-item> -->
 
-          <q-item clickable v-ripple to="/index" v-if="$can('create-card')">
+          <q-item clickable v-ripple to="/" v-if="$can('create-card')">
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-store" />
             </q-item-section>
@@ -447,14 +446,14 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch("auth/signOut");
-      const toPath = this.$route.query.to || "/index";
+      const toPath = this.$route.query.to || "/";
       this.$router.push(toPath);
     },
     darkMode(val) {
       this.$q.dark.set(val);
     },
     redirect() {
-      const toPath = this.$route.query.to || "/index";
+      const toPath = this.$route.query.to || "/";
       this.$router.push(toPath);
     },
   },

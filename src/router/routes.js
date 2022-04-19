@@ -10,41 +10,42 @@ import Middlewares from "../middlewares/";
 const routes = [
   {
     component: () => import("layouts/MainLayout.vue"),
+    path: "/other",
     children: [
       {
         name: "Home",
-        path: "/index",
+        path: "/",
         component: Index,
       },
-      { 
-        name: "About", 
-        path: "/about", 
-        component: About },
+      {
+        name: "About",
+        path: "/about",
+        component: About,
+      },
       {
         name: "Product",
         path: "/product",
         component: Product,
       },
+      {
+        name: "LoginIn",
+        path: "/login",
+        component: () => Login,
+        meta: {
+          middleware: [Middlewares.guest],
+          requireLogin: false,
+        },
+      },
+      {
+        name: "register",
+        path: "/register",
+        component: () => Register,
+        meta: {
+          middleware: [Middlewares.guest],
+          requireLogin: false,
+        },
+      },
     ],
-  },
-
-  {
-    name: "LoginIn",
-    path: "/login",
-    component: () => Login,
-    meta: {
-      middleware: [Middlewares.guest],
-      requireLogin: false,
-    },
-  },
-  {
-    name: "register",
-    path: "/register",
-    component: () => Register,
-    meta: {
-      middleware: [Middlewares.guest],
-      requireLogin: false,
-    },
   },
 
   {

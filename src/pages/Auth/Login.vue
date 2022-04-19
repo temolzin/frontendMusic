@@ -1,9 +1,7 @@
 <template>
   <div
-    v-bind:class="{
-      'justify-center': $q.screen.md || $q.screen.sm || $q.screen.xs,
-    }"
-    class="col-12 col-md-6 flex content-center bg-primary"
+    class="col-12 col-md-6 flex content-center justify-center"
+    :class="mode ? 'bg-modedark' : 'bg-primary'"
     v-bind:style="{ height: '60em' }"
   >
     <q-card
@@ -154,7 +152,7 @@
               <div class="q-mt-md q-mb-lg q-gutter-md">
                 <div class="text-center">
                   ¿Olvidaste tu contraseña?
-                  <router-link class="text-dark" to="/register">
+                  <router-link class="text-primary" to="/register">
                     Recupérala
                   </router-link>
                 </div>
@@ -244,6 +242,9 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["isAuthenticated"]),
+    mode: function () {
+      return this.$q.dark.isActive;
+    },
   },
 };
 </script>
