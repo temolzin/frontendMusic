@@ -1,117 +1,401 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
+  <q-layout view="lHh Lpr fff">
+    <!-- Inicio del header -->
+    <q-header
+      elevated
+      :class="mode ? 'bg-dark text-white-8' : 'bg-white text-grey-8'"
+      height-hint="64"
+    >
+      <q-toolbar class="GPL__toolbar" style="height: 64px">
+        <!-- Inicion de botón Hamburguesa Small -->
         <q-btn
+          v-if="$q.screen.lt.sm"
           flat
           dense
           round
-          icon="menu"
-          aria-label="Menu"
           @click="toggleLeftDrawer"
+          aria-label="Menu"
+          icon="list"
+          class="q-mx-md"
         />
+        <!-- Fin de botón Hamburguesa Small -->
 
-        <q-toolbar-title>
-          Musica
+        <!-- Incio icono y nombre lado izquierdo -->
+        <q-toolbar-title
+          shrink
+          class="row items-center no-wrap q-ml-md"
+          v-if="$q.screen.gt.sm"
+        >
+          <q-icon
+            name="fas fa-solid fa-cloud-moon"
+            color="primary"
+            size="40px"
+          />
+
+          <transition
+            appear
+            enter-active-class="animated rubberBand"
+            :duration="1000"
+          >
+            <span class="q-ml-sm">Música GSM</span>
+          </transition>
         </q-toolbar-title>
+        <!-- Fin icono y nombre lado izquierdo -->
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-space />
+
+        <!-- Inicio de input Search -->
+        <q-input
+          rounded
+          outlined
+          class="GPL__toolbar-input"
+          dense
+          v-model="search"
+          placeholder="Search"
+        >
+          <template v-slot:prepend>
+            <q-icon v-if="search === ''" name="search" />
+            <q-icon
+              v-else
+              name="clear"
+              class="cursor-pointer"
+              @click="search = ''"
+            />
+          </template>
+        </q-input>
+        <!-- Fin de input Search -->
+
+        <!-- Inicio de Links para navegar entre paginas -->
+        <q-tabs v-if="$q.screen.gt.xs">
+          <q-route-tab to="/" label="Inicio" />
+          <q-route-tab to="/product" label="Música" />
+          <q-route-tab to="/about" label="More" />
+        </q-tabs>
+        <!-- Fin de Links para navegar entre paginas -->
+
+        <q-space />
+
+        <div class="q-gutter-sm row items-center no-wrap">
+          <!-- Inicio Botones de inicio de sesion y dashboard -->
+          <q-tabs v-if="$q.screen.gt.xs">
+            <q-route-tab
+              to="/register"
+              label="Registrar"
+              class="q-mr-sm"
+              v-if="isAuthenticated == false"
+            />
+
+            <q-route-tab
+              to="/dashboard/home"
+              label="Dashboard"
+              v-if="isAuthenticated == true"
+            />
+          </q-tabs>
+          <q-tabs>
+            <q-btn
+              outline
+              to="/login"
+              color="primary"
+              label="Ingresar"
+              v-if="isAuthenticated == false"
+              class="q-mr-md"
+            />
+          </q-tabs>
+          <q-toggle
+            v-if="$q.screen.gt.xs"
+            v-model="isActiveDarkMode"
+            checked-icon="nightlight"
+            color="primary"
+            unchecked-icon="nightlight"
+            @update:model-value="darkMode(isActiveDarkMode)"
+          />
+          <!-- Fin Botones de inicio de sesion y dashboard -->
+
+          <q-btn round flat class="q-mr-md" v-if="isAuthenticated == true">
+            <q-avatar size="26px">
+              <img :src="getMe.image" />
+            </q-avatar>
+            <q-tooltip>{{ getMe.name }}</q-tooltip>
+          </q-btn>
+        </div>
       </q-toolbar>
     </q-header>
+    <!-- Fin del header -->
 
+    <!-- Inicio del Menú lateral izquierdo -->
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       bordered
+      behavior="mobile"
+      @click="leftDrawerOpen = false"
     >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+      <q-scroll-area class="fit">
+        <q-toolbar class="GPL__toolbar">
+          <q-toolbar-title class="row items-center q-mt-md q-ml-md">
+            <q-icon
+              name="fas fa-solid fa-cloud-moon"
+              color="primary"
+              size="40px"
+            ></q-icon>
+            <span class="q-ml-sm">Música GSM</span>
+          </q-toolbar-title>
+        </q-toolbar>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+        <q-list padding>
+          <div v-if="isAuthenticated == true">
+            <q-separator class="q-my-md" />
+
+            <q-item clickable class="q-ml-md" to="/dashboard/home">
+              <q-item-section avatar>
+                <q-icon name="dashboard" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Dashboard</q-item-label>
+              </q-item-section>
+            </q-item>
+          </div>
+
+          <q-separator class="q-my-md" />
+
+          <q-item
+            v-for="link in links2"
+            :key="link.text"
+            clickable
+            :to="link.to"
+            class="q-ml-md"
+          >
+            <q-item-section avatar>
+              <q-icon :name="link.icon" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ link.text }}</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-separator class="q-my-md" />
+          <div v-if="isAuthenticated == false">
+            <q-item
+              class="q-ml-md"
+              v-for="link in links3"
+              :key="link.text"
+              clickable
+              :to="link.to"
+            >
+              <q-item-section avatar>
+                <q-icon :name="link.icon" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ link.text }}</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-separator class="q-my-md" />
+          </div>
+          <q-item>
+            <q-item-section avatar class="q-ml-md">
+              Modo Obscuro
+            </q-item-section>
+            <q-item-section>
+              <q-toggle
+                v-model="isActiveDarkMode"
+                checked-icon="nightlight"
+                color="primary"
+                unchecked-icon="nightlight"
+                @update:model-value="darkMode(isActiveDarkMode)"
+              />
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
     </q-drawer>
+    <!-- Fin del Menú lateral izquierdo -->
 
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer>
+      <q-toolbar class="row bg-primary text-white">
+        <q-toolbar-title class="q-ml-md" style="font-size: 15px">
+          Conocenos a traves de nuestras redes sociales
+        </q-toolbar-title>
+        <div class="q-col-gutter-md q-mr-md">
+          <q-icon name="fab fa-brands fa-facebook-f" size="20px" />
+          <q-icon name="fab fa-brands fa-twitter" size="20px" />
+          <q-icon name="fab fa-brands fa-instagram" size="20px" />
+        </div>
+      </q-toolbar>
+
+      <q-card
+        class="my-card text-grey-5 bg-modedark"
+        style="border-radius: 0px"
+      >
+        <div class="row items-center justify-center">
+          <div class="col-12">
+            <div class="row items-center q-ma-lg justify-center">
+              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+                <p class="text-weight-bold">Música GSM</p>
+                <p>
+                  Here you can use rows and columns to organize your footer
+                  content. Lorem ipsum dolor sit amet, consectetur adipisicing
+                  elit.
+                </p>
+              </div>
+
+              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+                <p class="text-weight-bold">Legal</p>
+                <q-list class="text-white text-weight-light">
+                  <q-item clickable class="q-pa-none">
+                    <q-item-section class="text-weight-regular text-grey-5">
+                      Términos y condiciones
+                    </q-item-section>
+                  </q-item>
+                  <q-item clickable class="q-pa-none">
+                    <q-item-section class="text-weight-regular text-grey-5">
+                      Política de privacidad
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+
+              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+                <p class="text-weight-bold">Contacto</p>
+                <p>
+                  <q-icon name="home" size="15px" class="q-mb-xs" /> México,
+                  Méx.
+                </p>
+                <p>
+                  <q-icon name="email" size="15px" class="q-mb-xs" />
+                  prueba@email.com
+                </p>
+                <p>
+                  <q-icon name="phone" size="15px" class="q-mb-xs" />
+                  +52 55 34 13 13
+                </p>
+              </div>
+              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+                <p class="text-weight-bold">Contacto</p>
+                <p>
+                  <q-icon name="home" size="15px" class="q-mb-xs" /> México,
+                  Méx.
+                </p>
+                <p>
+                  <q-icon name="email" size="15px" class="q-mb-xs" />
+                  prueba@email.com
+                </p>
+                <p>
+                  <q-icon name="phone" size="15px" class="q-mb-xs" />
+                  +52 55 34 13 13
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <q-separator dark />
+        <q-card-actions
+          class="justify-center"
+          style="background-color: rgba(0, 0, 0, 0.2)"
+        >
+          <div class="text-center">2022 © Copyright MusicaGSM.com</div>
+        </q-card-actions>
+      </q-card>
+    </q-footer>
   </q-layout>
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
+import { ref } from "vue";
+import { mapGetters } from "vuex";
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
+export default {
+  name: "GooglePhotosLayout",
 
-import { defineComponent, ref } from 'vue'
+  setup() {
+    const leftDrawerOpen = ref(false);
+    const search = ref("");
 
-export default defineComponent({
-  name: 'MainLayout',
-
-  components: {
-    EssentialLink
-  },
-
-  setup () {
-    const leftDrawerOpen = ref(false)
+    function toggleLeftDrawer() {
+      leftDrawerOpen.value = !leftDrawerOpen.value;
+    }
 
     return {
-      essentialLinks: linksList,
+      isActiveDarkMode: ref(false),
       leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
-    }
-  }
-})
+      search,
+
+      links2: [
+        { icon: "home", text: "Inicio", to: "/" },
+        { icon: "music_note", text: "Música", to: "/product" },
+        { icon: "add", text: "Más..", to: "/about" },
+      ],
+      links3: [
+        { icon: "person", text: "Ingresar", to: "/login" },
+        { icon: "person_add_alt", text: "Registrar", to: "/register" },
+      ],
+      toggleLeftDrawer,
+    };
+  },
+
+  methods: {
+    darkMode(val) {
+      this.$q.dark.set(val);
+    },
+  },
+  created() {
+    this.isActiveDarkMode = this.mode;
+  },
+  computed: {
+    ...mapGetters("auth", ["isAuthenticated"]),
+    ...mapGetters("auth", ["getMe"]),
+
+    mode: function () {
+      return this.$q.dark.isActive;
+    },
+  },
+};
 </script>
+
+<style lang="sass">
+.GPL
+
+  &__toolbar
+    height: 64px
+
+  &__toolbar-input
+    width: 35%
+
+  &__drawer-item
+    line-height: 24px
+    border-radius: 0 24px 24px 0
+    margin-right: 12px
+
+    .q-item__section--avatar
+      padding-left: 12px
+      .q-icon
+        color: #5f6368
+
+    .q-item__label:not(.q-item__label--caption)
+      color: #3c4043
+      letter-spacing: .01785714em
+      font-size: .875rem
+      font-weight: 500
+      line-height: 1.25rem
+
+    &--storage
+      border-radius: 0
+      margin-right: 0
+      padding-top: 24px
+      padding-bottom: 24px
+
+  &__side-btn
+    &__label
+      font-size: 12px
+      line-height: 24px
+      letter-spacing: .01785714em
+      font-weight: 500
+
+  @media (min-width: 1024px)
+    &__page-container
+      padding-left: 94px
+</style>

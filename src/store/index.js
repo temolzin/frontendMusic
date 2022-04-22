@@ -1,27 +1,37 @@
-import { store } from 'quasar/wrappers'
-import { createStore } from 'vuex'
+import { store } from "quasar/wrappers";
+import { createStore } from "vuex";
+import auth from "./auth";
+import product from "./product";
+import users from "./admin/users";
+import roles from "./admin/roles";
+import card from "./client/card";
+import artist from "./artist/information";
+import musicalGenders from "./admin/musicalGenders";
+import galleryArtist from "./artist/galleryArtist";
+import clientMusicalGenders from "./client/clientMusicalGenders";
+import lastArtist from "./general/lastArtist";
+import shoppingCard from "./client/shoppingCard";
+import favouriteArtists from "./client/favouriteArtists";
 
-// import example from './module-example'
-
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Store instance.
- */
+const Store = createStore({
+  modules: {
+    auth,
+    product,
+    users,
+    roles,
+    card,
+    artist,
+    musicalGenders,
+    galleryArtist,
+    clientMusicalGenders,
+    lastArtist,
+    shoppingCard,
+    favouriteArtists,
+  },
+  strict: process.env.DEBUGGING,
+});
 
 export default store(function (/* { ssrContext } */) {
-  const Store = createStore({
-    modules: {
-      // example
-    },
-
-    // enable strict mode (adds overhead!)
-    // for dev mode and --debug builds only
-    strict: process.env.DEBUGGING
-  })
-
-  return Store
-})
+  return Store;
+});
+export { Store };
