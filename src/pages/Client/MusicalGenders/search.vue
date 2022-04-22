@@ -149,7 +149,13 @@
               <q-separator />
 
               <q-card-actions align="right">
-                <q-btn flat round color="red" icon="favorite" />
+                <q-btn
+                  flat
+                  round
+                  :color="colorHeart"
+                  icon="fas fa-solid fa-heart"
+                  @click="addFavouriteArtist(props.row.id)"
+                />
                 <q-btn flat round color="primary" icon="share" />
               </q-card-actions>
             </q-card>
@@ -198,11 +204,16 @@ export default {
       showResult: null,
       starts: 4,
       listCarrito: [],
+      colorHeart: "red",
+      addFavourite: {
+        artist_id: "",
+      },
     };
   },
   methods: {
     ...mapActions("clientMusicalGenders", ["getMusicalGendersBySlug"]),
     ...mapActions("shoppingCard", ["create_order"]),
+    ...mapActions("favouriteArtists", ["createFavouriteArtist"]),
     async gettMusicalGendersBySlug() {
       try {
         await this.getMusicalGendersBySlug(this.slug).then(() => {
@@ -251,34 +262,6 @@ export default {
 
       //alert(JSON.stringify(item));
     },
-    deleteItem(i) {
-      this.listCarrito.splice(i, 1);
-    },
-    changeQuantity(i, type) {
-      // sacar variable de carrito
-      const dataCar = this.listCarrito;
-
-      // sacar la cantidad de producto
-      let cantd = dataCar[i].cant;
-
-      if (type) {
-        cantd = cantd + 1;
-      } else if (type == false && cantd >= 1) {
-        cantd = cantd - 1;
-      }
-
-      if ((type == false && cantd >= 1) || type) {
-        dataCar[i].cant = cantd;
-        this.listCarrito;
-      }
-    },
-    onViewTotal() {
-      let total = 0;
-      this.listCarrito.map((data) => {
-        total = total + parseFloat(data.cant) * parseFloat(data.price_hour);
-      });
-      return total;
-    },
     onSendOrder(artist) {
       $q.notify({
         spinner: QSpinnerGears,
@@ -312,6 +295,25 @@ export default {
       fecha.setDate(fecha.getDate() + dias);
       return fecha.toLocaleString();
     },
+    async addFavouriteArtist(id) {
+      this.addFavourite.artist_id = id;
+      try {
+        await this.createFavouriteArtist(this.addFavourite).then(() => {
+          this.$q.notify({
+            type: "positive",
+            message: this.favouriteArtists,
+          });
+        });
+        this.addFavourite.artist_id = "";
+      } catch (err) {
+        if (err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
   },
   created() {
     this.slug = this.$route.params.slug;
@@ -321,6 +323,9 @@ export default {
     ...mapState({
       clientMusicalGenders: (state) =>
         state.clientMusicalGenders.artistsGenders,
+    }),
+    ...mapState({
+      favouriteArtists: (state) => state.favouriteArtists.message,
     }),
     mode: function () {
       return this.$q.dark.isActive;

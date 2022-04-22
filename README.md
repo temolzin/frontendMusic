@@ -1,22 +1,20 @@
-# Quasar App (proyecto-musica)
+# Quasar App(proyecto-musica)
 
-A Quasar Framework app
+Proyecto FRONT-END del Sistema Gestión de Música, es un sistema híbrido que pueda ser usado en aplicación web como en una aplicación para teléfonos inteligentes Android, su finalidad es una aplicación que de publicidad a grupos musicales y puedan ser contratados por cualquier persona a través del sistema, obteniendo ganancias por cada contratación.
 
-## Install the dependencies
-```bash
-npm install
-```
+Para su ejecutación se deben de crear las siguientes dependencias:
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-quasar dev
-```
+## npm install
 
+Este comando nos sirve para instalar paquetes. Los paquetes se descargarán y se meterán automáticamente en una carpeta llamada node_modules.
 
-### Build the app for production
-```bash
-quasar build
-```
+## quasar dev
 
-### Customize the configuration
-See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
+Nos ayuda a compilar y se abrirá el proyecto en el navegador predeterminado.
+
+## Configuración de Axios
+
+1. Entrar a la carpeta src.
+2. Dirigirse a la subcarpeta boot.
+3. Abrir el archivo axios.js.
+4. Cambiar el parametro "const api = axios.create({ baseURL: "http://127.0.0.1:8000/" });", al nuevo servidor.

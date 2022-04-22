@@ -11,7 +11,14 @@
     </q-card>
 
     <div v-if="loadInformation == false">
-      <div class="info">
+      <div
+        class="info"
+        :style="
+          mode
+            ? 'background: linear-gradient(to right,rgba(85, 83, 83, 0.445),rgb(10, 25, 56));'
+            : 'background: linear-gradient(to right,rgba(85, 83, 83, 0.445),rgb(1, 81, 253));'
+        "
+      >
         <q-img :src="artist.image" class="img" spinner-color="white" style="" />
         <div class="row text">
           <div class="col-12 col-xs-12 col-sm-6 col-md-6">
@@ -75,7 +82,7 @@
 
       <div class="row tipogra">
         <div class="col-12 col-sm-5 col-md-5 q-pa-lg">
-          <div :class="mode?'container-img-dark':'container-img'">
+          <div :class="mode ? 'container-img-dark' : 'container-img'">
             <q-img :src="artist.manager.image" class="image" />
           </div>
         </div>
@@ -90,13 +97,13 @@
               </h3>
               <h4 class="q-ma-none text-center q-mt-sm text-primary">
                 $ {{ artist.price_hour }}.00
-                <span :class="mode?'text-white':'text-dark'">pesos</span>
+                <span :class="mode ? 'text-white' : 'text-dark'">pesos</span>
                 <small
                   style="font-size: 20px; text-decoration: line-through"
                   class="text-red q-ml-sm"
                 >
                   $ {{ parseFloat(artist.price_hour) + 200 }}.00
-                  <span :class="mode?'text-white':'text-dark'">pesos</span>
+                  <span :class="mode ? 'text-white' : 'text-dark'">pesos</span>
                 </small>
               </h4>
               <h6 class="q-mt-sm text-weight-bold q-mb-sm">
@@ -188,7 +195,10 @@
       <!-- Gallery -->
       <div v-if="artist.galery_artists[0] != null">
         <div class="q-pa-md">
-          <h3 class="text-center q-mb-md ellipsis" :class="mode?'title-group2-white':'title-group2'">
+          <h3
+            class="text-center q-mb-md ellipsis"
+            :class="mode ? 'title-group2-white' : 'title-group2'"
+          >
             <small>Galeria de Imagenes de </small> {{ artist.name }}
           </h3>
           <q-carousel
@@ -317,11 +327,6 @@ export default {
   height: 57vh;
   background: black;
   z-index: 2;
-  background: linear-gradient(
-    to right,
-    rgba(85, 83, 83, 0.445),
-    rgb(1, 81, 253)
-  );
 }
 .text {
   z-index: 2;
