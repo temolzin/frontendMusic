@@ -302,7 +302,7 @@
             <q-item-section> Ofertas </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+          <q-item clickable v-ripple to="/client/favourite-artist" v-if="$can('view-favourite-artist')" active-class="text-accent text-weight-bold">
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-heart" />
             </q-item-section>

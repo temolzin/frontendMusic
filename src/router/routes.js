@@ -188,6 +188,16 @@ const routes = [
         },
       },
 
+      {
+        name: "client.view-favourite-artist",
+        path: "/client/favourite-artist",
+        component: import("src/pages/Client/FavouriteArtists/index.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-favourite-artist"],
+        },
+      },
       // Fin de rutas del cliente
     ],
   },

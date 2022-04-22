@@ -37,7 +37,6 @@
     <p class="q-mt-sm q-mb-md text-h4">
       Géneros
       <q-spinner-audio color="accent" class="q-pb-sm" />
-      <q-tooltip :offset="[0, 8]">QSpinnerAudio</q-tooltip>
     </p>
 
     <div class="row q-col-gutter-lg">

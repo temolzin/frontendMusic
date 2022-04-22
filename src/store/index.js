@@ -11,6 +11,7 @@ import galleryArtist from "./artist/galleryArtist";
 import clientMusicalGenders from "./client/clientMusicalGenders";
 import lastArtist from "./general/lastArtist";
 import shoppingCard from "./client/shoppingCard";
+import favouriteArtists from "./client/favouriteArtists";
 
 const Store = createStore({
   modules: {
@@ -25,6 +26,7 @@ const Store = createStore({
     clientMusicalGenders,
     lastArtist,
     shoppingCard,
+    favouriteArtists,
   },
   strict: process.env.DEBUGGING,
 });
