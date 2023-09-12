@@ -68,7 +68,7 @@
         <!-- Inicio de Links para navegar entre paginas -->
         <q-tabs v-if="$q.screen.gt.xs">
           <q-route-tab to="/" label="Inicio" />
-          <q-route-tab to="/product" label="Música" />
+          <q-route-tab to="/artist-list" label="Artistas" />
           <q-route-tab to="/about" label="More" />
         </q-tabs>
         <!-- Fin de Links para navegar entre paginas -->
@@ -326,7 +326,7 @@ export default {
 
       links2: [
         { icon: "home", text: "Inicio", to: "/" },
-        { icon: "music_note", text: "Música", to: "/product" },
+        { icon: "music_note", text: "Artistas", to: "/artist-list" },
         { icon: "add", text: "Más..", to: "/about" },
       ],
       links3: [

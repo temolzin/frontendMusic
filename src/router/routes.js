@@ -1,6 +1,7 @@
 import Index from "pages/Index.vue";
 import About from "pages/About.vue";
 import Product from "pages/Product.vue";
+import ArtistList from "pages/ArtistList.vue";
 import Register from "pages/Auth/Register.vue";
 import Login from "pages/Auth/Login.vue";
 import Dashboard from "pages/dashboard/Dashboard.vue";
@@ -22,10 +23,15 @@ const routes = [
         path: "/about",
         component: About,
       },
+      // {
+      //   name: "Product",
+      //   path: "/product",
+      //   component: Product,
+      // },
       {
-        name: "Product",
-        path: "/product",
-        component: Product,
+        name: "ArtistList",
+        path: "/artist-list",
+        component: ArtistList,
       },
       {
         name: "LoginIn",
