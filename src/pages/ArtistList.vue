@@ -19,23 +19,23 @@
         no-results-label="Ningún registro coincidente"
         :rows-per-page-label="'Artistas por página:'"
       >
-      <template v-slot:top>
+      <template v-slot:top class="template_filters">
 
-          <div class="col-10 col-md-2 col-lg-2 filter" v-if="showFilters">
+          <div class="col-8 col-md-2 col-lg-2 filter" v-if="showFilters">
             <q-select
               v-model="filterZone"
               label="Zona"
               :options="zonas()"
             />
           </div>
-          <div class="col-10 col-md-2 col-lg-2 filter" v-if="showFilters" >
+          <div class="col-8 col-md-2 col-lg-2 filter" v-if="showFilters" >
             <q-select
               v-model="filterGender"
               label="Género Musical"
               :options="generosMusicales()"
             />
           </div>
-          <div class="col-10 col-md-2 col-lg-2 filter" v-if="showFilters">
+          <div class="col-8 col-md-2 col-lg-2 filter" v-if="showFilters">
             <q-range
               v-model="filterPrice"
               :min="0"
@@ -47,7 +47,7 @@
               color="dark-blue"
             />
           </div>
-          <div class="col-10 col-md-2 col-lg-2 filter" v-if="showFilters">
+          <div class="col-8 col-md-2 col-lg-2 filter" v-if="showFilters">
             <q-input
               borderless
               dense
@@ -73,7 +73,7 @@
                 <div class="row no-wrap items-center">
                   <div
                     class="col text-h6 ellipsis search text-weight-regular"
-                    @click="search(props.row.slug)"
+                    @click="search(props.row.slug, props.row.musical_genders[0].slug)"
                   >
                     {{ props.row.name }}
                   </div>
@@ -153,7 +153,6 @@ import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
     components: {
       QSelect
     },
-    name: "SearchBySlug",
     data() {
       
       const columns = [{ name: "name", field: "name", sortable: true }];
@@ -161,7 +160,6 @@ import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
         columns,
         skeleton: true,
         showFilters: false,
-        slug: null,
         filterName: '',
         filterZone: '',
         filterGender: '',
@@ -172,7 +170,6 @@ import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
       };
     },
     created() {
-      this.slug = this.$route.params.slug;
       this.getArtistss();
     },
     computed: {
@@ -236,11 +233,11 @@ import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
       toggleFilters() {
         this.showFilters = !this.showFilters;
       },
-      search(slug) {
+      search(slug, slugmg) {
         this.$router.push({
           name: "client.view-group-by-gender-slug",
           params: {
-            slugMG: this.slug,
+            slugMG: slugmg,
             slugA: slug,
           },
         });
@@ -294,4 +291,5 @@ import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
   height: 70px;
   position: relative;
 }
+
 </style>
