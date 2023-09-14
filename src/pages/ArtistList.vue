@@ -77,7 +77,6 @@
                   >
                     {{ props.row.name }}
                   </div>
-
                   <div
                     class="col-auto text-grey text-caption q-pt-md row no-wrap items-center"
                   >
@@ -93,7 +92,6 @@
                   no-dimming
                   readonly
                 />
-
               </q-card-section>
 
               <q-card-section class="q-pt-none">
@@ -109,7 +107,6 @@
               </q-card-section>
 
               <q-card-section class="q-pt-none">
-                
                 <div class="text-caption text-black ellipsis" v-for="gender in props.row.musical_genders">
                   {{ gender.name }}
                 </div>
@@ -129,10 +126,8 @@
             src="https://cdn.quasar.dev/img/parallax1.jpg"
             :height="150"
           />
-
           <q-card-section>
             <div class="text-h6">Sin resultados</div>
-            
           </q-card-section>
         </q-card>
       </div>
@@ -141,10 +136,8 @@
   </template>
   
   <script>
-import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
-  import { mapActions } from "vuex";
-  import { mapGetters } from "vuex";
-  import { QSelect } from 'quasar';
+  import { useQuasar, QSelect } from "quasar";
+  import { mapActions, mapGetters } from "vuex";
   import { ref } from "vue";
 
   let $q;
@@ -277,9 +270,6 @@ import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 }
 .search:hover {
   color: #ff78a5;
-}
-.uppercase {
-  text-transform: uppercase;
 }
 
 .filter {
