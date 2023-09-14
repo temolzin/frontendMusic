@@ -23,11 +23,6 @@ const routes = [
         path: "/about",
         component: About,
       },
-      // {
-      //   name: "Product",
-      //   path: "/product",
-      //   component: Product,
-      // },
       {
         name: "ArtistList",
         path: "/artist-list",

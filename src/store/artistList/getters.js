@@ -1,3 +1,3 @@
 export function stateArtistList(state) {
-    return state.artistList;
-  }
+  return state.artistList;
+}

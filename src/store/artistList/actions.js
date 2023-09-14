@@ -5,4 +5,3 @@ export const getArtists = async ({ commit }) => {
     commit("setArtist", response.data.artists);
   });
 };
-

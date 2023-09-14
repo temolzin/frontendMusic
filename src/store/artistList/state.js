@@ -1,5 +1,5 @@
 export default function () {
-    return {
-      artistList: {},
-    };
-  }
+  return {
+    artistList: {},
+  };
+}
