@@ -189,6 +189,17 @@ const routes = [
       },
 
       {
+        name: "client.dataClient",
+        path: "/client/shopping-cart/dataClient",
+        component: import("src/pages/Client/ShoppingCart/dataClient.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-shopping-cart"],
+        },
+      },
+
+      {
         name: "client.view-favourite-artist",
         path: "/client/favourite-artist",
         component: import("src/pages/Client/FavouriteArtists/index.vue"),
