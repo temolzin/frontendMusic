@@ -6,11 +6,11 @@
           <q-col v-if="showInfo" :span-xs="12" :span-md="8" class="q-mx-auto">
             <q-markup-table dense flat bordered class="table-responsive">
               <thead>
-                <tr class="bg-blue">
+                <tr class="bg-primary">
                   <th class="">
                     <div class="row no-wrap items-center">
                       <div class="q-ml-md text-white"></div>
-                      <div class="artist-name-2" style=" font-size: 20px;">Artistas</div>
+                      <div class="artist-name-2" style="font-size: 22px " >Artistas</div>
                     </div>
                   </th>
 
@@ -48,7 +48,7 @@
                       round
                       @click="deleteItem(product.artist)"
                       label="Eliminar"
-                      color="blue"
+                      color="primary"
                     />
                   </td>
 
@@ -79,11 +79,13 @@
                       "
                     />
                   </td>
-                  <td
-                    class="text-left"
-                    
-                  >
-                    {{ "$ " + product.price }}
+                  <td class="text-left">
+                    {{
+                      "$ " +
+                      product.price
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }}
                   </td>
                 </tr>
               </tbody>
@@ -99,9 +101,9 @@
           <q-col v-if="showInfo" :span-xs="12" :span-md="6" class="q-mx-auto">
             <q-markup-table dense flat bordered class="table-responsive-2">
               <thead>
-                <tr class="bg-blue">
+                <tr class="bg-primary">
                   <th colspan="8">
-                    <h5 class="text-center">Resumen de Compra</h5>
+                    <h5 class="text-center" style="color: white">Resumen de Compra</h5>
                   </th>
                 </tr>
               </thead>
@@ -118,7 +120,10 @@
                                 >Total (Pesos)
                                 <strong>
                                   {{
-                                    "$" + stateListShopingCard[0].total
+                                    "MXN " +
+                                    stateListShopingCard[0].total
+                                      .toString()
+                                      .replace(/\B(?=(\d{3})+(?!\d))/g, ", ")
                                   }}</strong
                                 >
                                 pesos</h7
@@ -129,7 +134,7 @@
                             <td colspan="2">
                               <q-btn
                                 label="Procesar Pedido"
-                                color="blue"
+                                color="primary"
                                 @click="
                                   $router.push(
                                     '/client/shopping-cart/dataClient'
@@ -258,11 +263,12 @@ export default {
   font-style: italic;
   font-size: 15px;
 } */
-/* .artist-name-2 {
-  font-weight: bold;
+.artist-name-2 {
+  /* font-weight: bold;
   font-style: italic;
-  font-size: 25px;
-} */
+  font-size: 25px; */
+  color: white;
+}
 
 .table-responsive-2 {
   overflow-x: hidden;
