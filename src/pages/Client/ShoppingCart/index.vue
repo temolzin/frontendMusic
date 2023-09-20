@@ -1,8 +1,8 @@
 <template>
   <q-page padding>
-    <q-container >
-      <div class="q-pa-md" >
-        <q-card-group >
+    <q-container>
+      <div class="q-pa-md">
+        <q-card-group>
           <q-col v-if="showInfo" :span-xs="12" :span-md="8" class="q-mx-auto">
             <q-markup-table dense flat bordered class="table-responsive">
               <thead>
@@ -10,7 +10,9 @@
                   <th class="">
                     <div class="row no-wrap items-center">
                       <div class="q-ml-md text-white"></div>
-                      <div class="artist-name-2" style="font-size: 22px " >Artistas</div>
+                      <div class="artist-name-2" style="font-size: 22px">
+                        Artistas
+                      </div>
                     </div>
                   </th>
 
@@ -20,7 +22,6 @@
                   <th scope="col"></th>
                 </tr>
               </thead>
-
               <!-- Contenido de la primera tabla aquí -->
               <tbody v-if="showInfo">
                 <tr
@@ -80,12 +81,7 @@
                     />
                   </td>
                   <td class="text-left">
-                    {{
-                      "$ " +
-                      product.price
-                        .toString()
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    }}
+                    {{"$ " +product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}}
                   </td>
                 </tr>
               </tbody>
@@ -103,7 +99,9 @@
               <thead>
                 <tr class="bg-primary">
                   <th colspan="8">
-                    <h5 class="text-center" style="color: white">Resumen de Compra</h5>
+                    <h5 class="text-center" style="color: white">
+                      Resumen de Compra
+                    </h5>
                   </th>
                 </tr>
               </thead>
@@ -116,18 +114,11 @@
                         <table style="text-align: center; margin: 0 auto">
                           <tr>
                             <td>
-                              <h7
-                                >Total (Pesos)
+                              Total (Pesos)
                                 <strong>
-                                  {{
-                                    "MXN " +
-                                    stateListShopingCard[0].total
-                                      .toString()
-                                      .replace(/\B(?=(\d{3})+(?!\d))/g, ", ")
-                                  }}</strong
-                                >
-                                pesos</h7
-                              >
+                                  {{"MXN " + stateListShopingCard[0].total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ")}}
+                                </strong>
+                                pesos
                             </td>
                           </tr>
                           <tr>
@@ -135,11 +126,7 @@
                               <q-btn
                                 label="Procesar Pedido"
                                 color="primary"
-                                @click="
-                                  $router.push(
-                                    '/client/shopping-cart/dataClient'
-                                  )
-                                "
+                                @click="$router.push('/client/shopping-cart/dataClient')"
                               />
                             </td>
                           </tr>
@@ -157,15 +144,12 @@
   </q-page>
 </template>
 
-
-
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 
 let $q;
 export default {
-  // name: 'PageName',
   data() {
     return {
       showInfo: null,
@@ -258,22 +242,14 @@ export default {
 .rounded-circle {
   border-radius: 50%;
 }
-/* .artist-name {
-  font-weight: bold;
-  font-style: italic;
-  font-size: 15px;
-} */
+
 .artist-name-2 {
-  /* font-weight: bold;
-  font-style: italic;
-  font-size: 25px; */
   color: white;
 }
 
 .table-responsive-2 {
   overflow-x: hidden;
 }
-
 
 .q-container {
   text-align: center;

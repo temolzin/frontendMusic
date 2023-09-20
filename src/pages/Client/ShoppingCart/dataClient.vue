@@ -7,50 +7,41 @@
           <q-card-section>
             <q-form @submit.prevent="onSubmit">
               <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <q-input
-                  v-model="cliente.nombre"
-                  hint="Incluye tus apellidos"
-                />
+                <label for="name">Nombre</label>
+                <q-input v-model="client.name" hint="Incluye tus apellidos" />
               </div>
 
               <div class="form-group">
-                <label for="apellido">Apellido</label>
+                <label for="last-name">Apellido</label>
                 <q-input
-                  v-model="cliente.apellido"
+                  v-model="client.lastname"
                   hint="Incluye tus apellidos"
                 />
               </div>
 
               <div class="form-group">
                 <label for="postal">Código postal</label>
-                <q-input v-model="cliente.postal" hint="Codigo postal" />
+                <q-input v-model="client.postal" hint="Codigo postal" />
               </div>
 
               <div class="form-group">
-                <label for="telefono">Teléfono</label>
-                <q-input
-                  v-model="cliente.telefono"
-                  hint="Telefono de contacto"
-                />
+                <label for="phone">Teléfono</label>
+                <q-input v-model="client.phone" hint="Telefono de contacto" />
               </div>
 
               <div class="form-group">
-                <label for="direccion">Dirección</label>
-                <q-input v-model="cliente.direccion" hint="Direccion Actual" />
+                <label for="address">Dirección</label>
+                <q-input v-model="client.address" hint="Direccion Actual" />
               </div>
 
               <div class="form-group">
-                <label for="ciudad">Ciudad</label>
-                <q-input v-model="cliente.ciudad" hint="Cuidad" />
+                <label for="city">Ciudad</label>
+                <q-input v-model="client.city" hint="Cuidad" />
               </div>
 
               <div class="form-group">
-                <label for="estado">Estado</label>
-                <q-input
-                  v-model="cliente.estado"
-                  hint="Estado de la republica"
-                />
+                <label for="state">Estado</label>
+                <q-input v-model="client.state" hint="Estado de la republica" />
               </div>
 
               <div class="form-group">
@@ -60,13 +51,11 @@
           </q-card-section>
         </q-card>
       </q-layout-main>
-
       <!--- Mover el bloque q-layout-right aquí -->
-      <q-layout-right >
+      <q-layout-right>
         <label><h5>Metodos de Pago</h5></label>
         <q-card class="shadow-box q-ma-md" style="justify-content: center">
           <q-card-section style="align-items: center">
-            
             <q-list style="justify-content: center">
               <q-item>
                 <q-item-section>
@@ -95,18 +84,16 @@
           </q-card-section>
         </q-card>
       </q-layout-right>
-
     </q-layout>
   </q-page>
 </template>
 
-
-
-  <script>
+<script>
 import { useQuasar } from "quasar";
 import { mapActions } from "vuex";
 import { ref } from "vue";
 import { mapGetters } from "vuex";
+
 let $q;
 export default {
   data() {
@@ -116,29 +103,19 @@ export default {
         artist_id: "",
         hours_artist: "",
       },
-      cliente: {
-        nombre: "",
-        correo: "",
-        apellido: "",
+      client: {
+        name: "",
+        lastname: "",
         postal: "",
-        calle: "",
-        numero_exterior: "",
-        numero_interior: "",
-        referencia: "",
-        colonia: "",
-        municipio: "",
-        destinatario: "",
-        telefono: "",
-        direccion: "",
-        ciudad: "",
-        estado: "",
-        pais: "",
+        phone: "",
+        address: "",
+        city: "",
+        state: "",
       },
-      metodosDePago: {
-        tarjetaCredito: false,
+      paymentMethods: {
+        credit_card: false,
         paypal: false,
       },
-      // Agrega la variable step con el valor inicial deseado (por ejemplo, 1)
     };
   },
 
@@ -222,25 +199,24 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos personalizados para el diseño */
 .q-layout-main {
-  flex: 1; /* Esto hará que ocupe la mitad del ancho en todas las pantallas */
-  max-width: 50%; /* Limita el ancho máximo al 50% de la pantalla */
+  flex: 1;
+  max-width: 50%;
 }
 
 .q-layout-right {
-  flex: 1; /* Esto hará que ocupe la otra mitad del ancho en todas las pantallas */
-  max-width: 50%; /* Limita el ancho máximo al 50% de la pantalla */
+  flex: 1;
+  max-width: 50%;
 }
 
-/* Hacerlo responsive: En pantallas pequeñas, cambia a diseño de una columna */
 @media screen and (max-width: 767px) {
   .q-layout-main,
   .q-layout-right {
-    max-width: 100%; /* Ocupa el ancho completo en pantallas pequeñas */
+    max-width: 100%;
   }
 }
 </style>
+
 <style lang="sass" scoped>
 .shadow-box
   margin: 25px
