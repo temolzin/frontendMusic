@@ -40,8 +40,8 @@
               </div>
 
               <div class="form-group">
-                <label for="state">Estado</label>
-                <q-input v-model="client.state" hint="Estado de la republica" />
+                <label for="city_state">Estado de la Cuidad</label>
+                <q-input v-model="client.city_state" hint="Estado de la republica" />
               </div>
 
               <div class="form-group">
@@ -51,7 +51,7 @@
           </q-card-section>
         </q-card>
       </q-layout-main>
-      <!--- Mover el bloque q-layout-right aquí -->
+
       <q-layout-right>
         <label><h5>Metodos de Pago</h5></label>
         <q-card class="shadow-box q-ma-md" style="justify-content: center">
@@ -110,7 +110,7 @@ export default {
         phone: "",
         address: "",
         city: "",
-        state: "",
+        city_state: "",
       },
       paymentMethods: {
         credit_card: false,
