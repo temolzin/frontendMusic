@@ -45,24 +45,42 @@
         <q-space />
 
         <!-- Inicio de input Search -->
-        <q-input
-          rounded
+        <q-select
+          rounded 
           outlined
-          class="GPL__toolbar-input"
-          dense
-          v-model="search"
-          placeholder="Search"
+          v-model="searchBar"
+          use-input
+          input-debounce="0"
+          label="Buscar por artista o genero musical"
+          :options="options"
+          @filter="filterFn" 
+          style="width: 26vw; margin-right: 1.5vw;"
+          behavior="menu"
+          option-label="name"
+          option-value="url"
+          hide-dropdown-icon
+          :loading="loading"
+          @virtual-scroll="onScroll"
         >
-          <template v-slot:prepend>
-            <q-icon v-if="search === ''" name="search" />
-            <q-icon
-              v-else
-              name="clear"
-              class="cursor-pointer"
-              @click="search = ''"
-            />
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps" @click="redirectToRoute(scope.opt.url)">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.name }}</q-item-label>
+              </q-item-section>
+            </q-item>
           </template>
-        </q-input>
+          <template v-slot:append>
+            <q-icon name="search"/>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                No se encontró la busqueda
+              </q-item-section>
+            </q-item>
+          </template>
+          
+        </q-select>
         <!-- Fin de input Search -->
 
         <!-- Inicio de Links para navegar entre paginas -->
@@ -305,24 +323,24 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import { mapGetters } from "vuex";
+import { ref  } from "vue";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "GooglePhotosLayout",
 
   setup() {
     const leftDrawerOpen = ref(false);
-    const search = ref("");
 
     function toggleLeftDrawer() {
       leftDrawerOpen.value = !leftDrawerOpen.value;
     }
-
+    
     return {
       isActiveDarkMode: ref(false),
       leftDrawerOpen,
-      search,
+      options: ref(),
+      allOptions: [],
 
       links2: [
         { icon: "home", text: "Inicio", to: "/" },
@@ -338,16 +356,70 @@ export default {
   },
 
   methods: {
+    ...mapActions("artistList", ["getArtists"]),
+    async getArtistss() {
+      try {
+        await this.getArtists();
+      } catch (err) {
+        if (err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
     darkMode(val) {
       this.$q.dark.set(val);
     },
+    redirectToRoute(value) {
+      this.$router.push(value);      
+    },
+    removeDuplicates(arr) {
+      const uniqueArray = arr.filter((obj, index, self) =>
+        index === self.findIndex((o) => o.name === obj.name)
+      );
+      return uniqueArray;
+    },
+    getMusicalGendersAndArtist() {
+      let genders = [];
+      let artists = [];
+      
+      this.stateArtistList.forEach(artist => {
+        artist.musical_genders.forEach(gender => {
+          const obj = {name : gender.name, url: `/client/musical-genders/${gender.slug}`};
+          genders.push(obj);
+        });
+      });
+
+      this.stateArtistList.forEach(artist => {
+        const obj = {name : artist.name, url: `/client/musical-genders/${artist.musical_genders[0].name}/${artist.slug}`};
+        artists.push(obj);
+      });
+
+      this.allOptions = this.removeDuplicates([...genders, ...artists]);
+    },
+    filterFn (val, update, abort) {
+      this.getMusicalGendersAndArtist();
+      if (val.length < 1) {
+        abort()
+        return
+      } 
+      
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.allOptions.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+      })
+    },
   },
   created() {
+    this.getArtistss();
     this.isActiveDarkMode = this.mode;
   },
   computed: {
     ...mapGetters("auth", ["isAuthenticated"]),
     ...mapGetters("auth", ["getMe"]),
+    ...mapGetters("artistList", ["stateArtistList"]),
 
     mode: function () {
       return this.$q.dark.isActive;
