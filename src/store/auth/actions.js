@@ -54,6 +54,22 @@ export const doLoginGmailCallback = async ({ commit, dispatch }, payload) => {
   });
 };
 
+export const doLoginFacebook = async () => {
+  await api.get("/api/authorize/facebook/redirect").then((response) => {
+    if(response.data.url){
+      window.location.href = response.data.url
+    }
+  });
+};
+
+export const doLoginFacebookCallback = async ({ commit, dispatch }, payload) => {
+  await api.get("/api/authorize/facebook/callback" , { params: payload }).then((response) => {
+    const token = response.data;
+    dispatch("getMeUser", token);
+    commit("setToken", token);
+  });
+};
+
 
 export const updateDetails = async ({ dispatch }, payload) => {
   await api.put("/api/user/change-details", payload).then((response) => {
