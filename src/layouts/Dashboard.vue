@@ -410,7 +410,7 @@ import iconCart from "src/components/ShoppingCart/iconCart.vue";
 import SearchBar from "src/components/SearchBar/SearchBar.vue";
 
 export default {
-  components: { iconCart, SearchBar },
+  components: { iconCart,SearchBar },
   setup() {
     const leftDrawerOpen = ref(false);
 

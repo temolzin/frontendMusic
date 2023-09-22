@@ -86,13 +86,13 @@ export default {
       return uniqueArray;
     },
     getMusicalGendersAndArtist() {
-      let gendres = [];
+      let genres = [];
       let artists = [];
       
       this.stateArtistList.forEach(artist => {
-        artist.musical_genders.forEach(gendre => {
-          const obj = {name : gendre.name, url: `/client/musical-genders/${gendre.slug}`};
-          gendres.push(obj);
+        artist.musical_genders.forEach(genre => {
+          const obj = {name : genre.name, url: `/client/musical-genders/${genre.slug}`};
+          genres.push(obj);
         });
       });
 
@@ -101,7 +101,7 @@ export default {
         artists.push(obj);
       });
 
-      this.allOptions = this.removeDuplicates([...gendres, ...artists]);
+      this.allOptions = this.removeDuplicates([...genres, ...artists]);
     },
     filterFn (val, update, abort) {
       this.getMusicalGendersAndArtist();
