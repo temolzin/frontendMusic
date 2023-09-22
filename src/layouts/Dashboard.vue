@@ -10,42 +10,7 @@
         <!-- Bottom Serach -->
         <q-toolbar-title>
           <div class="row q-ma-md">
-            <q-select
-              rounded 
-              outlined
-              v-model="searchBar"
-              use-input
-              input-debounce="0"
-              label="Buscar por artista o genero musical"
-              :options="options"
-              @filter="filterFn" 
-              style="width: 26vw; margin-right: 1.5vw;"
-              behavior="menu"
-              option-label="name"
-              option-value="url"
-              hide-dropdown-icon
-              :loading="loading"
-              @virtual-scroll="onScroll"
-            >
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps" @click="redirectToRoute(scope.opt.url)">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.name }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template v-slot:append>
-                <q-icon name="search"/>
-              </template>
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No se encontró la busqueda
-                  </q-item-section>
-                </q-item>
-              </template>
-              
-            </q-select>
+            <SearchBar></SearchBar>
           </div>
         </q-toolbar-title>
         <!-- Fin Bottom Serach -->
@@ -439,12 +404,13 @@
 </template>
 
 <script>
-import { ref  } from "vue";
-import { mapGetters, mapActions  } from "vuex";
+import { ref } from "vue";
+import { mapGetters, mapActions } from "vuex";
 import iconCart from "src/components/ShoppingCart/iconCart.vue";
+import SearchBar from "src/components/SearchBar/SearchBar.vue";
 
 export default {
-  components: { iconCart },
+  components: { iconCart, SearchBar },
   setup() {
     const leftDrawerOpen = ref(false);
 
@@ -511,13 +477,13 @@ export default {
       return uniqueArray;
     },
     getMusicalGendersAndArtist() {
-      let genders = [];
+      let gendres = [];
       let artists = [];
       
       this.stateArtistList.forEach(artist => {
-        artist.musical_genders.forEach(gender => {
-          const obj = {name : gender.name, url: `/client/musical-genders/${gender.slug}`};
-          genders.push(obj);
+        artist.musical_genders.forEach(gendre => {
+          const obj = {name : gendre.name, url: `/client/musical-genders/${gendre.slug}`};
+          gendres.push(obj);
         });
       });
 
@@ -526,7 +492,7 @@ export default {
         artists.push(obj);
       });
 
-      this.allOptions = this.removeDuplicates([...genders, ...artists]);
+      this.allOptions = this.removeDuplicates([...gendres, ...artists]);
     },
     filterFn (val, update, abort) {
       this.getMusicalGendersAndArtist();

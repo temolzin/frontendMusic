@@ -45,42 +45,7 @@
         <q-space />
 
         <!-- Inicio de input Search -->
-        <q-select
-          rounded 
-          outlined
-          v-model="searchBar"
-          use-input
-          input-debounce="0"
-          label="Buscar por artista o genero musical"
-          :options="options"
-          @filter="filterFn" 
-          style="width: 26vw; margin-right: 1.5vw;"
-          behavior="menu"
-          option-label="name"
-          option-value="url"
-          hide-dropdown-icon
-          :loading="loading"
-          @virtual-scroll="onScroll"
-        >
-          <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps" @click="redirectToRoute(scope.opt.url)">
-              <q-item-section>
-                <q-item-label>{{ scope.opt.name }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </template>
-          <template v-slot:append>
-            <q-icon name="search"/>
-          </template>
-          <template v-slot:no-option>
-            <q-item>
-              <q-item-section class="text-grey">
-                No se encontró la busqueda
-              </q-item-section>
-            </q-item>
-          </template>
-          
-        </q-select>
+        <SearchBar></SearchBar>
         <!-- Fin de input Search -->
 
         <!-- Inicio de Links para navegar entre paginas -->
@@ -323,19 +288,20 @@
 </template>
 
 <script>
-import { ref  } from "vue";
+import { ref } from "vue";
 import { mapGetters, mapActions } from "vuex";
+import SearchBar from "src/components/SearchBar/SearchBar.vue";
 
 export default {
   name: "GooglePhotosLayout",
-
+  components: { SearchBar },
   setup() {
     const leftDrawerOpen = ref(false);
 
     function toggleLeftDrawer() {
       leftDrawerOpen.value = !leftDrawerOpen.value;
     }
-    
+
     return {
       isActiveDarkMode: ref(false),
       leftDrawerOpen,
