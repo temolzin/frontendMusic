@@ -32,7 +32,6 @@ export default {
           messageColor: "white",
         });
 
-        // hiding in 3s
         timer = setTimeout(() => {
           $q.loading.hide();
           timer = void 0;
@@ -63,7 +62,6 @@ export default {
             this.$router.push(toPath);
           });
       } catch (err) {
-        //console.log("error");
       }
     },
   },

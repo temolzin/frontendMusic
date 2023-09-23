@@ -102,7 +102,6 @@
                     no-caps
                     @click="loginGmail"
                   >
-                    <!-- Fin de icono Gmail-->
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 512 512"
@@ -126,7 +125,7 @@
                         d="M153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55z"
                       ></path>
                     </svg>
-                    <!-- Fin de icono -->
+                    
                     <label>Continuar con Google</label>
                   </q-btn>
 
@@ -144,7 +143,6 @@
                     v-if="loadingFacebook"
                     @click="loginFacebook"
                   >
-                    <!-- Inicio icono Facebook-->
                     <svg
                       fill="none"
                       height="24"
@@ -157,8 +155,7 @@
                         fill="currentColor"
                       ></path>
                     </svg>
-                    <!-- fin de icono -->
-
+                    
                     <label>Continuar con Facebook</label>
                   </q-btn>
                 </div>
@@ -267,7 +264,6 @@ export default {
     if (this.isAuthenticated) {
       const toPath = this.$route.query.to || "/product";
       this.$router.push(toPath);
-      //console.log("SESSION");
     }
   },
   computed: {
