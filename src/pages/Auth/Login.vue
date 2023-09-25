@@ -123,6 +123,9 @@
                     color="primary"
                     no-caps
                     class="q-mt-md full-width"
+                    v-if="loadingFacebook"
+                    style="color: red"
+                    @click="loginFacebook"
                   >
                     <!-- Inicio icono Facebook-->
                     <svg
@@ -188,11 +191,13 @@ export default {
       },
       loading: true,
       loadingGmail: true,
+      loadingFacebook: true,
     };
   },
   methods: {
     ...mapActions("auth", ["doLogin"]),
     ...mapActions("auth", ["doLoginGmail"]),
+    ...mapActions("auth", ["doLoginFacebook"]),
     async submitForm() {
       this.loading = false;
       if (!this.login.email || !this.login.password) {
@@ -228,6 +233,11 @@ export default {
       this.loadingGmail = false;
       await this.doLoginGmail();
       this.loadingGmail = true;
+    },
+    async loginFacebook() {
+      this.loadingFacebook = false;
+      await this.doLoginFacebook();
+      this.loadingFacebook = true;
     },
   },
   mounted() {

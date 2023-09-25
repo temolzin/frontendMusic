@@ -220,6 +220,11 @@ const routes = [
   },
 
   {
+    path: "/authorize/facebook/callback",
+    component: () => import("pages/Auth/LoginFacebook.vue"),
+  },
+
+  {
     path: "/authorize/login",
     component: () => import("pages/Auth/LoginForm.vue"),
   },
