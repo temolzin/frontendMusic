@@ -50,7 +50,7 @@ export default {
               message: "Usuario encontrado",
             });
             //const toPath = this.$route.query.to || "/dashboard/home";
-            this.$router.push({ name: "dashboardH" });
+            this.$router.push({ name: "Home" });
           })
           .catch(() => {
             $q.notify({
