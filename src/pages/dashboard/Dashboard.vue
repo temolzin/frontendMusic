@@ -25,6 +25,7 @@
   <notice-not-info v-if="getMe.role[0] == 'artista'"></notice-not-info>
   <artist-recomendation v-if="getMe.role[0] == 'artista'"></artist-recomendation>
   <client-card v-if="getMe.role[0] == 'cliente'"></client-card>
+  <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general >
 
   <q-page padding>
     <q-table v-if="getMe.role[0] === 'cliente'"
@@ -103,12 +104,13 @@ import ClientCard from "src/components/Client/ClientCard.vue";
 import ClientPromotion from "src/components/Client/ClientPromotion.vue";
 import ArtistRecomendation from "src/components/Artist/ArtistRecomendation.vue";
 import NoticeNotInfo from "src/components/Artist/NoticeNotInfo.vue";
+import NoticeGeneral from "src/components/admin/NoticeGeneral.vue";
 
 
 let $q = useQuasar();
 
 export default {
-  components: { ClientCard, ClientPromotion, ArtistRecomendation,NoticeNotInfo },
+  components: { ClientCard, ClientPromotion, ArtistRecomendation,NoticeNotInfo,NoticeGeneral},
   name: "Index",
   data() {
     const columns = [{ name: "name", field: "artist.name", sortable: true }];
