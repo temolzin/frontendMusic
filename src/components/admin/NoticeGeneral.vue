@@ -75,5 +75,3 @@
     background-color: rgba(0, 0, 0, .3)
     border-radius:10px
   </style>
-  
-  
