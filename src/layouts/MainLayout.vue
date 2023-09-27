@@ -45,24 +45,7 @@
         <q-space />
 
         <!-- Inicio de input Search -->
-        <q-input
-          rounded
-          outlined
-          class="GPL__toolbar-input"
-          dense
-          v-model="search"
-          placeholder="Search"
-        >
-          <template v-slot:prepend>
-            <q-icon v-if="search === ''" name="search" />
-            <q-icon
-              v-else
-              name="clear"
-              class="cursor-pointer"
-              @click="search = ''"
-            />
-          </template>
-        </q-input>
+        <SearchBar></SearchBar>
         <!-- Fin de input Search -->
 
         <!-- Inicio de Links para navegar entre paginas -->
@@ -306,14 +289,14 @@
 
 <script>
 import { ref } from "vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import SearchBar from "src/components/SearchBar/SearchBar.vue";
 
 export default {
   name: "GooglePhotosLayout",
-
+  components: { SearchBar },
   setup() {
     const leftDrawerOpen = ref(false);
-    const search = ref("");
 
     function toggleLeftDrawer() {
       leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -322,7 +305,8 @@ export default {
     return {
       isActiveDarkMode: ref(false),
       leftDrawerOpen,
-      search,
+      options: ref(),
+      allOptions: [],
 
       links2: [
         { icon: "home", text: "Inicio", to: "/" },
@@ -338,16 +322,70 @@ export default {
   },
 
   methods: {
+    ...mapActions("artistList", ["getArtists"]),
+    async getArtistss() {
+      try {
+        await this.getArtists();
+      } catch (err) {
+        if (err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
     darkMode(val) {
       this.$q.dark.set(val);
     },
+    redirectToRoute(value) {
+      this.$router.push(value);      
+    },
+    removeDuplicates(arr) {
+      const uniqueArray = arr.filter((obj, index, self) =>
+        index === self.findIndex((o) => o.name === obj.name)
+      );
+      return uniqueArray;
+    },
+    getMusicalGendersAndArtist() {
+      let genders = [];
+      let artists = [];
+      
+      this.stateArtistList.forEach(artist => {
+        artist.musical_genders.forEach(gender => {
+          const obj = {name : gender.name, url: `/client/musical-genders/${gender.slug}`};
+          genders.push(obj);
+        });
+      });
+
+      this.stateArtistList.forEach(artist => {
+        const obj = {name : artist.name, url: `/client/musical-genders/${artist.musical_genders[0].name}/${artist.slug}`};
+        artists.push(obj);
+      });
+
+      this.allOptions = this.removeDuplicates([...genders, ...artists]);
+    },
+    filterFn (val, update, abort) {
+      this.getMusicalGendersAndArtist();
+      if (val.length < 1) {
+        abort()
+        return
+      } 
+      
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.allOptions.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+      })
+    },
   },
   created() {
+    this.getArtistss();
     this.isActiveDarkMode = this.mode;
   },
   computed: {
     ...mapGetters("auth", ["isAuthenticated"]),
     ...mapGetters("auth", ["getMe"]),
+    ...mapGetters("artistList", ["stateArtistList"]),
 
     mode: function () {
       return this.$q.dark.isActive;
