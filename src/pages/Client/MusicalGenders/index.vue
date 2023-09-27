@@ -6,33 +6,6 @@
         <q-breadcrumbs-el label="Generos Musicales" icon="widgets" />
       </q-breadcrumbs>
     </div>
-    <!-- <div class="q-ma-none">
-      <h4 class="q-mt-none q-mb-none">Recomendaciones</h4>
-      <div>
-        <q-spinner-ball color="primary" size="2em" />
-        <q-tooltip :offset="[0, 8]">QSpinnerBall</q-tooltip>
-      </div>
-      <q-carousel
-        v-model="slide"
-        height="110px"
-        class="q-ma-none"
-        style="padding-left: 0px; padding-right: 0px"
-      >
-        <q-carousel-slide :name="1" class="column no-wrap q-ma-none">
-          <div
-            class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap"
-          >
-            <q-btn
-              v-for="(clientMusicalGender, index) in clientMusicalGenders"
-              :key="index"
-              class="rounded-borders col-3 col-sm-3 col-md-3"
-              :color="clientMusicalGender.color"
-              :label="clientMusicalGender.name"
-            />
-          </div>
-        </q-carousel-slide>
-      </q-carousel>
-    </div> -->
 
     <p class="q-mt-sm q-mb-md text-h4">
       Géneros

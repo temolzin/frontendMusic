@@ -10,24 +10,7 @@
         <!-- Bottom Serach -->
         <q-toolbar-title>
           <div class="row q-ma-md">
-            <q-input
-              rounded
-              outlined
-              dense
-              v-model="text"
-              placeholder="Buscar por artista, banda, sonido"
-              class="GPL__toolbar-input col-12 col-sm-8 col-md-6"
-            >
-              <template v-slot:prepend>
-                <q-icon v-if="text === ''" name="search" />
-                <q-icon
-                  v-else
-                  name="clear"
-                  class="cursor-pointer"
-                  @click="text = ''"
-                />
-              </template>
-            </q-input>
+            <SearchBar></SearchBar>
           </div>
         </q-toolbar-title>
         <!-- Fin Bottom Serach -->
@@ -422,11 +405,12 @@
 
 <script>
 import { ref } from "vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import iconCart from "src/components/ShoppingCart/iconCart.vue";
+import SearchBar from "src/components/SearchBar/SearchBar.vue";
 
 export default {
-  components: { iconCart },
+  components: { iconCart,SearchBar },
   setup() {
     const leftDrawerOpen = ref(false);
 
@@ -437,13 +421,40 @@ export default {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
 
+      options: ref(),
+      allOptions: [],
       text: ref(""),
       mobileData: ref(false),
       bluetooth: ref(false),
       numberShopping: 0,
     };
   },
+  computed: {
+    ...mapGetters("auth", ["getMe"]),
+    ...mapGetters("shoppingCard", ["stateCountListShopingCard"]),
+    ...mapGetters("artistList", ["stateArtistList"]),
+    mode: function () {
+      return this.$q.dark.isActive;
+    },
+  },
+  created() {
+    this.getArtistss();
+    this.isActiveDarkMode = this.mode;
+  },
   methods: {
+    ...mapActions("artistList", ["getArtists"]),
+    async getArtistss() {
+      try {
+        await this.getArtists();
+      } catch (err) {
+        if (err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
     logout() {
       this.$store.dispatch("auth/signOut");
       const toPath = this.$route.query.to || "/";
@@ -456,16 +467,46 @@ export default {
       const toPath = this.$route.query.to || "/";
       this.$router.push(toPath);
     },
-  },
-  computed: {
-    ...mapGetters("auth", ["getMe"]),
-    ...mapGetters("shoppingCard", ["stateCountListShopingCard"]),
-    mode: function () {
-      return this.$q.dark.isActive;
+    redirectToRoute(value) {
+      this.$router.push(value);      
+    },
+    removeDuplicates(arr) {
+      const uniqueArray = arr.filter((obj, index, self) =>
+        index === self.findIndex((o) => o.name === obj.name)
+      );
+      return uniqueArray;
+    },
+    getMusicalGendersAndArtist() {
+      let gendres = [];
+      let artists = [];
+      
+      this.stateArtistList.forEach(artist => {
+        artist.musical_genders.forEach(gendre => {
+          const obj = {name : gendre.name, url: `/client/musical-genders/${gendre.slug}`};
+          gendres.push(obj);
+        });
+      });
+
+      this.stateArtistList.forEach(artist => {
+        const obj = {name : artist.name, url: `/client/musical-genders/${artist.musical_genders[0].name}/${artist.slug}`};
+        artists.push(obj);
+      });
+
+      this.allOptions = this.removeDuplicates([...gendres, ...artists]);
+    },
+    filterFn (val, update, abort) {
+      this.getMusicalGendersAndArtist();
+      if (val.length < 1) {
+        abort()
+        return
+      } 
+      
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.allOptions.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+      })
     },
   },
-  created() {
-    this.isActiveDarkMode = this.mode;
-  },
+  
 };
 </script>

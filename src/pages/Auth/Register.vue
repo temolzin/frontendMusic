@@ -102,7 +102,6 @@
                     no-caps
                     @click="loginGmail"
                   >
-                    <!-- Fin de icono Gmail-->
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 512 512"
@@ -126,7 +125,7 @@
                         d="M153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55z"
                       ></path>
                     </svg>
-                    <!-- Fin de icono -->
+                    
                     <label>Continuar con Google</label>
                   </q-btn>
 
@@ -141,8 +140,9 @@
                     color="primary"
                     no-caps
                     class="q-mt-md full-width"
+                    v-if="loadingFacebook"
+                    @click="loginFacebook"
                   >
-                    <!-- Inicio icono Facebook-->
                     <svg
                       fill="none"
                       height="24"
@@ -155,8 +155,7 @@
                         fill="currentColor"
                       ></path>
                     </svg>
-                    <!-- fin de icono -->
-
+                    
                     <label>Continuar con Facebook</label>
                   </q-btn>
                 </div>
@@ -201,11 +200,13 @@ export default {
       },
       loading: true,
       loadingGmail: true,
+      loadingFacebook: true,
     };
   },
   methods: {
     ...mapActions("auth", ["registerUser"]),
     ...mapActions("auth", ["doLoginGmail"]),
+    ...mapActions("auth", ["doLoginFacebook"]),
     async submitForm() {
       this.loading = false;
       if (!this.user.email || !this.user.password || !this.user.name) {
@@ -250,6 +251,11 @@ export default {
       await this.doLoginGmail();
       this.loadingGmail = true;
     },
+    async loginFacebook() {
+      this.loadingFacebook = false;
+      await this.doLoginFacebook();
+      this.loadingFacebook = true;
+    },
   },
   mounted() {
     $q = useQuasar();
@@ -258,7 +264,6 @@ export default {
     if (this.isAuthenticated) {
       const toPath = this.$route.query.to || "/product";
       this.$router.push(toPath);
-      //console.log("SESSION");
     }
   },
   computed: {
