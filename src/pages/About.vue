@@ -14,15 +14,11 @@
       height="300px"
       class="bg-primary text-white shadow-1 rounded-borders"
     >
-      <template v-slot:navigation-icon="{ active, btnProps, onClick }">
-        <q-btn v-if="active" size="lg" icon="home" color="yellow" flat round dense @click="onClick" />
-        <q-btn v-else size="sm" :icon="btnProps.icon" color="white" flat round dense @click="onClick" />
-      </template>
 
       <q-carousel-slide name="style" class="column no-wrap flex-center"
       img-src="https://cdn.pixabay.com/photo/2016/01/10/21/05/mic-1132528_1280.jpg">
         <div class="absolute-center custom-caption">
-            <div class="text-subtitle1">
+            <div class="responsive-text">
               No pierdas esta oportunidad de hacer realidad tus sueños y contratar a
               tu artista favorito para un evento inolvidable. Regístrate ahora y comienza a planificar tu experiencia única con nosotros.
               ¡No esperes más, el escenario está listo para ti!
@@ -54,12 +50,13 @@
   </div>
 
   <div class="q-pa-md row items-start q-gutter-md">
+
     <q-card class="my-card" flat bordered>
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 1</div>
           <div class="text-h5 q-mt-sm q-mb-xs">Regístrate</div>
-          <div class="text-caption text-grey">
+          <div class="text-caption text-black">
                Ingresa a nuestra plataforma y regístrate de manera rápida y sencilla.
                Solo necesitas unos minutos para crear tu cuenta y estarás listo para comenzar.
           </div>
@@ -86,8 +83,9 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 2</div>
           <div class="text-h5 q-mt-sm q-mb-xs">Explora Nuestro Catálogo</div>
-          <div class="text-caption text-grey">
-            Descubre a tus artistas favoritos en nuestro amplio catálogo.Tenemos a todos tus artistas favoritos en un solo lugar..
+          <div class="text-caption text-black">
+            Descubre a tus artistas favoritos en nuestro amplio catálogo.
+            Tenemos a todos tus artistas favoritos en un solo lugar..
           </div>
         </q-card-section>
         <q-card-section class="col-5 flex flex-center">
@@ -111,7 +109,7 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 3</div>
           <div class="text-h5 q-mt-sm q-mb-xs">Selecciona a tu Artista</div>
-          <div class="text-caption text-grey">
+          <div class="text-caption text-black">
             Elige a tu artista favorito Ya sea un concierto privado, una aparición especial o una charla exclusiva, nosotros lo haremos posible.
           </div>
         </q-card-section>
@@ -123,6 +121,34 @@
           />
         </q-card-section>
       </q-card-section>
+      <q-separator />
+      <q-card-actions>
+        <q-btn flat color="primary" to="/login">
+          GO
+        </q-btn>
+      </q-card-actions>
+    </q-card>
+
+    <q-card class="my-card" flat bordered>
+      <q-card-section horizontal>
+        <q-card-section class="q-pt-xs">
+          <div class="text-overline">Paso 4</div>
+          <div class="text-h5 q-mt-sm q-mb-xs">Contrata a tu Artista Favorito!</div>
+          <div class="text-caption text-black">
+            Una vez que estés completamente satisfecho con todos los detalles,
+             confirma desde nuestra aplicación, donde puedes realizar el pago de forma rápida y segura.
+             Desde ese momento, puedes relajarte y dejar el resto en nuestras manos
+          </div>
+        </q-card-section>
+
+        <q-card-section class="col-5 flex flex-center">
+          <q-img
+            class="rounded-borders"
+            src="https://cdn.pixabay.com/photo/2015/11/03/08/58/meeting-1019875_640.jpg"
+          />
+        </q-card-section>
+      </q-card-section>
+
       <q-separator />
       <q-card-actions>
         <q-btn flat color="primary" to="/login">
@@ -188,9 +214,13 @@ export default {
 <style lang="sass" scoped>
 .my-card
   width: 100%
-  max-width: 350px
+  max-width: 400px
+  margin: 5
+  display: inline-block
+
 #groupMusic
-   height:300px
-   width:600px
-   max-width:100%
+  display: inline-block
+  width: 100%
+  max-width: 600px
+  margin:  auto
 </style>
