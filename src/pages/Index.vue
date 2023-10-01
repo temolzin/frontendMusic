@@ -180,6 +180,7 @@
             color="primary"
             class="col-12 col-xs-6 col-sm-4 col-md-3 q-mt-md"
             rounded
+            @click="subscribeUser" 
           />
         </div>
         <p class="q-mt-lg text-weight-bold" style="font-size: 14px">
@@ -204,6 +205,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
+
 let $q;
 export default {
   data() {
@@ -215,6 +217,7 @@ export default {
   },
   methods: {
     ...mapActions("lastArtist", ["getLatestArtists"]),
+    ...mapActions("UsersSuscribe", ["setEmail"]),
     async gettLatestArtists() {
       try {
         await this.getLatestArtists().then(() => {
@@ -227,12 +230,33 @@ export default {
         });
       }
     },
+    async subscribeUser() {
+      try {
+        const jsonData = {
+          email: this.email,
+        };
+        await this.setEmail(jsonData);
+        this.email = '';
+        this.$q.notify({
+          type: "positive",
+          message: `Suscrito correctamente`,
+        });
+      } catch (err) {
+        if (err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: `Algo salió mal, vuelve a intentarlo más tarde`
+          });
+        }
+      }
+    },
   },
   created() {
     this.gettLatestArtists();
   },
   computed: {
     ...mapGetters("lastArtist", ["stateArtists"]),
+    ...mapGetters("UsersSuscribe", ["stateEmails"]),
     mode: function () {
       return this.$q.dark.isActive;
     },
