@@ -18,7 +18,7 @@
       <q-carousel-slide name="style" class="column no-wrap flex-center"
       img-src="https://cdn.pixabay.com/photo/2016/01/10/21/05/mic-1132528_1280.jpg">
         <div class="absolute-center custom-caption">
-            <div class="responsive-text">
+            <div class="responsive-text" id="text">
               No pierdas esta oportunidad de hacer realidad tus sueños y contratar a
               tu artista favorito para un evento inolvidable. Regístrate ahora y comienza a planificar tu experiencia única con nosotros.
               ¡No esperes más, el escenario está listo para ti!
@@ -38,7 +38,7 @@
       img-src="https://cdn.pixabay.com/photo/2015/05/07/11/02/guitar-756326_1280.jpg">
 
         <div class="absolute-center custom-caption">
-            <div class="text-subtitle1">
+            <div class="responsive-text" id="text">
               ¡Si tienes un talento musical excepcional, nosotros tenemos la plataforma perfecta para
               impulsar tu carrera artística y hacerte conocido en todo el mundo! Contáctanos hoy mismo y
               te registraremos para darle alas a tu sueño musical.
@@ -55,10 +55,10 @@
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 1</div>
-          <div class="text-h5 q-mt-sm q-mb-xs">Regístrate</div>
+          <div class="text-h6 q-mt-sm q-mb-xs">Regístrate</div>
           <div class="text-caption text-black">
                Ingresa a nuestra plataforma y regístrate de manera rápida y sencilla.
-               Solo necesitas unos minutos para crear tu cuenta y estarás listo para comenzar.
+               Solo necesitas unos minutos  para crear tu cuenta y estarás listo para comenzar.
           </div>
         </q-card-section>
 
@@ -82,10 +82,11 @@
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 2</div>
-          <div class="text-h5 q-mt-sm q-mb-xs">Explora Nuestro Catálogo</div>
+          <div class="text-h6 q-mt-sm q-mb-xs">Explora Nuestro Catálogo</div>
           <div class="text-caption text-black">
             Descubre a tus artistas favoritos en nuestro amplio catálogo.
-            Tenemos a todos tus artistas favoritos en un solo lugar..
+            Tenemos a todos tus artistas favoritos en un solo lugar desde los,
+            mas famosos.
           </div>
         </q-card-section>
         <q-card-section class="col-5 flex flex-center">
@@ -108,7 +109,7 @@
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 3</div>
-          <div class="text-h5 q-mt-sm q-mb-xs">Selecciona a tu Artista</div>
+          <div class="text-h6 q-mt-sm q-mb-xs">Selecciona a tu Artista</div>
           <div class="text-caption text-black">
             Elige a tu artista favorito Ya sea un concierto privado, una aparición especial o una charla exclusiva, nosotros lo haremos posible.
           </div>
@@ -133,18 +134,17 @@
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 4</div>
-          <div class="text-h5 q-mt-sm q-mb-xs">Contrata a tu Artista Favorito!</div>
+          <div class="text-h6 q-mt-sm q-mb-xs">Contrata a tu Artista Favorito!</div>
           <div class="text-caption text-black">
-            Una vez que estés completamente satisfecho con todos los detalles,
-             confirma desde nuestra aplicación, donde puedes realizar el pago de forma rápida y segura.
-             Desde ese momento, puedes relajarte y dejar el resto en nuestras manos
+             Una vez que estés completamente satisfecho con todos los detalles,
+             confirma desde nuestra aplicación, de forma rápida y segura.
           </div>
         </q-card-section>
 
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="https://cdn.pixabay.com/photo/2015/11/03/08/58/meeting-1019875_640.jpg"
+            src="https://cdn.pixabay.com/photo/2015/11/26/07/47/hands-1063442_640.jpg"
           />
         </q-card-section>
       </q-card-section>
@@ -157,7 +157,7 @@
       </q-card-actions>
     </q-card>
 
-    <q-card class="my-card" id="groupMusic">
+    <q-card class="groupMusical">
       <q-item>
         <q-item-section avatar>
           <q-avatar>
@@ -211,16 +211,23 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-.my-card
-  width: 100%
-  max-width: 400px
-  margin: 5
-  display: inline-block
+<style lang="css" scoped>
+.my-card {
+  height: 300px;
+  max-width: 323px;
+  margin: 5px;
+}
+  
+.groupMusical {
+  width: 800px;
+  max-width: 600px;
+  margin: 0 auto;
+}
 
-#groupMusic
-  display: inline-block
-  width: 100%
-  max-width: 600px
-  margin:  auto
+@media (max-width: 767px) {
+  #text {
+    font-size: 11px;
+  }
+}
+  
 </style>
