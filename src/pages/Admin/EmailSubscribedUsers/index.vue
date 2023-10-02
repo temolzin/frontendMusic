@@ -64,13 +64,10 @@ export default {
                     message: `Se envió el email de forma correcta`,
                 });
             } catch (err) {
-                if (err) {
-                    // $q.notify({
-                    // type: "negative",
-                    // message: `Algo salió mal, vuelve a intentarlo más tarde ${err}`
-                    // });
-                    console.log(err)
-                }
+                $q.notify({
+                type: "negative",
+                message: `Algo salió mal, vuelve a intentarlo más tarde ${err}`
+                });
             }
         },
     },
