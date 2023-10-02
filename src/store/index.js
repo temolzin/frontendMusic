@@ -13,6 +13,7 @@ import clientMusicalGenders from "./client/clientMusicalGenders";
 import lastArtist from "./general/lastArtist";
 import shoppingCard from "./client/shoppingCard";
 import favouriteArtists from "./client/favouriteArtists";
+import UsersSuscribe from "./general/UsersSuscribe";
 
 const Store = createStore({
   modules: {
@@ -29,6 +30,7 @@ const Store = createStore({
     lastArtist,
     shoppingCard,
     favouriteArtists,
+    UsersSuscribe,
   },
   strict: process.env.DEBUGGING,
 });

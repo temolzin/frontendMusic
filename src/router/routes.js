@@ -121,6 +121,15 @@ const routes = [
           permissions: ["view-musicals-genders"],
         },
       },
+
+      {
+        name: "admin.create-newsletters",
+        path: "/admin/newsletter/index",
+        component: import("pages/Admin/EmailSubscribedUsers/index.vue"),
+        meta: {
+          requireLogin: true,
+        },
+      },
       // Fin de rutas del admin
 
       // Rutas del artista
