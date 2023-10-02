@@ -55,10 +55,10 @@
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 1</div>
-          <div class="text-h6 q-mt-sm q-mb-xs">Regístrate</div>
+          <div class="text-h6 q-mt-sm q-mb-xs">Regístrate con nosostros</div>
           <div class="text-caption text-black">
-               Ingresa a nuestra plataforma y regístrate de manera rápida y sencilla.
-               Solo necesitas unos minutos  para crear tu cuenta y estarás listo para comenzar.
+               Ingresa a nuestra app y regístrate de manera rápida y sencilla.
+               Solo necesitas unos minutos  para crear tu cuenta y estará todo listo.
           </div>
         </q-card-section>
 
@@ -213,7 +213,7 @@ export default {
 
 <style lang="css" scoped>
 .my-card {
-  height: 300px;
+  height: 100%;
   max-width: 323px;
   margin: 5px;
 }
