@@ -15,7 +15,7 @@
             <q-card-section class="col-2 flex flex-center">
               <q-btn round>
                 <q-avatar size="80px">
-                  <img :src="getMe.image" />
+                  <img :src="getBackendImageUrl(getMe.image)" />
                 </q-avatar>
               </q-btn>
             </q-card-section>
@@ -330,6 +330,14 @@ export default {
         message: `El archivo no ha superado las restricciones de validación`,
       });
       this.image_profile = [];
+    },
+    getBackendImageUrl(image) {
+      if (image) {
+        const rutaCompleta = image;
+        const partes = rutaCompleta.split("/");
+        const nombreImagen = partes[partes.length - 1];
+        return `http://127.0.0.1:8000/storage/user_profile/${nombreImagen}`;
+      }
     },
   },
   computed: {

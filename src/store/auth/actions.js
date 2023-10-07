@@ -70,7 +70,6 @@ export const doLoginFacebookCallback = async ({ commit, dispatch }, payload) => 
   });
 };
 
-
 export const updateDetails = async ({ dispatch }, payload) => {
   await api.put("/api/user/change-details", payload).then((response) => {
    dispatch("getMeUser");
