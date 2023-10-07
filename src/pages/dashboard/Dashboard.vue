@@ -4,7 +4,7 @@
       <q-item>
         <q-item-section avatar>
           <q-avatar>
-            <img :src="getMe.image" />
+            <img :src="getBackendImageUrl(getMe.image)" />
           </q-avatar>
         </q-item-section>
 
@@ -166,6 +166,14 @@ export default {
           },
         ],
       });
+    },
+    getBackendImageUrl(image) {
+      if (image) {
+        const rutaCompleta = image;
+        const partes = rutaCompleta.split("/");
+        const nombreImagen = partes[partes.length - 1];
+        return `http://127.0.0.1:8000/storage/user_profile/${nombreImagen}`;
+      }
     },
   },
   created() {

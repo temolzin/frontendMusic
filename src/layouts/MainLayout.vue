@@ -94,12 +94,9 @@
           />
           <!-- Fin Botones de inicio de sesion y dashboard -->
 
-          <q-btn round flat class="q-mr-md" v-if="isAuthenticated == true">
-            <q-avatar size="26px">
-              <img :src="getMe.image" />
-            </q-avatar>
-            <q-tooltip>{{ getMe.name }}</q-tooltip>
-          </q-btn>
+          <!-- Card info profile -->
+          <ProfilePhoto v-if="isAuthenticated == true"></ProfilePhoto>
+          <!-- Card info profile -->
         </div>
       </q-toolbar>
     </q-header>
@@ -291,10 +288,11 @@
 import { ref } from "vue";
 import { mapGetters, mapActions } from "vuex";
 import SearchBar from "src/components/SearchBar/SearchBar.vue";
+import ProfilePhoto from "src/components/ProfilePhoto.vue";
 
 export default {
   name: "GooglePhotosLayout",
-  components: { SearchBar },
+  components: { SearchBar,ProfilePhoto },
   setup() {
     const leftDrawerOpen = ref(false);
 
