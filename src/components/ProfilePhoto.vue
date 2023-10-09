@@ -48,34 +48,12 @@
 
 <script>
 import { getMe } from "src/store/auth/getters";
-import { ref } from "vue";
 import { mapGetters } from "vuex";
 
 export default {
   name: "ProfilePhoto",
-  setup() {
-    const leftDrawerOpen = ref(false);
-
-    return {
-      isActiveDarkMode: ref(false),
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-      text: ref(""),
-      mobileData: ref(false),
-      bluetooth: ref(false),
-      numberShopping: 0,
-    };
-  },
   computed: {
     ...mapGetters("auth", ["getMe"]),
-    mode: function () {
-      return this.$q.dark.isActive;
-    },
-  },
-  created() {
-    this.isActiveDarkMode = this.mode;
   },
   methods: {
     logout() {
@@ -83,24 +61,13 @@ export default {
       const toPath = this.$route.query.to || "/";
       this.$router.push(toPath);
     },
-    darkMode(val) {
-      this.$q.dark.set(val);
-    },
     redirect() {
       const toPath = this.$route.query.to || "/";
       this.$router.push(toPath);
     },
-    getImageUrl(image) {
-      if (image) {
-        return `/user_profile_images/${image}`;
-      }
-    },
     getBackendImageUrl(image) {
       if (image) {
-        const rutaCompleta = image;
-        const partes = rutaCompleta.split("/");
-        const nombreImagen = partes[partes.length - 1];
-        return `http://127.0.0.1:8000/storage/user_profile/${nombreImagen}`;
+        return `http://127.0.0.1:8000${image}`;
       }
     }
   }
