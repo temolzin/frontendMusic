@@ -66,8 +66,10 @@ export default {
       this.$router.push(toPath);
     },
     getBackendImageUrl(image) {
+      const BaseURL = "http://127.0.0.1:8000";
+
       if (image) {
-        return `http://127.0.0.1:8000${image}`;
+        return BaseURL + image;
       }
     }
   }
