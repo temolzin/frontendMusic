@@ -66,7 +66,7 @@ export default {
       this.$router.push(toPath);
     },
     getBackendImageUrl(image) {
-      const BaseURL = "http://127.0.0.1:8000";
+      const BaseURL = this.$q.config.backendUrl;
 
       if (image) {
         return BaseURL + image;
