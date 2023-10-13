@@ -79,7 +79,8 @@ module.exports = configure(function (ctx) {
     framework: {
       plugins: [],
       config: {
-        dark: 'auto'
+        dark: 'auto',
+        backendUrl: 'http://127.0.0.1:8000',
       },
 
       // iconSet: 'material-icons', // Quasar icon set
