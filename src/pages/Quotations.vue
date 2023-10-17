@@ -69,10 +69,7 @@
                   Información específica del evento
                 </p>
 
-                <div
-                  class="row items-center space-between"
-                  style="justify-content: center"
-                >
+                <div class="row items-center space-between" style="justify-content: center">
                   <q-input filled v-model="newQuotation.event_date">
                     <template v-slot:append>
                       <q-icon
@@ -326,7 +323,6 @@ export default {
       }
       return this.removeDuplicates(genders);
     },
-
     filteredData() {
       let filtered = [];
 
@@ -337,7 +333,6 @@ export default {
           );
         });
       }
-
       return filtered.length > 0
         ? filtered.map((artist) => {
             return { label: artist.name, value: artist.id };

@@ -4,5 +4,4 @@ import { api } from "boot/axios";
     await api.post("/api/quotations", payload).then((response) => {
       return response.data;
     });
-
   };
