@@ -115,7 +115,7 @@
               </div>
             </q-img>
             <q-btn
-              :to="'/search/' + stateArtist.slug"
+              :to="'/client/musical-genders/'+ stateArtist.musical_genders[0].name + '/' + stateArtist.slug"
               color="primary"
               icon="arrow_forward"
               class="absolute"
