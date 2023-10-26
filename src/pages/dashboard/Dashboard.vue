@@ -28,7 +28,7 @@
   <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general >
 
   <q-page padding>
-    <q-table v-if="getMe.role[0] === 'cliente'"
+    <q-table v-if="getMe.role[0] === 'cliente' && skeleton == false"
       grid
       card-class="bg-primary text-white"
       :rows="stateFavouriteArtists"
@@ -176,4 +176,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.imageArtist {
+  max-height: 200px;
+  min-height: 200px;
+  object-fit: cover;
+}</style>
