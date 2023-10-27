@@ -292,7 +292,7 @@ import ProfilePhoto from "src/components/ProfilePhoto.vue";
 
 export default {
   name: "GooglePhotosLayout",
-  components: { SearchBar,ProfilePhoto },
+  components: { SearchBar, ProfilePhoto },
   setup() {
     const leftDrawerOpen = ref(false);
 
