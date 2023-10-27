@@ -382,7 +382,7 @@ import SearchBar from "src/components/SearchBar/SearchBar.vue";
 import ProfilePhoto from "src/components/ProfilePhoto.vue";
 
 export default {
-  components: { iconCart,SearchBar,ProfilePhoto },
+  components: { iconCart, SearchBar, ProfilePhoto },
   setup() {
     const leftDrawerOpen = ref(false);
 
