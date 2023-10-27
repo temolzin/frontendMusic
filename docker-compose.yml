@@ -5,9 +5,3 @@ services:
       context: ./
     ports:
       - "8080:8080"
-    networks:
-      - network-music
-
-networks:
-  network-music:
-    driver: bridge
