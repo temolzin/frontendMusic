@@ -6,3 +6,7 @@ export const setCards = (state, cards) => {
     state.card = card;
   };
   
+  export const setUserCards = (state, cards) => {
+    console.log(cards);
+    state.cards = cards;
+  };

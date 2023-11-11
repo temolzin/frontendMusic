@@ -13,6 +13,7 @@ import galleryArtist from "./artist/galleryArtist";
 import clientMusicalGenders from "./client/clientMusicalGenders";
 import lastArtist from "./general/lastArtist";
 import shoppingCard from "./client/shoppingCard";
+import orderDetails from "./client/orderDetails";
 import favouriteArtists from "./client/favouriteArtists";
 import UsersSuscribe from "./general/UsersSuscribe";
 
@@ -31,6 +32,7 @@ const Store = createStore({
     clientMusicalGenders,
     lastArtist,
     shoppingCard,
+    orderDetails,
     favouriteArtists,
     UsersSuscribe,
   },

@@ -205,6 +205,17 @@ const routes = [
       },
 
       {
+        name: "client.view-my-order-details",
+        path: "/client/shopping-cart/view-my-order-details",
+        component: import("src/pages/Client/ShoppingCart/My_Order_Details.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-my-order-details"],
+        },
+      },
+
+      {
         name: "client.dataClient",
         path: "/client/shopping-cart/dataClient",
         component: import("src/pages/Client/ShoppingCart/dataClient.vue"),
