@@ -4,5 +4,6 @@ export function stateCards(state) {
   export function stateCard(state) {
     return state.card;
   }
-  
-  
+  export function stateUserCards(state) {
+    return state.cards;
+  }
