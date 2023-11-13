@@ -6,10 +6,8 @@
           <q-step :name="1" title="Informacion de la Compra" icon="shopping_cart" :done="step > 1" :header-nav="step > 1">
             <img class="openpay" src="https://assets.stickpng.com/images/62e3c66bd889babae63d750e.png" />
             <q-form @submit="createNewOrders">
-
               <div class="row">
                 <div class="col-6">
-
                   <q-item>
                     <q-input dense outlined class="full-width" type="text" v-model="formClient.first_name"
                       label="Nombre *" required />
@@ -152,10 +150,7 @@
 
               <div class="card col-12 col-sm-3 col-md-4 q-ma-sm">
                 <div class="card__front card__part">
-                  <!-- Inicio de logo izquierdo -->
                   <img class="card__square" src="https://conta.nubank.com.br/images/nu-white.png" />
-                  <!-- Fin de logo izquierdo -->
-                  <!-- Inicio de información de la tarjeta -->
                   <p class="card_numer">{{ selectedCard.number_card }}</p>
                   <div class="card__space-75">
                     <span class="card__label">Nombre de la Tarjeta</span>
@@ -166,7 +161,6 @@
                     <p class="card__info">{{ selectedCard.expiration_date }}</p>
                   </div>
                 </div>
-                <!-- Fin de información de la tarjeta -->
               </div>
 
               <div class="col-6">
@@ -580,7 +574,6 @@ export default defineComponent({
   margin-bottom: 15px;
   margin-top: 25px;
 }
-
 .card__space-75 {
   width: 85%;
   float: left;
