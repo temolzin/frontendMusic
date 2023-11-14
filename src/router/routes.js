@@ -2,6 +2,7 @@ import Index from "pages/Index.vue";
 import About from "pages/About.vue";
 import Product from "pages/Product.vue";
 import ArtistList from "pages/ArtistList.vue";
+import Quotations from "pages/Quotations";
 import Register from "pages/Auth/Register.vue";
 import Login from "pages/Auth/Login.vue";
 import Dashboard from "pages/dashboard/Dashboard.vue";
@@ -27,6 +28,11 @@ const routes = [
         name: "ArtistList",
         path: "/artist-list",
         component: ArtistList,
+      },
+      {
+        name: "Quotations",
+        path: "/quotations",
+        component: Quotations,
       },
       {
         name: "LoginIn",
@@ -195,6 +201,17 @@ const routes = [
           middleware: [Middlewares.checkPermissions],
           requireLogin: true,
           permissions: ["view-shopping-cart"],
+        },
+      },
+
+      {
+        name: "client.view-my-order-details",
+        path: "/client/shopping-cart/view-my-order-details",
+        component: import("src/pages/Client/ShoppingCart/My_Order_Details.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-my-order-details"],
         },
       },
 

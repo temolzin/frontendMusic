@@ -29,7 +29,7 @@
                     .shopping_card_detail"
                   :key="index"
                 >
-                  <td>
+                  <td class="text-center">
                     <q-img
                       :src="product.artist.image"
                       loading="lazy"
