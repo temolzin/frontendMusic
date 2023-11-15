@@ -269,7 +269,13 @@
               <q-item-section class="text-weight-bold" v-if="$can('create-card')"> COMPRAS </q-item-section>
             </q-item> -->
 
-          <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+            <q-item
+            clickable
+            v-ripple
+            to="/client/store"
+            v-if="$can('view-store')"
+            active-class="text-accent"
+          >
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-store" />
             </q-item-section>

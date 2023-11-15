@@ -236,6 +236,17 @@ const routes = [
           permissions: ["view-favourite-artist"],
         },
       },
+
+      {
+        name: "client.view-store",
+        path: "/client/store",
+        component: import("src/pages/Client/Store/index.vue"),
+        meta: {
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-store"],
+        },
+      },
       // Fin de rutas del cliente
     ],
   },
