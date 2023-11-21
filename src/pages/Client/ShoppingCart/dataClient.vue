@@ -485,6 +485,12 @@ export default defineComponent({
           "country_code": "MX"
         }
       }, async (response) => {
+        let artistList = []
+        this.stateListShopingCard[0].shopping_card_detail.map((element) => {
+          let obj = [element.artist_id, element.price]
+          artistList.push(obj)
+        });
+        console.log(artistList)
         const data = {
           card_holder_name: this.formClient.first_name + " " + this.formClient.first_last,
           card_number: card_number,
@@ -496,11 +502,13 @@ export default defineComponent({
           last_name: this.formClient.first_last,
           email: this.formClient.email,
           deviceSessionId: deviceDataId,
-          token : response.data.id
+          token : response.data.id,
+          artistList: artistList
         }
 
         try {
-          await this.createPayment(data);
+          const response = await this.createPayment(data);
+          console.log(response.data)
           $q.notify({
             type: "positive",
             message: "Tu transacción se realizó con exito",
