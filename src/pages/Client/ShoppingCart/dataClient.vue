@@ -404,8 +404,6 @@ export default defineComponent({
         }
       }
     },
-    // async gettListShoppingCard() {
-    // ...mapActions("card", ["createCard"]),
     async createNewOrders() {
       try {
         await this.createNewOrder(this.formClient.value);
@@ -453,12 +451,6 @@ export default defineComponent({
       console.log("Selected Card:", this.selectedCard);
       this.basic = false;
     },
-    mostrarModal() {
-      this.mostrar = true;
-    },
-    cerrarModal() {
-      this.mostrar = false;
-    },
     async pay () {
 
       OpenPay.setId(this.$q.config.OpenPayID);
@@ -490,7 +482,6 @@ export default defineComponent({
           let obj = [element.artist_id, element.price]
           artistList.push(obj)
         });
-        console.log(artistList)
         const data = {
           card_holder_name: this.formClient.first_name + " " + this.formClient.first_last,
           card_number: card_number,
@@ -501,6 +492,10 @@ export default defineComponent({
           name: this.formClient.first_name,
           last_name: this.formClient.first_last,
           email: this.formClient.email,
+          address: this.formClient.adress_line2,
+          city: this.formClient.state_city,
+          state: this.formClient.city,
+          zip_code: this.formClient.zip_code,
           deviceSessionId: deviceDataId,
           token : response.data.id,
           artistList: artistList
