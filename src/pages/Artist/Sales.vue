@@ -22,13 +22,14 @@
     data() {
       return {
         ventas: [
-          { id: 1, producto: 'Producto A', precio: 50 },
-          { id: 2, producto: 'Producto B', precio: 75 },
-          { id: 3, producto: 'Producto C', precio: 100 },
+          { id: 1, transactionID: 'trc9dntnsu68tfdiokkh', amount: 50 },
+          { id: 2, transactionID: 'trc9dntnsu68tfdiokkh', amount: 150 },
+          { id: 3, transactionID: 'trc9dntnsu68tfdiokkh', amount: 520 },
+
         ],
         columnas: [
-          { name: 'producto', label: 'Producto', align: 'left', field: 'producto', sortable: true },
-          { name: 'precio', label: 'Precio', align: 'right', field: 'precio', sortable: true },
+          { name: 'transactionID', label: 'ID de transacción', align: 'left', field: 'transactionID', sortable: true },
+          { name: 'amount', label: 'Precio', align: 'left', field: 'amount', sortable: true },
         ],
       };
     },
