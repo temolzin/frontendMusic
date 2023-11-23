@@ -66,10 +66,10 @@ export default {
       this.$router.push(toPath);
     },
     getBackendImageUrl(image) {
-      const BaseURL = this.$q.config.backendUrl;
+      const baseURL = this.$q.config.backendUrl;
 
       if (image) {
-        return BaseURL + image;
+        return baseURL + image;
       }
     }
   }
