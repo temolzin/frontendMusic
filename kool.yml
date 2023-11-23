@@ -1,0 +1,6 @@
+scripts:
+  quasar: kool exec frontend quasar
+  npm: kool exec frontend npm 
+
+  setup:
+    - kool start
