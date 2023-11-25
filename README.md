@@ -26,3 +26,21 @@ Nos ayuda a compilar y se abrirá el proyecto en el navegador predeterminado.
 2. Dirigirse a la subcarpeta boot.
 3. Abrir el archivo axios.js.
 4. Cambiar el parametro "const api = axios.create({ baseURL: "http://127.0.0.1:8000/" });", al nuevo servidor.
+
+## - curl -fsSL https://kool.dev/install | bash
+
+Para ejecutar correctamente el proyecto correctamente se necesita tener instalado kool, el cual se instala con el comando.
+
+Este comando solo sirve en linux, por lo que para usarse en windows necesitamos instalar Windows Subsistem Linux(WSL) e instalar una versión de Linux, además tenemos que tener Docker instalado en nuestro subsistema de linux y docker compose.
+
+## kool run setup
+
+Este comando ejecutará la creación del contenedor de docker, instalación de dependencias e inicialización del proyecto.
+
+## kool start
+
+Enciende el contenedor
+
+## kool stop
+
+Apaga el contenedor
