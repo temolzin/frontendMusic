@@ -352,7 +352,8 @@
           <q-item
             clickable
             v-ripple
-            v-if="$can('create-card')"
+            to="/client/shopping-cart/view-my-order-details"
+            v-if="$can('view-my-order-details')"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
@@ -361,7 +362,7 @@
 
             <q-item-section> Mis Compras </q-item-section>
           </q-item>
-
+          
           <q-item
             clickable
             v-ripple

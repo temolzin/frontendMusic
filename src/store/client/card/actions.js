@@ -23,3 +23,9 @@ export const updateCard = async ({ dispatch }, form) => {
     dispatch("getCards");
   });
 };
+
+export const showCards = async ({ commit }) => {
+  await api.get("/api/client-card").then((response) => {
+    commit("setUserCards", response.data.client);
+  });
+};
