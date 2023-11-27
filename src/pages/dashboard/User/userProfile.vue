@@ -332,13 +332,12 @@ export default {
       this.image_profile = [];
     },
     getBackendImageUrl(image) {
+      const baseURL = this.$q.config.backendUrl;
+
       if (image) {
-        const rutaCompleta = image;
-        const partes = rutaCompleta.split("/");
-        const nombreImagen = partes[partes.length - 1];
-        return `http://127.0.0.1:8000/storage/user_profile/${nombreImagen}`;
+        return baseURL + image;
       }
-    },
+    }
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
