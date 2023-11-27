@@ -18,8 +18,10 @@
         <!-- bottom dropdown  -->
         <div class="text-right" style="color: gray">
           <!-- Icons bell and wrench -->
-          <small>
-            <icon-cart v-if="getMe.role[0] == 'cliente'"></icon-cart>
+          <small v-if="getMe.role[0] == 'cliente'">
+            <router-link to="/client/shopping-cart">
+              <icon-cart></icon-cart>
+            </router-link>
           </small>
           <!-- FinIcons bell and wrench -->
 
