@@ -86,7 +86,7 @@
             <q-img :src="artist.manager.image" class="image" />
           </div>
         </div>
-        <div class="col-12 col-sm-7 col-md-7 2 q-pa-lg" >
+        <div class="col-12 col-sm-7 col-md-7 2 q-pa-lg">
           <q-card class="my-card shadow-6">
             <q-card-section>
               <h3
@@ -134,7 +134,7 @@
               </div>
 
               <form @submit="onSubmit" class="q-gutter-md q-mt-md">
-                <q-input 
+                <q-input
                   type="number"
                   v-model="hours"
                   label="Ingresa el número de horas de contratación *"
@@ -142,7 +142,7 @@
                   lazy-rules
                   :rules="nameRules"
                 />
-                <div class="row" >
+                <div class="row">
                   <div class="col-12 col-xs-6 col-sm-6 col-md-6">
                     <q-btn
                       label="Agregar al carrito"
@@ -266,7 +266,7 @@ export default {
       fullscreen: ref(false),
       showGallery: null,
       showInfo: null,
-      listCarrito: [],
+      listCart: [],
       hours: 1,
       item: {
         artist_id: "",
@@ -297,7 +297,7 @@ export default {
     },
     addCart(item) {
       let change = false;
-      this.listCarrito.forEach(function (valor, indice) {
+      this.listCart.forEach(function (valor, indice) {
         if (valor.id == item.id) {
           valor.cant = valor.cant + 1;
           change = true;
@@ -314,7 +314,7 @@ export default {
           zone: item.zone,
           image: item.image,
         };
-        this.listCarrito.push(itemcar);
+        this.listCart.push(itemcar);
       }
     },
     onSendOrder(artist) {
@@ -343,13 +343,14 @@ export default {
       return new Date().toLocaleString();
     },
     printDateFinish: function () {
-      var d = new Date();
-      return this.sumarDias(d, 2);
+      var currentDate = new Date();
+      return this.addDays(currentDate, 2);
     },
-    sumarDias(fecha, dias) {
-      fecha.setDate(fecha.getDate() + dias);
-      return fecha.toLocaleString();
+    addDays(date, days) {
+      date.setDate(date.getDate() + days);
+      return date.toLocaleString();
     },
+
     onSubmit() {},
   },
   created() {
