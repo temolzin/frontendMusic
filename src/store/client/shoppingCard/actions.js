@@ -32,3 +32,9 @@ export const deleteItembyId= async ({ dispatch }, artist_id) => {
   });
 };
 
+export const createPayment= async ({ dispatch },  payload) => {
+  await api.post("/api/process-payment", payload).then((response) => {
+    return response;
+  });
+};
+

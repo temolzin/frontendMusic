@@ -4,6 +4,22 @@ Proyecto FRONT-END del Sistema Gestión de Música, es un sistema híbrido que p
 
 Para su ejecutación se deben de crear las siguientes dependencias:
 
+## Configuración de OpenPay
+
+En el archivo quasar.conf.js configurar con sus llaves propias las credenciales de OpenPay, las cuales se obtienen registrandote en OpenPay y scrolleando.
+Las variables a rellenar son:
+    - OpenPayID: 'tu-openpay-id',
+    - OpenPayKey: 'tu-openpay-key(la que inicia con pk)', 
+    - OpenPaySanboxMode: true(Si se usa el ambiente de pruebas o el de producción)
+
+## npm install
+
+Este comando nos sirve para instalar paquetes. Los paquetes se descargarán y se meterán automáticamente en una carpeta llamada node_modules.
+
+## quasar dev
+
+Nos ayuda a compilar y se abrirá el proyecto en el navegador predeterminado.
+
 ## Configuración de Axios
 
 1. Entrar a la carpeta src.

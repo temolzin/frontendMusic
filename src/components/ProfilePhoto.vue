@@ -70,6 +70,7 @@ export default {
 
       if (image) {
         return baseURL + image;
+
       }
     }
   }
