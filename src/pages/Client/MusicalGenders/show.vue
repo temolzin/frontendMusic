@@ -136,13 +136,12 @@
               <form @submit="onSubmit" class="q-gutter-md q-mt-md">
                 <q-input
                   type="number"
-                  v-model="name"
+                  v-model="hours"
                   label="Ingresa el número de horas de contratación *"
                   hint="No. Horas"
                   lazy-rules
                   :rules="nameRules"
                 />
-
                 <div class="row">
                   <div class="col-12 col-xs-6 col-sm-6 col-md-6">
                     <q-btn
@@ -150,6 +149,7 @@
                       color="primary"
                       icon-right="fas fa-cart-plus"
                       class="full-width q-mt-xs"
+                      v-on:click="onSendOrder(artist)"
                     />
                   </div>
                   <div class="col-12 col-xs-6 col-sm-6 col-md-6">
@@ -244,7 +244,7 @@
 </template>
 
 <script>
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapState, mapGetters } from "vuex";
 import { ref } from "vue";
 
@@ -265,10 +265,19 @@ export default {
       autoplay: ref(true),
       fullscreen: ref(false),
       showGallery: null,
+      showInfo: null,
+      listCart: [],
+      hours: 1,
+      item: {
+        artist_id: "",
+        hours_artist: "",
+      },
     };
   },
   methods: {
     ...mapActions("clientMusicalGenders", ["getArtistBySlug"]),
+    ...mapActions("shoppingCard", ["updateItemShoppingCart"]),
+    ...mapActions("shoppingCard", ["create_order"]),
     async gettArtistBySlug() {
       try {
         await this.getArtistBySlug(this.slug).then(() => {
@@ -286,6 +295,62 @@ export default {
         }
       }
     },
+    addCart(item) {
+      let change = false;
+      this.listCart.forEach(function (valor, indice) {
+        if (valor.id == item.id) {
+          valor.cant = valor.cant + 1;
+          change = true;
+        }
+      });
+      if (change != true) {
+        const itemcar = {
+          id: item.id,
+          name: item.name,
+          slug: item.slug,
+          cant: 1,
+          hours: 1,
+          price_hour: item.price_hour,
+          zone: item.zone,
+          image: item.image,
+        };
+        this.listCart.push(itemcar);
+      }
+    },
+    onSendOrder(artist) {
+      $q.notify({
+        spinner: QSpinnerGears,
+        message: "Agregando al carrito...",
+        timeout: 200,
+      });
+      const formData = new FormData();
+      formData.append("service_id", artist.id);
+      formData.append("name", artist.name);
+      formData.append("price", artist.price_hour);
+      formData.append("hours", this.hours);
+      formData.append("order_date_start", this.printDateStart());
+      formData.append("order_date_finish", this.printDateFinish());
+      this.create_order(formData).then(() => {
+        $q.notify({
+          type: "positive",
+          spinner: QSpinnerAudio,
+          message: "Artista agregado",
+          timeout: 1000,
+        });
+      });
+    },
+    printDateStart: function () {
+      return new Date().toLocaleString();
+    },
+    printDateFinish: function () {
+      var currentDate = new Date();
+      return this.addDays(currentDate, 2);
+    },
+    addDays(date, days) {
+      date.setDate(date.getDate() + days);
+      return date.toLocaleString();
+    },
+
     onSubmit() {},
   },
   created() {
@@ -298,6 +363,7 @@ export default {
     ...mapState({
       artist: (state) => state.clientMusicalGenders.artistGender,
     }),
+    ...mapGetters("shoppingCard", ["stateListShopingCard"]),
     mode: function () {
       return this.$q.dark.isActive;
     },

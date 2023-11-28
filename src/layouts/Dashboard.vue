@@ -18,8 +18,10 @@
         <!-- bottom dropdown  -->
         <div class="text-right" style="color: gray">
           <!-- Icons bell and wrench -->
-          <small>
-            <icon-cart v-if="getMe.role[0] == 'cliente'"></icon-cart>
+          <small v-if="getMe.role[0] == 'cliente'">
+            <router-link to="/client/shopping-cart">
+              <icon-cart></icon-cart>
+            </router-link>
           </small>
           <!-- FinIcons bell and wrench -->
 
@@ -226,7 +228,13 @@
               <q-item-section class="text-weight-bold" v-if="$can('create-card')"> COMPRAS </q-item-section>
             </q-item> -->
 
-          <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+            <q-item
+            clickable
+            v-ripple
+            to="/client/store"
+            v-if="$can('view-store')"
+            active-class="text-accent"
+          >
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-store" />
             </q-item-section>
