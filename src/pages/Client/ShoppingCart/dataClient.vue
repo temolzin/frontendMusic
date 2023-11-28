@@ -182,7 +182,7 @@
               </div>
               <div class="col-6">
                 <q-item>
-                  <q-input dense autogrow outlined class="full-width"
+                  <q-input dense autogrow outlined class="full-width" v-model="cvv"
                     label="CVV *" />
                 </q-item>
               </div>
@@ -281,7 +281,7 @@
             </q-card>
 
             <q-stepper-navigation>
-              <q-btn rounded @click="done3 = true" class="float-right q-mr-md q-mb-md" color="blue"
+              <q-btn rounded @click="pay()" class="float-right q-mr-md q-mb-md" color="blue"
                 label="Realizar Compra" />
               <q-btn flat @click="step = 2" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
             </q-stepper-navigation>
@@ -334,7 +334,7 @@
 <script>
 import { defineComponent } from "vue";
 import { useQuasar } from "quasar";
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import { ref } from "vue";
 
 let $q;
@@ -381,12 +381,29 @@ export default defineComponent({
       formClient,
       form,
       step,
+      cvv: ref(0),
+      selectedCardIndex: ref(null)
     };
   },
   methods: {
     ...mapActions("card", ["showCards"]),
     ...mapActions("shoppingCard", ["getListShoppingCard"]),
-    ...mapActions("card", ["createCard"]),
+    ...mapActions("shoppingCard", ["deleteItembyId"]),
+    ...mapActions("shoppingCard", ["updateItemShoppingCart"]),
+    ...mapActions("card", ["getCards"]),
+    ...mapActions("shoppingCard", ["createPayment"]),
+    async gettCards() {
+      try {
+        await this.getCards();
+      } catch (err) {
+        if (err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
     async createNewOrders() {
       try {
         await this.createNewOrder(this.formClient.value);
@@ -434,17 +451,90 @@ export default defineComponent({
       console.log("Selected Card:", this.selectedCard);
       this.basic = false;
     },
+    async pay () {
+
+      OpenPay.setId(this.$q.config.OpenPayID);
+      OpenPay.setApiKey(this.$q.config.OpenPayKey);
+      OpenPay.setSandboxMode(this.$q.config.OpenPaySanboxMode);
+
+      var deviceDataId = OpenPay.deviceData.setup("formId");
+      const cardData = this.stateCards.find(item => item.id === this.selectedCard);
+      const dateCard = this.selectedCard.expiration_date.split("/");
+      const card_numberArr = this.selectedCard.number_card.split(" - ");
+      const card_number = card_numberArr[0] + card_numberArr[1] + card_numberArr[2] + card_numberArr[3];
+
+      OpenPay.token.create({
+        "card_number": card_number,
+        "holder_name": this.formClient.first_name + " " + this.formClient.first_last,
+        "expiration_year": dateCard[1],
+        "expiration_month": dateCard[0],
+        "cvv2": this.cvv,
+        "address":{
+          "city": this.formClient.city,
+          "postal_code": this.formClient.zip_code,
+          "line1": this.formClient.adress_line2,
+          "state": this.formClient.state_city,
+          "country_code": "MX"
+        }
+      }, async (response) => {
+        let artistList = []
+        this.stateListShopingCard[0].shopping_card_detail.map((element) => {
+          let obj = [element.artist_id, element.price]
+          artistList.push(obj)
+        });
+        const data = {
+          card_holder_name: this.formClient.first_name + " " + this.formClient.first_last,
+          card_number: card_number,
+          expiration_month: dateCard[0],
+          expiration_year: dateCard[1],
+          cvv2: this.cvv,
+          amount: this.stateListShopingCard[0].total,
+          name: this.formClient.first_name,
+          last_name: this.formClient.first_last,
+          email: this.formClient.email,
+          address: this.formClient.adress_line2,
+          city: this.formClient.state_city,
+          state: this.formClient.city,
+          zip_code: this.formClient.zip_code,
+          deviceSessionId: deviceDataId,
+          token : response.data.id,
+          artistList: artistList
+        }
+
+        try {
+          const response = await this.createPayment(data);
+          console.log(response.data)
+          $q.notify({
+            type: "positive",
+            message: "Tu transacción se realizó con exito",
+          });
+        } catch (err) {
+          $q.notify({
+            type: "negative",
+            message: err,
+          });
+        }
+
+      });
+      
+    }
   },
   computed: {
     ...mapGetters("card", ["stateUserCards"]),
     ...mapGetters("shoppingCard", ["stateListShopingCard"]),
+    ...mapGetters("card", ["stateCards"]),
+    ...mapState({
+      cards: (state) => state.card.cards,
+    }),
   },
   created() {
+    this.gettCards();
     this.showCards();
     this.getListShoppingCard();
   },
   mounted() {
     $q = useQuasar();
+
   },
 });
 </script>

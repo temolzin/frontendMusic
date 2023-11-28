@@ -15,7 +15,7 @@
             <q-card-section class="col-2 flex flex-center">
               <q-btn round>
                 <q-avatar size="80px">
-                  <img :src="getMe.image" />
+                  <img :src="getBackendImageUrl(getMe.image)" />
                 </q-avatar>
               </q-btn>
             </q-card-section>
@@ -331,6 +331,13 @@ export default {
       });
       this.image_profile = [];
     },
+    getBackendImageUrl(image) {
+      const baseURL = this.$q.config.backendUrl;
+
+      if (image) {
+        return baseURL + image;
+      }
+    }
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),

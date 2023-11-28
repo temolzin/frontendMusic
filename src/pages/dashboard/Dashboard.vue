@@ -4,7 +4,7 @@
       <q-item>
         <q-item-section avatar>
           <q-avatar>
-            <img :src="getMe.image" />
+            <img :src="getBackendImageUrl(getMe.image)" />
           </q-avatar>
         </q-item-section>
 
@@ -166,6 +166,13 @@ export default {
           },
         ],
       });
+    },
+    getBackendImageUrl(image) {
+      const BaseURL = this.$q.config.backendUrl;
+      
+      if (image) {
+        return BaseURL + image;
+      }
     },
   },
   created() {
