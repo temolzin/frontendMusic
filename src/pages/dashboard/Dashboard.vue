@@ -4,7 +4,7 @@
       <q-item>
         <q-item-section avatar>
           <q-avatar>
-            <img :src="getMe.image" />
+            <img :src="getBackendImageUrl(getMe.image)" />
           </q-avatar>
         </q-item-section>
 
@@ -28,7 +28,7 @@
   <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general >
 
   <q-page padding>
-    <q-table v-if="getMe.role[0] === 'cliente'"
+    <q-table v-if="getMe.role[0] === 'cliente' && skeleton == false"
       grid
       card-class="bg-primary text-white"
       :rows="stateFavouriteArtists"
@@ -36,6 +36,7 @@
       row-key="name"
       no-data-label="Sin registros"
       no-results-label="Ningún registro coincidente"
+      :rows-per-page-options="[6, 12 , 18 , 24, 30]"
     >
       <template v-slot:top-left>
         <p class="q-mt-sm q-mb-sm text-h4" v-if="skeleton == false">
@@ -166,6 +167,13 @@ export default {
         ],
       });
     },
+    getBackendImageUrl(image) {
+      const BaseURL = this.$q.config.backendUrl;
+      
+      if (image) {
+        return BaseURL + image;
+      }
+    },
   },
   created() {
     this.gettFavouriteArtists();
@@ -176,4 +184,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+.imageArtist {
+  max-height: 200px;
+  min-height: 200px;
+  object-fit: cover;
+}
+</style>

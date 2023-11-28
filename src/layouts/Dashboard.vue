@@ -18,56 +18,15 @@
         <!-- bottom dropdown  -->
         <div class="text-right" style="color: gray">
           <!-- Icons bell and wrench -->
-          <small>
-            <icon-cart v-if="getMe.role[0] == 'cliente'"></icon-cart>
+          <small v-if="getMe.role[0] == 'cliente'">
+            <router-link to="/client/shopping-cart">
+              <icon-cart></icon-cart>
+            </router-link>
           </small>
           <!-- FinIcons bell and wrench -->
 
           <!-- Card info profile -->
-          <q-btn-dropdown class="q-ml-sm" round outline flat>
-            <template v-slot:label>
-              <div class="row items-center no-wrap">
-                <q-avatar size="40px">
-                  <img :src="getMe.image" />
-                </q-avatar>
-              </div>
-            </template>
-            <div class="row no-wrap q-ma-md">
-              <div class="column items-center">
-                <q-avatar size="82px">
-                  <img :src="getMe.image" class="" />
-                </q-avatar>
-                <div class="text-subtitle1 q-mt-md q-mb-xs">
-                  {{ getMe.name }}
-                </div>
-                <b style="text-transform: capitalize">{{ getMe.role[0] }}</b>
-                <small class="q-mt-sm">{{ getMe.email }}</small>
-
-                <div class="row q-mt-md q-ma-sm">
-                  <q-btn
-                    outline
-                    color="indigo col-5"
-                    label="Editar perfil"
-                    push
-                    size="sm"
-                    v-close-popup
-                    to="/dashboard/user/profile"
-                    v-if="$can('edit-profile')"
-                  />
-                  <div class="col-2"></div>
-                  <q-btn
-                    outline
-                    color="red col-5"
-                    label="Cerrar Sesión"
-                    push
-                    size="sm"
-                    v-close-popup
-                    @click="logout"
-                  />
-                </div>
-              </div>
-            </div>
-          </q-btn-dropdown>
+          <ProfilePhoto></ProfilePhoto>
           <!-- Card info profile -->
         </div>
         <!-- Fin bottom dropdown  -->
@@ -269,7 +228,13 @@
               <q-item-section class="text-weight-bold" v-if="$can('create-card')"> COMPRAS </q-item-section>
             </q-item> -->
 
-          <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+            <q-item
+            clickable
+            v-ripple
+            to="/client/store"
+            v-if="$can('view-store')"
+            active-class="text-accent"
+          >
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-store" />
             </q-item-section>
@@ -352,7 +317,8 @@
           <q-item
             clickable
             v-ripple
-            v-if="$can('create-card')"
+            to="/client/shopping-cart/view-my-order-details"
+            v-if="$can('view-my-order-details')"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
@@ -361,7 +327,7 @@
 
             <q-item-section> Mis Compras </q-item-section>
           </q-item>
-
+          
           <q-item
             clickable
             v-ripple
@@ -422,9 +388,10 @@ import { ref } from "vue";
 import { mapGetters, mapActions } from "vuex";
 import iconCart from "src/components/ShoppingCart/iconCart.vue";
 import SearchBar from "src/components/SearchBar/SearchBar.vue";
+import ProfilePhoto from "src/components/ProfilePhoto.vue";
 
 export default {
-  components: { iconCart,SearchBar },
+  components: { iconCart, SearchBar, ProfilePhoto },
   setup() {
     const leftDrawerOpen = ref(false);
 

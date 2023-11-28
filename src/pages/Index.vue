@@ -28,24 +28,27 @@
 
   <!-- Inicio de presupuesto -->
   <div class="row justify-center up-card">
-    <q-card class="my-card shadow-8" style="width: 950px">
-      <q-card-section class="row justify-center">
-        <div class="col-12 col-xs-6 col-sm-3 col-md-3 q-pa-sm">
-          <h6 class="q-ma-none">¿Qué necesitas?</h6>
-          <q-select filled :options="options" label="Seccionar" />
-        </div>
-        <div class="col-12 col-xs-6 col-sm-3 col-md-3 q-pa-sm">
-          <h6 class="q-ma-none">¿Cuándo?</h6>
-          <q-input filled type="date" />
-        </div>
-        <div class="col-12 col-xs-6 col-sm-4 col-md-4 q-pa-sm">
-          <h6 class="q-ma-none">¿Doné será el evento?</h6>
-          <q-input filled label="Ejemplo: Ciudad de México, Puebla ,México" />
-        </div>
-        <div class="col-12 col-xs-6 col-sm-2 col-md-2 q-pa-sm">
-          <h6 class="q-ma-none">ㅤㅤ</h6>
-          <q-btn v-ripple class="" color="primary" label="Pedir Presupuesto" />
-        </div>
+    <q-card
+      class="my-card shadow-8"
+      style="width: 550px; justify-content: center"
+    >
+      <q-card-section
+        class="row justify-center text-center"
+        style="width: 550px; justify-content: center"
+      >
+        <h6 class="q-ma-none" style="justify-content: center">
+          ¿Necesitas una Cotizacion de tu evento?
+        </h6>
+
+        <q-btn
+          v-ripple
+          rounded
+          icon="assignment"
+          color="primary"
+          label="Cotiza tu evento aqui"
+          @click="$router.push('/quotations')"
+        >
+        </q-btn>
       </q-card-section>
     </q-card>
   </div>
@@ -115,7 +118,7 @@
               </div>
             </q-img>
             <q-btn
-              :to="'/search/' + stateArtist.slug"
+              :to="'/client/musical-genders/'+ stateArtist.musical_genders[0].name + '/' + stateArtist.slug"
               color="primary"
               icon="arrow_forward"
               class="absolute"

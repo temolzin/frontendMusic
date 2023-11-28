@@ -79,7 +79,11 @@ module.exports = configure(function (ctx) {
     framework: {
       plugins: [],
       config: {
-        dark: 'auto'
+        dark: 'auto',
+        backendUrl: 'http://127.0.0.1:8000',
+        OpenPayID: 'moe7dmj3v9h6zthgntqg',
+        OpenPayKey: 'pk_1c6cf0acf7c14b67ab93dd3ea055892f', 
+        OpenPaySanboxMode: true
       },
 
       // iconSet: 'material-icons', // Quasar icon set
