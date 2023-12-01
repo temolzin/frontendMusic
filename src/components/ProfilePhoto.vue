@@ -69,8 +69,10 @@ export default {
       const baseURL = this.$q.config.backendUrl;
 
       if (image) {
-        return baseURL + image;
-
+        if (image.startsWith('http://') || image.startsWith('https://')) {
+            return image;
+          }
+          return baseURL + image;
       }
     }
   }
