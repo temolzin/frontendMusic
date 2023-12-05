@@ -1,4 +1,3 @@
 export const setArtistSales = (state, artistSales) => {
-    state.artistSales = artistSales;
-  };
-  
+  state.artistSales = artistSales;
+};
