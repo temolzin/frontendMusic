@@ -147,7 +147,7 @@
           <q-item
             clickable
             v-ripple
-            to="/"
+            to="/artist/artistSales"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
           >
