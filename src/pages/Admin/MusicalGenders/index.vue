@@ -9,6 +9,7 @@
       :filter="filter"
       no-data-label="Sin registros"
       no-results-label="Ningún registro coincidente"
+      rows-per-page-label="Géneros por página"
     >
       <template v-slot:top>
         <b class="text-h5">
@@ -453,7 +454,8 @@ export default {
           .dialog({
             title: "Mensaje de confirmación",
             message: `¿Estas seguro de eliminar el registro de ${name}`,
-            cancel: true,
+            cancel: "Cancelar",
+            ok: "Confirmar",
             persistent: true,
           })
           .onOk(() => {

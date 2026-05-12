@@ -9,6 +9,7 @@
         row-key="name"
         no-data-label="Sin registros"
         no-results-label="Ningún registro coincidente"
+        rows-per-page-label="Favoritos por página"
       >
         <template v-slot:top-left>
           <p class="q-mt-sm q-mb-sm text-h4" v-if="skeleton == false">

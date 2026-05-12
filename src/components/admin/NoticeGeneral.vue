@@ -18,7 +18,7 @@
             <div class="text-h2">Usuarios</div>
             <div class="text-subtitle1">
                 Para mantener los registros actualizados y garantizar una gestión eficiente
-                 de usuarios, te invitamos a administrar tu lista de usuarios o agregar nuevos.
+                de usuarios, te invitamos a administrar tu lista de usuarios o agregar nuevos.
             </div>
             <q-btn outline label="Ver más" class="q-mt-md" to="/admin/users"/>
           </div>
@@ -32,7 +32,7 @@
             <div class="text-h2">Roles</div>
             <div class="text-subtitle1">
                 Para garantizar una mayor seguridad, es esencial mantener actualizados y
-                 gestionar de manera adecuada los roles en el sistema.
+                gestionar de manera adecuada los roles en el sistema.
             </div>
             <q-btn outline label="Ver más" class="q-mt-md" to="/admin/roles"/>
           </div>

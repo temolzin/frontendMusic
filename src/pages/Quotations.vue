@@ -91,7 +91,7 @@
                             <div class="row items-center justify-end">
                               <q-btn
                                 v-close-popup
-                                label="Close"
+                                label="Cerrar"
                                 color="primary"
                                 flat
                               />
