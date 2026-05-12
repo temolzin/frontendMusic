@@ -171,7 +171,7 @@ export default {
       });
     },
     printDateStart: function () {
-      return new Date().toLocaleString();
+      return this.formatCartDate(new Date());
     },
     printDateFinish: function () {
       var d = new Date();
@@ -179,7 +179,10 @@ export default {
     },
     sumarDias(fecha, dias) {
       fecha.setDate(fecha.getDate() + dias);
-      return fecha.toLocaleString();
+      return this.formatCartDate(fecha);
+    },
+    formatCartDate(date) {
+      return date.toISOString().slice(0, 19).replace("T", " ");
     },
   },
   created() {

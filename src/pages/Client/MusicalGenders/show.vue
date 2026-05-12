@@ -340,7 +340,7 @@ export default {
       });
     },
     printDateStart: function () {
-      return new Date().toLocaleString();
+      return this.formatCartDate(new Date());
     },
     printDateFinish: function () {
       var currentDate = new Date();
@@ -348,7 +348,10 @@ export default {
     },
     addDays(date, days) {
       date.setDate(date.getDate() + days);
-      return date.toLocaleString();
+      return this.formatCartDate(date);
+    },
+    formatCartDate(date) {
+      return date.toISOString().slice(0, 19).replace("T", " ");
     },
 
     onSubmit() {},
