@@ -9,6 +9,7 @@
       :filter="filter"
       no-data-label="Sin registros"
       no-results-label="Ningún registro coincidente"
+      rows-per-page-label="Usuarios por página"
     >
       <template v-slot:top>
         <b class="text-h5">
@@ -142,8 +143,8 @@
               />
               <!-- Fin Select -->
               <q-card-actions align="right" class="text-primary">
-                <q-btn flat label="Cancel" v-close-popup color="red" />
-                <q-btn flat label="Submit" type="submit" color="primary" />
+                <q-btn flat label="Cancelar" v-close-popup color="red" />
+                <q-btn flat label="Enviar" type="submit" color="primary" />
               </q-card-actions>
             </q-form>
           </q-card-section>
@@ -201,8 +202,8 @@
               />
               <!-- Fin Select -->
               <q-card-actions align="right" class="text-primary">
-                <q-btn flat label="Cancel" v-close-popup color="red" />
-                <q-btn flat label="Submit" type="submit" color="primary" />
+                <q-btn flat label="Cancelar" v-close-popup color="red" />
+                <q-btn flat label="Enviar" type="submit" color="primary" />
               </q-card-actions>
             </q-form>
           </q-card-section>
@@ -342,7 +343,8 @@ export default {
         .dialog({
           title: "Mensaje de confirmación",
           message: `¿Estas seguro de eliminar el registro de ${props.row.name}`,
-          cancel: true,
+          cancel: "Cancelar",
+          ok: "Confirmar",
           persistent: true,
         })
         .onOk(() => {

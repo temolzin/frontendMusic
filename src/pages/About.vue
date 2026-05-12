@@ -57,8 +57,8 @@
           <div class="text-overline">Paso 1</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Regístrate con nosostros</div>
           <div class="text-caption text-black">
-               Ingresa a nuestra app y regístrate de manera rápida y sencilla.
-               Solo necesitas unos minutos  para crear tu cuenta y estará todo listo.
+              Ingresa a nuestra app y regístrate de manera rápida y sencilla.
+              Solo necesitas unos minutos  para crear tu cuenta y estará todo listo.
           </div>
         </q-card-section>
 
@@ -73,7 +73,7 @@
       <q-separator />
       <q-card-actions>
         <q-btn flat color="primary" to="/register">
-          GO
+          Ir
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -100,7 +100,7 @@
       <q-separator />
       <q-card-actions>
         <q-btn flat color="primary" to="/login">
-          GO
+          Ir
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -125,7 +125,7 @@
       <q-separator />
       <q-card-actions>
         <q-btn flat color="primary" to="/login">
-          GO
+          Ir
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -136,8 +136,8 @@
           <div class="text-overline">Paso 4</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Contrata a tu Artista Favorito!</div>
           <div class="text-caption text-black">
-             Una vez que estés completamente satisfecho con todos los detalles,
-             confirma desde nuestra aplicación, de forma rápida y segura.
+            Una vez que estés completamente satisfecho con todos los detalles,
+            confirma desde nuestra aplicación, de forma rápida y segura.
           </div>
         </q-card-section>
 
@@ -152,7 +152,7 @@
       <q-separator />
       <q-card-actions>
         <q-btn flat color="primary" to="/login">
-          GO
+          Ir
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -192,7 +192,7 @@
           7715678903
         </q-btn>
         <q-btn flat color="primary">
-          Reserve
+          Reservar
         </q-btn>
       </q-card-actions>
     </q-card>

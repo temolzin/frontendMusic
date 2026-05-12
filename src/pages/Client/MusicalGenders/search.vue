@@ -65,6 +65,7 @@
         hide-header
         no-data-label="Sin registros"
         no-results-label="Ningún registro coincidente"
+        rows-per-page-label="Géneros por página"
       >
         <template v-slot:top-left>
           <h5

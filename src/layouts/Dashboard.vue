@@ -51,7 +51,7 @@
             v-if="getMe.role[0] == 'administrador'"
           >
             <q-item-section class="text-weight-bold">
-              DASHBOARD
+              PANEL
             </q-item-section>
           </q-item>
 

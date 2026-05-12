@@ -3,7 +3,7 @@
     <q-card style="min-width: 350px">
       <q-card-section>
         <div class="text-h6">
-          Edit product "{{ stateProduct.product.name }}"
+          Editar producto "{{ stateProduct.product.name }}"
         </div>
       </q-card-section>
 
@@ -13,23 +13,23 @@
             dense
             v-model="editForm.name"
             autofocus
-            label="Name product"
+            label="Nombre del producto"
             :rules="[(val) => !!val || 'Field is required']"
           />
           <q-input
             dense
             v-model="editForm.price"
-            label="Price product"
+            label="Precio del producto"
             :rules="[(val) => !!val || 'Field is required']"
           />
         </form>
       </q-card-section>
 
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat label="Cancel" v-close-popup />
+        <q-btn flat label="Cancelar" v-close-popup />
         <q-btn
           flat
-          label="Submit"
+          label="Enviar"
           type="submit"
           v-on:click="upProduct"
           v-close-popup
@@ -40,7 +40,7 @@
 
   <section>
     <div class="q-pa-md q-gutter-sm">
-      <q-btn class="" label="Create" color="primary" @click="prompt = true" />
+      <q-btn class="" label="Crear" color="primary" @click="prompt = true" />
       <q-dialog v-model="prompt" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
@@ -66,10 +66,10 @@
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
-            <q-btn flat label="Cancel" v-close-popup />
+            <q-btn flat label="Cancelar" v-close-popup />
             <q-btn
               flat
-              label="Submit"
+              label="Enviar"
               type="submit"
               v-on:click="createPro"
               v-close-popup

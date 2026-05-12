@@ -66,7 +66,7 @@
 
               <q-stepper-navigation>
                 <q-btn rounded @click="() => { done1 = true; step = 2; }" class="float-right q-mr-md q-mb-md" color="blue"
-                  label="Next"
+                  label="Siguiente"
                   :disable="!formClient.first_name || !formClient.first_last || !formClient.email || !formClient.adress_line2 || !formClient.city || !formClient.state_city || !formClient.zip_code || !formClient.country" />
               </q-stepper-navigation>
             </q-form>
@@ -209,8 +209,8 @@
 
             <q-stepper-navigation>
               <q-btn rounded @click="() => { done2 = true; step = 3; }" class="float-right q-mr-md q-mb-md" color="blue"
-                label="Next" />
-              <q-btn flat @click="step = 1" color="primary" rounded label="Back" class="q-mr-sm float-right" />
+                label="Siguiente" />
+              <q-btn flat @click="step = 1" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
             </q-stepper-navigation>
           </q-step>
 

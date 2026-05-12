@@ -52,7 +52,7 @@
         <q-tabs v-if="$q.screen.gt.xs">
           <q-route-tab to="/" label="Inicio" />
           <q-route-tab to="/artist-list" label="Artistas" />
-          <q-route-tab to="/about" label="More" />
+          <q-route-tab to="/about" label="Más" />
         </q-tabs>
         <!-- Fin de Links para navegar entre paginas -->
 
@@ -70,7 +70,7 @@
 
             <q-route-tab
               to="/dashboard/home"
-              label="Dashboard"
+              label="PANEL"
               v-if="isAuthenticated == true"
             />
           </q-tabs>
@@ -130,7 +130,7 @@
                 <q-icon name="dashboard" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>Dashboard</q-item-label>
+                <q-item-label>Panel</q-item-label>
               </q-item-section>
             </q-item>
           </div>

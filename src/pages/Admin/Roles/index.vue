@@ -9,6 +9,7 @@
       :filter="filter"
       no-data-label="Sin registros"
       no-results-label="Ningún registro coincidente"
+      rows-per-page-label="Roles por página"
     >
       <template v-slot:top>
         <b class="text-h5">
@@ -225,10 +226,10 @@
           </q-card-section>
 
           <q-card-actions align="right" class="text-primary">
-            <q-btn flat label="Cancel" v-close-popup @click="onReset" />
+            <q-btn flat label="Cancelar" v-close-popup @click="onReset" />
             <q-btn
               flat
-              label="Submit"
+              label="Enviar"
               type="submit"
               v-close-popup
               v-on:click="editRole"
@@ -330,7 +331,8 @@ export default {
           .dialog({
             title: "Mensaje de confirmación",
             message: `¿Estas seguro de eliminar el registro de ${name}`,
-            cancel: true,
+            cancel: "Cancelar",
+            ok: "Confirmar",
             persistent: true,
           })
           .onOk(() => {
