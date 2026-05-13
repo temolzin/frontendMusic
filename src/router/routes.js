@@ -165,7 +165,7 @@ const routes = [
         },
       },
       {
-        name: "artist.view-profile-artist",
+        name: "artist.view-sales",
         path: "/artist/artistSales",
         component: import("pages/Artist/Sales.vue"),
         meta: {
