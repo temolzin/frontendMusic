@@ -340,7 +340,7 @@ export default {
       });
     },
     printDateStart: function () {
-      return new Date().toLocaleString();
+      return this.formatCartDate(new Date());
     },
     printDateFinish: function () {
       var currentDate = new Date();
@@ -348,7 +348,18 @@ export default {
     },
     addDays(date, days) {
       date.setDate(date.getDate() + days);
-      return date.toLocaleString();
+      return this.formatCartDate(date);
+    },
+    formatCartDate(date) {
+      const pad = (value) => String(value).padStart(2, "0");
+      const year = date.getFullYear();
+      const month = pad(date.getMonth() + 1);
+      const day = pad(date.getDate());
+      const hours = pad(date.getHours());
+      const minutes = pad(date.getMinutes());
+      const seconds = pad(date.getSeconds());
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     },
 
     onSubmit() {},

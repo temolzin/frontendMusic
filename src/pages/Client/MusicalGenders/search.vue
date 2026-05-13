@@ -75,7 +75,6 @@
           >
             Resultados relacionados a {{ clientMusicalGenders[0].name }}
           </h5>
-          <q-skeleton width="400px" v-if="skeleton == true" />
         </template>
         <template v-slot:top-right>
           <q-input
@@ -286,7 +285,7 @@ export default {
       });
     },
     printDateStart: function () {
-      return new Date().toLocaleString();
+      return this.formatCartDate(new Date());
     },
     printDateFinish: function () {
       var d = new Date();
@@ -294,7 +293,18 @@ export default {
     },
     sumarDias(fecha, dias) {
       fecha.setDate(fecha.getDate() + dias);
-      return fecha.toLocaleString();
+      return this.formatCartDate(fecha);
+    },
+    formatCartDate(date) {
+      const pad = (value) => String(value).padStart(2, "0");
+      const year = date.getFullYear();
+      const month = pad(date.getMonth() + 1);
+      const day = pad(date.getDate());
+      const hours = pad(date.getHours());
+      const minutes = pad(date.getMinutes());
+      const seconds = pad(date.getSeconds());
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     },
     async addFavouriteArtist(id) {
       this.addFavourite.artist_id = id;

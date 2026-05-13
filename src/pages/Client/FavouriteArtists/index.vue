@@ -171,7 +171,7 @@ export default {
       });
     },
     printDateStart: function () {
-      return new Date().toLocaleString();
+      return this.formatCartDate(new Date());
     },
     printDateFinish: function () {
       var d = new Date();
@@ -179,7 +179,20 @@ export default {
     },
     sumarDias(fecha, dias) {
       fecha.setDate(fecha.getDate() + dias);
-      return fecha.toLocaleString();
+      return this.formatCartDate(fecha);
+    },
+    padCartDatePart(value) {
+      return String(value).padStart(2, "0");
+    },
+    formatCartDate(date) {
+      const year = date.getFullYear();
+      const month = this.padCartDatePart(date.getMonth() + 1);
+      const day = this.padCartDatePart(date.getDate());
+      const hours = this.padCartDatePart(date.getHours());
+      const minutes = this.padCartDatePart(date.getMinutes());
+      const seconds = this.padCartDatePart(date.getSeconds());
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     },
   },
   created() {
