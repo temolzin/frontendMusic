@@ -172,62 +172,6 @@
             <q-item-section> Mi Membrecía </q-item-section>
           </q-item>
 
-          <q-item
-            to="/dashboard/home"
-            clickable
-            active-class="text-accent text-weight-bold"
-            v-if="getMe.role[0] == 'artista'"
-          >
-            <q-item-section class="text-weight-bold">
-              OTRAS CONFIGURACIONES
-            </q-item-section>
-          </q-item>
-
-          <q-item
-            clickable
-            v-ripple
-            to="/"
-            v-if="$can('view-profile-artist')"
-            active-class="text-accent text-weight-bold"
-          >
-            <q-item-section avatar>
-              <q-icon name="fas fa-solid fa-microphone" />
-            </q-item-section>
-
-            <q-item-section> Perfil de Artista </q-item-section>
-          </q-item>
-
-          <q-item
-            clickable
-            v-ripple
-            to="/"
-            v-if="$can('view-profile-artist')"
-            active-class="text-accent text-weight-bold"
-          >
-            <q-item-section avatar>
-              <q-icon name="fas fa-solid fa-cart-arrow-down" />
-            </q-item-section>
-
-            <q-item-section> Mis ventas</q-item-section>
-          </q-item>
-
-          <q-item
-            clickable
-            v-ripple
-            to="/"
-            v-if="$can('view-profile-artist')"
-            active-class="text-accent text-weight-bold"
-          >
-            <q-item-section avatar>
-              <q-icon name="fas fa-solid fa-address-card" />
-            </q-item-section>
-
-            <q-item-section> Mi Membrecía </q-item-section>
-          </q-item>
-          <!-- <q-item >
-              <q-item-section class="text-weight-bold" v-if="$can('create-card')"> COMPRAS </q-item-section>
-            </q-item> -->
-
             <q-item
             clickable
             v-ripple

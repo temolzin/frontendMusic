@@ -216,9 +216,8 @@
               <div class="col-12 col-xs-12 col-sm-3 col-md-3">
                 <p class="text-weight-bold">Música GSM</p>
                 <p>
-                  Here you can use rows and columns to organize your footer
-                  content. Lorem ipsum dolor sit amet, consectetur adipisicing
-                  elit.
+                  Plataforma dedicada a conectar artistas musicales con clientes
+                  que buscan el mejor talento para sus eventos.
                 </p>
               </div>
 
