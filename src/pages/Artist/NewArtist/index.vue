@@ -55,7 +55,7 @@
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="higth: 50px"
+                style="height: 50px"
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
                 hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
@@ -416,7 +416,7 @@
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="higth: 50px"
+                style="height: 50px"
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
                 hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
