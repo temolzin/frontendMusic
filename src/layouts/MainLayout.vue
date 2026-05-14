@@ -382,11 +382,9 @@ export default {
   async created() {
     this.getArtistss();
     const saved = localStorage.getItem('darkMode');
-    if (saved !== null) {
-      const isDark = saved === 'true';
-      this.$q.dark.set(isDark);
-      this.isActiveDarkMode = isDark;
-    }
+    const isDark = saved !== null ? saved === 'true' : this.mode;
+    this.$q.dark.set(isDark);
+    this.isActiveDarkMode = isDark;
   },
   computed: {
     ...mapGetters("auth", ["isAuthenticated"]),

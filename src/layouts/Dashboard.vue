@@ -365,13 +365,9 @@ export default {
   created() {
     this.getArtistss();
     const saved = localStorage.getItem('darkMode');
-    if (saved !== null) {
-      const isDark = saved === 'true';
-      this.$q.dark.set(isDark);
-      this.isActiveDarkMode = isDark;
-    } else {
-      this.isActiveDarkMode = this.mode;
-    }
+    const isDark = saved !== null ? saved === 'true' : this.mode;
+    this.$q.dark.set(isDark);
+    this.isActiveDarkMode = isDark;
   },
   methods: {
     ...mapActions("artistList", ["getArtists"]),
