@@ -51,24 +51,24 @@ export default {
     methods: {
         ...mapActions("UsersSuscribe", ["sendEmail"]),
         async sendEmails() {
-                try {
-                    const jsonData = {
-                        subject: this.emailSubject,
-                        content: this.emailContent,
-                    };
-                    await this.sendEmail(jsonData);
-                    this.emailSubject = '';
-                    this.emailContent = '';
+            try {
+                const jsonData = {
+                    subject: this.emailSubject,
+                    content: this.emailContent,
+                };
+                await this.sendEmail(jsonData);
+                this.emailSubject = '';
+                this.emailContent = '';
                 $q.notify({
                     type: "positive",
                     message: `Se envió el email de forma correcta`,
-                    });
+                });
             } catch (err) {
                 $q.notify({
                 type: "negative",
                 message: `Algo salió mal, vuelve a intentarlo más tarde ${err}`
-                });
-            }
+            });
+        }
     },
 },
     computed: {
