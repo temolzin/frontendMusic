@@ -449,31 +449,31 @@ export default {
       try {
         let id = props.row.id;
         let name = props.row.name;
-        
+
         this.$q
-        .dialog({
-          title: "Mensaje de confirmación",
-          message: `¿Estas seguro de eliminar el registro de ${name}`,
-          cancel: "Cancelar",
-          ok: "Confirmar",
-          persistent: true,
-        })
-        .onOk(() => {
-          try {
-            this.deleteMusicalGender(id);
-            this.$q.notify({
-              type: "positive",
-              message: `Rol ${name} eliminado correctamente`,
-            });
-          } catch (err) {
-            if (err.response.data.message) {
-              $q.notify({
-                type: "negative",
-                message: err.response.data.message,
+          .dialog({
+            title: "Mensaje de confirmación",
+            message: `¿Estas seguro de eliminar el registro de ${name}`,
+            cancel: "Cancelar",
+            ok: "Confirmar",
+            persistent: true,
+          })
+          .onOk(() => {
+            try {
+              this.deleteMusicalGender(id);
+              this.$q.notify({
+                type: "positive",
+                message: `Rol ${name} eliminado correctamente`,
               });
+            } catch (err) {
+              if (err.response.data.message) {
+                $q.notify({
+                  type: "negative",
+                  message: err.response.data.message,
+                });
+              }
             }
-          }
-        });
+          });
       } catch (error) {
         console.error(error);
       }
