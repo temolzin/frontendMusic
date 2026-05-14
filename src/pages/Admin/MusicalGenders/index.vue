@@ -447,8 +447,8 @@ export default {
     },
     removeMusicalGender(props) {
       try {
-        let id = props.row.id;
-        let name = props.row.name;
+      let id = props.row.id;
+      let name = props.row.name;
 
         this.$q
           .dialog({
@@ -459,20 +459,20 @@ export default {
             persistent: true,
           })
           .onOk(() => {
-            try {
+        try {
               this.deleteMusicalGender(id);
               this.$q.notify({
                 type: "positive",
                 message: `Rol ${name} eliminado correctamente`,
-              });
-            } catch (err) {
-              if (err.response.data.message) {
+          });
+        } catch (err) {
+          if (err.response.data.message) {
                 $q.notify({
                   type: "negative",
                   message: err.response.data.message,
-                });
-              }
-            }
+            });
+          }
+        }
           });
       } catch (error) {
         console.error(error);

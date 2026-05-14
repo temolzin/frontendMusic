@@ -85,7 +85,7 @@
       <q-dialog v-model="formCreate" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Crear rol "{{ form.name }}"</div>
+            <div class="text-h6">Crear rol{{ form.name }} </div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -171,26 +171,27 @@
       <q-dialog v-model="formEdit" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Editar rol "{{ form.name }}"</div>
+            <div class="text-h6">Editar rol</div>
           </q-card-section>
-
           <q-card-section class="q-pt-none">
-            <form class="q-gutter-md">
+            <q-form @submit="editRole" class="q-gutter-md">
               <q-input
                 dense
+                lazy-rules
                 v-model="form.name"
                 autofocus
-                label="Nombre completo"
-                :rules="[(val) => !!val || 'Field is required']"
+                label="Nombre del rol"
+                :rules="[(val) => !!val || 'El campo nombre es requerido']"
               />
               <q-input
                 dense
+                lazy-rules
                 v-model="form.description"
-                label="Correo electrónico"
-                :rules="[(val) => !!val || 'Field is required']"
+                label="Descripción del rol"
+                :rules="[(val) => !!val || 'El campo descripción es requerido']"
               />
-              <!-- Select -->
               <q-select
+                lazy-rules
                 v-model="form.selection"
                 for="permission"
                 :option-value="
@@ -209,42 +210,34 @@
                 options-dense
                 use-chips
                 filled
-                hint="Selecciona los permisos que tendra el rol"
+                hint="Selecciona los permisos que tendrá el rol"
                 color="primary"
                 :loading="false"
                 clear-icon
                 counter
                 :rules="[
                   (val) =>
-                    val.length > 1 ||
-                    'Por favor selecciona al menos 2 opciones',
+                    (val && val.length > 1) ||
+                    'Por favor selecciona al menos 2 permisos',
                 ]"
                 :options="permissions"
               />
-              <!-- Fin Select -->
-            </form>
+              <q-card-actions align="right" class="text-primary">
+                <q-btn flat label="Cancelar" v-close-popup @click="onReset" />
+                <q-btn flat label="Enviar" type="submit" />
+              </q-card-actions>
+            </q-form>
           </q-card-section>
-
-          <q-card-actions align="right" class="text-primary">
-            <q-btn flat label="Cancelar" v-close-popup @click="onReset" />
-            <q-btn
-              flat
-              label="Enviar"
-              type="submit"
-              v-close-popup
-              v-on:click="editRole"
-            />
-          </q-card-actions>
         </q-card>
       </q-dialog>
     </div>
   </section>
-  <!-- Fin de Formulario editar rol -->
 </template>
 
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
+import Swal from "sweetalert2";
 
 let $q;
 const columns = [
@@ -336,20 +329,20 @@ export default {
             persistent: true,
           })
           .onOk(() => {
-            try {
+        try {
               this.deleteRole(id);
               this.$q.notify({
                 type: "positive",
                 message: `Rol ${name} eliminado correctamente`,
-              });
-            } catch (err) {
-              if (err.response.data.message) {
+          });
+        } catch (err) {
+          if (err.response.data.message) {
                 $q.notify({
                   type: "negative",
                   message: err.response.data.message,
-                });
-              }
-            }
+            });
+          }
+        }
           });
       } catch (error) {
         console.error(error);
