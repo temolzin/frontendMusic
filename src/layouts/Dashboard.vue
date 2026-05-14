@@ -364,7 +364,10 @@ export default {
   },
   created() {
     this.getArtistss();
-    this.isActiveDarkMode = this.mode;
+    const saved = localStorage.getItem('darkMode');
+    const isDark = saved !== null ? saved === 'true' : this.mode;
+    this.$q.dark.set(isDark);
+    this.isActiveDarkMode = isDark;
   },
   methods: {
     ...mapActions("artistList", ["getArtists"]),
@@ -387,6 +390,10 @@ export default {
     },
     darkMode(val) {
       this.$q.dark.set(val);
+      localStorage.setItem('darkMode', val);
+      if (this.isAuthenticated) {
+        this.$axios.put('/api/user/dark-mode', { dark_mode: val });
+      }
     },
     redirect() {
       const toPath = this.$route.query.to || "/";
