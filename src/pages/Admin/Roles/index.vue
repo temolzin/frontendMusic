@@ -85,7 +85,7 @@
       <q-dialog v-model="formCreate" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Crear rol{{ form.name }} </div>
+            <div class="text-h6">Crear rol</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -319,7 +319,7 @@ export default {
       try {
         let id = props.row.id;
         let name = props.row.name;
-
+        
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
@@ -329,25 +329,25 @@ export default {
             persistent: true,
           })
           .onOk(() => {
-        try {
+            try {
               this.deleteRole(id);
               this.$q.notify({
                 type: "positive",
                 message: `Rol ${name} eliminado correctamente`,
-          });
-        } catch (err) {
-          if (err.response.data.message) {
+              });
+            } catch (err) {
+              if (err.response.data.message) {
                 $q.notify({
                   type: "negative",
                   message: err.response.data.message,
-            });
-          }
-        }
+                });
+              }
+            }
           });
-      } catch (error) {
-        console.error(error);
-      }
-    },
+        } catch (error) {
+          console.error(error);
+        }
+      },
     showRole(props) {
       let selected = [props.row];
       try {

@@ -363,22 +363,22 @@ export default {
           persistent: true,
         })
         .onOk(() => {
-        try {
+          try {
             this.deleteUser(props.row.id);
             this.$q.notify({
               type: "positive",
               message: `Usuario ${props.row.name} eliminado correctamente`,
-          });
-        } catch (err) {
-          if (err.response.data.message) {
+            });
+          } catch (err) {
+            if (err.response.data.message) {
               $q.notify({
                 type: "negative",
                 message: err.response.data.message,
-            });
+              });
+            }
           }
-        }
         });
-    },
+      },
 
     showUser(props) {
       try {
