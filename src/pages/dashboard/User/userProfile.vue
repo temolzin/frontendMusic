@@ -130,6 +130,7 @@
       <div class="col-12 col-sm-8 col-md-8 q-pa-md"  :class="mode?'bg-dark':'bg-white'"  style="border-radius: 5px;">
         <div class="q-pa-md">
           <q-form
+            ref="passwordForm"
             @submit="onSubmitPassword"
             @reset="onResetPassword"
             class="q-gutter-md"
@@ -269,6 +270,7 @@ export default {
           type: "positive",
           message: `Contraseña actualizada`,
         });
+        this.clearPasswordForm();
       } catch (err) {
         if (err.response.data.message) {
           $q.notify({
@@ -317,9 +319,17 @@ export default {
       this.formUpdateMain.email = this.getMe.email;
     },
     onResetPassword() {
-      this.formUpdatePassword.newPassword = null;
-      this.formUpdatePassword.confirmPassword = null;
-      this.formUpdatePassword.currentPassword = null;
+      this.formUpdatePassword.newPassword = "";
+      this.formUpdatePassword.confirmPassword = "";
+      this.formUpdatePassword.currentPassword = "";
+    },
+    clearPasswordForm() {
+      this.onResetPassword();
+      this.$nextTick(() => {
+        if (this.$refs.passwordForm) {
+          this.$refs.passwordForm.resetValidation();
+        }
+      });
     },
     onResetImageProfile() {
       this.image_profile = null;
