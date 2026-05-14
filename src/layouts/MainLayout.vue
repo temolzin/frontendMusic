@@ -334,6 +334,10 @@ export default {
     },
     darkMode(val) {
       this.$q.dark.set(val);
+      localStorage.setItem('darkMode', val);
+      if (this.isAuthenticated) {
+        this.$axios.put('/api/user/dark-mode', { dark_mode: val });
+      }
     },
     redirectToRoute(value) {
       this.$router.push(value);      
@@ -375,9 +379,14 @@ export default {
       })
     },
   },
-  created() {
+  async created() {
     this.getArtistss();
-    this.isActiveDarkMode = this.mode;
+    const saved = localStorage.getItem('darkMode');
+    if (saved !== null) {
+      const isDark = saved === 'true';
+      this.$q.dark.set(isDark);
+      this.isActiveDarkMode = isDark;
+    }
   },
   computed: {
     ...mapGetters("auth", ["isAuthenticated"]),
