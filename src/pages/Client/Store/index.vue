@@ -259,6 +259,9 @@ export default {
       fecha.setDate(fecha.getDate() + dias);
       return this.formatCartDate(fecha);
     },
+    padCartDatePart(value) {
+      return String(value).padStart(2, "0");
+    },
     formatCartDate(date) {
       const year = date.getFullYear();
       const month = this.padCartDatePart(date.getMonth() + 1);
