@@ -67,10 +67,10 @@ export default {
                 $q.notify({
                 type: "negative",
                 message: `Algo salió mal, vuelve a intentarlo más tarde ${err}`
-                });
-            }
-        },
+            });
+        }
     },
+},
     computed: {
         ...mapGetters("UsersSuscribe", ["stateEmails"]),
         mode: function () {

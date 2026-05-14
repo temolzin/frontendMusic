@@ -108,6 +108,7 @@
                 label="Correo electrónico"
                 :rules="[
                   (val) => !!val || 'El campo correo electrónico es requerido',
+                  (val) => /.+@.+\..+/.test(val) || 'Ingresa un correo válido',
                 ]"
               />
               <q-input
@@ -115,7 +116,11 @@
                 lazy-rules
                 v-model="form.password"
                 label="Contraseña"
-                :rules="[(val) => !!val || 'El campo contraseña es requerido']"
+                type="password"
+                :rules="[
+                  (val) => !!val || 'El campo contraseña es requerido',
+                  (val) => val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
+                ]"
               />
 
               <!-- Select -->
@@ -160,7 +165,7 @@
       <q-dialog v-model="formEdit" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Editar usuario {{ form.name }}</div>
+            <div class="text-h6">Editar usuario</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -176,9 +181,19 @@
                 dense
                 v-model="form.email"
                 label="Correo electrónico"
-                :rules="[(val) => !!val || 'Field is required']"
+                :rules="[
+                  (val) => !!val || 'El campo correo electrónico es requerido',
+                  (val) => /.+@.+\..+/.test(val) || 'Ingresa un correo válido',
+                ]"
               />
-              <q-input dense v-model="form.password" label="Contraseña" />
+              <q-input dense 
+              v-model="form.password" 
+              label="Contraseña"
+              type="password"
+              hint="Déjalo vacío si no deseas cambiarla"
+                :rules="[
+                  (val) => !val || val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
+                ]" />
               <!-- Select -->
               <q-select
                 v-model="form.role_id"
@@ -198,7 +213,7 @@
                 color="green"
                 :loading="false"
                 :options="roles"
-                :rules="[(val) => !!val || 'Field is required']"
+                :rules="[(val) => !!val || 'Por favor selecciona un rol']"
               />
               <!-- Fin Select -->
               <q-card-actions align="right" class="text-primary">
@@ -363,7 +378,7 @@ export default {
             }
           }
         });
-    },
+      },
 
     showUser(props) {
       try {
