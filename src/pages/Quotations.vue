@@ -267,7 +267,6 @@ export default {
       ) {
         try {
           this.newQuotation.event_hours = this.event_hours;
-
           await this.newQuotations({ ...this.newQuotation, artist_id: artistIdReal });
 
           $q.notify({
