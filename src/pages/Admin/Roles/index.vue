@@ -237,7 +237,6 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
-import Swal from "sweetalert2";
 
 let $q;
 const columns = [
