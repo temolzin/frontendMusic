@@ -193,6 +193,7 @@
     </q-card>
   </div>
 </template>
+
 <script>
 import { useQuasar, QSelect } from "quasar";
 import { mapActions } from "vuex";
@@ -252,8 +253,10 @@ export default {
     async submitForm() {
       this.loading = false;
 
+      const artistIdReal = this.newQuotation.artist_id ? this.newQuotation.artist_id.value : null;
+
       if (
-        this.newQuotation.artist_id &&
+        artistIdReal &&
         this.event_hours &&
         this.newQuotation.event_date &&
         this.newQuotation.city &&
@@ -264,25 +267,21 @@ export default {
       ) {
         try {
           this.newQuotation.event_hours = this.event_hours;
-          await this.newQuotations(this.newQuotation);
+          await this.newQuotations({ ...this.newQuotation, artist_id: artistIdReal });
+
           $q.notify({
             type: "positive",
             message: "Cotización registrada",
           });
-          const toPath = this.$route.query.to || "/";
-          this.$router.push(toPath);
+
+          this.$router.push(this.$route.query.to || "/");
         } catch (err) {
+          const msg = err.response?.data?.message || err.response?.data || "Error de conexión";
+
           $q.notify({
             type: "negative",
-            message: err.response.data,
+            message: msg,
           });
-
-          if (err.response.data.error) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.error,
-            });
-          }
         }
       } else {
         $q.notify({
