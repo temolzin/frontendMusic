@@ -152,8 +152,8 @@
                 <q-btn
                   flat
                   round
-                  :color="colorHeart"
-                  icon="fas fa-solid fa-heart"
+                  :color="isFavoriteArtist(props.row.id) ? 'red' : 'black'"
+                  :icon="isFavoriteArtist(props.row.id) ? 'fas fa-solid fa-heart' : 'far fa-heart'"
                   @click="addFavouriteArtist(props.row.id)"
                 />
                 <q-btn flat round color="primary" icon="share" />
@@ -187,7 +187,7 @@
 
 <script>
 import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import { ref } from "vue";
 
 let $q;
@@ -204,7 +204,7 @@ export default {
       showResult: null,
       starts: 4,
       listCarrito: [],
-      colorHeart: "red",
+      favoriteArtistIds: [],
       addFavourite: {
         artist_id: "",
       },
@@ -213,7 +213,7 @@ export default {
   methods: {
     ...mapActions("clientMusicalGenders", ["getMusicalGendersBySlug"]),
     ...mapActions("shoppingCard", ["create_order"]),
-    ...mapActions("favouriteArtists", ["createFavouriteArtist"]),
+    ...mapActions("favouriteArtists", ["createFavouriteArtist", "getFavouriteArtists"]),
     async gettMusicalGendersBySlug() {
       try {
         await this.getMusicalGendersBySlug(this.slug).then(() => {
@@ -310,6 +310,7 @@ export default {
       this.addFavourite.artist_id = id;
       try {
         await this.createFavouriteArtist(this.addFavourite).then(() => {
+          this.toggleFavoriteArtist(id);
           this.$q.notify({
             type: "positive",
             message: this.favouriteArtists,
@@ -325,12 +326,47 @@ export default {
         }
       }
     },
+    isFavoriteArtist(id) {
+      return this.favoriteArtistIds.includes(id);
+    },
+    toggleFavoriteArtist(id) {
+      if (this.favoriteArtistIds.includes(id)) {
+        this.favoriteArtistIds = this.favoriteArtistIds.filter((itemId) => itemId !== id);
+        return;
+      }
+      this.favoriteArtistIds.push(id);
+    },
+    syncFavoriteArtistIds() {
+      if (!Array.isArray(this.stateFavouriteArtists)) {
+        this.favoriteArtistIds = [];
+        return;
+      }
+
+      this.favoriteArtistIds = this.stateFavouriteArtists
+        .map((item) => (item && item.artist ? item.artist.id : null))
+        .filter((id) => id !== null && id !== undefined);
+    },
+    async loadFavouriteArtists() {
+      try {
+        await this.getFavouriteArtists();
+        this.syncFavoriteArtistIds();
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
   },
   created() {
     this.slug = this.$route.params.slug;
     this.gettMusicalGendersBySlug();
+    this.loadFavouriteArtists();
   },
   computed: {
+    ...mapGetters("favouriteArtists", ["stateFavouriteArtists"]),
     ...mapState({
       clientMusicalGenders: (state) =>
         state.clientMusicalGenders.artistsGenders,
