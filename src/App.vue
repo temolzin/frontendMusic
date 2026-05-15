@@ -20,9 +20,6 @@ export default defineComponent({
       api.defaults.headers.common.Authorization = "";
     }
   },
-  created() {
-    this.$q.dark.set(false);
-  },
 });
 </script>
 <style>
