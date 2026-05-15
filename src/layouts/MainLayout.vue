@@ -334,9 +334,10 @@ export default {
     },
     darkMode(val) {
       this.$q.dark.set(val);
-      localStorage.setItem('darkMode', val);
-      if (this.isAuthenticated) {
-        this.$axios.put('/api/user/dark-mode', { dark_mode: val });
+      const user = this.getMe;
+      if (user?.id) {
+        localStorage.setItem(`darkMode_${user.id}`, val);
+        this.$api.put('/api/user/dark-mode', { dark_mode: val });
       }
     },
     redirectToRoute(value) {
@@ -381,8 +382,9 @@ export default {
   },
   async created() {
     this.getArtistss();
-    const saved = localStorage.getItem('darkMode');
-    const isDark = saved !== null ? saved === 'true' : this.mode;
+    const user = this.getMe;
+    const saved = user?.id ? localStorage.getItem(`darkMode_${user.id}`) : null;
+    const isDark = saved === 'true';
     this.$q.dark.set(isDark);
     this.isActiveDarkMode = isDark;
   },
@@ -393,6 +395,14 @@ export default {
 
     mode: function () {
       return this.$q.dark.isActive;
+    },
+  },
+  watch: {
+    getMe(user) {
+      const saved = user?.id ? localStorage.getItem(`darkMode_${user.id}`) : null;
+      const isDark = saved === 'true';
+      this.$q.dark.set(isDark);
+      this.isActiveDarkMode = isDark;
     },
   },
 };

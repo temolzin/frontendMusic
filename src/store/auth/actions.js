@@ -32,7 +32,7 @@ export const init = async ({ commit, dispatch }) => {
   if (token) {
     await commit("setToken", JSON.parse(token));
     api.defaults.headers.common.Authorization = "Bearer " + JSON.parse(token).access_token;
-    dispatch("getMeUser", JSON.parse(token));
+    await dispatch("getMeUser");
   } else {
     commit("removeToken");
   }
