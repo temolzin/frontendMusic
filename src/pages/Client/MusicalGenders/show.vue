@@ -93,7 +93,7 @@
                 class="q-mt-sm ellipsis"
                 :class="mode ? 'title-group2-white' : 'title-group2'"
               >
-                <small>¡Contratame ahora! </small>{{ getMe.name }}
+                <small>¡Contratame ahora! {{ getMe.name }}</small>
               </h3>
               <h4 class="q-ma-none text-center q-mt-sm text-primary">
                 $ {{ artist.price_hour }}.00
@@ -171,7 +171,7 @@
               class="q-mt-xl"
               :class="mode ? 'title-group2-white' : 'title-group2'"
             >
-              <small>Hola soy </small>{{ artist.manager.name }}
+              <small>Hola soy {{ artist.manager.name }}</small>
             </h3>
             <p class="info2 q-mt-md">Manager del grupo {{ artist.name }}</p>
             <p>
