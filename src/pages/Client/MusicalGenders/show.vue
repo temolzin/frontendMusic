@@ -93,7 +93,7 @@
                 class="q-mt-sm ellipsis"
                 :class="mode ? 'title-group2-white' : 'title-group2'"
               >
-                <small>¡Contratame ahora! {{ getMe.name }}</small>
+                <small>¡Contrátame ahora! {{ getMe.name }}</small>
               </h3>
               <h4 class="q-ma-none text-center q-mt-sm text-primary">
                 $ {{ artist.price_hour }}.00
