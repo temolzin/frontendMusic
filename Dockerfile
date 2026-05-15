@@ -6,7 +6,7 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm install -g @quasar/cli
+RUN npm install -g @quasar/cli@1
 
 COPY . .
 
