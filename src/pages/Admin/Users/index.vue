@@ -48,7 +48,7 @@
             {{ props.row.role_name }}
           </q-td>
           <q-td key="created_at" :props="props">
-            {{ props.row.created_at }}
+            {{ formatDate(props.row.created_at) }}
           </q-td>
           <q-td key="options" :props="props">
             <q-btn
@@ -289,6 +289,11 @@ export default {
       rows,
       filter: "",
       formCreate: false,
+      pagination: {
+        sortBy: "created_at",
+        descending: true,
+        rowsPerPage: 10,
+      },
       formEdit: false,
       form: {
         id: "",
@@ -305,6 +310,14 @@ export default {
     ...mapActions("users", ["deleteUser"]),
     ...mapActions("users", ["updateUser"]),
     ...mapActions("roles", ["getRoles"]),
+    formatDate(date) {
+      if (!date) return "";
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const year = String(d.getFullYear()).slice(-2);
+      return `${day}/${month}/${year}`;
+    },
     async gettUsers() {
       try {
         await this.getUsers();
@@ -472,7 +485,7 @@ export default {
     $q = useQuasar();
   },
   beforeUpdate() {
-    this.rows = this.users;
+    this.rows = [...this.users].sort((a, b) => b.id - a.id);
     this.loading = false;
   },
 };
