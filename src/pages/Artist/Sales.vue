@@ -53,6 +53,8 @@
               </tr>
             </tbody>
           </q-markup-table>
+          <notice-not-info v-if="artist == null"></notice-not-info>
+          <notice-no-sales v-if="artist != null && (!stateArtistSales || stateArtistSales.length === 0)"></notice-no-sales>
       </q-card-section>
     </q-card>
   </q-page>
@@ -62,19 +64,30 @@
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
 import { useQuasar } from "quasar";
+import { mapState } from "vuex";
+import NoticeNoSales from "src/components/Artist/NoticeNoSales.vue";
+import NoticeNotInfo from "src/components/Artist/NoticeNotInfo.vue";
 let $q;
 
 export default {
   
+  components: {
+    NoticeNoSales, NoticeNotInfo
+  },
+
   data() {
     return {
     };
   },
   methods: {
     ...mapActions("artistSales", ["getArtistSales"]),
+    ...mapActions("artist", ["getArtist"]),
     async getArtistSaless() {
       try {
-        await this.getArtistSales();
+        await this.getArtist();
+        if (this.artist != null) { 
+          await this.getArtistSales();
+        }
         console.log(this.stateArtistSales)
       } catch (err) {
         if (err.response.data.message) {
@@ -91,6 +104,9 @@ export default {
   },
   computed: {
     ...mapGetters("artistSales", ["stateArtistSales"]),
+    ...mapState({
+      artist: (state) => state.artist.artist,
+    }),
   },
   created: function () {
     return this.getArtistSaless();
