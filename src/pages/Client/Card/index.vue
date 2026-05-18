@@ -68,11 +68,10 @@
     >
       <q-banner inline-actions rounded class="bg-positive text-white q-ma-md">
         <div class="q-ma-md">
-          <p class="text-h6 q-mb-sm">No tienes ni una tarjeta guardada 😥</p>
+          <p class="text-h6 q-mb-sm">Aún no tienes tarjetas guardadas 😥</p>
           <p class="q-mt-none">
-            Guarda tus tarjetas de Credito o Devito es 100% seguro y confiable
-            ✔. Recuerda que no se te pedira el Cvv, hasta que realices alguna
-            renta de algún servicio.
+            Guarda tus tarjetas de crédito o débito de forma 100% segura y confiable.
+            Recuerda que no se te solicitará el CVV hasta que realices la contratación de un servicio.
           </p>
         </div>
       </q-banner>
@@ -92,43 +91,74 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-form @submit="createCardNew" class="q-gutter-md col-6">
+            <q-form ref="formCreateCard" @submit="createCardNew" class="q-gutter-md col-6">
               <q-input
                 dense
-                lazy-rules
                 v-model="form.name"
                 autofocus
                 label="Nombre completo del propietario"
-                :rules="[(val) => !!val || 'El campo nombre es requerido']"
+                :rules="[
+                  (val) => !!val || 'El campo nombre es requerido',
+                  (val) => val.trim().length >= 3 || 'El nombre debe tener al menos 3 caracteres',
+                  (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El nombre solo puede contener letras y espacios'
+                ]"
               />
 
               <q-input
                 dense
-                lazy-rules
                 v-model="form.number_card"
-                label="Numero de trajeta"
+                label="Numero de tarjeta"
                 fill-mask
                 mask="#### - #### - #### - ####"
                 :rules="[
                   (val) => !!val || 'El campo número de tarjeta es requerido',
+                  (val) => {
+                    if (!val) return true;
+                    const digits = (val.match(/\d/g) || []).length;
+                    if (digits !== 16) return `Debe tener 16 dígitos. Actualmente tiene ${digits}`;
+                    const clean = val.replace(/[\s-]/g, '');
+                    if (!/^\d+$/.test(clean)) return false;
+                    let sum = 0;
+                    let shouldDouble = false;
+                    for (let i = clean.length - 1; i >= 0; i--) {
+                      let digit = parseInt(clean[i]);
+                      if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; }
+                      sum += digit;
+                      shouldDouble = !shouldDouble;
+                    }
+                    return sum % 10 === 0 || 'Número de tarjeta inválido';
+                  }
                 ]"
               />
+              <div v-if="form.number_card" class="q-mt-xs text-caption text-grey-7">
+                Tipo: <strong>{{ detectCardType(form.number_card) }}</strong>
+              </div>
 
               <q-input
                 dense
-                lazy-rule
+                lazy-rules
                 v-model="form.expiration_date"
                 label="Fecha de expiración"
                 mask="##/##"
                 fill-mask
-                hint="Fecha: mm/YY"
-                :rules="[
-                  (val) => !!val || 'El campo fecha de expiración es requerido',
-                ]"
-              />
-              <!-- Select -->
-
-              <!-- Fin Select -->
+                  :rules="[
+                    (val) => !!val || 'La fecha de expiración es requerida',
+                    (val) => {
+                      if (!val || val.length !== 5) return 'Formato: mm/YY';
+                      const [month, year] = val.split('/');
+                      const monthNum = parseInt(month, 10);
+                      const yearNum = parseInt(year, 10);
+                      const currentYear = new Date().getFullYear() % 100;
+                      const currentMonth = new Date().getMonth() + 1;
+  
+                      if (monthNum < 1 || monthNum > 12) return 'Mes debe ser 01-12';
+                      if (yearNum < currentYear) return `El año debe ser mayor o igual a ${currentYear}`;
+                      if (yearNum === currentYear && monthNum < currentMonth) return 'La tarjeta ya expiró';
+                              
+                      return true;
+                    }
+                  ]"
+                />
               <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Cancelar" v-close-popup color="red" />
                 <q-btn flat label="Crear" type="submit" color="primary" />
@@ -154,43 +184,73 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-form @submit="editCard" class="q-gutter-md col-6">
+            <q-form ref="formEditCard" @submit="editCard" class="q-gutter-md col-6">
               <q-input
                 dense
-                lazy-rules
+
                 v-model="form.name"
                 autofocus
                 label="Nombre completo del propietario"
-                :rules="[(val) => !!val || 'El campo nombre es requerido']"
+                :rules="[
+                  (val) => !!val || 'El campo nombre es requerido',
+                  (val) => val.trim().length >= 3 || 'El nombre debe tener al menos 3 caracteres'
+                ]"
               />
 
               <q-input
                 dense
-                lazy-rules
                 v-model="form.number_card"
-                label="Numero de trajeta"
+                label="Numero de tarjeta"
                 fill-mask
                 mask="#### - #### - #### - ####"
                 :rules="[
                   (val) => !!val || 'El campo número de tarjeta es requerido',
+                  (val) => {
+                    if (!val) return true;
+                    const clean = val.replace(/[\s-]/g, '');
+                    if (clean.length !== 16) return `Debe tener 16 dígitos. Actualmente tiene ${clean.length}`;
+                    if (!/^\d+$/.test(clean)) return false;
+                    let sum = 0;
+                    let shouldDouble = false;
+                    for (let i = clean.length - 1; i >= 0; i--) {
+                      let digit = parseInt(clean[i]);
+                      if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; }
+                      sum += digit;
+                      shouldDouble = !shouldDouble;
+                    }
+                    return sum % 10 === 0 || 'Número de tarjeta inválido';
+                  }
                 ]"
               />
+              <div v-if="form.number_card" class="q-mt-xs text-caption text-grey-7">
+                Tipo: <strong>{{ detectCardType(form.number_card) }}</strong>
+              </div>
 
               <q-input
                 dense
-                lazy-rule
+                lazy-rules
                 v-model="form.expiration_date"
                 label="Fecha de expiración"
                 mask="##/##"
                 fill-mask
-                hint="Fecha: mm/YY"
-                :rules="[
-                  (val) => !!val || 'El campo fecha de expiración es requerido',
-                ]"
-              />
-              <!-- Select -->
-
-              <!-- Fin Select -->
+                  :rules="[
+                    (val) => !!val || 'La fecha de expiración es requerida',
+                    (val) => {
+                      if (!val || val.length !== 5) return 'Formato: mm/YY';
+                      const [month, year] = val.split('/');
+                      const monthNum = parseInt(month, 10);
+                      const yearNum = parseInt(year, 10);
+                      const currentYear = new Date().getFullYear() % 100;
+                      const currentMonth = new Date().getMonth() + 1;
+  
+                      if (monthNum < 1 || monthNum > 12) return 'Mes debe ser 01-12';
+                      if (yearNum < currentYear) return `El año debe ser mayor o igual a ${currentYear}`;
+                      if (yearNum === currentYear && monthNum < currentMonth) return 'La tarjeta ya expiró';
+                              
+                      return true;
+                    }
+                  ]"
+                />
               <q-card-actions align="right" class="text-primary">
                 <q-btn
                   flat
@@ -233,12 +293,40 @@ export default {
     ...mapActions("card", ["createCard"]),
     ...mapActions("card", ["deleteCard"]),
     ...mapActions("card", ["updateCard"]),
+    
+    detectCardType(number) {
+      const clean = number.replace(/[\s-]/g, '');
+      if (/^4/.test(clean)) return 'Visa';
+      if (/^5[1-5]/.test(clean) || /^2(2[2-9]|[3-6]\d|7[01])/.test(clean)) return 'Mastercard';
+      if (/^3[47]/.test(clean)) return 'American Express';
+      if (/^6(011|5)/.test(clean)) return 'Discover';
+      if (/^3(0[0-5]|[68])/.test(clean)) return 'Diners Club';
+      if (/^35(2[89]|[3-8])/.test(clean)) return 'JCB';
+      if (/^(5018|5020|5038|6304|6759|676[1-3])/.test(clean)) return 'Maestro';
+      if (/^62/.test(clean)) return 'UnionPay';
+      return 'Desconocida';
+    },
+
+    luhnCheck(number) {
+      const clean = number.replace(/[\s-]/g, '');
+      if (!/^\d+$/.test(clean)) return false;
+      let sum = 0;
+      let shouldDouble = false;
+      for (let i = clean.length - 1; i >= 0; i--) {
+        let digit = parseInt(clean[i]);
+        if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; }
+        sum += digit;
+        shouldDouble = !shouldDouble;
+      }
+      return sum % 10 === 0;
+    },
+    
     async gettCards() {
       try {
         await this.getCards();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
+        if (err.response?.data?.message) {
+          this.$q.notify({
             type: "negative",
             message: err.response.data.message,
           });
@@ -247,6 +335,42 @@ export default {
     },
 
     async createCardNew() {
+      const valid = await this.$refs.formCreateCard.validate();
+      if (!valid) {
+        this.$q.notify({
+          type: "negative",
+          message: "Por favor completa todos los campos correctamente",
+        });
+        return;
+      }
+      
+      // Validación adicional del número de tarjeta
+      const digits = (this.form.number_card.match(/\d/g) || []).length;
+      if (digits !== 16) {
+        this.$q.notify({
+          type: "negative",
+          message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}`,
+        });
+        return;
+      }
+      
+      const cardClean = this.form.number_card.replace(/[\s-]/g, '');
+      if (!/^\d+$/.test(cardClean)) {
+        this.$q.notify({
+          type: "negative",
+          message: "El número de tarjeta solo debe contener dígitos",
+        });
+        return;
+      }
+      
+      if (!this.luhnCheck(cardClean)) {
+        this.$q.notify({
+          type: "negative",
+          message: "El número de tarjeta no es válido (validación Luhn)",
+        });
+        return;
+      }
+      
       try {
         await this.createCard(this.form);
         this.formCreate = false;
@@ -255,9 +379,10 @@ export default {
           type: "positive",
           message: `Tarjeta creada correctamente`,
         });
+        await this.gettCards();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
+        if (err.response?.data?.message) {
+          this.$q.notify({
             type: "negative",
             message: err.response.data.message,
           });
@@ -285,8 +410,8 @@ export default {
                 message: `La tarjeta de ${name} fue eliminada correctamente`,
               });
             } catch (err) {
-              if (err.response.data.message) {
-                $q.notify({
+              if (err.response?.data?.message) {
+                this.$q.notify({
                   type: "negative",
                   message: err.response.data.message,
                 });
@@ -307,17 +432,53 @@ export default {
     },
 
     async editCard() {
+      const valid = await this.$refs.formEditCard.validate();
+      if (!valid) {
+        this.$q.notify({
+          type: "negative",
+          message: "Por favor completa todos los campos correctamente",
+        });
+        return;
+      }
+      
+      const digits = (this.form.number_card.match(/\d/g) || []).length;
+      if (digits !== 16) {
+        this.$q.notify({
+          type: "negative",
+          message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}`,
+        });
+        return;
+      }
+      
+      const cardClean = this.form.number_card.replace(/[\s-]/g, '');
+      if (!/^\d+$/.test(cardClean)) {
+        this.$q.notify({
+          type: "negative",
+          message: "El número de tarjeta solo debe contener dígitos",
+        });
+        return;
+      }
+      
+      if (!this.luhnCheck(cardClean)) {
+        this.$q.notify({
+          type: "negative",
+          message: "El número de tarjeta no es válido (validación Luhn)",
+        });
+        return;
+      }
+      
       try {
         await this.updateCard(this.form);
         this.formEdit = false;
         this.$q.notify({
           type: "positive",
-          message: `Tajeta modificada correctamente`,
+          message: `Tarjeta modificada correctamente`,
         });
         this.onReset();
+        await this.gettCards();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
+        if (err.response?.data?.message) {
+          this.$q.notify({
             type: "negative",
             message: err.response.data.message,
           });
