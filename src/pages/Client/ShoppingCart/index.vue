@@ -142,7 +142,7 @@
 
       <q-card v-else flat bordered class="empty-cart-card q-pa-xl q-mx-auto q-mt-lg">
         <q-icon name="shopping_cart" color="primary" size="56px" />
-        <h5 class="q-mt-md q-mb-sm">Tu carrito esta vacio</h5>
+        <h5 class="q-mt-md q-mb-sm">Tu carrito está vacío</h5>
         <p class="text-grey-7 q-mb-lg">
           Explora artistas y agrega tus favoritos para reservarlos en minutos.
         </p>

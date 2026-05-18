@@ -649,8 +649,8 @@ export default defineComponent({
       }
     },
     async initializeCheckout() {
-      this.gettCards();
-      this.showCards();
+      await this.gettCards();
+      await this.showCards();
       await this.getListShoppingCard();
 
       if (!this.shoppingCardDetail.length) {
