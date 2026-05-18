@@ -55,7 +55,7 @@
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="higth: 50px"
+                style="height: 50px"
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
                 hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
@@ -369,10 +369,10 @@
         </p>
         <p class="info q-mb-sm q-mt-md">Zona: {{ artist.zone }}</p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por hora: ${{ artist.price_hour }} pesos.
+          Precio por hora: ${{ Number(artist.price_hour).toLocaleString('es-MX') }} pesos.
         </p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por kilometro extra: ${{ artist.extra_kilometre }} pesos.
+          Precio por kilometro extra: ${{ Number(artist.extra_kilometre).toLocaleString('es-MX') }} pesos.
         </p>
         <div
           v-if="artist.social_media && artist.social_media.length > 0"
@@ -475,7 +475,7 @@
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="higth: 50px"
+                style="height: 50px"
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
                 hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
@@ -674,7 +674,7 @@
                   <q-select
                     v-model="formCreate.social_media[index].nombre"
                     class="col-5 q-mr-sm"
-                    label="Nombre (ej. Instagram)"
+                    label="Nombre"
                     :options="socialMediaOptions"
                     dense
                     filled
