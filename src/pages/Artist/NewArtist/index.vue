@@ -256,11 +256,13 @@
                   :key="index"
                   class="row q-mt-sm"
                 >
-                  <q-input
+                  <q-select
                     v-model="formCreate.social_media[index].nombre"
                     class="col-5 q-mr-sm"
-                    label="Nombre (ej. Instagram)"
+                    label="Red Social"
+                    :options="socialMediaOptions"
                     dense
+                    filled
                   />
                   <q-input
                     v-model="formCreate.social_media[index].url"
@@ -669,11 +671,13 @@
                   :key="index"
                   class="row q-mt-sm"
                 >
-                  <q-input
+                  <q-select
                     v-model="formCreate.social_media[index].nombre"
                     class="col-5 q-mr-sm"
                     label="Nombre (ej. Instagram)"
+                    :options="socialMediaOptions"
                     dense
+                    filled
                   />
                   <q-input
                     v-model="formCreate.social_media[index].url"
@@ -765,10 +769,22 @@ export default {
         email_manager: "",
         image_manager: [],
         selection: [],
-        social_media: [],
+        social_media: [{ nombre: "", url: "" }],
       },
       linkWhatsApp: "",
       linkCorreo: "",
+      socialMediaOptions: [
+        "Instagram",
+        "X (Twitter)",
+        "YouTube",
+        "Facebook",
+        "TikTok",
+        "Spotify",
+        "Apple Music",
+        "SoundCloud",
+        "Bandcamp",
+        "LinkedIn",
+      ],
     };
   },
   methods: {
