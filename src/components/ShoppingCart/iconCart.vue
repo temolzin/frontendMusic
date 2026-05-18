@@ -11,9 +11,6 @@
       </q-badge>
     </transition>
   </q-btn>
-  <div style="display: none">
-    {{ stateCountListShopingCard.status }}
-  </div>
 </template>
 
 <script>
@@ -43,11 +40,10 @@ export default {
       }
     },
     async shopping_list_count() {
-      if (this.stateCountListShopingCard.length == 0) {
+      if (!this.stateCountListShopingCard.length) {
         this.numberShopping = 0;
       } else {
-        this.numberShopping =
-          this.stateCountListShopingCard[0].shopping_card_detail.length;
+        this.numberShopping = this.stateCountListShopingCard[0]?.shopping_card_detail?.length || 0;
       }
     },
   },

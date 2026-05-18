@@ -236,10 +236,10 @@
                 flat
                 icon="shopping_cart"
                 class="q-ma-none"
-                v-if="stateCountListShopingCard[0] != null"
+                v-if="stateCountListShopingCard && stateCountListShopingCard[0]"
               >
                 <q-badge color="red" floating transparent>
-                  {{ stateCountListShopingCard[0].shopping_card_detail.length }}
+                  {{ stateCountListShopingCard[0]?.shopping_card_detail?.length || 0 }}
                 </q-badge>
               </q-btn>
 

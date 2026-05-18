@@ -1,9 +1,9 @@
 <template>
   <q-page padding>
-    <q-container>
+    <q-container v-if="hasCartItems">
       <div class="q-pa-md">
         <q-card-group>
-          <q-col v-if="showInfo" :span-xs="12" :span-md="8" class="q-mx-auto">
+          <q-col :span-xs="12" :span-md="8" class="q-mx-auto">
             <q-markup-table dense flat bordered class="table-responsive">
               <thead>
                 <tr class="bg-primary">
@@ -23,10 +23,9 @@
                 </tr>
               </thead>
               <!-- Contenido de la primera tabla aquí -->
-              <tbody v-if="showInfo">
+              <tbody>
                 <tr
-                  v-for="(product, index) in stateListShopingCard[0]
-                    .shopping_card_detail"
+                  v-for="(product, index) in shoppingCardDetail"
                   :key="index"
                 >
                   <td class="text-center">
@@ -92,9 +91,9 @@
     </q-container>
 
     <q-container class="text-center">
-      <q-div class="q-pa-md">
+      <div class="q-pa-md" v-if="hasCartItems">
         <q-card-group>
-          <q-col v-if="showInfo" :span-xs="12" :span-md="6" class="q-mx-auto">
+          <q-col :span-xs="12" :span-md="6" class="q-mx-auto">
             <q-markup-table dense flat bordered class="table-responsive-2">
               <thead>
                 <tr class="bg-primary">
@@ -106,7 +105,7 @@
                 </tr>
               </thead>
               <!-- Contenido de la segunda tabla aquí -->
-              <q-tbody v-if="showInfo">
+              <q-tbody>
                 <q-tr>
                   <q-td class="q-gutter-md" style="justify-content: center">
                     <q-card class="q-ma-md" style="text-align: center">
@@ -116,7 +115,7 @@
                             <td>
                               Total (Pesos)
                                 <strong>
-                                  {{"MXN " + stateListShopingCard[0].total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ")}}
+                                  {{"MXN " + shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ")}}
                                 </strong>
                                 pesos
                             </td>
@@ -139,7 +138,21 @@
             </q-markup-table>
           </q-col>
         </q-card-group>
-      </q-div>
+      </div>
+
+      <q-card v-else flat bordered class="empty-cart-card q-pa-xl q-mx-auto q-mt-lg">
+        <q-icon name="shopping_cart" color="primary" size="56px" />
+        <h5 class="q-mt-md q-mb-sm">Tu carrito está vacío</h5>
+        <p class="text-grey-7 q-mb-lg">
+          Explora artistas y agrega tus favoritos para reservarlos en minutos.
+        </p>
+        <q-btn
+          color="primary"
+          label="Ir a la tienda"
+          icon="store"
+          @click="$router.push('/client/store')"
+        />
+      </q-card>
     </q-container>
   </q-page>
 </template>
@@ -152,7 +165,6 @@ let $q;
 export default {
   data() {
     return {
-      showInfo: null,
       item: {
         artist_id: "",
         hours_artist: "",
@@ -166,13 +178,7 @@ export default {
 
     async gettListShoppingCard() {
       try {
-        await this.getListShoppingCard().then(() => {
-          if (this.stateListShopingCard == null) {
-            this.showInfo = false;
-          } else {
-            this.showInfo = true;
-          }
-        });
+        await this.getListShoppingCard();
       } catch (err) {
         if (err.response.data.message) {
           $q.notify({
@@ -190,7 +196,7 @@ export default {
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
-            message: `¿Estas seguro de eliminar a ${name}`,
+            message: `¿Estas seguro de eliminar a ${name}?`,
             cancel: true,
             persistent: true,
           })
@@ -228,6 +234,15 @@ export default {
   },
   computed: {
     ...mapGetters("shoppingCard", ["stateListShopingCard"]),
+    shoppingCardDetail() {
+      return this.stateListShopingCard?.[0]?.shopping_card_detail || [];
+    },
+    shoppingCartTotal() {
+      return this.stateListShopingCard?.[0]?.total || 0;
+    },
+    hasCartItems() {
+      return this.shoppingCardDetail.length > 0;
+    },
   },
   created() {
     this.gettListShoppingCard();
@@ -258,5 +273,9 @@ export default {
 .artist-name,
 .artist-zone {
   width: auto;
+}
+
+.empty-cart-card {
+  max-width: 560px;
 }
 </style>

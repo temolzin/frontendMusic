@@ -354,7 +354,7 @@
             <div class="row">
               <div class="col-12">
                 <q-item-label header class="text-h6">Detalles de la Orden</q-item-label>
-                <q-item class="full-width" v-for="(product, index) in stateListShopingCard[0].shopping_card_detail"
+                <q-item class="full-width" v-for="(product, index) in shoppingCardDetail"
                   :key="index">
                   <q-item-section class="r">
                     <q-item-label>{{ castProduct(product).artist.name }}</q-item-label>
@@ -382,7 +382,7 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    {{ "MXN " + stateListShopingCard[0].total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}
+                    {{ "MXN " + shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}
                   </q-item-section>
                 </q-item>
               </div>
@@ -438,7 +438,7 @@
             <q-icon name="shopping_cart" class="q-mr-sm" />
             Resumen del pedido
           </q-card-section>
-          <q-card-section horizontal v-for="(product, index) in stateListShopingCard[0].shopping_card_detail"
+          <q-card-section horizontal v-for="(product, index) in shoppingCardDetail"
             :key="index">
             <q-card-section class="col-6 flex flex-center">
               <q-img :src="castProduct(product).artist.image" loading="lazy" style="object-fit: cover" height="100px"
@@ -465,7 +465,7 @@
               <div class="col-12 col-sm-3 col-md-4 text-center text-h6">
                 TOTAL:
                 <span class="text-right">{{ "$ " +
-                  stateListShopingCard[0].total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}</span>
+                  shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}</span>
               </div>
             </div>
           </q-card-section>
@@ -648,6 +648,19 @@ export default defineComponent({
         }
       }
     },
+    async initializeCheckout() {
+      await this.gettCards();
+      await this.showCards();
+      await this.getListShoppingCard();
+
+      if (!this.shoppingCardDetail.length) {
+        this.$q.notify({
+          type: "warning",
+          message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
+        });
+        this.$router.push("/client/shopping-cart");
+      }
+    },
     async createNewOrders() {
       try {
         await this.createNewOrder(this.formClient.value);
@@ -817,7 +830,7 @@ export default defineComponent({
         }
       }, async (response) => {
         let artistList = []
-        this.stateListShopingCard[0].shopping_card_detail.map((element) => {
+        this.shoppingCardDetail.map((element) => {
           let obj = [element.artist_id, element.price]
           artistList.push(obj)
         });
@@ -827,7 +840,7 @@ export default defineComponent({
           expiration_month: dateCard[0],
           expiration_year: dateCard[1],
           cvv2: this.cvv,
-          amount: this.stateListShopingCard[0].total,
+          amount: this.shoppingCartTotal,
           name: this.formClient.first_name,
           last_name: this.formClient.first_last,
           email: this.formClient.email,
@@ -880,11 +893,15 @@ export default defineComponent({
     ...mapState({
       cards: (state) => state.card.cards,
     }),
+    shoppingCardDetail() {
+      return this.stateListShopingCard?.[0]?.shopping_card_detail || [];
+    },
+    shoppingCartTotal() {
+      return this.stateListShopingCard?.[0]?.total || 0;
+    },
   },
-  created() {
-    this.gettCards();
-    this.showCards();
-    this.getListShoppingCard();
+  async created() {
+    await this.initializeCheckout();
   },
   mounted() {
     $q = useQuasar();
