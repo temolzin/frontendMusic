@@ -505,8 +505,6 @@ export default defineComponent({
 
     const step = ref(1);
     const formCreate = ref(false);
-    const done1 = ref(false);
-    const done2 = ref(false);
     const starts = ref(3);
     const selectedCardIndex = ref(null);
     const address_detail = ref({ checkbox: false });
@@ -540,8 +538,6 @@ export default defineComponent({
       step,
       cvv: ref(''),
       selectedCardIndex,
-      done1,
-      done2,
       starts
     };
   },
@@ -615,7 +611,6 @@ export default defineComponent({
         }
       }
 
-      this.done2 = true;
       this.step = 3;
     },
     validateCardNumber() {
@@ -632,7 +627,6 @@ export default defineComponent({
       return true;
     },
     nextStep() {
-      this.done1 = true;
       this.step = 2;
     },
     ...mapActions("card", ["showCards"]),
