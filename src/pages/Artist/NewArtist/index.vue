@@ -55,7 +55,7 @@
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="higth: 50px"
+                style="height: 50px"
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
                 hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
@@ -248,6 +248,45 @@
                 </q-file>
               </div>
 
+              <div class="col-12 q-pa-sm">
+                <p class="q-mb-sm text-weight-bold">Redes Sociales</p>
+                <small>Agrega los links de tus redes sociales</small>
+                <div
+                  v-for="(red, index) in formCreate.social_media"
+                  :key="index"
+                  class="row q-mt-sm"
+                >
+                  <q-select
+                    v-model="formCreate.social_media[index].nombre"
+                    class="col-5 q-mr-sm"
+                    label="Red Social"
+                    :options="socialMediaOptions"
+                    dense
+                    filled
+                  />
+                  <q-input
+                    v-model="formCreate.social_media[index].url"
+                    class="col-6"
+                    label="Link"
+                    dense
+                  />
+                  <q-btn
+                    flat
+                    round
+                    icon="delete"
+                    color="red"
+                    @click="formCreate.social_media.splice(index, 1)"
+                  />
+                </div>
+                <q-btn
+                  flat
+                  icon="add"
+                  color="primary"
+                  label="Agregar red social"
+                  class="q-mt-sm"
+                  @click="formCreate.social_media.push({ nombre: '', url: '' })"
+                />
+              </div>
               <div class="q-pt-lg col-12">
                 <q-btn
                   class="full-width"
@@ -330,11 +369,31 @@
         </p>
         <p class="info q-mb-sm q-mt-md">Zona: {{ artist.zone }}</p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por hora: ${{ artist.price_hour }} pesos.
+          Precio por hora: ${{ Number(artist.price_hour).toLocaleString('es-MX') }} pesos.
         </p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por kilometro extra: ${{ artist.extra_kilometre }} pesos.
+          Precio por kilometro extra: ${{ Number(artist.extra_kilometre).toLocaleString('es-MX') }} pesos.
         </p>
+        <div
+          v-if="artist.social_media && artist.social_media.length > 0"
+          class="q-mt-lg"
+        >
+          <p class="info q-mb-md text-weight-bold">
+            Redes Sociales
+          </p>
+
+          <div class="social-container">
+            <a
+              v-for="(red, index) in artist.social_media"
+              :key="index"
+              :href="red.url"
+              target="_blank"
+              class="social-link"
+            >
+              {{ red.nombre }}
+            </a>
+          </div>
+        </div>
       </div>
       <div
         :class="mode ? 'title-group-white' : 'title-group'"
@@ -416,7 +475,7 @@
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="higth: 50px"
+                style="height: 50px"
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
                 hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
@@ -604,6 +663,45 @@
                 </q-file>
               </div>
               <p></p>
+              <div class="col-12 q-pa-sm">
+                <p class="q-mb-sm text-weight-bold">Redes Sociales</p>
+                <small>Agrega los links de tus redes sociales</small>
+                <div
+                  v-for="(red, index) in formCreate.social_media"
+                  :key="index"
+                  class="row q-mt-sm"
+                >
+                  <q-select
+                    v-model="formCreate.social_media[index].nombre"
+                    class="col-5 q-mr-sm"
+                    label="Nombre"
+                    :options="socialMediaOptions"
+                    dense
+                    filled
+                  />
+                  <q-input
+                    v-model="formCreate.social_media[index].url"
+                    class="col-6"
+                    label="Link"
+                    dense
+                  />
+                  <q-btn
+                    flat
+                    round
+                    icon="delete"
+                    color="red"
+                    @click="formCreate.social_media.splice(index, 1)"
+                  />
+                </div>
+                <q-btn
+                  flat
+                  icon="add"
+                  color="primary"
+                  label="Agregar red social"
+                  class="q-mt-sm"
+                  @click="formCreate.social_media.push({ nombre: '', url: '' })"
+                />
+              </div>
               <div class="q-pt-lg col-12">
                 <q-btn
                   class="q-mr-md"
@@ -671,9 +769,22 @@ export default {
         email_manager: "",
         image_manager: [],
         selection: [],
+        social_media: [{ nombre: "", url: "" }],
       },
       linkWhatsApp: "",
       linkCorreo: "",
+      socialMediaOptions: [
+        "Instagram",
+        "X (Twitter)",
+        "YouTube",
+        "Facebook",
+        "TikTok",
+        "Spotify",
+        "Apple Music",
+        "SoundCloud",
+        "Bandcamp",
+        "LinkedIn",
+      ],
     };
   },
   methods: {
@@ -758,6 +869,8 @@ export default {
             InstFormData.append("image_manager", this.formCreate.image_manager);
             const selection = JSON.stringify(this.formCreate.selection);
             InstFormData.append("selection", selection);
+            const social_media = JSON.stringify(this.formCreate.social_media);
+            InstFormData.append("social_media", social_media);
 
             // console.log(InstFormData);
             await this.createArtist(InstFormData);
@@ -810,6 +923,7 @@ export default {
       this.formCreate.zone = this.artist.zone;
       this.formCreate.price_hour = this.artist.price_hour;
       this.formCreate.extra_kilometre = this.artist.extra_kilometre;
+      this.formCreate.social_media = this.artist.social_media ? [...this.artist.social_media] : [];
 
       let selected = [this.artist];
 
@@ -867,6 +981,8 @@ export default {
           InstFormData.append("email_manager", this.formCreate.email_manager);
           const selection = JSON.stringify(this.formCreate.selection);
           InstFormData.append("selection", selection);
+          const social_media = JSON.stringify(this.formCreate.social_media);
+          InstFormData.append("social_media", social_media);
 
           // console.log(InstFormData);
 
@@ -1214,5 +1330,32 @@ input:focus {
 }
 .avatar {
   object-fit: cover;
+}
+
+.social-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.social-link {
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: #f5f5f5;
+  color: #001d38;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: 0.3s;
+  border: 1px solid #e0e0e0;
+}
+
+.social-link:hover {
+  background: #001d38;
+  color: white;
+  transform: translateY(-2px);
 }
 </style>
