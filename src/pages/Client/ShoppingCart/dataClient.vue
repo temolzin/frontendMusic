@@ -66,9 +66,10 @@
                 <div class="col-6">
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.zip_code"
-                      label="Codigo Postal" :rules="[
-                        (val) => !!val || 'El código postal es requerido',
-                        (val) => val.toString().length >= 4 || 'El código postal debe tener al menos 4 caracteres'
+                      label="Codigo Postal" maxlength="4" @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
+                      :rules="[
+                        (val) => /^[0-9]+$/.test(val) || 'Solo se permiten números',
+                        (val) => val.toString().length === 4 || 'El código postal debe tener exactamente 4 dígitos'
                       ]" required />
                   </q-item>
                 </div>
@@ -124,7 +125,7 @@
                     style="padding: 16px; font-weight: bold; border: 2px solid;"
                     :style="paymentMethod === 'cash' ? 'border-color: #1976d2; background-color: #e3f2fd;' : 'border-color: #ccc; background-color: transparent;'"
                     label="💰 Pagar en Efectivo" 
-                    @click="paymentMethod = 'cash'; selectedCard = {id: '', name: '', number_card: '', expiration_date: ''}; cvv = 0" 
+                    @click="paymentMethod = 'cash'; selectedCard = {id: '', name: '', number_card: '', expiration_date: ''}; cvv = ''" 
                   />
                 </div>
               </div>
@@ -189,20 +190,56 @@
                       <q-input 
                         dense 
                         v-model="form.number_card" 
-                        label="Numero de tarjeta" 
+                        label="Número de tarjeta" 
                         fill-mask
-                        mask="#### #### #### ####" 
-                        @blur="validateCardNumber"
+                        mask="#### #### #### ####"
+                        :rules="[
+                          (val) => !!val || 'El campo número de tarjeta es requerido',
+                          (val) => {
+                            if (!val) return true;
+                            const digits = (val.match(/\d/g) || []).length;
+                            if (digits !== 16) return `Debe tener 16 dígitos. Actualmente tiene ${digits}`;
+                            const clean = val.replace(/[\s-]/g, '');
+                            if (!/^\d+$/.test(clean)) return false;
+                            let sum = 0;
+                            let shouldDouble = false;
+                            for (let i = clean.length - 1; i >= 0; i--) {
+                              let digit = parseInt(clean[i]);
+                              if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; }
+                              sum += digit;
+                              shouldDouble = !shouldDouble;
+                            }
+                            return sum % 10 === 0 || 'Número de tarjeta inválido';
+                          }
+                        ]"
                       />
+                      <div v-if="form.number_card" class="q-mt-xs text-caption text-grey-7">
+                        Tipo: <strong>{{ detectCardType(form.number_card) }}</strong>
+                      </div>
 
                       <q-input 
                         dense 
                         v-model="form.expiration_date" 
-                        label="Fecha de expiracion" 
+                        label="Fecha de expiración" 
                         mask="##/##" 
                         fill-mask 
-                        hint="Formato mm/YY"
-                        @blur="validateExpiration"
+                          :rules="[
+                            (val) => !!val || 'La fecha de expiración es requerida',
+                            (val) => {
+                              if (!val || val.length !== 5) return 'Formato: mm/YY';
+                              const [month, year] = val.split('/');
+                              const monthNum = parseInt(month, 10);
+                              const yearNum = parseInt(year, 10);
+                              const currentYear = new Date().getFullYear() % 100;
+                              const currentMonth = new Date().getMonth() + 1;
+  
+                              if (monthNum < 1 || monthNum > 12) return 'Mes debe ser 01-12';
+                              if (yearNum < currentYear) return `El año debe ser mayor o igual a ${currentYear}`;
+                              if (yearNum === currentYear && monthNum < currentMonth) return 'La tarjeta ya expiró';
+                              
+                              return true;
+                            }
+                          ]"
                       />
                       <q-card-actions align="right" class="text-primary">
                         <q-btn flat label="Cancelar" v-close-popup color="red" />
@@ -241,7 +278,7 @@
               </div>
               <div class="col-6">
                 <q-item>
-                  <q-input dense outlined class="full-width" label="Numero de la Tarjeta"
+                  <q-input dense outlined class="full-width" label="Número de la Tarjeta"
                     v-model="selectedCard.number_card" mask="#### #### #### ####" fill-mask :rules="[
                       (val) => !!val || 'Campo requerido',
                       (val) => {
@@ -255,13 +292,21 @@
               <div class="col-6">
                 <q-item>
                   <q-input dense outlined class="full-width" v-model="selectedCard.expiration_date"
-                    label="Fecha de Expiracion" mask="##/##" fill-mask :rules="[
+                    label="Fecha de Expiración" mask="##/##" fill-mask :rules="[
                       (val) => !!val || 'Campo requerido',
                       (val) => {
                         if (!val || val.length !== 5) return 'Formato: mm/YY';
-                        const [month] = val.split('/');
+                        const [month, year] = val.split('/');
                         const monthNum = parseInt(month, 10);
-                        return (monthNum >= 1 && monthNum <= 12) || 'Mes debe ser 01-12';
+                        const yearNum = parseInt(year, 10);
+                        const currentYear = new Date().getFullYear() % 100;
+                        const currentMonth = new Date().getMonth() + 1;
+
+                        if (monthNum < 1 || monthNum > 12) return 'Mes debe ser 01-12';
+                        if (yearNum < currentYear) return `El año debe ser mayor o igual a ${currentYear}`;
+                        if (yearNum === currentYear && monthNum < currentMonth) return 'La tarjeta ya expiró';
+
+                        return true;
                       }
                     ]" />
                 </q-item>
@@ -358,15 +403,15 @@
                 <q-card-section class="col-7 q-pt-xs ">
                   <div class="text-h6 text-center">Detalles del Pago</div>
                   <div v-if="paymentMethod === 'card'">
-                    <div class="text-subtitle1 q-mb-xs">Tipo de Tarjeta - Visa</div>
+                    <div class="text-subtitle1 q-mb-xs">Tipo de Tarjeta - {{ detectCardType(selectedCard.number_card) }}</div>
                     <div class="text-subtitle1 q-mb-xs">
                       Titular de la tarjeta - {{ selectedCard.name }}
                     </div>
                     <div class="text-subtitle1 q-mb-xs">
-                      Numero de la Tarjeta - {{ maskCardNumber(selectedCard.number_card) }}
+                      Número de la Tarjeta - {{ maskCardNumber(selectedCard.number_card) }}
                     </div>
                     <div class="text-subtitle1 q-mb-xs">
-                      Fecha de Expiracion - {{ selectedCard.expiration_date }}
+                      Fecha de Expiración - {{ selectedCard.expiration_date }}
                     </div>
                   </div>
                   <div v-if="paymentMethod === 'cash'">
@@ -493,7 +538,7 @@ export default defineComponent({
       formClient,
       form,
       step,
-      cvv: ref(0),
+      cvv: ref(''),
       selectedCardIndex,
       done1,
       done2,
@@ -504,6 +549,34 @@ export default defineComponent({
     castCard(card) {
       return card;
     },
+
+    detectCardType(number) {
+      const clean = number.replace(/[\s-]/g, '');
+      if (/^4/.test(clean)) return 'Visa';
+      if (/^5[1-5]/.test(clean) || /^2(2[2-9]|[3-6]\d|7[01])/.test(clean)) return 'Mastercard';
+      if (/^3[47]/.test(clean)) return 'American Express';
+      if (/^6(011|5)/.test(clean)) return 'Discover';
+      if (/^3(0[0-5]|[68])/.test(clean)) return 'Diners Club';
+      if (/^35(2[89]|[3-8])/.test(clean)) return 'JCB';
+      if (/^(5018|5020|5038|6304|6759|676[1-3])/.test(clean)) return 'Maestro';
+      if (/^62/.test(clean)) return 'UnionPay';
+      return 'Desconocida';
+    },
+
+    luhnCheck(number) {
+      const clean = number.replace(/[\s-]/g, '');
+      if (!/^\d+$/.test(clean)) return false;
+      let sum = 0;
+      let shouldDouble = false;
+      for (let i = clean.length - 1; i >= 0; i--) {
+        let digit = parseInt(clean[i]);
+        if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; }
+        sum += digit;
+        shouldDouble = !shouldDouble;
+      }
+      return sum % 10 === 0;
+    },
+    
     castProduct(product) {
       return product;
     },
@@ -558,29 +631,12 @@ export default defineComponent({
       }
       return true;
     },
-    validateExpiration() {
-      const val = this.form.expiration_date;
-      if (!val) {
-        this.$q.notify({ type: 'negative', message: 'Campo requerido' });
-        return false;
-      }
-      if (val.length !== 5) {
-        this.$q.notify({ type: 'negative', message: 'Formato debe ser mm/YY' });
-        return false;
-      }
-      const [month, year] = val.split('/');
-      const monthNum = parseInt(month, 10);
-      if (monthNum < 1 || monthNum > 12) {
-        this.$q.notify({ type: 'negative', message: 'Mes debe ser 01-12' });
-        return false;
-      }
-      return true;
-    },
     nextStep() {
       this.done1 = true;
       this.step = 2;
     },
     ...mapActions("card", ["showCards"]),
+    ...mapActions("card", ["createCard"]),
     ...mapActions("shoppingCard", ["getListShoppingCard"]),
     ...mapActions("shoppingCard", ["deleteItembyId"]),
     ...mapActions("shoppingCard", ["updateItemShoppingCart"]),
@@ -616,8 +672,28 @@ export default defineComponent({
       }
     },
     async createCardNew() {
-      // Validar el número de tarjeta
-      const digits = (this.form.number_card.match(/\d/g) || []).length;
+      let cardData = this.form;
+      if (this.form && this.form.value) {
+        cardData = this.form.value;
+      }
+
+      if (!cardData.name || cardData.name.trim().length < 3) {
+        this.$q.notify({
+          type: "negative",
+          message: "El nombre debe tener al menos 3 caracteres",
+        });
+        return;
+      }
+
+      if (!cardData.number_card) {
+        this.$q.notify({
+          type: "negative",
+          message: "El número de tarjeta es requerido",
+        });
+        return;
+      }
+
+      const digits = (cardData.number_card.match(/\d/g) || []).length;
       if (digits !== 16) {
         this.$q.notify({
           type: "negative",
@@ -626,19 +702,42 @@ export default defineComponent({
         return;
       }
 
+      const cardClean = cardData.number_card.replace(/[\s-]/g, '');
+      if (!this.luhnCheck(cardClean)) {
+        this.$q.notify({
+          type: "negative",
+          message: "El número de tarjeta no es válido (validación Luhn)",
+        });
+        return;
+      }
+
+      if (!cardData.expiration_date) {
+        this.$q.notify({
+          type: "negative",
+          message: "La fecha de expiración es requerida",
+        });
+        return;
+      }
+
       try {
-        await this.createCard(this.form);
+        await this.createCard(cardData);
         this.formCreate = false;
         this.onReset();
         this.$q.notify({
           type: "positive",
           message: `Tarjeta creada correctamente`,
         });
+        await this.gettCards();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
+        if (err.response?.data?.message) {
+          this.$q.notify({
             type: "negative",
             message: err.response.data.message,
+          });
+        } else {
+          this.$q.notify({
+            type: "negative",
+            message: "Error al crear la tarjeta",
           });
         }
       }
@@ -656,7 +755,6 @@ export default defineComponent({
       this.basic = false;
     },
     async pay () {
-      // Validaciones previas
       if (!this.selectedCard || !this.selectedCard.number_card) {
         this.$q.notify({
           type: "negative",
@@ -764,6 +862,21 @@ export default defineComponent({
 
       });
       
+    },
+    onReset() {
+      if (this.form && this.form.value) {
+        this.form.value.id = "";
+        this.form.value.name = "";
+        this.form.value.number_card = "";
+        this.form.value.expiration_date = "";
+      } else {
+        this.form = {
+          id: "",
+          name: "",
+          number_card: "",
+          expiration_date: "",
+        };
+      }
     }
   },
   computed: {
@@ -787,7 +900,6 @@ export default defineComponent({
 </script>
 
 <style lang="sass" scoped>
-// Component styles
 .my-card
   width: 100%
   max-width: 250px
