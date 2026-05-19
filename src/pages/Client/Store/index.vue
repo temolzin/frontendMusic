@@ -110,7 +110,7 @@
                 <q-card-actions align="right">
                   <q-btn flat round :color="isFavoriteArtist(props.row.id) ? 'red' : 'black'" :icon="isFavoriteArtist(props.row.id) ? 'fas fa-solid fa-heart' : 'far fa-heart'"
                     @click="addFavouriteArtist(props.row.id)" />
-                  <q-btn flat round color="primary" icon="share" />
+                  <q-btn flat round color="primary" icon="share" @click="copyArtistLink(props.row.slug, props.row.musical_genders[0].slug)" />
                 </q-card-actions>
               </q-card>
             </div>
@@ -290,6 +290,12 @@ export default {
           });
         }
       }
+    },
+    copyArtistLink(artistSlug, genreSlug) {
+      const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
+      navigator.clipboard.writeText(link).then(() => {
+        this.$q.notify({ type: 'positive', message: 'Link copiado al portapapeles' });
+      });
     },
     isFavoriteArtist(id) {
       return this.favoriteArtistIds.includes(id);
