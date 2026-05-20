@@ -96,7 +96,7 @@
               height="350px"
               v-if="skeleton == true"
             />
-            <q-card class="my-card q-ma-sm" v-if="skeleton == false">
+            <q-card class="my-card q-ma-sm" v-show="!skeleton">
               <q-img :src="props.row.image" class="imageArtist" />
 
               <q-card-section>
@@ -126,9 +126,13 @@
                 </div>
 
                 <q-rating
-                  v-model="starts"
+                  :model-value="parseFloat(props.row?.ratings_avg_rating || 0)"
                   :max="5"
                   size="32px"
+                  color="yellow"
+                  icon="star_border"
+                  icon-selected="star"
+                  icon-half="star_half"
                   no-dimming
                   readonly
                 />
@@ -202,7 +206,6 @@ export default {
       slug: null,
       skeleton: true,
       showResult: null,
-      starts: 4,
       listCarrito: [],
       favoriteArtistIds: [],
       addFavourite: {

@@ -68,7 +68,7 @@
           :rows-per-page-label="'Artistas por página:'" :rows-per-page-options="[6, 12, 18, 24, 30]">
           <template v-slot:item="props">
             <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
-              <q-card class="my-card q-ma-sm" v-if="skeleton == false">
+            <q-card class="my-card q-ma-sm" v-show="!skeleton">
                 <q-img :src="props.row.image" class="imageArtist" />
 
                 <q-card-section>
@@ -76,16 +76,27 @@
                     style="top: 0; right: 12px; transform: translateY(-50%)" v-on:click="onSendOrder(props.row)" />
                   <div class="row no-wrap items-center">
                     <div class="col text-h6 ellipsis search text-weight-regular"
-                      @click="props.row.slug, props.row.musical_genders[0].slug">
+                      @click="search(props.row.slug, props.row.musical_genders[0].slug)">
                       {{ props.row.name }}
-                    </div>
+                    </div> 
                     <div class="col-auto text-grey text-caption q-pt-md row no-wrap items-center">
                       <q-icon name="map" />
                       <small>{{ props.row.zone }}</small>
                     </div>
                   </div>
 
-                  <q-rating v-model="starts" :max="5" size="32px" no-dimming readonly />
+                  <q-rating 
+                    :model-value="parseFloat(props.row?.ratings_avg_rating || 0)" 
+                    :max="5" 
+                    size="32px" 
+                    color="yellow"
+                    icon="star_border"
+                    icon-selected="star"
+                    icon-half="star_half"
+                    no-dimming 
+                    readonly 
+                  />
+
                 </q-card-section>
 
                 <q-card-section class="q-pt-none">
@@ -147,9 +158,7 @@ export default {
       columns,
       slug: null,
       skeleton: true,
-      starts: 4,
       searchSlug: null,
-      slide: 1,
       slide: ref("style"),
       listCarrito: [],
       favoriteArtistIds: [],
@@ -173,6 +182,16 @@ export default {
     formatGenres(genres) {
       return genres.map((genre) => genre.name).join(", ");
     },
+    search(slug, slugmg) {
+      this.$router.push({
+        name: "client.view-group-by-gender-slug",
+        params: {
+          slugMG: slugmg,
+          slugA: slug,
+        },
+      });
+    },
+
     async getArtistss() {
       try {
         await this.getArtists().then(() => {
