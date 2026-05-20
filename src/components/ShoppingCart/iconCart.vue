@@ -1,5 +1,26 @@
 <template>
-  <q-btn dense round flat icon="shopping_cart" class="q-ma-none">
+  <div v-if="compact" class="cart-icon-compact q-ma-none">
+    <q-icon name="shopping_cart" size="28px" />
+    <transition
+      appear
+      enter-active-class="animated rubberBand"
+      leave-active-class="animated fadeOut"
+      :duration="6000"
+    >
+      <q-badge color="red" floating transparent>
+        {{ shoppingCount }}
+      </q-badge>
+    </transition>
+  </div>
+
+  <q-btn
+    v-else
+    dense
+    round
+    flat
+    icon="shopping_cart"
+    class="q-ma-none"
+  >
     <transition
       appear
       enter-active-class="animated rubberBand"
@@ -18,6 +39,10 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Icon-Cart",
   props: {
+    compact: {
+      type: Boolean,
+      default: false,
+    },
     fetchOnCreate: {
       type: Boolean,
       default: true,
@@ -50,3 +75,19 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.cart-icon-compact {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.cart-icon-compact :deep(.q-badge) {
+  top: -2px;
+  right: -6px;
+}
+</style>

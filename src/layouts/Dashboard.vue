@@ -230,8 +230,7 @@
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <icon-cart :fetch-on-create="false"></icon-cart>
-              <q-icon name="fas fa-solid fa-cart-shopping" />
+              <icon-cart compact :fetch-on-create="false"></icon-cart>
             </q-item-section>
 
             <q-item-section> Mi Carrito </q-item-section>
