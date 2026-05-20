@@ -76,7 +76,7 @@
                     style="top: 0; right: 12px; transform: translateY(-50%)" v-on:click="onSendOrder(props.row)" />
                   <div class="row no-wrap items-center">
                     <div class="col text-h6 ellipsis search text-weight-regular"
-                      @click="search(props.row.slug, props.row.musical_genders[0].slug)">
+                      @click="$router.push({ name: 'client.view-group-by-gender-slug', params: { slugMG: props.row.musical_genders[0].slug, slugA: props.row.slug } })">
                       {{ props.row.name }}
                     </div> 
                     <div class="col-auto text-grey text-caption q-pt-md row no-wrap items-center">
@@ -121,7 +121,7 @@
                 <q-card-actions align="right">
                   <q-btn flat round :color="isFavoriteArtist(props.row.id) ? 'red' : 'black'" :icon="isFavoriteArtist(props.row.id) ? 'fas fa-solid fa-heart' : 'far fa-heart'"
                     @click="addFavouriteArtist(props.row.id)" />
-                  <q-btn flat round color="primary" icon="share" />
+                  <q-btn flat round color="primary" icon="share" @click="copyArtistLink(props.row.slug, props.row.musical_genders[0].slug)" />
                 </q-card-actions>
               </q-card>
             </div>
@@ -310,6 +310,12 @@ export default {
         }
       }
     },
+    copyArtistLink(artistSlug, genreSlug) {
+      const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
+      navigator.clipboard.writeText(link).then(() => {
+        this.$q.notify({ type: 'positive', message: 'Link copiado al portapapeles' });
+      });
+    },
     isFavoriteArtist(id) {
       return this.favoriteArtistIds.includes(id);
     },
@@ -417,5 +423,11 @@ export default {
   #text {
     font-size: 11px;
   }
+}
+.search {
+  cursor: pointer;
+}
+.search:hover {
+  color: #ff78a5;
 }
 </style>

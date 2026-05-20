@@ -70,7 +70,7 @@
               <div class="col-6">
                 <div align="right">
                   <q-btn flat round color="red" icon="favorite" />
-                  <q-btn flat round color="white" icon="share" />
+                  <q-btn flat round color="white" icon="share" @click="copyArtistLink()" />
                 </div>
               </div>
             </div>
@@ -360,6 +360,12 @@ export default {
           message: "Artista agregado",
           timeout: 1000,
         });
+      });
+    },
+    copyArtistLink() {
+      const link = `${window.location.origin}/client/musical-genders/${this.slugMG}/${this.slug}`;
+      navigator.clipboard.writeText(link).then(() => {
+        this.$q.notify({ type: 'positive', message: 'Link copiado al portapapeles' });
       });
     },
     printDateStart: function () {

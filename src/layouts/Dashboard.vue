@@ -200,7 +200,7 @@
             <q-item-section> Generos Musicales</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+          <q-item clickable v-ripple to="/artist-list" v-if="$can('create-card')">
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-tags" />
             </q-item-section>

@@ -27,14 +27,14 @@ export default function checkPermissions({ next, to, from, Router }) {
         if (canEnter) {
           return next();
         }
-        return Router.push({ name: "Home" });
+        return Router.push({ name: from.name, params: from.params });
       });
     } else {
       const canEnter = can(requiredPermissions);
       if (canEnter) {
         return next();
       }
-      return Router.push({ name: "Home" });
+      return Router.push({ name: from.name, params: from.params });
     }
   }
 }

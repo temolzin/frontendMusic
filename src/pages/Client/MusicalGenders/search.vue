@@ -160,7 +160,7 @@
                   :icon="isFavoriteArtist(props.row.id) ? 'fas fa-solid fa-heart' : 'far fa-heart'"
                   @click="addFavouriteArtist(props.row.id)"
                 />
-                <q-btn flat round color="primary" icon="share" />
+                <q-btn flat round color="primary" icon="share" @click="copyArtistLink(props.row.slug, this.slug)" />
               </q-card-actions>
             </q-card>
           </div>
@@ -238,6 +238,13 @@ export default {
           slugMG: this.slug,
           slugA: slug,
         },
+      });
+    },
+
+    copyArtistLink(artistSlug, genreSlug) {
+      const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
+      navigator.clipboard.writeText(link).then(() => {
+        this.$q.notify({ type: 'positive', message: 'Link copiado al portapapeles' });
       });
     },
 
