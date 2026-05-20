@@ -85,7 +85,7 @@
                 <div class="col-6">
                   <q-item>
                     <q-checkbox dense outlined class="full-width"
-                      label="Desea utlizar esta dirección para obtener los detalles de pago"
+                      label="Deseas guardar los datos para la siguiente compra"
                       v-model="address_detail.checkbox" />
                   </q-item>
                 </div>
@@ -560,6 +560,12 @@ export default defineComponent({
       return 'Desconocida';
     },
 
+    getExpectedCvvLength(number) {
+      const cardType = this.detectCardType(number);
+      if (cardType === 'American Express') return 4;
+      return 3;
+    },
+
     luhnCheck(number) {
       const clean = number.replace(/[\s-]/g, '');
       if (!/^\d+$/.test(clean)) return false;
@@ -655,12 +661,43 @@ export default defineComponent({
       await this.showCards();
       await this.getListShoppingCard();
 
+      try {
+        await this.fetchProfile();
+      } catch (err) {
+
+      }
+
+      if ((!this.selectedCard || !this.selectedCard.id) && this.stateUserCards?.length) {
+        this.selectedCardIndex = 0;
+        this.selectedCard = { ...this.stateUserCards[0] };
+      }
+
       if (!this.shoppingCardDetail.length) {
         this.$q.notify({
           type: "warning",
           message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
         });
         this.$router.push("/client/shopping-cart");
+      }
+    },
+    async fetchProfile() {
+      try {
+        const resp = await api.get('/api/client/profile');
+        if (resp.data && resp.data.success && resp.data.user) {
+          const u = resp.data.user;
+          const fullName = (u.name || '').trim().replace(/\s+/g, ' ');
+          const nameParts = fullName ? fullName.split(' ') : [];
+          this.formClient.first_name = nameParts.length ? nameParts.shift() : '';
+          this.formClient.first_last = nameParts.join(' ');
+          this.formClient.email = u.email || '';
+          this.formClient.adress_line2 = u.address || '';
+          this.formClient.city = u.city || '';
+          this.formClient.state_city = u.state || '';
+          this.formClient.zip_code = u.zip_code || '';
+          this.formClient.country = u.country || '';
+        }
+      } catch (err) {
+
       }
     },
     async createNewOrders() {
@@ -737,6 +774,13 @@ export default defineComponent({
           message: `Tarjeta creada correctamente`,
         });
         await this.gettCards();
+        await this.showCards();
+
+        if (this.stateUserCards?.length) {
+          const lastIndex = this.stateUserCards.length - 1;
+          this.selectedCardIndex = lastIndex;
+          this.selectedCard = { ...this.stateUserCards[lastIndex] };
+        }
       } catch (err) {
         if (err.response?.data?.message) {
           this.$q.notify({
@@ -770,7 +814,7 @@ export default defineComponent({
           city: this.formClient.city,
           state: this.formClient.state_city,
           zip_code: this.formClient.zip_code,
-          country: "MX"
+          country: this.formClient.country,
         };
 
         const response = await api.post("/api/client/save-address", addressData);
@@ -827,6 +871,18 @@ export default defineComponent({
         return;
       }
 
+      const expectedCvvLength = this.getExpectedCvvLength(this.selectedCard.number_card);
+      if (this.cvv.toString().length !== expectedCvvLength) {
+        this.$q.notify({
+          type: "negative",
+          message: expectedCvvLength === 4
+            ? "Esta tarjeta requiere un CVV de 4 dígitos"
+            : "Esta tarjeta requiere un CVV de 3 dígitos",
+          position: "top",
+        });
+        return;
+      }
+
       if (typeof OpenPay === "undefined") {
         this.$q.notify({
           type: "negative",
@@ -849,13 +905,9 @@ export default defineComponent({
 
         let deviceDataId = null;
         try {
-          if (OpenPay.deviceData && typeof OpenPay.deviceData.generateSessionId === 'function') {
-            deviceDataId = OpenPay.deviceData.generateSessionId();
-          } else {
-            deviceDataId = OpenPay.deviceData.setup("formId");
-          }
+          deviceDataId = OpenPay.deviceData?.generateSessionId?.() ?? OpenPay.deviceData?.setup?.("formId") ?? null;
         } catch (e) {
-
+          console.warn('Device data setup fallido, continuando sin él:', e);
         }
 
         const card_number = this.selectedCard.number_card.replace(/\s/g, "");
@@ -964,13 +1016,26 @@ export default defineComponent({
             this.$q.loading.hide();
             
             let errorMessage = error?.description || error?.message || "Error desconocido en OpenPay";
+            errorMessage = errorMessage
+              .replace(/cvv2/gi, "CVV")
+              .replace(/card number/gi, "número de tarjeta")
+              .replace(/invalid/gi, "inválido")
+              .replace(/must be/gi, "debe ser")
+              .replace(/length/gi, "longitud")
+              .replace(/wrong/gi, "incorrecto");
             if (error?.data?.description) {
-              errorMessage = error.data.description;
+              errorMessage = error.data.description
+                .replace(/cvv2/gi, "CVV")
+                .replace(/card number/gi, "número de tarjeta")
+                .replace(/invalid/gi, "inválido")
+                .replace(/must be/gi, "debe ser")
+                .replace(/length/gi, "longitud")
+                .replace(/wrong/gi, "incorrecto");
             }
             
             this.$q.notify({
               type: "negative",
-              message: "Error al crear token: " + errorMessage,
+              message: "Error al crear el token: " + errorMessage,
               position: "top",
               timeout: 5000
             });
