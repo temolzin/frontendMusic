@@ -112,7 +112,7 @@
                 </q-card-section>
 
                 <q-card-section class="q-pt-none">
-                  <div class="text-caption text-black ellipsis">
+                  <div class="text-caption ellipsis, mode ? 'text-grey-5' : 'text-black']">
                     {{ formatGenres(props.row.musical_genders) }}
                   </div>
                 </q-card-section>
@@ -405,6 +405,9 @@ export default {
     ...mapState({
       favouriteArtists: (state) => state.favouriteArtists.message,
     }),
+    mode: function () {
+      return this.$q.dark.isActive;
+    },
   },
   created() {
     this.gettMusicalGenders();
