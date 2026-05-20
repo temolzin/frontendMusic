@@ -51,15 +51,13 @@
               <span class="text-weight-regular">{{ artist.members }}</span>
             </p>
             <q-rating
-              v-model="start"
-              max="5"
-              size="1.5em"
-              color="yellow"
-              icon="star_border"
-              icon-selected="star"
-              icon-half="star_half"
-              no-dimming
-              readonly
+            v-model="userRating"
+            max="5"
+            size="1.5em"
+            color="yellow"
+            icon="star_border"
+            icon-selected="star"
+            @update:model-value="sendRating"
             />
             <div class="row">
               <div class="col-6">
@@ -253,7 +251,7 @@ export default {
   name: "Slug",
   data() {
     return {
-      start: 4,
+      userRating: 0,
       slug: "",
       slugMG: "",
       loadInformation: true,
@@ -275,16 +273,41 @@ export default {
     };
   },
   methods: {
+    async sendRating(value) {
+      try {
+        await this.$api.post(`/api/client/artists/${this.artist.id}/rate`, {
+          rating: value
+        });
+        $q.notify({
+          type: "positive",
+          message: "¡Calificación guardada con éxito!"
+        });
+      } catch (err) {
+        console.error("Error de validación:", err.response.data.errors);
+        
+        $q.notify({
+          type: "negative",
+          message: "Error al guardar la calificación"
+        });
+      }
+    },
     ...mapActions("clientMusicalGenders", ["getArtistBySlug"]),
     ...mapActions("shoppingCard", ["updateItemShoppingCart"]),
     ...mapActions("shoppingCard", ["create_order"]),
     async gettArtistBySlug() {
       try {
-        await this.getArtistBySlug(this.slug).then(() => {
+        await this.getArtistBySlug(this.slug).then(async () => {
           this.loadInformation = false;
           const link = this.artist.manager.phone.replace(/\s+/g, "");
           this.linkWhatsApp = `https://wa.me/${link}?text=Hola%20me%20interesa%20su%20sevicios`;
           this.linkCorreo = `mailto:${this.artist.manager.email}`;
+          try {
+            const res = await this.$api.get(`/api/client/artists/${this.artist.id}/my-rating`);
+            
+            this.userRating = res.data.rating;
+          } catch (e) {
+            console.error("No se pudo cargar la calificación previa", e);
+          }
         });
       } catch (err) {
         if (err.response.data.message) {

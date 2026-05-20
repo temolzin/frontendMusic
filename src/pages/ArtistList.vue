@@ -68,7 +68,9 @@
         <template v-slot:item="props">
           <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
             
-            <q-card class="my-card q-ma-sm" v-if="skeleton == false">
+            <q-skeleton class="q-ma-sm" height="350px" v-show="skeleton" />
+            
+            <q-card class="my-card q-ma-sm" v-show="!skeleton">
               <q-img :src="props.row.image" class="imageArtist" />
 
               <q-card-section>
@@ -88,9 +90,13 @@
                 </div>
 
                 <q-rating
-                  v-model="starts"
+                  :model-value="parseFloat(props.row?.ratings_avg_rating || 0)"
                   :max="5"
                   size="32px"
+                  color="yellow"
+                  icon="star_border"
+                  icon-selected="star"
+                  icon-half="star_half"
                   no-dimming
                   readonly
                 />
