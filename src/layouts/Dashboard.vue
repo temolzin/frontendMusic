@@ -230,29 +230,7 @@
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <q-btn
-                dense
-                round
-                flat
-                icon="shopping_cart"
-                class="q-ma-none"
-                v-if="stateCountListShopingCard && stateCountListShopingCard[0]"
-              >
-                <q-badge color="red" floating transparent>
-                  {{ stateCountListShopingCard[0]?.shopping_card_detail?.length || 0 }}
-                </q-badge>
-              </q-btn>
-
-              <q-btn
-                dense
-                round
-                flat
-                icon="shopping_cart"
-                class="q-ma-none"
-                v-else
-              >
-                <q-badge color="red" floating transparent> 0 </q-badge>
-              </q-btn>
+              <icon-cart></icon-cart>
             </q-item-section>
 
             <q-item-section> Mi Carrito </q-item-section>
@@ -356,7 +334,6 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
-    ...mapGetters("shoppingCard", ["stateCountListShopingCard"]),
     ...mapGetters("artistList", ["stateArtistList"]),
     mode: function () {
       return this.$q.dark.isActive;
