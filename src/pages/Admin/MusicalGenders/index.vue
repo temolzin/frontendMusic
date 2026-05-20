@@ -13,7 +13,7 @@
     >
       <template v-slot:top>
         <b class="text-h5">
-          Generos Musicales
+          Géneros Musicales
           <q-btn
             color="primary"
             :disable="loading"
@@ -87,7 +87,7 @@
         <q-dialog v-model="formCreate" persistent>
           <q-card style="min-width: 350px">
             <q-card-section>
-              <div class="text-h6">Crear Nuevo Genero Musical</div>
+              <div class="text-h6">Crear Nuevo Género Musical</div>
             </q-card-section>
 
             <q-card-section class="q-pt-none">
@@ -98,7 +98,7 @@
               >
                 <q-input
                   v-model="form.name"
-                  label="Nombre del genero musical *"
+                  label="Nombre del género musical *"
                   hint="Se recomiendo una sola palabra"
                   lazy-rules
                   :rules="[
@@ -108,7 +108,7 @@
 
                 <q-input
                   v-model="form.description"
-                  label="Breve descripcion del rol *"
+                  label="Breve descripcion del género *"
                   hint="Se recomienda explicarlo de manera simple"
                   lazy-rules
                   :rules="[
@@ -123,7 +123,7 @@
                   emit-value
                   map-options
                   style="max-width: 300px"
-                  label="Selecciona el color de genero de música"
+                  label="Selecciona el color de género de música"
                   :rules="[
                     (val) =>
                       (val && val.length != 0) ||
@@ -179,7 +179,7 @@
         <q-dialog v-model="formEdit" persistent>
           <q-card style="min-width: 350px">
             <q-card-section>
-              <div class="text-h6">Editar Genero Musical</div>
+              <div class="text-h6">Editar Género Musical</div>
             </q-card-section>
 
             <q-card-section class="q-pt-none">
@@ -190,7 +190,7 @@
               >
                 <q-input
                   v-model="form.name"
-                  label="Nombre del genero musical *"
+                  label="Nombre del género musical *"
                   hint="Se recomiendo una sola palabra"
                   lazy-rules
                   :rules="[
@@ -200,7 +200,7 @@
 
                 <q-input
                   v-model="form.description"
-                  label="Breve descripcion del rol *"
+                  label="Breve descripcion del género *"
                   hint="Se recomienda explicarlo de manera simple"
                   lazy-rules
                   :rules="[
@@ -214,7 +214,7 @@
                   emit-value
                   map-options
                   style="max-width: 300px"
-                  label="Selecciona el color de genero de música"
+                  label="Selecciona el color de género de música"
                   :rules="[
                     (val) =>
                       (val && val.length != 0) ||
@@ -447,7 +447,7 @@ export default {
         this.onReset();
         this.$q.notify({
           type: "positive",
-          message: `Genero musical modificado correctamente`,
+          message: `Género musical modificado correctamente`,
         });
       } catch (err) {
         if (err.response.data.message) {
@@ -466,7 +466,7 @@ export default {
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
-            message: `¿Estas seguro de eliminar el registro de ${name}`,
+            message: `¿Estas seguro de eliminar el registro de ${name}?`,
             cancel: "Cancelar",
             ok: "Confirmar",
             persistent: true,
