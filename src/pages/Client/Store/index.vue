@@ -76,7 +76,7 @@
                     style="top: 0; right: 12px; transform: translateY(-50%)" v-on:click="onSendOrder(props.row)" />
                   <div class="row no-wrap items-center">
                     <div class="col text-h6 ellipsis search text-weight-regular"
-                      @click="props.row.slug, props.row.musical_genders[0].slug">
+                      @click="$router.push({ name: 'client.view-group-by-gender-slug', params: { slugMG: props.row.musical_genders[0].slug, slugA: props.row.slug } })">
                       {{ props.row.name }}
                     </div>
                     <div class="col-auto text-grey text-caption q-pt-md row no-wrap items-center">
@@ -404,5 +404,11 @@ export default {
   #text {
     font-size: 11px;
   }
+}
+.search {
+  cursor: pointer;
+}
+.search:hover {
+  color: #ff78a5;
 }
 </style>
