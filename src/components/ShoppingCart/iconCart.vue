@@ -17,23 +17,30 @@
 import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Icon-Cart",
+  props: {
+    fetchOnCreate: {
+      type: Boolean,
+      default: true,
+    },
+  },
   methods: {
     ...mapActions("shoppingCard", ["getCountListShoppingCard"]),
     async fetchCountListShoppingCard() {
       try {
         await this.getCountListShoppingCard();
       } catch (err) {
-        if (err.response.data.message) {
-          this.$q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
-        }
+        const message = err?.response?.data?.message || "No se pudo actualizar el contador del carrito.";
+        this.$q.notify({
+          type: "negative",
+          message,
+        });
       }
     },
   },
   created() {
-    this.fetchCountListShoppingCard();
+    if (this.fetchOnCreate) {
+      this.fetchCountListShoppingCard();
+    }
   },
   computed: {
     ...mapGetters("shoppingCard", ["stateCountListShopingCard"]),

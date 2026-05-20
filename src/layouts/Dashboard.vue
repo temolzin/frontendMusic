@@ -20,7 +20,7 @@
           <!-- Icons bell and wrench -->
           <small v-if="getMe.role[0] == 'cliente'">
             <router-link to="/client/shopping-cart">
-              <icon-cart></icon-cart>
+              <icon-cart :fetch-on-create="false"></icon-cart>
             </router-link>
           </small>
           <!-- FinIcons bell and wrench -->
@@ -230,7 +230,8 @@
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <icon-cart></icon-cart>
+              <icon-cart :fetch-on-create="false"></icon-cart>
+              <q-icon name="fas fa-solid fa-cart-shopping" />
             </q-item-section>
 
             <q-item-section> Mi Carrito </q-item-section>
@@ -350,6 +351,7 @@ export default {
 
   created() {
     this.getArtistss();
+    this.fetchShoppingCartCount();
     const user = this.getMe;
     const saved = user?.id ? localStorage.getItem(`darkMode_${user.id}`) : null;
     const isDark = saved === 'true';
@@ -358,16 +360,27 @@ export default {
   },
   methods: {
     ...mapActions("artistList", ["getArtists"]),
+    ...mapActions("shoppingCard", ["getCountListShoppingCard"]),
     async getArtistss() {
       try {
         await this.getArtists();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
-        }
+        const message = err?.response?.data?.message || "No se pudieron cargar los artistas.";
+        this.$q.notify({
+          type: "negative",
+          message,
+        });
+      }
+    },
+    async fetchShoppingCartCount() {
+      try {
+        await this.getCountListShoppingCard();
+      } catch (err) {
+        const message = err?.response?.data?.message || "No se pudo cargar el carrito.";
+        this.$q.notify({
+          type: "negative",
+          message,
+        });
       }
     },
     logout() {
