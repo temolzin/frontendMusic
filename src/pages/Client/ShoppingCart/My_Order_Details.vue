@@ -35,70 +35,80 @@
           </div>
 
           <q-col :span-xs="12" :span-md="8" class="q-mx-auto">
-            <q-markup-table dense flat bordered class="table-responsive">
-              <tbody v-for="(order, index) in filteredListShopingCard" :key="index">
-                <tr class="bg-primary text-white text-center">
-                  <th style="font-size: 15px">
-                    {{ formatDate(order.order_date_start) }}
-                  </th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                </tr>
-                <tr v-for="(detail, index) in order.shopping_card_detail" :key="index">
-                  <td>
-                    <div class="text-center">
-                      <q-img :src="detail.artist.image" loading="lazy" width="100px" height="100px"
-                        style="object-fit: cover" class="rounded-circle q-responsive" />
-                    </div>
-                  </td>
-                  <td class="text-left">
-                      <strong class="bf-ui-rich-text">Contratado el
-                        {{ formatDate(order.order_date_finish) }}</strong>
-                    <br>
-                    <br class="detail-artist-name">{{ detail.artist.name }}
-                    <br class="detail-artist-zone">{{ detail.artist.zone }}
-                    <br class="detail-hours">H | {{ detail.hours }} hora(s)
-                    <p></p>
-                  </td>
-                  <td>
-                    <p class="artist-zone">{{ detail.artist.manager.name }}</p>
-                    <p>
-                      <q-btn flat rounded color="primary" label="Enviar Mensaje" />
-                    </p>
-                  </td>
-                  <td class="text-left">
-                    <q-btn unelevated rounded color="primary" label="ver compra" @click="this.showModal = true; showOrderDetails({ order })" />
-                  </td>
-                  <q-dialog v-model="showModal" transition-show="rotate" transition-hide="rotate">
-                    <q-card style="width: 300px" class="q-px-sm q-pb-md">
-                      <q-card-section class="row items-center">
-                        <div class="text-h6">Detalle de la compra</div>
-                      </q-card-section>
-                      <q-separator />
-                      <q-card-section>
-                        <div class="text-h6">
-                          {{ formatDate(order.order_date_start) }}
-                        </div>
-                        <q-separator spaced />
-                        <div>Artistas:</div>
-                        <div>Descuento: - {{ order.total }}</div>
-                        <div>Total: - {{ order.total }}</div>
-                        <q-separator spaced />
-                        <div>Pago - 3x $910</div>
-                        <div>Mastercard ***</div>
-                      </q-card-section>
-                      <q-card-actions align="right">
-                        <q-btn flat label="Cerrar" color="primary" v-close-popup />
-                      </q-card-actions>
-                    </q-card>
-                  </q-dialog>
-                </tr>
-              </tbody>
-            </q-markup-table>
+            <div v-if="filteredPurchases.length === 0" class="text-center q-pa-lg">
+              <p class="text-h6 text-grey-7">No tienes compras registradas</p>
+            </div>
+            <div v-else>
+              <q-markup-table dense flat bordered class="table-responsive">
+                <tbody v-for="(purchase, index) in filteredPurchases" :key="index">
+                  <tr class="bg-primary text-white text-center">
+                    <th style="font-size: 15px">
+                      {{ formatDate(purchase.created_at) }}
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="text-center">
+                        <q-img :src="purchase.artist?.image" loading="lazy" width="100px" height="100px"
+                          style="object-fit: cover" class="rounded-circle q-responsive" />
+                      </div>
+                    </td>
+                    <td class="text-left">
+                      <strong class="bf-ui-rich-text">Contratado el {{ formatDate(purchase.created_at) }}</strong>
+                      <br>
+                      <br class="detail-artist-name">{{ purchase.artist?.name || 'N/A' }}
+                      <br class="detail-artist-zone">{{ purchase.artist?.zone || 'N/A' }}
+                      <br class="detail-hours">Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
+                      <p></p>
+                    </td>
+                    <td>
+                      <p class="artist-zone">{{ purchase.artist?.manager?.name || 'N/A' }}</p>
+                      <p>
+                        <q-btn flat rounded color="primary" label="Enviar Mensaje" />
+                      </p>
+                    </td>
+                    <td class="text-left">
+                      <q-btn unelevated rounded color="primary" label="ver compra" @click="openOrderModal(purchase)" />
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+            </div>
           </q-col>
         </q-card-group>
       </div>
+
+      <q-dialog v-model="showModal" transition-show="rotate" transition-hide="rotate">
+        <q-card style="width: 450px" class="q-px-sm q-pb-md">
+          <q-card-section class="row items-center">
+            <div class="text-h6">Detalle de la compra</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div v-if="selectedPurchase">
+              <div class="text-h7">
+                Fecha: {{ formatDate(selectedPurchase.created_at) }}
+              </div>
+              <q-separator spaced />
+              <div class="text-subtitle2"><strong>Artista:</strong> {{ selectedPurchase.artist?.name || 'N/A' }}</div>
+              <div class="text-subtitle2"><strong>Monto:</strong> ${{ (parseFloat(selectedPurchase.amount) || 0).toFixed(2) }} MXN</div>
+              <q-separator spaced />
+              <div class="text-subtitle2"><strong>ID Transacción:</strong></div>
+              <div class="text-caption text-primary">{{ selectedPurchase.openpay_transaction_id }}</div>
+              <q-separator spaced />
+              <div class="text-subtitle2"><strong>Estado:</strong> <span class="text-green">Completado</span></div>
+            </div>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cerrar" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-container>
   </q-page>
 </template>
@@ -111,22 +121,14 @@ let $q;
 export default {
   data() {
     return {
-      shoppingCartDetails: [],
       filterName: "",
       filterDate: "",
       showModal: false,
-      showModalList: {},
-      stars: "",
-      props: {
-        order: {
-          type: Object,
-          required: true,
-        },
-      },
+      selectedPurchase: null,
     };
   },
   methods: {
-    ...mapActions("orderDetails", ["viewShoppingCardDetails"]),
+    ...mapActions("orderDetails", ["viewPurchaseHistory"]),
     formatDate(rawDate) {
       const months = [
         "enero",
@@ -150,17 +152,9 @@ export default {
 
       return `${day} de ${months[monthIndex]} del ${year}`;
     },
-    search(slug, slugmg) {
-      this.$router.push({
-        name: "client.view-group-by-gender-slug",
-        params: {
-          slugMG: slugmg,
-          slugA: slug,
-        },
-      });
-    },
-    showOrderDetails({ order }) {
-      this.$set(this.showModalList, order.id, true);
+    openOrderModal(purchase) {
+      this.selectedPurchase = purchase;
+      this.showModal = true;
     },
   },
   computed: {
@@ -168,6 +162,7 @@ export default {
     dateOptions() {
       const currentYear = new Date().getFullYear();
       return [
+        "Todas",
         "Este mes",
         "Mes pasado",
         "Este año",
@@ -176,47 +171,54 @@ export default {
           .map((_, i) => `${currentYear - i - 1}`),
       ];
     },
-    filteredListShopingCard() {
-      return this.stateListShopingCard.filter((order) => {
-        const artistMatch = order.shopping_card_detail.some((detail) =>
-          detail.artist.name.includes(this.filterName)
-        );
+    filteredPurchases() {
+      return this.stateListShopingCard.filter((purchase) => {
+        const artistMatch = purchase.artist?.name?.includes(this.filterName) || false;
         let dateMatch = true;
-        if (this.filterDate) {
-          const orderDate = new Date(order.order_date_start);
+
+        if (this.filterDate && this.filterDate !== "Todas") {
+          const purchaseDate = new Date(purchase.created_at);
           const now = new Date();
           switch (this.filterDate) {
             case "Este mes":
               dateMatch =
-                now.getMonth() === orderDate.getMonth() &&
-                now.getFullYear() === orderDate.getFullYear();
+                now.getMonth() === purchaseDate.getMonth() &&
+                now.getFullYear() === purchaseDate.getFullYear();
               break;
             case "Mes pasado":
               dateMatch =
-                now.getMonth() - 1 === orderDate.getMonth() &&
-                now.getFullYear() === orderDate.getFullYear();
+                now.getMonth() - 1 === purchaseDate.getMonth() &&
+                now.getFullYear() === purchaseDate.getFullYear();
               break;
             case "Este año":
-              dateMatch = now.getFullYear() === orderDate.getFullYear();
+              dateMatch = now.getFullYear() === purchaseDate.getFullYear();
               break;
             default:
-              dateMatch = parseInt(this.filterDate) === orderDate.getFullYear();
+              dateMatch = parseInt(this.filterDate) === purchaseDate.getFullYear();
           }
         }
+
         return artistMatch && dateMatch;
       });
     },
   },
   created() {
-    this.viewShoppingCardDetails();
-    this.showModalList = this.filteredListShopingCard.reduce((acc, order) => {
-      acc[order.id] = false;
-      return acc;
-    }, {});
+    this.viewPurchaseHistory();
+    console.log("My_Order_Details component created, calling viewPurchaseHistory");
+  },
+  watch: {
+    stateListShopingCard(newVal) {
+      console.log("stateListShopingCard updated:", newVal);
+    }
   },
   mounted() {
     $q = useQuasar();
   },
 };
 </script>
-<style></style>
+
+<style scoped>
+.table-responsive {
+  width: 100%;
+}
+</style>
