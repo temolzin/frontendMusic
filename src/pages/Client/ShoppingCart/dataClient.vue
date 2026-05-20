@@ -480,6 +480,7 @@ import { defineComponent } from "vue";
 import { useQuasar } from "quasar";
 import { mapActions, mapState, mapGetters } from "vuex";
 import { ref } from "vue";
+import { api } from "boot/axios";
 
 let $q;
 
@@ -634,6 +635,7 @@ export default defineComponent({
     ...mapActions("shoppingCard", ["getListShoppingCard"]),
     ...mapActions("shoppingCard", ["deleteItembyId"]),
     ...mapActions("shoppingCard", ["updateItemShoppingCart"]),
+    ...mapActions("shoppingCard", ["clearCart"]),
     ...mapActions("card", ["getCards"]),
     ...mapActions("shoppingCard", ["createPayment"]),
     async gettCards() {
@@ -756,12 +758,32 @@ export default defineComponent({
     },
     selectCard(cards) {
       this.selectedCardIndex = this.stateUserCards.indexOf(cards);
-      console.log("Selected Card Index:", this.selectedCardIndex);
       this.selectedCard = { ...this.stateUserCards[this.selectedCardIndex] };
-      console.log("Selected Card:", this.selectedCard);
-      this.basic = false;
     },
-    async pay () {
+    async saveAddress() {
+      try {
+        const addressData = {
+          first_name: this.formClient.first_name,
+          last_name: this.formClient.first_last,
+          email: this.formClient.email,
+          address: this.formClient.adress_line2,
+          city: this.formClient.city,
+          state: this.formClient.state_city,
+          zip_code: this.formClient.zip_code,
+          country: "MX"
+        };
+
+        const response = await api.post("/api/client/save-address", addressData);
+        
+        if (response.data.success) {
+          console.log("Dirección guardada correctamente");
+        }
+      } catch (error) {
+        console.error("Error guardando dirección:", error);
+        throw error;
+      }
+    },
+    async pay() {
       if (!this.selectedCard || !this.selectedCard.number_card) {
         this.$q.notify({
           type: "negative",
@@ -805,70 +827,163 @@ export default defineComponent({
         return;
       }
 
-      OpenPay.setId(this.$q.config.OpenPayID);
-      OpenPay.setApiKey(this.$q.config.OpenPayKey);
-      OpenPay.setSandboxMode(this.$q.config.OpenPaySanboxMode);
-
-      var deviceDataId = OpenPay.deviceData.setup("formId");
-      const cardData = this.stateCards.find(item => item.id === this.selectedCard);
-      const dateCard = this.selectedCard.expiration_date.split("/");
-      const card_numberArr = this.selectedCard.number_card.split(" ");
-      const card_number = card_numberArr.join("");
-
-      OpenPay.token.create({
-        "card_number": card_number,
-        "holder_name": this.formClient.first_name + " " + this.formClient.first_last,
-        "expiration_year": dateCard[1],
-        "expiration_month": dateCard[0],
-        "cvv2": this.cvv,
-        "address":{
-          "city": this.formClient.city,
-          "postal_code": this.formClient.zip_code,
-          "line1": this.formClient.adress_line2,
-          "state": this.formClient.state_city,
-          "country_code": "MX"
-        }
-      }, async (response) => {
-        let artistList = []
-        this.shoppingCardDetail.map((element) => {
-          let obj = [element.artist_id, element.price]
-          artistList.push(obj)
+      if (typeof OpenPay === "undefined") {
+        this.$q.notify({
+          type: "negative",
+          message: "Error: OpenPay no está cargado. Recarga la página.",
         });
-        const data = {
-          card_holder_name: this.formClient.first_name + " " + this.formClient.first_last,
-          card_number: card_number,
-          expiration_month: dateCard[0],
-          expiration_year: dateCard[1],
-          cvv2: this.cvv,
-          amount: this.shoppingCartTotal,
-          name: this.formClient.first_name,
-          last_name: this.formClient.first_last,
-          email: this.formClient.email,
-          address: this.formClient.adress_line2,
-          city: this.formClient.state_city,
-          state: this.formClient.city,
-          zip_code: this.formClient.zip_code,
-          deviceSessionId: deviceDataId,
-          token : response.data.id,
-          artistList: artistList
-        }
+        return;
+      }
 
-        try {
-          const response = await this.createPayment(data);
-          console.log(response.data)
-          $q.notify({
-            type: "positive",
-            message: "Tu transacción se realizó con exito",
-          });
-        } catch (err) {
-          $q.notify({
-            type: "negative",
-            message: err,
-          });
-        }
-
+      this.$q.loading.show({
+        message: "Procesando tu pago...",
+        spinnerColor: "primary",
+        backgroundColor: "rgba(0, 0, 0, 0.3)",
+        messageColor: "white",
       });
-      
+
+      try {
+        OpenPay.setId(this.$q.config.OpenPayID);
+        OpenPay.setApiKey(this.$q.config.OpenPayKey);
+        OpenPay.setSandboxMode(this.$q.config.OpenPaySanboxMode);
+
+        let deviceDataId = null;
+        try {
+          if (OpenPay.deviceData && typeof OpenPay.deviceData.generateSessionId === 'function') {
+            deviceDataId = OpenPay.deviceData.generateSessionId();
+          } else {
+            deviceDataId = OpenPay.deviceData.setup("formId");
+          }
+        } catch (e) {
+
+        }
+
+        const card_number = this.selectedCard.number_card.replace(/\s/g, "");
+
+        OpenPay.token.create(
+          {
+            "card_number": card_number,
+            "holder_name": this.formClient.first_name + " " + this.formClient.first_last,
+            "expiration_year": parseInt(year),
+            "expiration_month": parseInt(month),
+            "cvv2": this.cvv.toString(),
+            "address": {
+              "city": this.formClient.city,
+              "postal_code": this.formClient.zip_code.toString(),
+              "line1": this.formClient.adress_line2,
+              "state": this.formClient.state_city,
+              "country_code": "MX"
+            }
+          },
+          async (response) => {
+            try {
+              if (!response || !response.data || !response.data.id) {
+                throw new Error("No se recibió token válido de OpenPay");
+              }
+
+              const token = response.data.id;
+
+              const artistList = this.shoppingCardDetail.map((element) => [
+                element.artist_id,
+                element.price
+              ]);
+
+              const paymentData = {
+                token: token,
+                amount: this.shoppingCartTotal * 100,
+                customer_name: this.formClient.first_name + " " + this.formClient.first_last,
+                customer_email: this.formClient.email,
+                customer_phone: this.formClient.zip_code,
+                order_details: {
+                  first_name: this.formClient.first_name,
+                  last_name: this.formClient.first_last,
+                  email: this.formClient.email,
+                  address: this.formClient.adress_line2,
+                  city: this.formClient.city,
+                  state: this.formClient.state_city,
+                  zip_code: this.formClient.zip_code,
+                  country: "MX"
+                },
+                artistList: artistList,
+                description: `Compra de servicios musicales - Total: ${this.shoppingCartTotal} MXN`,
+                deviceSessionId: deviceDataId
+              };
+
+              const paymentResponse = await this.createPayment(paymentData);
+
+              if (this.address_detail.checkbox) {
+                try {
+                  await this.saveAddress();
+                } catch (err) {
+                  console.error("Error saving address:", err);
+                }
+              }
+
+              if (this.card_detail.checkbox && this.selectedCard && !this.selectedCard.id) {
+                try {
+                  const cardToSave = {
+                    name: this.selectedCard.name,
+                    number_card: (this.selectedCard.number_card || '').replace(/\s/g, ''),
+                    expiration_date: this.selectedCard.expiration_date,
+                  };
+                  await this.createCard(cardToSave);
+                } catch (err) {
+                  console.error("Error saving card:", err);
+                }
+              }
+
+              this.$q.loading.hide();
+              this.$q.notify({
+                type: "positive",
+                message: "¡Tu transacción se realizó con éxito!",
+                position: "top",
+              });
+
+              this.onReset();
+              setTimeout(() => {
+                this.$router.push("/client/shopping-cart/view-my-order-details");
+              }, 1500);
+            } catch (err) {
+              this.$q.loading.hide();
+              
+              let errorMessage =
+                err.response?.data?.error?.description ??
+                err.response?.data?.message ??
+                err.message ??
+                "Error al procesar el pago";
+              
+              this.$q.notify({
+                type: "negative",
+                message: errorMessage,
+                position: "top",
+                timeout: 5000
+              });
+            }
+          },
+          (error) => {
+            this.$q.loading.hide();
+            
+            let errorMessage = error?.description || error?.message || "Error desconocido en OpenPay";
+            if (error?.data?.description) {
+              errorMessage = error.data.description;
+            }
+            
+            this.$q.notify({
+              type: "negative",
+              message: "Error al crear token: " + errorMessage,
+              position: "top",
+              timeout: 5000
+            });
+          }
+        );
+      } catch (err) {
+        this.$q.loading.hide();
+        this.$q.notify({
+          type: "negative",
+          message: err.message || "Error inesperado en el pago",
+          position: "top",
+        });
+      }
     },
     onReset() {
       if (this.form && this.form.value) {
