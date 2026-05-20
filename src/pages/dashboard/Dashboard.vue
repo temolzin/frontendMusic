@@ -88,7 +88,7 @@
             <q-separator />
 
             <q-card-actions align="right">
-              <q-btn flat round color="primary" icon="share" />
+              <q-btn flat round color="primary" icon="share" @click="copyArtistLink(props.row.artist.slug)" />
             </q-card-actions>
           </q-card>
         </div>
@@ -150,6 +150,12 @@ export default {
         },
       });
     },
+    copyArtistLink(artistSlug) {
+      const link = `${window.location.origin}/client/musical-genders/search/${artistSlug}`;
+      navigator.clipboard.writeText(link).then(() => {
+        this.$q.notify({ type: 'positive', message: 'Link copiado al portapapeles' });
+      });
+    },
     showNotif() {
       $q.notify({
         message:
@@ -189,5 +195,11 @@ export default {
   max-height: 200px;
   min-height: 200px;
   object-fit: cover;
+}
+.search {
+  cursor: pointer;
+}
+.search:hover {
+  color: #ff78a5;
 }
 </style>

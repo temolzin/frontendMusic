@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-sm bg-white">
+  <q-page class="q-pa-sm">
     <q-carousel v-model="slide" transition-prev="scale" transition-next="scale" swipeable animated control-color="white"
       navigation padding arrows height="300px" class="bg-primary text-white shadow-1 rounded-borders">
       <q-carousel-slide name="style" class="column no-wrap flex-center"

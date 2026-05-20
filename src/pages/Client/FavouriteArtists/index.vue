@@ -84,6 +84,23 @@
         </template>
       </q-table>
     </div>
+    <div v-else class="q-pa-md q-gutter-sm">
+      <q-banner
+        inline-actions
+        rounded
+        class="bg-warning text-white"
+      >
+        <div class="q-ma-md">
+          <p class="text-h6 q-mb-sm">Aún no tienes artistas favoritos 😥</p>
+          <p class="q-mt-none">
+            Explora la tienda y agrega tus artistas favoritos para verlos aquí.
+          </p>
+        </div>
+        <template v-slot:action>
+          <q-btn flat label="Vamos ➡" to="/client/store" />
+        </template>
+      </q-banner>
+    </div>
   </q-page>
 </template>
 
