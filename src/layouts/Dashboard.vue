@@ -310,11 +310,9 @@
       </q-scroll-area>
 
       <!-- Inicio Icono de la marca -->
-      <q-img class="absolute-top bg-transparent" style="height: 140px">
-        <div class="absolute-center bg-transparent">
-          <q-avatar size="140px" @click="redirect" style="cursor: pointer">
-            <q-icon name="fas fa-solid fa-cloud-moon" />
-          </q-avatar>
+      <q-img class="absolute-top bg-transparent" style="height: 140px;">
+        <div class="bg-transparent" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;" @click="redirect">
+          <img :src="mode ? '/logovibeer.ico' : '/logovibeer-negro.png'" style="height: 50px; transform: scale(2.4); cursor: pointer;">
         </div>
       </q-img>
       <!-- Fin Icono de la marca -->

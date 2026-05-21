@@ -4,7 +4,7 @@
     <q-header
       elevated
       :class="mode ? 'bg-dark text-white-8' : 'bg-white text-grey-8'"
-      height-hint="64"
+      height-hint="90"
     >
       <q-toolbar class="GPL__toolbar" style="height: 64px">
         <!-- Inicion de botón Hamburguesa Small -->
@@ -26,19 +26,7 @@
           class="row items-center no-wrap q-ml-md"
           v-if="$q.screen.gt.sm"
         >
-          <q-icon
-            name="fas fa-solid fa-cloud-moon"
-            color="primary"
-            size="40px"
-          />
-
-          <transition
-            appear
-            enter-active-class="animated rubberBand"
-            :duration="1000"
-          >
-            <span class="q-ml-sm">Música GSM</span>
-          </transition>
+          <img :src="mode ? '/logovibeer.ico' : '/logovibeer-negro.png'" style="height: 64px; transform: scale(1.4); transform-origin: left center;">
         </q-toolbar-title>
         <!-- Fin icono y nombre lado izquierdo -->
 
