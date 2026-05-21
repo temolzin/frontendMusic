@@ -87,21 +87,21 @@
         <div class="col-12 col-sm-7 col-md-7 2 q-pa-lg">
           <q-card class="my-card shadow-6">
             <q-card-section>
-              <h3
-                class="q-mt-sm ellipsis"
-                :class="mode ? 'title-group2-white' : 'title-group2'"
-              >
-                <small>¡Contrátame ahora! {{ getMe.name }}</small>
-              </h3>
+              <div class="artist-hero text-center q-mt-sm">
+                <h3 class="artist-cta q-ma-none" :class="mode ? 'title-group2-white' : 'title-group2'">
+                  ¡Contrátame ahora!
+                </h3>
+                <div class="artist-name q-mt-xs" :class="mode ? 'text-white' : 'text-dark'">
+                  {{ artist.name }}
+                </div>
+              </div>
               <h4 class="q-ma-none text-center q-mt-sm text-primary">
-                $ {{ artist.price_hour }}.00
-                <span :class="mode ? 'text-white' : 'text-dark'">pesos</span>
+                $ {{ formatMoney(artist.price_hour) }}
                 <small
                   style="font-size: 20px; text-decoration: line-through"
                   class="text-red q-ml-sm"
                 >
-                  $ {{ parseFloat(artist.price_hour) + 200 }}.00
-                  <span :class="mode ? 'text-white' : 'text-dark'">pesos</span>
+                  $ {{ formatMoney(parseFloat(artist.price_hour) + 200) }}
                 </small>
               </h4>
               <h6 class="q-mt-sm text-weight-bold q-mb-sm">
@@ -121,13 +121,13 @@
               <div class="q-mt-sm">
                 <q-icon name="money" class="q-mt-none" />
                 <span class="q-ml-sm q-mt-md">
-                  $ {{ artist.price_hour }}.00 pesos por hora
+                  $ {{ formatMoney(artist.price_hour) }} por hora
                 </span>
               </div>
               <div class="q-mt-sm">
                 <q-icon name="money" class="q-mt-none" />
                 <span class="q-ml-sm q-mt-md">
-                  $ {{ artist.extra_kilometre }}.00 pesos por hora extra por km
+                  $ {{ formatMoney(artist.extra_kilometre) }} por km extra
                 </span>
               </div>
 
@@ -392,6 +392,10 @@ export default {
     },
 
     onSubmit() {},
+    formatMoney(value) {
+      const num = Number(value || 0);
+      return num.toLocaleString('es-MX');
+    },
   },
   created() {
     this.slug = this.$route.params.slugA;
@@ -455,6 +459,24 @@ export default {
   font-size: 45px;
   margin-bottom: 0;
   color: #e6e6e6;
+}
+.artist-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.artist-cta {
+  line-height: 1.1;
+  text-align: center;
+}
+.artist-name {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  max-width: 100%;
+  word-break: break-word;
 }
 .labels {
   z-index: 2;
