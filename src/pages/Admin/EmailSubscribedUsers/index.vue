@@ -100,9 +100,17 @@ export default {
                     message: `Se envió el email de forma correcta`,
                 });
             } catch (err) {
+                const backendMessage =
+                    err?.response?.data?.message ||
+                    err?.response?.data?.errors?.role_ids?.[0] ||
+                    err?.response?.data?.errors?.subject?.[0] ||
+                    err?.response?.data?.errors?.content?.[0] ||
+                    err?.message ||
+                    "Algo salió mal, vuelve a intentarlo más tarde";
+
                 $q.notify({
                 type: "negative",
-                message: `Algo salió mal, vuelve a intentarlo más tarde ${err}`
+                message: backendMessage
             });
         }
     },
