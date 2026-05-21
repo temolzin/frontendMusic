@@ -26,7 +26,7 @@
           class="row items-center no-wrap q-ml-md"
           v-if="$q.screen.gt.sm"
         >
-          <img :src="mode ? '/logovibeer.ico' : '/logovibeer-negro.png'" style="height: 64px; transform: scale(1.4); transform-origin: left center;">
+          <img :src="mode ? '/logovibeer.ico' : '/logovibeer-black.png'" style="height: 64px; transform: scale(1.4); transform-origin: left center;">
         </q-toolbar-title>
         <!-- Fin icono y nombre lado izquierdo -->
 
