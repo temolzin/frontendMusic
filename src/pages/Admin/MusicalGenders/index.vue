@@ -413,7 +413,7 @@ export default {
         this.onReset();
         this.$q.notify({
           type: "positive",
-          message: `Genéro musical creado correctamente`,
+          message: `Género musical creado correctamente`,
         });
       } catch (err) {
         if (err.response.data.message) {
