@@ -43,7 +43,7 @@ export default route(function ({ store, ssrContext }) {
 
   Router.beforeEach((to, from, next) => {
 
-    const systemName = 'Música GSM';
+    const systemName = 'Vibeer';
     const pageTitle = to.meta.title || 'Inicio';
     document.title = `${systemName} | ${pageTitle}`;
 

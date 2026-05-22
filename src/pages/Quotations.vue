@@ -26,12 +26,11 @@
               <q-btn round flat icon="fas fa-arrow-left" to="/" />
             </div>
             <div class="col-6 text-right q-px-md" style="font-size: 2em">
-              <q-btn
-                round
-                color="primary"
-                icon="fas fa-solid fa-cloud-moon"
-                to="/"
-              />
+              <img 
+                :src="$q.dark.isActive ? '/vibeerlogowithouttext.png' : '/viberlogowithouttext-black.png'" 
+                @click="$router.push('/')" 
+                style="height: 64px; cursor: pointer; vertical-align: middle;"
+              >
             </div>
           </div>
           <div class="row-2">
