@@ -5,18 +5,16 @@
         <q-breadcrumbs-el
           to="/dashboard/home"
           label="Inico"
-          class="text-weight-bold text-h6 uppercase"
-          :class="mode ? 'text-grey-5' : 'text-dark'"
+          icon="home"
         />
         <q-breadcrumbs-el
           to="/client/musical-genders"
           label="Generos Musicales"
-          class="text-weight-bold text-h6 uppercase"
-          :class="mode ? 'text-grey-5' : 'text-dark'"
+          icon="widgets"
         />
         <q-breadcrumbs-el
           :label="slug"
-          class="text-weight-bold text-h6 uppercase"
+          class="text-weight-bold"
           :class="mode ? 'text-grey-5' : 'text-dark'"
         />
       </q-breadcrumbs>
