@@ -8,10 +8,9 @@
           <div class="responsive-text" id="text">
             No pierdas esta oportunidad de hacer realidad tus sueños y
             contratar a tu artista favorito para un evento inolvidable.
-            Regístrate ahora y comienza a planificar tu experiencia única con
+            Ahora comienza a planificar tu experiencia única con
             nosotros. ¡No esperes más, el escenario está listo para ti!
           </div>
-          <q-btn outline label="Ver más" class="q-mt-md" to="/login" />
         </div>
       </q-carousel-slide>
 
@@ -27,7 +26,7 @@
             conocido en todo el mundo! Contáctanos hoy mismo y te
             registraremos para darle alas a tu sueño musical.
           </div>
-          <q-btn outline label="Ver más" class="q-mt-md" to="/login" />
+          <q-btn outline label="Ver más" class="q-mt-md" to="/about" />
         </div>
       </q-carousel-slide>
     </q-carousel>
