@@ -370,7 +370,7 @@ export default {
       this.$q
         .dialog({
           title: "Mensaje de confirmación",
-          message: `¿Estas seguro de eliminar el registro de ${props.row.name}`,
+          message: `¿Estás seguro de eliminar el registro de ${props.row.name}?`,
           cancel: "Cancelar",
           ok: "Confirmar",
           persistent: true,

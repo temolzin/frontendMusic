@@ -20,7 +20,7 @@
             Ve tus ventas generadas a lo largo del tiempo y las que aún te
             faltan.
           </div>
-          <q-btn outline label="Ver más" class="q-mt-md" />
+          <q-btn outline label="Ver más" class="q-mt-md" to="/artist/artistSales"/>
         </div>
       </q-carousel-slide>
 
@@ -49,7 +49,7 @@
             Recuerda siempre tener la información de tu maneger actualizada para
             que puedan contactarlos de manera rápida y efectiva.
           </div>
-          <q-btn outline label="Ver más" class="q-mt-md" />
+          <q-btn outline label="Ver más" class="q-mt-md" to="/artist/index"/>
         </div>
       </q-carousel-slide>
 
@@ -63,7 +63,6 @@
             Cualquier duda o aclaración mándanos mensaje al correo info@root.com
             o al teléfono +52 55 43 22 32.
           </div>
-          <q-btn outline label="Ver más" class="q-mt-md" />
         </div>
       </q-carousel-slide>
     </q-carousel>

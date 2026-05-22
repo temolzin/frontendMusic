@@ -23,7 +23,7 @@
               tu artista favorito para un evento inolvidable. Regístrate ahora y comienza a planificar tu experiencia única con nosotros.
               ¡No esperes más, el escenario está listo para ti!
             </div>
-            <q-btn outline label="Ver más" class="q-mt-md" to="/login"/>
+            <q-btn outline label="Ver más" class="q-mt-md" :to="isLoggedIn ? '/artist-list' : '/register'"/>
           </div>
       </q-carousel-slide>
 
@@ -43,7 +43,8 @@
               impulsar tu carrera artística y hacerte conocido en todo el mundo! Contáctanos hoy mismo y
               te registraremos para darle alas a tu sueño musical.
             </div>
-            <q-btn outline label="Ver más" class="q-mt-md" to="/login"/>
+            <q-btn v-if="!isLoggedIn" outline label="Ver más" class="q-mt-md" to="/login" />
+            <q-btn v-else outline label="Ver más" class="q-mt-md" @click="scrollToGrupo" />
           </div>
       </q-carousel-slide>
     </q-carousel>
@@ -71,7 +72,7 @@
       </q-card-section>
 
       <q-separator />
-      <q-card-actions>
+      <q-card-actions v-if="!isLoggedIn">
         <q-btn flat color="primary" to="/register">
           Ir
         </q-btn>
@@ -99,7 +100,7 @@
 
       <q-separator />
       <q-card-actions>
-        <q-btn flat color="primary" to="/login">
+        <q-btn flat color="primary" :to="getRouteFor(2)">
           Ir
         </q-btn>
       </q-card-actions>
@@ -112,7 +113,7 @@
           <div class="text-h6 q-mt-sm q-mb-xs">Selecciona a tu Artista</div>
           <div class="text-caption text-black">
             Elige a tu artista favorito Ya sea un concierto privado, una aparición especial o una charla exclusiva, nosotros lo haremos posible.
-          </div>
+          </div> 
         </q-card-section>
 
         <q-card-section class="col-5 flex flex-center">
@@ -124,7 +125,7 @@
       </q-card-section>
       <q-separator />
       <q-card-actions>
-        <q-btn flat color="primary" to="/login">
+        <q-btn flat color="primary" :to="getRouteFor(3)">
           Ir
         </q-btn>
       </q-card-actions>
@@ -151,13 +152,13 @@
 
       <q-separator />
       <q-card-actions>
-        <q-btn flat color="primary" to="/login">
+        <q-btn flat color="primary" :to="getRouteFor(4)">
           Ir
         </q-btn>
       </q-card-actions>
     </q-card>
 
-    <q-card class="groupMusical">
+    <q-card id="register-group" class="groupMusical">
       <q-item>
         <q-item-section avatar>
           <q-avatar>
@@ -200,15 +201,49 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref } from "vue";
+import { mapState } from "vuex"; 
 
 export default {
-  setup () {
+  data() {
     return {
       slide: ref('style'),
+      isLoggedIn: Boolean(localStorage.getItem('token')) 
+    };
+  },
+  computed: {
+    ...mapState({
+      authState: (state) => state.auth || {}
+    }),
+    userRole() {
+      return this.authState?.me?.role?.[0]
+        ? String(this.authState.me.role[0]).trim().toLowerCase() 
+        : '';
+    }
+  },
+  methods: {
+    scrollToGrupo() {
+      document.getElementById('register-group')?.scrollIntoView({ behavior: 'smooth' });
+    },
+    getRouteFor(Step) {
+      const ruoteClient = {
+        2: '/client/musical-genders',
+        3: '/client/store',
+        4: '/client/shopping-cart'
+      };
+
+      const routeOtherRole = {
+        2: '/artist-list',
+        3: '/artist-list',
+        4: '/artist-list'
+      };
+
+      return !this.isLoggedIn 
+        ? '/login' 
+        : (this.userRole === 'cliente' ? ruoteClient[Step] : routeOtherRole[Step]);
     }
   }
-}
+};
 </script>
 
 <style lang="css" scoped>
