@@ -26,14 +26,14 @@
             </p>
             <p class="text-center q-mb-sm text-weight-bold">
               Disfruta la nueva experiencia de contratación de servicios
-              musicales rapida y segura.
+              musicales rápida y segura.
             </p>
 
             <div class="row content-center">
               <q-input
                 v-model="formCreate.name"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Nombre del grupo o artistico"
+                label="Nombre del grupo o artístico"
                 hint="Nombre completo del grupo o del artista"
                 lazy-rules
                 :rules="[
@@ -44,7 +44,7 @@
                 v-model="formCreate.members"
                 class="col-12 col-sm-5 q-ma-sm"
                 label="Integrantes"
-                hint="Numero de integrantes"
+                hint="Número de integrantes"
                 type="number"
                 lazy-rules
                 :rules="[
@@ -55,7 +55,7 @@
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="height: 50px"
+                autogrow
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
                 hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
@@ -448,7 +448,7 @@
             </p>
             <p class="text-center q-mb-sm text-weight-bold">
               Disfruta la nueva experiencia de contratación de servicios
-              musicales rapida y segura.
+              musicales rápida y segura.
             </p>
 
             <div class="row content-center">
@@ -466,7 +466,7 @@
                 v-model="formCreate.members"
                 class="col-12 col-sm-5 q-ma-sm"
                 label="Integrantes"
-                hint="Numero de integrantes"
+                hint="Número de integrantes"
                 type="number"
                 lazy-rules
                 :rules="[(val) => (val && val > 0) || 'Por favor ingresa algo']"
@@ -475,7 +475,7 @@
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="height: 50px"
+                autogrow
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
                 hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
