@@ -288,14 +288,14 @@ export default {
         await this.$api.post(`/api/client/artists/${this.artist.id}/rate`, {
           rating: value
         });
-        $q.notify({
+          this.$q.notify({
           type: "positive",
           message: "¡Calificación guardada con éxito!"
         });
       } catch (err) {
         console.error("Error de validación:", err.response.data.errors);
         
-        $q.notify({
+          this.$q.notify({
           type: "negative",
           message: "Error al guardar la calificación"
         });
@@ -312,17 +312,16 @@ export default {
 
       this.addFavourite.artist_id = id;
       try {
-        await this.createFavouriteArtist(this.addFavourite).then(() => {
-          this.toggleFavoriteArtist(id);
-          this.$q.notify({
-            type: "positive",
-            message: "Agregado a Favoritos",
-          });
+        await this.createFavouriteArtist(this.addFavourite);
+        this.toggleFavoriteArtist(id);
+        this.$q.notify({
+          type: "positive",
+          message: "Agregado a Favoritos",
         });
         this.addFavourite.artist_id = "";
       } catch (err) {
         if (err.response && err.response.data && err.response.data.message) {
-          $q.notify({
+             this.$q.notify({
             type: "negative",
             message: err.response.data.message,
           });
@@ -346,7 +345,7 @@ export default {
         });
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
+            this.$q.notify({
             type: "negative",
             message: err.response.data.message,
           });
@@ -376,7 +375,7 @@ export default {
       }
     },
     onSendOrder(artist) {
-      $q.notify({
+      this.$q.notify({
         spinner: QSpinnerGears,
         message: "Agregando al carrito...",
         timeout: 200,
@@ -389,7 +388,7 @@ export default {
       formData.append("order_date_start", this.printDateStart());
       formData.append("order_date_finish", this.printDateFinish());
       this.create_order(formData).then(() => {
-        $q.notify({
+        this.$q.notify({
           type: "positive",
           spinner: QSpinnerAudio,
           message: "Artista agregado",
@@ -429,7 +428,7 @@ export default {
         this.syncFavoriteArtistIds();
       } catch (err) {
         if (err.response && err.response.data && err.response.data.message) {
-          $q.notify({
+            this.$q.notify({
             type: "negative",
             message: err.response.data.message,
           });
