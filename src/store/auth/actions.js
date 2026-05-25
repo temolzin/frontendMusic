@@ -88,3 +88,16 @@ export const updateImageProfile = async ({ dispatch }, payload) => {
    dispatch("getMeUser");
   });
 };
+
+export const recoverPassword = async ({ commit }, payload) => {
+
+  return await api.post("/api/password/email", payload).then((response) => {
+    return response.data;
+  });
+};
+
+export const resetPassword = async ({ commit }, payload) => {
+  return await api.post("/api/password/reset", payload).then((response) => {
+    return response.data;
+  });
+};
