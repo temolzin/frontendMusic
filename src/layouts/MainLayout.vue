@@ -105,7 +105,7 @@
               color="primary"
               size="40px"
             ></q-icon>
-            <span class="q-ml-sm">Música GSM</span>
+            <span class="q-ml-sm">Vibeer</span>
           </q-toolbar-title>
         </q-toolbar>
 
@@ -202,7 +202,7 @@
           <div class="col-12">
             <div class="row items-center q-ma-lg justify-center">
               <div class="col-12 col-xs-12 col-sm-3 col-md-3">
-                <p class="text-weight-bold">Música GSM</p>
+                <p class="text-weight-bold">Vibeer</p>
                 <p>
                   Plataforma dedicada a conectar artistas musicales con clientes
                   que buscan el mejor talento para sus eventos.

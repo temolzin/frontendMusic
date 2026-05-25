@@ -139,7 +139,7 @@
           <q-icon name="health_and_safety" color="primary" />
         </template>
         <span class="text-weight-bold text-info">Reserva con Seguridad</span>,
-        si cancelas por COVID-19 te devolvemos el dinero. Musica GSM vela por
+        si cancelas por COVID-19 te devolvemos el dinero. Vibeer vela por
         <span class="text-weight-bold"> tu seguridad y la de los tuyos</span>
       </q-banner>
     </div>
