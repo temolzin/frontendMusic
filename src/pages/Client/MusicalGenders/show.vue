@@ -69,7 +69,13 @@
               </div>
               <div class="col-6">
                 <div align="right">
-                  <q-btn flat round color="red" icon="favorite" />
+                  <q-btn
+                    flat
+                    round
+                    :color="isFavoriteArtist(artist.id) ? 'red' : 'black'"
+                    :icon="isFavoriteArtist(artist.id) ? 'fas fa-solid fa-heart' : 'far fa-heart'"
+                    @click="addFavouriteArtist(artist.id)"
+                  />
                   <q-btn flat round color="white" icon="share" @click="copyArtistLink()" />
                 </div>
               </div>
@@ -265,6 +271,10 @@ export default {
       showGallery: null,
       showInfo: null,
       listCart: [],
+      favoriteArtistIds: [],
+      addFavourite: {
+        artist_id: "",
+      },
       hours: 1,
       item: {
         artist_id: "",
@@ -294,6 +304,31 @@ export default {
     ...mapActions("clientMusicalGenders", ["getArtistBySlug"]),
     ...mapActions("shoppingCard", ["updateItemShoppingCart"]),
     ...mapActions("shoppingCard", ["create_order"]),
+    ...mapActions("favouriteArtists", ["createFavouriteArtist", "getFavouriteArtists"]),
+    async addFavouriteArtist(id) {
+      if (!id || this.isFavoriteArtist(id)) {
+        return;
+      }
+
+      this.addFavourite.artist_id = id;
+      try {
+        await this.createFavouriteArtist(this.addFavourite).then(() => {
+          this.toggleFavoriteArtist(id);
+          this.$q.notify({
+            type: "positive",
+            message: "Agregado a Favoritos",
+          });
+        });
+        this.addFavourite.artist_id = "";
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
     async gettArtistBySlug() {
       try {
         await this.getArtistBySlug(this.slug).then(async () => {
@@ -368,6 +403,39 @@ export default {
         this.$q.notify({ type: 'positive', message: 'Link copiado al portapapeles' });
       });
     },
+    isFavoriteArtist(id) {
+      return this.favoriteArtistIds.includes(id);
+    },
+    toggleFavoriteArtist(id) {
+      if (this.favoriteArtistIds.includes(id)) {
+        this.favoriteArtistIds = this.favoriteArtistIds.filter((itemId) => itemId !== id);
+        return;
+      }
+      this.favoriteArtistIds.push(id);
+    },
+    syncFavoriteArtistIds() {
+      if (!Array.isArray(this.stateFavouriteArtists)) {
+        this.favoriteArtistIds = [];
+        return;
+      }
+
+      this.favoriteArtistIds = this.stateFavouriteArtists
+        .map((item) => (item && item.artist ? item.artist.id : null))
+        .filter((id) => id !== null && id !== undefined);
+    },
+    async loadFavouriteArtists() {
+      try {
+        await this.getFavouriteArtists();
+        this.syncFavoriteArtistIds();
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.message) {
+          $q.notify({
+            type: "negative",
+            message: err.response.data.message,
+          });
+        }
+      }
+    },
     printDateStart: function () {
       return this.formatCartDate(new Date());
     },
@@ -401,8 +469,10 @@ export default {
     this.slug = this.$route.params.slugA;
     this.slugMG = this.$route.params.slugMG;
     this.gettArtistBySlug();
+    this.loadFavouriteArtists();
   },
   computed: {
+    ...mapGetters("favouriteArtists", ["stateFavouriteArtists"]),
     ...mapGetters("auth", ["getMe"]),
     ...mapState({
       artist: (state) => state.clientMusicalGenders.artistGender,
