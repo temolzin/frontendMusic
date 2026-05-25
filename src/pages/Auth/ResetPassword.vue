@@ -13,10 +13,13 @@
               v-model="password"
             >
               <template #append>
-                <q-icon
-                  :name="showPassword ? 'visibility_off' : 'visibility'"
-                  class="cursor-pointer"
+                <q-btn
+                  :icon="showPassword ? 'visibility_off' : 'visibility'"
+                  flat
+                  dense
+                  round
                   @click="showPassword = !showPassword"
+                  :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
                 />
               </template>
             </q-input>
@@ -26,10 +29,13 @@
               v-model="passwordConfirmation"
             >
               <template #append>
-                <q-icon
-                  :name="showPasswordConfirmation ? 'visibility_off' : 'visibility'"
-                  class="cursor-pointer"
+                <q-btn
+                  :icon="showPasswordConfirmation ? 'visibility_off' : 'visibility'"
+                  flat
+                  dense
+                  round
                   @click="showPasswordConfirmation = !showPasswordConfirmation"
+                  :aria-label="showPasswordConfirmation ? 'Ocultar contraseña' : 'Mostrar contraseña'"
                 />
               </template>
             </q-input>

@@ -43,7 +43,7 @@ const routes = [
       {
         name: "LoginIn",
         path: "/login",
-        component: () => Login,
+        component: Login,
         meta: {
           title: "Iniciar Sesión",
           middleware: [Middlewares.guest],
@@ -53,7 +53,7 @@ const routes = [
       {
         name: "recover",
         path: "/recover",
-        component: () => Recover,
+        component: Recover,
         meta: {
           title: "Recuperar Contraseña",
           middleware: [Middlewares.guest],
@@ -63,7 +63,7 @@ const routes = [
       {
         name: "reset-password",
         path: "/reset-password",
-        component: () => ResetPassword,
+        component: ResetPassword,
         meta: {
           title: "Nueva Contraseña",
           middleware: [Middlewares.guest],
@@ -73,7 +73,7 @@ const routes = [
       {
         name: "register",
         path: "/register",
-        component: () => Register,
+        component: Register,
         meta: {
           title: "Registro",
           middleware: [Middlewares.guest],

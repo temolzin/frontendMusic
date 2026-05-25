@@ -89,15 +89,12 @@ export const updateImageProfile = async ({ dispatch }, payload) => {
   });
 };
 
-export const recoverPassword = async ({ commit }, payload) => {
-
-  return await api.post("/api/password/email", payload).then((response) => {
-    return response.data;
-  });
+export const recoverPassword = async (_, payload) => {
+  const { data } = await api.post("/api/password/email", payload);
+  return data;
 };
 
-export const resetPassword = async ({ commit }, payload) => {
-  return await api.post("/api/password/reset", payload).then((response) => {
-    return response.data;
-  });
+export const resetPassword = async (_, payload) => {
+  const { data } = await api.post("/api/password/reset", payload);
+  return data;
 };
