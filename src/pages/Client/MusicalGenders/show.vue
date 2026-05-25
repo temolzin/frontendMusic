@@ -62,9 +62,15 @@
             <div class="row">
               <div class="col-6">
                 <div class="q-mt-sm q-gutter-sm">
-                  <q-btn round color="gray" icon="facebook" size="10px" />
-                  <q-btn round color="gray" icon="facebook" size="10px" />
-                  <q-btn round color="gray" icon="facebook" size="10px" />
+                  <a
+                    v-for="(red, index) in artist.social_media"
+                    :key="index"
+                    :href="red.url"
+                    target="_blank"
+                    class="q-mr-sm"
+                  >
+                    <q-btn round color="primary" :icon="socialIcon(red.nombre)" size="10px" />
+                  </a>
                 </div>
               </div>
               <div class="col-6">
@@ -300,6 +306,16 @@ export default {
           message: "Error al guardar la calificación"
         });
       }
+    },
+    socialIcon(nombre) {
+      const icons = {
+        'Facebook': 'facebook',
+        'Instagram': 'instagram',
+        'X (Twitter)': 'close',
+        'YouTube': 'smart_display',
+        'TikTok': 'music_note',
+      };
+      return icons[nombre] || 'link';
     },
     ...mapActions("clientMusicalGenders", ["getArtistBySlug"]),
     ...mapActions("shoppingCard", ["updateItemShoppingCart"]),
