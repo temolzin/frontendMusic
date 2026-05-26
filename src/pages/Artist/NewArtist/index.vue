@@ -359,7 +359,7 @@
     <notice-gallery></notice-gallery>
 
     <div class="row q-pa-lg q-col-gutter-md justify-center">
-      <div class="col-12 col-sm-6 col-md-3">
+      <div class="col-12 col-sm-6 col-md-4">
         <q-card class="text-center shadow-4">
           <q-card-section>
             <q-icon name="favorite" color="red" size="40px" />
@@ -368,7 +368,7 @@
           </q-card-section>
         </q-card>
       </div>
-      <div class="col-12 col-sm-6 col-md-3">
+      <div class="col-12 col-sm-6 col-md-4">
         <q-card class="text-center shadow-4">
           <q-card-section>
             <q-icon name="star" color="yellow" size="40px" />
@@ -377,19 +377,7 @@
           </q-card-section>
         </q-card>
       </div>
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="text-center shadow-4">
-          <q-card-section>
-            <q-icon name="event" color="primary" size="40px" />
-            <div class="text-h4 text-weight-bold q-mt-sm">{{ stats.quotations }}</div>
-            <div class="text-subtitle2 text-grey">
-              Eventos pendientes
-              <span v-if="stats.nextEvent"><br/>Próximo: {{ stats.nextEvent }}</span>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-12 col-sm-6 col-md-3">
+      <div class="col-12 col-sm-6 col-md-4">
         <q-card class="text-center shadow-4">
           <q-card-section>
             <q-icon name="payments" color="green" size="40px" />
@@ -1083,21 +1071,18 @@ export default {
     },
     async loadStats() {
       try {
-        const [favRes, ratingRes, quotRes, salesRes] = await Promise.all([
+        const [favRes, ratingRes, salesRes] = await Promise.all([
           this.$api.get('/api/artist/favourite_artists/count'),
           this.$api.get('/api/artist/ratings/average'),
-          this.$api.get('/api/artist/quotations/count'),
           this.$api.get('/api/artist/sales/stats'),
         ]);
         this.stats.favorites = favRes.data.count;
         this.stats.rating = ratingRes.data.average;
         this.stats.totalReviews = ratingRes.data.total;
-        this.stats.quotations = quotRes.data.count;
-        this.stats.nextEvent = quotRes.data.next_event;
         this.stats.totalSales = salesRes.data.total;
         this.stats.totalHires = salesRes.data.count;
       } catch (e) {
-        console.error('Error cargando stats', e);
+        console.error('Error loading stats', e);
       }
     },
   },
