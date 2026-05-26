@@ -65,7 +65,7 @@
                   (val) => (val && val.length > 0) || 'Por favor, ingresa tu historia',
                   (val) =>
                     (val && val.length < 250) ||
-                    'Excediste el número máximo de carácteres',
+                    'Excediste el número máximo de caracteres',
                 ]"
               />
               <q-input
@@ -195,7 +195,7 @@
                 hint="Ingresa el nombre completo del manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor, el nombre del manager',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el nombre del manager',
                 ]"
               />
 
@@ -485,7 +485,7 @@
                   (val) => (val && val.length > 0) || 'Por favor, ingresa tu historia',
                   (val) =>
                     (val && val.length < 250) ||
-                    'Excediste el número máximo de carácteres',
+                    'Excediste el número máximo de caracteres',
                 ]"
               />
               <q-input
