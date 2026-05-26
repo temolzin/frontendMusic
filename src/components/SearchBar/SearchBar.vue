@@ -29,7 +29,7 @@
         <template v-slot:no-option>
         <q-item>
             <q-item-section class="text-grey">
-            No se encontró la busqueda
+            No se encontró la búsqueda
             </q-item-section>
         </q-item>
         </template>
