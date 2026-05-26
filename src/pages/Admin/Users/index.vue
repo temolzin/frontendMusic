@@ -119,7 +119,7 @@
                 type="password"
                 :rules="[
                   (val) => !!val || 'El campo contraseña es requerido',
-                  (val) => val.length >= 8 || 'La contraseña debe tener al menos 8 carácteres',
+                  (val) => val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
                 ]"
               />
 
