@@ -38,7 +38,7 @@
           options-dense
           use-chips
           filled
-          hint="Selecciona los permisos que tendra el rol"
+          hint="Selecciona los permisos que tendrá el rol"
           color="primary"
           :loading="false"
           clear-icon

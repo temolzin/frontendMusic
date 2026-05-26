@@ -85,9 +85,7 @@
           <div class="text-overline">Paso 2</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Explora Nuestro Catálogo</div>
           <div class="text-caption">
-            Descubre a tus artistas favoritos en nuestro amplio catálogo.
-            Tenemos a todos tus artistas favoritos en un solo lugar desde los,
-            mas famosos.
+            Descubre a tus artistas favoritos en nuestro amplio catálogo. Tenemos a los mejores exponentes de la música en un solo lugar, desde los más famosos hasta tus próximos grandes descubrimientos.
           </div>
         </q-card-section>
         <q-card-section class="col-5 flex flex-center">
@@ -138,7 +136,7 @@
           <div class="text-h6 q-mt-sm q-mb-xs">Contrata a tu Artista Favorito!</div>
           <div class="text-caption">
             Una vez que estés completamente satisfecho con todos los detalles,
-            confirma desde nuestra aplicación, de forma rápida y segura.
+            confirma desde nuestra aplicación de forma rápida y segura.
           </div>
         </q-card-section>
 

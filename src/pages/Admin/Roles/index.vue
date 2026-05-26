@@ -8,7 +8,7 @@
       row-key="id"
       :filter="filter"
       no-data-label="Sin registros"
-      no-results-label="Ningún registro coincidente"
+      no-results-label="No se encontraron registros"
       rows-per-page-label="Roles por página"
     >
       <template v-slot:top>
@@ -132,7 +132,7 @@
                   options-dense
                   use-chips
                   filled
-                  hint="Selecciona los permisos que tendra el rol"
+                  hint="Selecciona los permisos que tendrá el rol"
                   color="primary"
                   :loading="false"
                   clear-icon

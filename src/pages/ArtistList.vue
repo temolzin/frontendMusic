@@ -17,7 +17,7 @@
         :columns="columns"
         row-key="name"
         no-data-label="Sin registros"
-        no-results-label="Ningún registro coincidente"
+        no-results-label="Ningún registro coincide"
         :rows-per-page-label="'Artistas por página:'"
         :rows-per-page-options="[6, 12 , 18 , 24, 30]"
       >

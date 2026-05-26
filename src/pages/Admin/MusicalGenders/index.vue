@@ -8,7 +8,7 @@
       row-key="id"
       :filter="filter"
       no-data-label="Sin registros"
-      no-results-label="Ningún registro coincidente"
+      no-results-label="No hay registros que coincidan"
       rows-per-page-label="Géneros por página"
     >
       <template v-slot:top>
@@ -123,11 +123,11 @@
                   emit-value
                   map-options
                   style="max-width: 300px"
-                  label="Selecciona el color de género de música"
+                  label="Selecciona el color del género de música"
                   :rules="[
                     (val) =>
                       (val && val.length != 0) ||
-                      'Por favor selecciona al menos 1 opcion',
+                      'Por favor selecciona al menos 1 opción',
                   ]"
                   lazy-rules
                 >
@@ -214,11 +214,11 @@
                   emit-value
                   map-options
                   style="max-width: 300px"
-                  label="Selecciona el color de género de música"
+                  label="Selecciona el color del género de música"
                   :rules="[
                     (val) =>
                       (val && val.length != 0) ||
-                      'Por favor selecciona al menos 1 opcion',
+                      'Por favor selecciona al menos 1 opción',
                   ]"
                   lazy-rules
                 >

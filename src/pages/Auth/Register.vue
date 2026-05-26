@@ -41,7 +41,7 @@
               Regístrate
             </p>
             <p class="text-center q-mb-sm text-weight-light">
-              Se parte de esta nueva experiencia de contratación de servicios
+              Sé parte de esta nueva experiencia de contratación de servicios
               musicales
             </p>
 

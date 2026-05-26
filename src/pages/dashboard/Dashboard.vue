@@ -35,7 +35,7 @@
       :columns="columns"
       row-key="name"
       no-data-label="Sin registros"
-      no-results-label="Ningún registro coincidente"
+      no-results-label="Ningún registro coincide"
       :rows-per-page-options="[6, 12 , 18 , 24, 30]"
     >
       <template v-slot:top-left>
@@ -159,7 +159,7 @@ export default {
     showNotif() {
       $q.notify({
         message:
-          "Guarda tus tarjetas de credito o debito, es totalmente seguro. Solo se te pedira el numero de cuenta y la fecha de expiración",
+          "Guarda tus tarjetas de crédito o débito, es totalmente seguro. Solo se te pedirá el número de cuenta y la fecha de expiración",
         color: "red",
 
         actions: [

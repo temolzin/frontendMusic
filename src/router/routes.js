@@ -180,7 +180,7 @@ const routes = [
         path: "/artist/index",
         component: import("pages/Artist/NewArtist/index.vue"),
         meta: {
-          title: "Perfil Artísta",
+          title: "Perfil Artista",
           middleware: [Middlewares.checkPermissions],
           requireLogin: true,
           permissions: ["view-profile-artist"],

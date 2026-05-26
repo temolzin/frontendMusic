@@ -161,7 +161,7 @@
           </div>
           <q-item>
             <q-item-section avatar class="q-ml-md">
-              Modo Obscuro
+              Modo Oscuro
             </q-item-section>
             <q-item-section>
               <q-toggle
@@ -185,7 +185,7 @@
     <q-footer>
       <q-toolbar class="row bg-primary text-white">
         <q-toolbar-title class="q-ml-md" style="font-size: 15px">
-          Conocenos a traves de nuestras redes sociales
+          Conócenos a través de nuestras redes sociales
         </q-toolbar-title>
         <div class="q-col-gutter-md q-mr-md">
           <q-icon name="fab fa-brands fa-facebook-f" size="20px" />

@@ -33,11 +33,11 @@
               <q-input
                 v-model="formCreate.name"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Nombre del grupo o artístico"
+                label="Nombre del grupo o del artista"
                 hint="Nombre completo del grupo o del artista"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu nombre artístico o del grupo',
                 ]"
               />
               <q-input
@@ -48,7 +48,7 @@
                 type="number"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Please type something',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el número de integrantes',
                 ]"
               />
 
@@ -58,14 +58,14 @@
                 autogrow
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
-                hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
+                hint="Describe la historia de tu grupo o tú como solista. Esto se mostrará al usuario."
                 lazy-rules
                 counter
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu historia',
                   (val) =>
                     (val && val.length < 250) ||
-                    'Exediste del maxímo de carácteres ',
+                    'Excediste el número máximo de caracteres',
                 ]"
               />
               <q-input
@@ -75,7 +75,7 @@
                 hint="Ingresa la colonia, municipio, estado donde te ubicas"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
                 ]"
               />
               <q-input
@@ -88,27 +88,27 @@
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor, ingresa un número válido',
                 ]"
               />
 
               <q-input
                 v-model="formCreate.extra_kilometre"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Precio por kilometro extra"
-                hint="Ingresa el precio extra por kilometro"
+                label="Precio por kilómetro extra"
+                hint="Ingresa el precio extra por kilómetro"
                 type="number"
                 lazy-rules
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor, ingresa número válido',
                 ]"
               />
 
               <div class="col-12 col-sm-12 col-md-12 q-pa-md">
                 <p class="q-mb-sm">
-                  Ingresa una foto del grupo o tu como solista
+                  Ingresa una foto del grupo o tú como solista
                 </p>
                 <small class="text-center q-mt-sm q-mb-sm">
                   Esta imagen será visualizada cuando las personas ingresen a tu
@@ -135,7 +135,7 @@
 
               <div class="col-11">
                 <p class="q-mb-sm">
-                  Selecciona los generos musicales a los que entras
+                  Selecciona los géneros musicales a los que perteneces
                 </p>
                 <small class="text-center q-mt-sm q-mb-sm">
                   Por medio de estas etiquetas, los usuarios también podrán
@@ -160,7 +160,7 @@
                   options-dense
                   use-chips
                   filled
-                  hint="Selecciona los generos musicales que perteneces"
+                  hint="Selecciona los géneros musicales a los que perteneces"
                   color="primary"
                   :loading="false"
                   clear-icon
@@ -168,14 +168,14 @@
                   :rules="[
                     (val) =>
                       val.length > 0 ||
-                      'Por favor selecciona al menos 1 opcion',
+                      'Por favor selecciona al menos 1 opción',
                   ]"
                   :options="musicalGenders"
                 />
               </div>
 
               <p class="text-center q-mb-sm text-weight-bold q-mt-lg col-12">
-                La siguiente información es acerca de manager para la
+                La siguiente información es acerca de tu manager para la
                 comunicación entre el cliente y él.
               </p>
 
@@ -195,7 +195,7 @@
                 hint="Ingresa el nombre completo del manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el nombre del manager',
                 ]"
               />
 
@@ -205,7 +205,7 @@
                 label="Teléfono del Manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, un número telefónico válido',
                 ]"
                 mask="## ## ## ## ##"
                 hint="Ingresa el teléfono del manager"
@@ -218,7 +218,7 @@
                 lazy-rules
                 type="email"
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el email del manager',
                 ]"
                 hint="Ingresa el correo frecuente del manager"
               />
@@ -372,7 +372,7 @@
           Precio por hora: ${{ Number(artist.price_hour).toLocaleString('es-MX') }} pesos.
         </p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por kilometro extra: ${{ Number(artist.extra_kilometre).toLocaleString('es-MX') }} pesos.
+          Precio por kilómetro extra: ${{ Number(artist.extra_kilometre).toLocaleString('es-MX') }} pesos.
         </p>
         <div
           v-if="artist.social_media && artist.social_media.length > 0"
@@ -455,11 +455,11 @@
               <q-input
                 v-model="formCreate.name"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Nombre del grupo o artistico"
+                label="Nombre del grupo o artista"
                 hint="Nombre completo del grupo o del artista"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu nombre artístico o del grupo',
                 ]"
               />
               <q-input
@@ -469,7 +469,7 @@
                 hint="Número de integrantes"
                 type="number"
                 lazy-rules
-                :rules="[(val) => (val && val > 0) || 'Por favor ingresa algo']"
+                :rules="[(val) => (val && val > 0) || 'Por favor, ingresa el número de integrantes']"
               />
 
               <q-input
@@ -478,14 +478,14 @@
                 autogrow
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
-                hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
+                hint="Describe la historia de tu grupo o tú como solista, esto se le muestra al usuario"
                 lazy-rules
                 counter
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu historia',
                   (val) =>
                     (val && val.length < 250) ||
-                    'Exediste del maxímo de carácteres ',
+                    'Excediste el número máximo de caracteres',
                 ]"
               />
               <q-input
@@ -495,7 +495,7 @@
                 hint="Ingresa la colonia, municipio, estado donde te ubicas"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
                 ]"
               />
               <q-input
@@ -508,21 +508,21 @@
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor ingresa un número válido',
                 ]"
               />
 
               <q-input
                 v-model="formCreate.extra_kilometre"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Precio por kilometro extra"
-                hint="Ingresa el precio extra por kilometro"
+                label="Precio por kilómetro extra"
+                hint="Ingresa el precio extra por kilómetro"
                 type="number"
                 lazy-rules
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor ingresa un número válido',
                 ]"
               />
               <div class="col-12 col-sm-12 col-md-12 q-pa-md">
@@ -551,7 +551,7 @@
               </div>
               <div class="col-11">
                 <p class="q-mb-sm">
-                  Selecciona los generos musicales a los que entras
+                  Selecciona los géneros musicales a los que perteneces
                 </p>
                 <small class="text-center q-mt-sm q-mb-sm">
                   Por medio de estas etiquetas, los usuarios también podrán
@@ -576,7 +576,7 @@
                   options-dense
                   use-chips
                   filled
-                  hint="Selecciona los generos musicales que perteneces"
+                  hint="Selecciona los géneros musicales a los que perteneces"
                   :color="mode ? 'info' : 'primary'"
                   :loading="false"
                   clear-icon
@@ -584,7 +584,7 @@
                   :rules="[
                     (val) =>
                       val.length > 0 ||
-                      'Por favor selecciona al menos 1 opcion',
+                      'Por favor selecciona al menos 1 opción',
                   ]"
                   :options="musicalGenders"
                 />
@@ -611,7 +611,7 @@
                 hint="Ingresa el nombre completo del manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el nombre del manager',
                 ]"
               />
 
@@ -621,7 +621,7 @@
                 label="Teléfono del Manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el número telefónico del manager',
                 ]"
                 mask="## ## ## ## ##"
                 hint="Ingresa el teléfono del manager"
@@ -634,7 +634,7 @@
                 lazy-rules
                 type="email"
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el email del manager',
                 ]"
                 hint="Ingresa el correo frecuente del manager"
               />
