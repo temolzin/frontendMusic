@@ -139,7 +139,7 @@
               v-model="formUpdatePassword.newPassword"
               label="Ingresa la nueva contraseña"
               :type="isPwd ? 'password' : 'text'"
-              hint="Recuerda usar carácteres especiales"
+              hint="Recuerda usar caracteres especiales"
               lazy-rules
               :rules="[
                 (val) => (val && val.length > 0) || 'Por favor, ingresa la nueva contraseña',
