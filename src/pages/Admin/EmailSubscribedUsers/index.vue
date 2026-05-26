@@ -119,7 +119,14 @@ export default {
         ...mapGetters("roles", ["stateRoles"]),
         ...mapGetters("UsersSuscribe", ["stateEmails"]),
         rolesOptions() {
-            return Array.isArray(this.stateRoles) ? this.stateRoles : [];
+            let roles = Array.isArray(this.stateRoles) ? [...this.stateRoles] : [];
+            
+            roles.push({
+                id: 'newsletter_users', 
+                name: 'Correos de la Página Principal' 
+            });
+
+            return roles;
         },
         mode: function () {
         return this.$q.dark.isActive;

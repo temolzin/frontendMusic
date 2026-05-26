@@ -127,12 +127,20 @@
                   v-model="newQuotation.city"
                   type="text"
                   label="Cuidad *"
+                  :rules="[
+                    (val) => !!val || 'La ciudad es requerida',
+                    (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'La ciudad solo puede contener letras'
+                  ]" required
                 >
                 </q-input>
                 <q-input
                   v-model="newQuotation.address"
                   type="text"
                   label="Direccion *"
+                  :rules="[
+                    (val) => !!val || 'El domicilio es requerido',
+                    (val) => val.trim().length >= 5 || 'El domicilio debe tener al menos 5 caracteres'
+                  ]" required
                 >
                 </q-input>
               </div>
@@ -145,18 +153,34 @@
                   v-model="newQuotation.phone"
                   type="tel"
                   label="Telefono *"
+                  maxlength="10"
+                  @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
+                  :rules="[
+                    (val) => !!val || 'El teléfono es requerido',
+                    (val) => /^[0-9]+$/.test(val) || 'Solo se permiten números',
+                    (val) => val.toString().length === 10 || 'El teléfono debe tener exactamente 10 dígitos'
+                  ]" required
                 >
                 </q-input>
                 <q-input
                   v-model="newQuotation.email"
                   type="email"
                   label="Email *"
+                  :rules="[
+                    (val) => !!val || 'El email es requerido',
+                    (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || 'Email inválido'
+                  ]" required
                 >
                 </q-input>
                 <q-input
                   v-model="newQuotation.full_name"
                   type="text"
                   label="Nombre *"
+                  :rules="[
+                    (val) => !!val || 'El nombre es requerido',
+                    (val) => val.trim().length >= 3 || 'El nombre debe tener al menos 3 caracteres',
+                    (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El nombre solo puede contener letras'
+                  ]" required
                 >
                 </q-input>
 
