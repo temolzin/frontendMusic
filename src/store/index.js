@@ -7,6 +7,7 @@ import roles from "./admin/roles";
 import card from "./client/card";
 import artist from "./artist/information";
 import artistSales from "./artist/artistSales";
+import artistCalendar from "./artist/artistCalendar";
 import artistList from "./artistList";
 import quotations from "./quotations"
 import musicalGenders from "./admin/musicalGenders";
@@ -37,6 +38,7 @@ const Store = createStore({
     favouriteArtists,
     UsersSuscribe,
     artistSales,
+    artistCalendar,
   },
   strict: process.env.DEBUGGING,
 });

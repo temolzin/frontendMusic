@@ -197,6 +197,17 @@ const routes = [
           permissions: ["view-profile-artist"],
         },
       },
+      {
+        name: "artist.view-calendar",
+        path: "/artist/my-calendar",
+        component: import("pages/Artist/MyCalendar.vue"),
+        meta: {
+          title: "Mi Calendario",
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-profile-artist"],
+        },
+      },
       // Fin de rutas del artista
 
       // Rutas del cliente
