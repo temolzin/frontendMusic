@@ -478,7 +478,7 @@
                 autogrow
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
-                hint="Describe las historia de tu grupo o tú como solista, esto se le muestra al usuario "
+                hint="Describe la historia de tu grupo o tú como solista, esto se le muestra al usuario"
                 lazy-rules
                 counter
                 :rules="[
