@@ -91,7 +91,7 @@
         class="bg-warning text-white"
       >
         <div class="q-ma-md">
-          <p class="text-h6 q-mb-sm">Aún no tienes artistas favoritos 😥</p>
+          <p class="text-h6 q-mb-sm">Aún no tienes artistas favoritos en tu lista. Agrega algunos y no te pierdas nada de ellos.</p>
           <p class="q-mt-none">
             Explora la tienda y agrega tus artistas favoritos para verlos aquí.
           </p>

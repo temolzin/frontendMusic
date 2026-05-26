@@ -9,7 +9,7 @@
             No pierdas esta oportunidad de hacer realidad tus sueños y
             contratar a tu artista favorito para un evento inolvidable.
             Ahora comienza a planificar tu experiencia única con
-            nosotros. ¡No esperes más, el escenario está listo para ti!
+            nosotros. ¡No esperes más, el escenario está listo para tí!
           </div>
         </div>
       </q-carousel-slide>
