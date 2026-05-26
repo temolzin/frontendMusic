@@ -358,6 +358,48 @@
 
     <notice-gallery></notice-gallery>
 
+    <div class="row q-pa-lg q-col-gutter-md justify-center">
+      <div class="col-12 col-sm-6 col-md-3">
+        <q-card class="text-center shadow-4">
+          <q-card-section>
+            <q-icon name="favorite" color="red" size="40px" />
+            <div class="text-h4 text-weight-bold q-mt-sm">{{ stats.favoritos }}</div>
+            <div class="text-subtitle2 text-grey">Personas te tienen como favorito</div>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <q-card class="text-center shadow-4">
+          <q-card-section>
+            <q-icon name="star" color="yellow" size="40px" />
+            <div class="text-h4 text-weight-bold q-mt-sm">{{ stats.calificacion }}</div>
+            <div class="text-subtitle2 text-grey">Calificación promedio ({{ stats.totalReviews }} reseñas)</div>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <q-card class="text-center shadow-4">
+          <q-card-section>
+            <q-icon name="event" color="primary" size="40px" />
+            <div class="text-h4 text-weight-bold q-mt-sm">{{ stats.cotizaciones }}</div>
+            <div class="text-subtitle2 text-grey">
+              Eventos pendientes
+              <span v-if="stats.proximoEvento"><br/>Próximo: {{ stats.proximoEvento }}</span>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <q-card class="text-center shadow-4">
+          <q-card-section>
+            <q-icon name="payments" color="green" size="40px" />
+            <div class="text-h4 text-weight-bold q-mt-sm">${{ Number(stats.totalVentas).toLocaleString('es-MX') }}</div>
+            <div class="text-subtitle2 text-grey">Generados en {{ stats.totalContrataciones }} contrataciones</div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
+
     <div class="row tipogra">
       <div
         :class="mode ? 'title-group-white' : 'title-group'"
@@ -773,6 +815,15 @@ export default {
       },
       linkWhatsApp: "",
       linkCorreo: "",
+      stats: {
+        favoritos: 0,
+        calificacion: 0,
+        totalReviews: 0,
+        cotizaciones: 0,
+        proximoEvento: null,
+        totalVentas: 0,
+        totalContrataciones: 0,
+      },
       socialMediaOptions: [
         "Instagram",
         "X (Twitter)",
@@ -1030,6 +1081,25 @@ export default {
       this.showInfo = "false";
       this.onReset();
     },
+    async loadStats() {
+      try {
+        const [favRes, ratingRes, quotRes, salesRes] = await Promise.all([
+          this.$api.get('/api/artist/favourite_artists/count'),
+          this.$api.get('/api/artist/ratings/average'),
+          this.$api.get('/api/artist/quotations/count'),
+          this.$api.get('/api/artist/sales/stats'),
+        ]);
+        this.stats.favoritos = favRes.data.count;
+        this.stats.calificacion = ratingRes.data.average;
+        this.stats.totalReviews = ratingRes.data.total;
+        this.stats.cotizaciones = quotRes.data.count;
+        this.stats.proximoEvento = quotRes.data.next_event;
+        this.stats.totalVentas = salesRes.data.total;
+        this.stats.totalContrataciones = salesRes.data.count;
+      } catch (e) {
+        console.error('Error cargando stats', e);
+      }
+    },
   },
   computed: {
     ...mapState({
@@ -1049,6 +1119,7 @@ export default {
     $q = useQuasar();
     this.gettArtist();
     this.gettMusicalGenders();
+    this.loadStats();
   },
 };
 </script>
