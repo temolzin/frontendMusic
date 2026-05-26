@@ -154,7 +154,7 @@
               <div class="q-mt-md q-mb-lg q-gutter-md">
                 <div class="text-center">
                   ¿Olvidaste tu contraseña?
-                  <router-link class="text-primary" to="/register">
+                  <router-link class="text-primary" to="/recover">
                     Recupérala
                   </router-link>
                 </div>

@@ -5,6 +5,8 @@ import ArtistList from "pages/ArtistList.vue";
 import Quotations from "pages/Quotations";
 import Register from "pages/Auth/Register.vue";
 import Login from "pages/Auth/Login.vue";
+import Recover from "pages/Auth/Recover.vue";
+import ResetPassword from "pages/Auth/ResetPassword.vue";
 import Dashboard from "pages/dashboard/Dashboard.vue";
 
 import Middlewares from "../middlewares/";
@@ -41,7 +43,7 @@ const routes = [
       {
         name: "LoginIn",
         path: "/login",
-        component: () => Login,
+        component: Login,
         meta: {
           title: "Iniciar Sesión",
           middleware: [Middlewares.guest],
@@ -49,9 +51,29 @@ const routes = [
         },
       },
       {
+        name: "recover",
+        path: "/recover",
+        component: Recover,
+        meta: {
+          title: "Recuperar Contraseña",
+          middleware: [Middlewares.guest],
+          requireLogin: false,
+        },
+      },
+      {
+        name: "reset-password",
+        path: "/reset-password",
+        component: ResetPassword,
+        meta: {
+          title: "Nueva Contraseña",
+          middleware: [Middlewares.guest],
+          requireLogin: false,
+        },
+      },
+      {
         name: "register",
         path: "/register",
-        component: () => Register,
+        component: Register,
         meta: {
           title: "Registro",
           middleware: [Middlewares.guest],
