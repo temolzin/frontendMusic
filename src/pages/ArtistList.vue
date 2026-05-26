@@ -115,7 +115,7 @@
               </q-card-section>
 
               <q-card-section class="q-pt-none">
-                <div class="text-caption text-black ellipsis">
+                <div class="text-caption ">
                   {{ formatGenres(props.row.musical_genders) }}
                 </div>
               </q-card-section>

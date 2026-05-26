@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-sm bg-white">
+  <q-page class="q-pa-sm">
     <div class="row q-col-gutter-sm">
       <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
         <q-stepper v-model="step" header-nav ref="stepper" class="no-shadow" bordered animated>
@@ -453,7 +453,17 @@
                 {{ "$ " + castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
               </div>
               <div class="text-subtitle2 text-center">
-                <q-rating v-model="starts" :max="5" size="32px" no-dimming readonly />
+                <q-rating 
+                  :model-value="parseFloat(castProduct(product).artist?.ratings_avg_rating || 0)" 
+                  :max="5" 
+                  size="32px" 
+                  color="yellow"
+                  icon="star_border"
+                  icon-selected="star"
+                  icon-half="star_half"
+                  no-dimming 
+                  readonly 
+                />
               </div>
             </q-card-section>
             <q-separator></q-separator>

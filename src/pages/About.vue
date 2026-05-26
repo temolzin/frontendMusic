@@ -44,7 +44,7 @@
               te registraremos para darle alas a tu sueño musical.
             </div>
             <q-btn v-if="!isLoggedIn" outline label="Ver más" class="q-mt-md" to="/login" />
-            <q-btn v-else outline label="Ver más" class="q-mt-md" @click="scrollToGrupo" />
+            <q-btn v-if="isLoggedIn && userRole === 'artista'" outline label="Ver más" class="q-mt-md" @click="scrollToGrupo" />
           </div>
       </q-carousel-slide>
     </q-carousel>
@@ -57,7 +57,7 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 1</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Regístrate con nosostros</div>
-          <div class="text-caption text-black">
+          <div class="text-caption">
               Ingresa a nuestra app y regístrate de manera rápida y sencilla.
               Solo necesitas unos minutos  para crear tu cuenta y estará todo listo.
           </div>
@@ -84,7 +84,7 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 2</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Explora Nuestro Catálogo</div>
-          <div class="text-caption text-black">
+          <div class="text-caption">
             Descubre a tus artistas favoritos en nuestro amplio catálogo.
             Tenemos a todos tus artistas favoritos en un solo lugar desde los,
             mas famosos.
@@ -111,7 +111,7 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 3</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Selecciona a tu Artista</div>
-          <div class="text-caption text-black">
+          <div class="text-caption">
             Elige a tu artista favorito Ya sea un concierto privado, una aparición especial o una charla exclusiva, nosotros lo haremos posible.
           </div> 
         </q-card-section>
@@ -136,7 +136,7 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 4</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Contrata a tu Artista Favorito!</div>
-          <div class="text-caption text-black">
+          <div class="text-caption">
             Una vez que estés completamente satisfecho con todos los detalles,
             confirma desde nuestra aplicación, de forma rápida y segura.
           </div>
@@ -158,7 +158,7 @@
       </q-card-actions>
     </q-card>
 
-    <q-card id="register-group" class="groupMusical">
+    <q-card id="register-group" class="groupMusical" v-if="userRole === 'artista'">
       <q-item>
         <q-item-section avatar>
           <q-avatar>
