@@ -29,9 +29,9 @@
         img-src="https://cdn.pixabay.com/photo/2017/08/14/04/48/ceiling-2639360_960_720.jpg"
       >
         <div class="absolute-center custom-caption">
-          <div class="text-h2">Obten tu membrecía</div>
+          <div class="text-h2">Obtén tu membresía</div>
           <div class="text-subtitle1">
-            Con la membrecía puedes hacer más, <b>¡Generar más!</b>
+            Con la membresía puedes hacer más, <b>¡Generar más!</b>
             Con ella puedes obtener beneficios como aparecer en las primeras
             opciones de búsqueda, descuentos y mucho más.
           </div>
@@ -44,10 +44,10 @@
         img-src="https://cdn.pixabay.com/photo/2021/11/25/14/37/singer-6823783_960_720.png"
       >
         <div class="absolute-center custom-caption">
-          <div class="text-h2">Manten actulizada tu información</div>
+          <div class="text-h2">Mantén actualizada tu información</div>
           <div class="text-subtitle1">
-            Recuerda siempre tener la información de tu maneger actualizada para
-            que puedan contactarlos de manera rápida y efectiva.
+            Recuerda siempre tener la información de tu mánager actualizada para
+            que puedan contactarte de manera rápida y efectiva.
           </div>
           <q-btn outline label="Ver más" class="q-mt-md" to="/artist/index"/>
         </div>

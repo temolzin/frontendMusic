@@ -4,12 +4,12 @@
       <q-breadcrumbs>
         <q-breadcrumbs-el
           to="/dashboard/home"
-          label="Inico"
+          label="Inicio"
           icon="home"
         />
         <q-breadcrumbs-el
           to="/client/musical-genders"
-          label="Generos Musicales"
+          label="Géneros Musicales"
           icon="widgets"
         />
         <q-breadcrumbs-el

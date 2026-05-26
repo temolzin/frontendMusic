@@ -14,12 +14,12 @@
         <q-dialog v-model="formGallery" persistent>
           <q-card style="min-width: 350px">
             <q-card-section>
-              <div class="text-h6">Crear galeria de imagenes</div>
+              <div class="text-h6">Crear galería de imágenes</div>
             </q-card-section>
 
             <q-card-section class="q-pt-none">
               <q-uploader
-                label="Selecciona las imagenes (Max 5)"
+                label="Selecciona las imágenes (Máx. 5)"
                 max-files="5"
                 multiple
                 accept=".jpg, image/*"
@@ -100,12 +100,12 @@
         <q-dialog v-model="formGalleryEdit" persistent>
           <q-card style="max-width: 360px">
             <q-card-section>
-              <div class="text-h6">Editar galeria de imagenes</div>
+              <div class="text-h6">Editar galería de imágenes</div>
               <p class="">
-                Todas las imagenes anteriores serán eliminadas y sustituidas por
-                las que seleccione.
+                Todas las imágenes anteriores serán eliminadas y sustituidas por
+                las que selecciones.
               </p>
-              Estas seguro de eliminar las imagenes anteriores
+              ¿Estás seguro de eliminar las imágenes anteriores?
               <q-btn
                 :disable="btnDelete"
                 label="Confirmar"

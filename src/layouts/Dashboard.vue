@@ -113,7 +113,7 @@
               <q-icon name="fas fa-solid fa-icons" />
             </q-item-section>
 
-            <q-item-section> Generos Musicales </q-item-section>
+            <q-item-section> Géneros Musicales </q-item-section>
           </q-item>
 
           <q-item
@@ -169,7 +169,7 @@
               <q-icon name="fas fa-solid fa-address-card" />
             </q-item-section>
 
-            <q-item-section> Mi Membrecía </q-item-section>
+            <q-item-section> Mi Membresía </q-item-section>
           </q-item>
 
             <q-item
@@ -197,7 +197,7 @@
               <q-icon name="fas fa-solid fa-list-ul" />
             </q-item-section>
 
-            <q-item-section> Generos Musicales</q-item-section>
+            <q-item-section> Géneros Musicales</q-item-section>
           </q-item>
 
           <q-item clickable v-ripple to="/artist-list" v-if="$can('create-card')">
@@ -282,7 +282,7 @@
               />
             </q-item-section>
 
-            <q-item-section> Modo Obscuro </q-item-section>
+            <q-item-section> Modo Oscuro </q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>

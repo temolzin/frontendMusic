@@ -196,7 +196,7 @@ export default {
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
-            message: `¿Estas seguro de eliminar a ${name}?`,
+            message: `¿Estás seguro de eliminar a ${name}?`,
             cancel: true,
             persistent: true,
           })

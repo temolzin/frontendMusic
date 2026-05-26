@@ -2,8 +2,8 @@
   <q-page padding>
     <div class="q-mb-md">
       <q-breadcrumbs>
-        <q-breadcrumbs-el to="/dashboard/home" label="Inico" icon="home" />
-        <q-breadcrumbs-el label="Generos Musicales" icon="widgets" />
+        <q-breadcrumbs-el to="/dashboard/home" label="Inicio" icon="home" />
+        <q-breadcrumbs-el label="Géneros Musicales" icon="widgets" />
       </q-breadcrumbs>
     </div>
 

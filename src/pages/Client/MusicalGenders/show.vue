@@ -93,7 +93,7 @@
       <div class="row tipogra">
         <div class="col-12 col-sm-5 col-md-5 q-pa-lg">
           <div :class="mode ? 'container-img-dark' : 'container-img'">
-            <q-img :src="artist.manager.image" class="image" />
+              <q-img :src="artist.manager.image" class="image" />
           </div>
         </div>
         <div class="col-12 col-sm-7 col-md-7 2 q-pa-lg">
@@ -184,9 +184,9 @@
               <small>Hola soy {{ artist.manager.name }}</small>
             </h3>
             <p class="info2 q-mt-md">Manager del grupo {{ artist.name }}</p>
-            <p>
-              Ofrecemos nuestros servicios al publico en general. ¡Contactame!
-            </p>
+              <p>
+                Ofrecemos nuestros servicios al público en general. ¡Contáctame!
+              </p>
             <p class="q-mb-sm">
               Teléfono:
               <q-icon name="phone" class="q-mr-sm"></q-icon>
@@ -209,7 +209,7 @@
             class="text-center q-mb-md ellipsis"
             :class="mode ? 'title-group2-white' : 'title-group2'"
           >
-            <small>Galeria de Imagenes de </small> {{ artist.name }}
+            <small>Galería de imágenes de </small> {{ artist.name }}
           </h3>
           <q-carousel
             swipeable
@@ -270,7 +270,7 @@ export default {
       linkWhatsApp: "",
       linkCorreo: "",
       name: "",
-      nameRules: [(val) => (val && val.length > 0) || "Please type something"],
+      nameRules: [(val) => (val && val.length > 0) || "Por favor ingresa algo"],
       slide: ref(1),
       autoplay: ref(true),
       fullscreen: ref(false),

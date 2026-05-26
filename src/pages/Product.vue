@@ -44,7 +44,7 @@
       <q-dialog v-model="prompt" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Create new product</div>
+            <div class="text-h6">Crear nuevo producto</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -53,18 +53,17 @@
                 dense
                 v-model="form.name"
                 autofocus
-                label="Name product"
-                :rules="[(val) => !!val || 'Field is required']"
+                label="Nombre del producto"
+                :rules="[(val) => !!val || 'Campo obligatorio']"
               />
               <q-input
                 dense
                 v-model="form.price"
-                label="Price product"
-                :rules="[(val) => !!val || 'Field is required']"
+                label="Precio del producto"
+                :rules="[(val) => !!val || 'Campo obligatorio']"
               />
             </form>
-          </q-card-section>
-
+          </q-card-section>          
           <q-card-actions align="right" class="text-primary">
             <q-btn flat label="Cancelar" v-close-popup />
             <q-btn
@@ -86,9 +85,9 @@
         <thead>
           <tr>
             <th class="text-left">Id</th>
-            <th class="text-left">Name</th>
-            <th class="text-left">Price</th>
-            <th class="text-left">Actions</th>
+            <th class="text-left">Nombre</th>
+            <th class="text-left">Precio</th>
+            <th class="text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -178,7 +177,7 @@ export default {
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
-            message: "¿Estas seguro de eliminar el registro?",
+            message: "¿Estás seguro de eliminar el registro?",
             cancel: true,
             persistent: true,
           })

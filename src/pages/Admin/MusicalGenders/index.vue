@@ -127,7 +127,7 @@
                   :rules="[
                     (val) =>
                       (val && val.length != 0) ||
-                      'Por favor selecciona al menos 1 opcion',
+                      'Por favor selecciona al menos 1 opción',
                   ]"
                   lazy-rules
                 >
@@ -218,7 +218,7 @@
                   :rules="[
                     (val) =>
                       (val && val.length != 0) ||
-                      'Por favor selecciona al menos 1 opcion',
+                      'Por favor selecciona al menos 1 opción',
                   ]"
                   lazy-rules
                 >

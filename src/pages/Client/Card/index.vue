@@ -398,7 +398,7 @@ export default {
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
-            message: `¿Estas seguro de eliminar el registro de la tarjeta de ${name}`,
+            message: `¿Estás seguro de eliminar el registro de la tarjeta de ${name}?`,
             cancel: true,
             persistent: true,
           })

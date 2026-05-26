@@ -43,7 +43,7 @@
           img-src="https://cdn.pixabay.com/photo/2014/05/21/15/18/musician-349790_960_720.jpg"
         >
           <div class="absolute-center custom-caption">
-            <div class="text-h2">Generos Musicales</div>
+            <div class="text-h2">Géneros Musicales</div>
             <div class="text-subtitle1">
                 ¡Agrega nuevos géneros musicales y amplía nuestra increíble lista!
             </div>
