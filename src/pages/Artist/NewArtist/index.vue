@@ -808,7 +808,6 @@ export default {
         rating: 0,
         totalReviews: 0,
         quotations: 0,
-        nextEvent: null,
         totalSales: 0,
         totalHires: 0,
       },
