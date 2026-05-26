@@ -8,7 +8,7 @@
       row-key="id"
       :filter="filter"
       no-data-label="Sin registros"
-      no-results-label="Ningún registro coincidente"
+      no-results-label="No hay registros que coincidan."
       rows-per-page-label="Usuarios por página"
     >
       <template v-slot:top>
@@ -119,7 +119,7 @@
                 type="password"
                 :rules="[
                   (val) => !!val || 'El campo contraseña es requerido',
-                  (val) => val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
+                  (val) => val.length >= 8 || 'La contraseña debe tener al menos 8 carácteres',
                 ]"
               />
 
@@ -140,7 +140,7 @@
                 map-options
                 options-dense
                 filled
-                hint="Selecciona los permisos que tendra el rol"
+                hint="Selecciona los permisos que tendrá el rol"
                 color="green"
                 :loading="false"
                 :options="roles"
@@ -209,11 +209,11 @@
                 map-options
                 options-dense
                 filled
-                hint="Selecciona los permisos que tendra el rol"
+                hint="Selecciona los permisos que tendrá el rol"
                 color="green"
                 :loading="false"
                 :options="roles"
-                :rules="[(val) => !!val || 'Por favor selecciona un rol']"
+                :rules="[(val) => !!val || 'Por favor, selecciona un rol']"
               />
               <!-- Fin Select -->
               <q-card-actions align="right" class="text-primary">
