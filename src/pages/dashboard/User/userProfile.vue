@@ -94,7 +94,7 @@
               lazy-rules
               :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Por favor, ingresa un email válido',
+                  (val !== null && val !== '') || 'Por favor, ingresa tu correo electrónico',
               ]"
             />
 
