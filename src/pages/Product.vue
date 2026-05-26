@@ -14,13 +14,13 @@
             v-model="editForm.name"
             autofocus
             label="Nombre del producto"
-            :rules="[(val) => !!val || 'Field is required']"
+            :rules="[(val) => !!val || 'Campo obligatorio']"
           />
           <q-input
             dense
             v-model="editForm.price"
             label="Precio del producto"
-            :rules="[(val) => !!val || 'Field is required']"
+            :rules="[(val) => !!val || 'Campo obligatorio']"
           />
         </form>
       </q-card-section>

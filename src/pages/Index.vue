@@ -37,7 +37,7 @@
         style="width: 550px; justify-content: center"
       >
         <h6 class="q-ma-none" style="justify-content: center">
-          ¿Necesitas una Cotizacion de tu evento?
+          ¿Necesitas una cotización de tu evento?
         </h6>
 
         <q-btn
