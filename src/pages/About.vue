@@ -44,7 +44,7 @@
               te registraremos para darle alas a tu sueño musical.
             </div>
             <q-btn v-if="!isLoggedIn" outline label="Ver más" class="q-mt-md" to="/login" />
-            <q-btn v-else-if="userRole === 'artista'" outline label="Ver más" class="q-mt-md" @click="scrollToGrupo" />
+            <q-btn v-if="isLoggedIn && userRole === 'artista'" outline label="Ver más" class="q-mt-md" @click="scrollToGrupo" />
           </div>
       </q-carousel-slide>
     </q-carousel>
