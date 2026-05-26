@@ -33,11 +33,11 @@
               <q-input
                 v-model="formCreate.name"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Nombre del grupo o artístico"
+                label="Nombre del grupo o del artista"
                 hint="Nombre completo del grupo o del artista"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu nombre artístico o del grupo',
                 ]"
               />
               <q-input
@@ -48,7 +48,7 @@
                 type="number"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el número de integrantes',
                 ]"
               />
 
@@ -62,10 +62,10 @@
                 lazy-rules
                 counter
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu historia',
                   (val) =>
                     (val && val.length < 250) ||
-                    'Excediste el máximo de caracteres',
+                    'Excediste el número máximo de carácteres',
                 ]"
               />
               <q-input
@@ -75,7 +75,7 @@
                 hint="Ingresa la colonia, municipio, estado donde te ubicas"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
                 ]"
               />
               <q-input
@@ -88,7 +88,7 @@
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor, ingresa un número válido',
                 ]"
               />
 
@@ -102,7 +102,7 @@
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor, ingresa número válido',
                 ]"
               />
 
@@ -175,7 +175,7 @@
               </div>
 
               <p class="text-center q-mb-sm text-weight-bold q-mt-lg col-12">
-                La siguiente información es acerca de manager para la
+                La siguiente información es acerca de tu manager para la
                 comunicación entre el cliente y él.
               </p>
 
@@ -195,7 +195,7 @@
                 hint="Ingresa el nombre completo del manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, el nombre del manager',
                 ]"
               />
 
@@ -205,7 +205,7 @@
                 label="Teléfono del Manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, un número telefónico válido',
                 ]"
                 mask="## ## ## ## ##"
                 hint="Ingresa el teléfono del manager"
@@ -218,7 +218,7 @@
                 lazy-rules
                 type="email"
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el email del manager',
                 ]"
                 hint="Ingresa el correo frecuente del manager"
               />
@@ -455,11 +455,11 @@
               <q-input
                 v-model="formCreate.name"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Nombre del grupo o artístico"
+                label="Nombre del grupo o artista"
                 hint="Nombre completo del grupo o del artista"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu nombre artístico o del grupo',
                 ]"
               />
               <q-input
@@ -469,7 +469,7 @@
                 hint="Número de integrantes"
                 type="number"
                 lazy-rules
-                :rules="[(val) => (val && val > 0) || 'Por favor ingresa algo']"
+                :rules="[(val) => (val && val > 0) || 'Por favor, ingresa el número de integrantes']"
               />
 
               <q-input
@@ -478,14 +478,14 @@
                 autogrow
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
-                hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
+                hint="Describe las historia de tu grupo o tú como solista, esto se le muestra al usuario "
                 lazy-rules
                 counter
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu historia',
                   (val) =>
                     (val && val.length < 250) ||
-                    'Excediste el máximo de caracteres',
+                    'Excediste el número máximo de carácteres',
                 ]"
               />
               <q-input
@@ -495,7 +495,7 @@
                 hint="Ingresa la colonia, municipio, estado donde te ubicas"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
                 ]"
               />
               <q-input
@@ -508,7 +508,7 @@
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor ingresa un número válido',
                 ]"
               />
 
@@ -522,7 +522,7 @@
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor ingresa un número válido',
                 ]"
               />
               <div class="col-12 col-sm-12 col-md-12 q-pa-md">
@@ -611,7 +611,7 @@
                 hint="Ingresa el nombre completo del manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el nombre del manager',
                 ]"
               />
 
@@ -621,7 +621,7 @@
                 label="Teléfono del Manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el número telefónico del manager',
                 ]"
                 mask="## ## ## ## ##"
                 hint="Ingresa el teléfono del manager"
@@ -634,7 +634,7 @@
                 lazy-rules
                 type="email"
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el email del manager',
                 ]"
                 hint="Ingresa el correo frecuente del manager"
               />
