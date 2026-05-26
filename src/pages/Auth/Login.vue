@@ -43,7 +43,7 @@
             </p>
             <p class="text-center q-mb-sm text-weight-light">
               Disfruta la nueva experiencia de contratación de servicios
-              musicales rapida y segura.
+              musicales rápida y segura.
             </p>
 
             <q-input label="Correo electrónico" v-model="login.email">
