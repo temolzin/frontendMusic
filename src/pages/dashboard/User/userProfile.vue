@@ -50,7 +50,7 @@
                   </q-file>
                 </div>
                 <div class="text-caption text-grey">
-                  El tamaño máximo de archivo permitido es de 1MB.
+                  El tamaño máximo del archivo permitido es de 1MB.
                 </div>
                 <div class="float-right">
                   <q-btn color="primary" label="Actualizar" type="submit" />
@@ -82,7 +82,7 @@
               hint="Introduce tu nombre completo, para que la gente pueda reconocerte"
               lazy-rules
               :rules="[
-                (val) => (val && val.length > 0) || 'Por favor, escriba algo',
+                (val) => (val && val.length > 0) || 'Por favor, ingresa tu nombre',
               ]"
             />
 
@@ -94,7 +94,7 @@
               lazy-rules
               :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Por favor, escriba algo',
+                  (val !== null && val !== '') || 'Por favor, ingresa un email válido',
               ]"
             />
 
@@ -139,10 +139,10 @@
               v-model="formUpdatePassword.newPassword"
               label="Ingresa la nueva contraseña"
               :type="isPwd ? 'password' : 'text'"
-              hint="Recuerda usar caracteres especiales"
+              hint="Recuerda usar carácteres especiales"
               lazy-rules
               :rules="[
-                (val) => (val && val.length > 0) || 'Por favor, escriba algo',
+                (val) => (val && val.length > 0) || 'Por favor, ingresa la nueva contraseña',
               ]"
             >
               <template v-slot:append>
@@ -161,7 +161,7 @@
               hint="Ingresa la misma contraseña"
               lazy-rules
               :rules="[
-                (val) => (val && val.length > 0) || 'Por favor, escriba algo',
+                (val) => (val && val.length > 0) || 'Por favor, confirma la contraseña',
                 (val) =>
                   (val && val == formUpdatePassword.newPassword) ||
                   'Las contraseñas no coinciden',
@@ -183,7 +183,7 @@
               hint="Ingresa la contraseña actual"
               lazy-rules
               :rules="[
-                (val) => (val && val.length > 0) || 'Por favor, escriba algo',
+                (val) => (val && val.length > 0) || 'Por favor, ingresa la contraseña actual',
               ]"
             >
               <template v-slot:append>
@@ -291,7 +291,7 @@ export default {
           if (this.image_profile.size > 1000000) {
             this.$q.notify({
               type: "negative",
-              message: `El tamaño de la imagen excede de lo permitido`,
+              message: `La imagen excede el tamaño permitido`,
             });
           } else {
             let InstFormData = new FormData();
