@@ -1,7 +1,6 @@
 <template>
   <q-page>
     <div class="q-pa-md">
-      <!-- Header -->
       <div class="row items-center q-mb-lg">
         <h1 class="text-h4 text-primary q-ma-none">Mi Calendario</h1>
         <q-space />
@@ -15,7 +14,6 @@
         />
       </div>
 
-      <!-- Error Message -->
       <q-banner
         v-if="error"
         class="bg-negative text-white q-mb-md rounded-borders"
@@ -24,9 +22,7 @@
         {{ error }}
       </q-banner>
 
-      <!-- Main Content with QSplitter -->
       <q-splitter v-model="splitterModel" class="calendar-splitter">
-        <!-- Left side: Calendar -->
         <template v-slot:before>
           <div class="q-pa-md">
             <q-card>
@@ -44,7 +40,6 @@
               </q-card-section>
             </q-card>
 
-            <!-- Leyenda -->
             <q-card class="q-mt-md">
               <q-card-section>
                 <div class="text-subtitle2 q-mb-md">Leyenda</div>
@@ -71,7 +66,6 @@
           </div>
         </template>
 
-        <!-- Right side: Bookings Details with QTabPanels -->
         <template v-slot:after>
           <q-tabs
             v-model="activeTab"
@@ -85,7 +79,6 @@
           </q-tabs>
 
           <q-tab-panels v-model="activeTab" animated>
-            <!-- Tab 1: Day Bookings -->
             <q-tab-panel name="day">
               <div class="q-pa-md">
                 <div class="text-subtitle1 q-mb-md">
@@ -133,7 +126,6 @@
               </div>
             </q-tab-panel>
 
-            <!-- Tab 2: All Bookings -->
             <q-tab-panel name="month">
               <div class="q-pa-md">
                 <div class="text-subtitle1 q-mb-md">
@@ -177,7 +169,6 @@
             </q-tab-panel>
           </q-tab-panels>
 
-          <!-- Detalles (aparece cuando se selecciona un evento) -->
           <q-separator v-if="activeBooking" />
           <div v-if="activeBooking" class="q-pa-md bg-grey-1">
             <q-card>
@@ -187,7 +178,6 @@
 
               <q-card-section>
                 <div class="row q-col-gutter-lg">
-                  <!-- Left Column -->
                   <div class="col-12 col-md-6">
                     <div class="q-mb-md">
                       <div class="text-overline text-grey">Cliente</div>
@@ -223,7 +213,6 @@
                     </div>
                   </div>
 
-                  <!-- Right Column -->
                   <div class="col-12 col-md-6">
                     <div class="q-mb-md">
                       <div class="text-overline text-grey">Ubicación</div>
@@ -257,7 +246,6 @@
                 </div>
               </q-card-section>
 
-              <!-- Status Change Actions -->
               <q-separator />
               <q-card-section class="bg-grey-2">
                 <div class="text-subtitle2 q-mb-md">Cambiar estado</div>
@@ -409,10 +397,8 @@ export default defineComponent({
           status: newStatus
         })
         
-        // Recargar los bookings después de actualizar
         await this.fetchBookings()
         
-        // Actualizar el booking activo
         const updatedBooking = this.bookings.find(b => b.id === bookingId)
         if (updatedBooking) {
           this.activeBooking = updatedBooking
