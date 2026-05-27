@@ -549,7 +549,9 @@ export default defineComponent({
       step,
       cvv: ref(''),
       selectedCardIndex,
-      starts
+      starts,
+      isQuickBuy: ref(false),
+      quickBuyData: ref(null)
     };
   },
   methods: {
@@ -666,10 +668,47 @@ export default defineComponent({
         }
       }
     },
+    loadQuickBuyArtist(artistDataEncoded, hours) {
+      try {
+        const artistData = JSON.parse(atob(artistDataEncoded));
+        const price = parseFloat(artistData.price_hour) * parseInt(hours || 1);
+        
+        this.quickBuyData = {
+          artist_id: artistData.id,
+          artist: artistData,
+          hours: parseInt(hours || 1),
+          price: price
+        };
+        
+        this.isQuickBuy = true;
+      } catch (err) {
+        this.$q.notify({
+          type: "negative",
+          message: "Error al procesar los datos de compra rápida",
+        });
+        this.$router.push("/");
+      }
+    },
     async initializeCheckout() {
-      await this.gettCards();
-      await this.showCards();
-      await this.getListShoppingCard();
+      const isQuickBuy = this.$route.query.quickBuy === 'true';
+      const artistDataEncoded = this.$route.query.artistData;
+      const hoursParam = this.$route.query.hours;
+      
+      if (isQuickBuy && artistDataEncoded) {
+        this.loadQuickBuyArtist(artistDataEncoded, hoursParam);
+      } else {
+        await this.gettCards();
+        await this.showCards();
+        await this.getListShoppingCard();
+
+        if (!this.shoppingCardDetail.length) {
+          this.$q.notify({
+            type: "warning",
+            message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
+          });
+          this.$router.push("/client/shopping-cart");
+        }
+      }
 
       try {
         await this.fetchProfile();
@@ -680,14 +719,6 @@ export default defineComponent({
       if ((!this.selectedCard || !this.selectedCard.id) && this.stateUserCards?.length) {
         this.selectedCardIndex = 0;
         this.selectedCard = { ...this.stateUserCards[0] };
-      }
-
-      if (!this.shoppingCardDetail.length) {
-        this.$q.notify({
-          type: "warning",
-          message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
-        });
-        this.$router.push("/client/shopping-cart");
       }
     },
     async fetchProfile() {
@@ -1084,9 +1115,20 @@ export default defineComponent({
       cards: (state) => state.card.cards,
     }),
     shoppingCardDetail() {
+      if (this.isQuickBuy && this.quickBuyData) {
+        return [{
+          artist_id: this.quickBuyData.artist_id,
+          artist: this.quickBuyData.artist,
+          hours: this.quickBuyData.hours,
+          price: this.quickBuyData.price
+        }];
+      }
       return this.stateListShopingCard?.[0]?.shopping_card_detail || [];
     },
     shoppingCartTotal() {
+      if (this.isQuickBuy && this.quickBuyData) {
+        return this.quickBuyData.price;
+      }
       return this.stateListShopingCard?.[0]?.total || 0;
     },
   },
