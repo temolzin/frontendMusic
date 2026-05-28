@@ -674,7 +674,6 @@ export default defineComponent({
         try {
           decodedArtistJson = decodeURIComponent(escape(atob(artistDataEncoded)));
         } catch (e) {
-          // Fallback: try plain atob
           try {
             decodedArtistJson = atob(artistDataEncoded);
           } catch (e2) {
@@ -685,9 +684,6 @@ export default defineComponent({
         const artistData = JSON.parse(decodedArtistJson);
         const artistId = artistData.id;
         const hoursCount = parseInt(hours || 1);
-
-        // Use provided artist data for display and compute price client-side for UX.
-        // Server will always recalculate/validate price at payment time.
         const clientPrice = parseFloat(artistData.price_hour || 0) * hoursCount;
 
         this.quickBuyData = {
@@ -989,9 +985,6 @@ export default defineComponent({
               }
 
               const token = response.data.id;
-
-              // En modo quickBuy, enviar solo artist_id y hours para que el servidor calcule el precio
-              // En modo carrito normal, enviar artist_id y hours (el servidor validará y calculará el precio)
               const artistList = this.isQuickBuy 
                 ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours }]
                 : this.shoppingCardDetail.map((element) => ({ 
