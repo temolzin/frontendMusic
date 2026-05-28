@@ -422,12 +422,23 @@ export default {
         members: artist.members,
         manager: artist.manager
       });
-      
+      let artistDataEncoded = '';
+      try {
+        artistDataEncoded = btoa(unescape(encodeURIComponent(artistData)));
+      } catch (err) {
+        try {
+          artistDataEncoded = btoa(artistData);
+        } catch (err2) {
+          this.$q.notify({ type: 'negative', message: 'Error al preparar datos de compra. Intenta de nuevo.' });
+          return;
+        }
+      }
+
       this.$router.push({
         name: 'client.dataClient',
-        query: { 
+        query: {
           quickBuy: 'true',
-          artistData: btoa(artistData),
+          artistData: artistDataEncoded,
           hours: this.hours
         }
       });

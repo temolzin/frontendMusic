@@ -668,25 +668,42 @@ export default defineComponent({
         }
       }
     },
-    loadQuickBuyArtist(artistDataEncoded, hours) {
+    async loadQuickBuyArtist(artistDataEncoded, hours) {
       try {
-        const artistData = JSON.parse(atob(artistDataEncoded));
-        const price = parseFloat(artistData.price_hour) * parseInt(hours || 1);
-        
+        let decodedArtistJson = '';
+        try {
+          decodedArtistJson = decodeURIComponent(escape(atob(artistDataEncoded)));
+        } catch (e) {
+          // Fallback: try plain atob
+          try {
+            decodedArtistJson = atob(artistDataEncoded);
+          } catch (e2) {
+            throw new Error('Error decoding artist data');
+          }
+        }
+
+        const artistData = JSON.parse(decodedArtistJson);
+        const artistId = artistData.id;
+        const hoursCount = parseInt(hours || 1);
+
+        // Use provided artist data for display and compute price client-side for UX.
+        // Server will always recalculate/validate price at payment time.
+        const clientPrice = parseFloat(artistData.price_hour || 0) * hoursCount;
+
         this.quickBuyData = {
-          artist_id: artistData.id,
+          artist_id: artistId,
           artist: artistData,
-          hours: parseInt(hours || 1),
-          price: price
+          hours: hoursCount,
+          price: clientPrice
         };
         
         this.isQuickBuy = true;
       } catch (err) {
         this.$q.notify({
           type: "negative",
-          message: "Error al procesar los datos de compra rápida",
+          message: "Error al cargar el artista. Por favor, intenta de nuevo.",
         });
-        this.$router.push("/");
+        this.$router.push("/client/musical-genders");
       }
     },
     async initializeCheckout() {
@@ -694,21 +711,18 @@ export default defineComponent({
       const artistDataEncoded = this.$route.query.artistData;
       const hoursParam = this.$route.query.hours;
       
-      if (isQuickBuy && artistDataEncoded) {
-        this.loadQuickBuyArtist(artistDataEncoded, hoursParam);
-      } else {
-        await this.gettCards();
-        await this.showCards();
-        await this.getListShoppingCard();
-
-        if (!this.shoppingCardDetail.length) {
+      (isQuickBuy && artistDataEncoded) ? this.loadQuickBuyArtist(artistDataEncoded, hoursParam) : (
+        await this.gettCards(),
+        await this.showCards(),
+        await this.getListShoppingCard(),
+        !this.shoppingCardDetail.length && (
           this.$q.notify({
             type: "warning",
             message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
-          });
-          this.$router.push("/client/shopping-cart");
-        }
-      }
+          }),
+          this.$router.push("/client/shopping-cart")
+        )
+      );
 
       try {
         await this.fetchProfile();
@@ -976,10 +990,14 @@ export default defineComponent({
 
               const token = response.data.id;
 
-              const artistList = this.shoppingCardDetail.map((element) => [
-                element.artist_id,
-                element.price
-              ]);
+              // En modo quickBuy, enviar solo artist_id y hours para que el servidor calcule el precio
+              // En modo carrito normal, enviar artist_id y hours (el servidor validará y calculará el precio)
+              const artistList = this.isQuickBuy 
+                ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours }]
+                : this.shoppingCardDetail.map((element) => ({ 
+                    artist_id: element.artist_id, 
+                    hours: element.hours 
+                  }));
 
               const paymentData = {
                 token: token,
