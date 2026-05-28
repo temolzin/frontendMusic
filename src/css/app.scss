@@ -1,1 +1,24 @@
 // app global css in SCSS form
+.body--dark {
+    .q-field--outlined .q-field__control {
+        border-color: #718096 !important;
+    }
+    .q-field--outlined:hover .q-field__control {
+        border-color: #a0aec0 !important;
+    }
+    .q-field__label {
+        color: #a0aec0 !important;
+    }
+    .q-field__native, .q-field__input {
+        color: #e2e8f0 !important;
+    }
+    .q-field__bottom {
+        color: #718096 !important;
+    }
+    .my-card {
+        background: #1e2a45 !important;
+    }
+    .q-card.shadow-4 {
+        background: #1e2a45 !important;
+    }
+}
