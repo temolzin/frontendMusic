@@ -122,7 +122,7 @@ export default {
             let roles = Array.isArray(this.stateRoles) ? [...this.stateRoles] : [];
             
             roles.push({
-                id: 'newsletter_users', 
+                id: 0, 
                 name: 'Correos de la Página Principal' 
             });
 
