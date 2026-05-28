@@ -174,12 +174,12 @@ export default {
       });
     },
     getBackendImageUrl(image) {
-      const BaseURL = this.$q.config.backendUrl;
-      
-      if (image) {
-        return BaseURL + image;
-      }
-    },
+      const baseURL = this.$q.config.backendUrl;
+
+      if (!image) return "";
+
+      return /^https?:\/\//.test(image) ? image : `${baseURL}${image}`;
+    }
   },
   created() {
     this.gettFavouriteArtists();
