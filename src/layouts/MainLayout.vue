@@ -41,6 +41,7 @@
           <q-route-tab to="/" label="Inicio" />
           <q-route-tab to="/artist-list" label="Artistas" />
           <q-route-tab to="/about" label="Más" />
+          <q-route-tab to="/dashboard/home" label="Panel" v-if="isAuthenticated == true" />
         </q-tabs>
         <!-- Fin de Links para navegar entre paginas -->
 
@@ -55,23 +56,17 @@
               class="q-mr-sm"
               v-if="isAuthenticated == false"
             />
+          </q-tabs>
 
-            <q-route-tab
-              to="/dashboard/home"
-              label="PANEL"
-              v-if="isAuthenticated == true"
-            />
-          </q-tabs>
-          <q-tabs>
-            <q-btn
-              outline
-              to="/login"
-              color="primary"
-              label="Ingresar"
-              v-if="isAuthenticated == false"
-              class="q-mr-md"
-            />
-          </q-tabs>
+          <q-btn
+            outline
+            to="/login"
+            color="primary"
+            label="Ingresar"
+            v-if="isAuthenticated == false"
+            class="q-mr-md"
+          />
+
           <q-toggle
             v-if="$q.screen.gt.xs"
             v-model="isActiveDarkMode"

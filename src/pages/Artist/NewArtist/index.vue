@@ -474,7 +474,7 @@
             class="q-gutter-md q-px-sm q-py-sm"
           >
             <p class="text-center q-mb-lg text-weight-light text-h3">
-              Editar '{{ artist.name }}'
+              Editar Perfil
             </p>
             <p class="text-center q-mb-sm text-weight-bold">
               Disfruta la nueva experiencia de contratación de servicios
