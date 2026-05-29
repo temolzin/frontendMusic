@@ -344,7 +344,7 @@ export default {
     getBackendImageUrl(image) {
       const baseURL = this.$q.config.backendUrl;
 
-      if (!image) return "";
+      if (!image) return null;
 
       return /^https?:\/\//.test(image) ? image : `${baseURL}${image}`;
     }
