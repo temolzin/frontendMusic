@@ -165,10 +165,10 @@
                   <div class="col-12 col-xs-6 col-sm-6 col-md-6">
                     <q-btn
                       label="Contratar ahora"
-                      type="submit"
                       color="amber"
                       icon-right="send"
                       class="full-width q-mt-xs"
+                      @click="handleHireNow(artist)"
                     />
                   </div>
                 </div>
@@ -410,6 +410,37 @@ export default {
           message: "Artista agregado",
           timeout: 1000,
         });
+      });
+    },
+    handleHireNow(artist) {
+      const artistData = JSON.stringify({
+        id: artist.id,
+        name: artist.name,
+        image: artist.image,
+        price_hour: artist.price_hour,
+        zone: artist.zone,
+        members: artist.members,
+        manager: artist.manager
+      });
+      let artistDataEncoded = '';
+      try {
+        artistDataEncoded = btoa(unescape(encodeURIComponent(artistData)));
+      } catch (err) {
+        try {
+          artistDataEncoded = btoa(artistData);
+        } catch (err2) {
+          this.$q.notify({ type: 'negative', message: 'Error al preparar datos de compra. Intenta de nuevo.' });
+          return;
+        }
+      }
+
+      this.$router.push({
+        name: 'client.dataClient',
+        query: {
+          quickBuy: 'true',
+          artistData: artistDataEncoded,
+          hours: this.hours
+        }
       });
     },
     copyArtistLink() {
