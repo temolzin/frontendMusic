@@ -183,9 +183,15 @@
           Conócenos a través de nuestras redes sociales
         </q-toolbar-title>
         <div class="q-col-gutter-md q-mr-md">
-          <q-icon name="fab fa-brands fa-facebook-f" size="20px" />
-          <q-icon name="fab fa-brands fa-twitter" size="20px" />
-          <q-icon name="fab fa-brands fa-instagram" size="20px" />
+          <a href="https://www.facebook.com/RootHeim" target="_blank" class="text-white">
+            <q-icon name="fab fa-brands fa-facebook-f" size="20px" />
+          </a>
+          <a href="https://mx.linkedin.com/company/rootheim" target="_blank" class="text-white">
+            <q-icon name="fab fa-brands fa-linkedin-in" size="20px" />
+          </a>
+          <a href="https://www.instagram.com/rootheimcompany/" target="_blank" class="text-white">
+            <q-icon name="fab fa-brands fa-instagram" size="20px" />
+          </a>
         </div>
       </q-toolbar>
 
@@ -221,33 +227,39 @@
               </div>
 
               <div class="col-12 col-xs-12 col-sm-3 col-md-3">
-                <p class="text-weight-bold">Contacto</p>
-                <p>
-                  <q-icon name="home" size="15px" class="q-mb-xs" /> México,
-                  Méx.
-                </p>
-                <p>
-                  <q-icon name="email" size="15px" class="q-mb-xs" />
-                  prueba@email.com
-                </p>
-                <p>
-                  <q-icon name="phone" size="15px" class="q-mb-xs" />
-                  +52 55 34 13 13
-                </p>
+                <p class="text-weight-bold">Explora</p>
+                <q-list class="text-white text-weight-light">
+                  <q-item clickable class="q-pa-none" to="/">
+                    <q-item-section class="text-weight-regular text-grey-5">
+                      Inicio
+                    </q-item-section>
+                  </q-item>
+                  <q-item clickable class="q-pa-none" to="/artist-list">
+                    <q-item-section class="text-weight-regular text-grey-5">
+                      Artistas
+                    </q-item-section>
+                  </q-item>
+                  <q-item clickable class="q-pa-none" to="/quotations">
+                    <q-item-section class="text-weight-regular text-grey-5">
+                      Cotizaciones
+                    </q-item-section>
+                  </q-item>
+                </q-list>
               </div>
+
               <div class="col-12 col-xs-12 col-sm-3 col-md-3">
                 <p class="text-weight-bold">Contacto</p>
                 <p>
-                  <q-icon name="home" size="15px" class="q-mb-xs" /> México,
-                  Méx.
+                  <q-icon name="home" size="15px" class="q-mb-xs" /> Calle la Palma, 
+                  Núm. Ext. 9, Col. Purificación, Teotihuacán, Méx. 55804
                 </p>
                 <p>
                   <q-icon name="email" size="15px" class="q-mb-xs" />
-                  prueba@email.com
+                  <a href="mailto:info@rootheim.com" class="text-grey-5"> info@rootheim.com </a>
                 </p>
                 <p>
                   <q-icon name="phone" size="15px" class="q-mb-xs" />
-                  +52 55 34 13 13
+                  +52 56 1966 0990
                 </p>
               </div>
             </div>
@@ -259,7 +271,7 @@
           class="justify-center"
           style="background-color: rgba(0, 0, 0, 0.2)"
         >
-          <div class="text-center">2022 © Copyright MusicaGSM.com</div>
+          <div class="text-center">2022 © Copyright Vibeer.com</div>
         </q-card-actions>
       </q-card>
     </q-footer>
