@@ -118,7 +118,7 @@
               </div>
             </q-img>
             <q-btn
-              :to="'/client/musical-genders/'+ stateArtist.musical_genders[0].name + '/' + stateArtist.slug"
+              :to="getArtistRoute(stateArtist)"
               color="primary"
               icon="arrow_forward"
               class="absolute"
@@ -221,6 +221,26 @@ export default {
   methods: {
     ...mapActions("lastArtist", ["getLatestArtists"]),
     ...mapActions("UsersSuscribe", ["setEmail"]),
+    getArtistRoute(stateArtist) {
+      const isLoggedIn = Boolean(this.getToken);
+      const role = this.userRole;
+
+      if (!isLoggedIn) {
+        return "/artist-list";
+      }
+
+      if (!["cliente", "artista", "administrador"].includes(role)) {
+        return "/artist-list";
+      }
+
+      const musicalGender = stateArtist?.musical_genders?.[0]?.name;
+
+      if (!musicalGender || !stateArtist?.slug) {
+        return "/artist-list";
+      }
+
+      return `/client/musical-genders/${musicalGender}/${stateArtist.slug}`;
+    },
     async gettLatestArtists() {
       try {
         await this.getLatestArtists().then(() => {
@@ -258,10 +278,16 @@ export default {
     this.gettLatestArtists();
   },
   computed: {
+    ...mapGetters("auth", ["getMe", "getToken"]),
     ...mapGetters("lastArtist", ["stateArtists"]),
     ...mapGetters("UsersSuscribe", ["stateEmails"]),
     mode: function () {
       return this.$q.dark.isActive;
+    },
+    userRole() {
+      return this.getMe?.role?.[0]
+        ? String(this.getMe.role[0]).trim().toLowerCase()
+        : "";
     },
   },
   mounted() {
