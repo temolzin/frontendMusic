@@ -233,7 +233,7 @@ export default {
         return "/artist-list";
       }
 
-      const musicalGender = stateArtist?.musical_genders?.[0]?.name;
+      const musicalGender = stateArtist?.musical_genders?.[0]?.slug;
 
       if (!musicalGender || !stateArtist?.slug) {
         return "/artist-list";
