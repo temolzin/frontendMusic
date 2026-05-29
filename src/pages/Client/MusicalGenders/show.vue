@@ -168,7 +168,7 @@
                       color="amber"
                       icon-right="send"
                       class="full-width q-mt-xs"
-                      @click="handleContratarAhora(artist)"
+                      @click="handleHireNow(artist)"
                     />
                   </div>
                 </div>
@@ -412,7 +412,7 @@ export default {
         });
       });
     },
-    handleContratarAhora(artist) {
+    handleHireNow(artist) {
       const artistData = JSON.stringify({
         id: artist.id,
         name: artist.name,
