@@ -229,7 +229,7 @@ export default {
         return "/artist-list";
       }
 
-      if (!["cliente", "artista", "administrador"].includes(role)) {
+      if (role !== "cliente") {
         return "/artist-list";
       }
 

@@ -3,7 +3,7 @@ import { Store } from "../store/index.js";
 
 export default async function checkPermissions({ next, to, from, Router }) {
   const requiredPermissions = to.meta.permissions;
-  const allowedRolesForArtistDetail = ["cliente", "artista", "administrador"];
+  const allowedRolesForArtistDetail = ["cliente"];
 
   if (localStorage.getItem("token")) {
     try {
