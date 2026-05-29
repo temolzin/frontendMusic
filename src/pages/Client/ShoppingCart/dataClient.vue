@@ -66,10 +66,10 @@
                 <div class="col-6">
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.zip_code"
-                      label="Codigo Postal" maxlength="4" @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
+                      label="Codigo Postal" maxlength="5" @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
                       :rules="[
                         (val) => /^[0-9]+$/.test(val) || 'Solo se permiten números',
-                        (val) => val.toString().length === 4 || 'El código postal debe tener exactamente 4 dígitos'
+                        (val) => val.toString().length === 5 || 'El código postal debe tener exactamente 5 dígitos'
                       ]" required />
                   </q-item>
                 </div>
@@ -184,7 +184,7 @@
                         :rules="[
                           (val) => !!val || 'El campo nombre es requerido',
                           (val) => val.trim().length >= 3 || 'El nombre debe tener al menos 3 caracteres',
-                          (val) => /^[a-zaeiounAZEIOUN\s]+$/.test(val) || 'El nombre solo puede contener letras y espacios'
+                          (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El nombre solo puede contener letras y espacios'
                         ]" />
 
                       <q-input 
