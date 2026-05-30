@@ -59,7 +59,7 @@
           <div class="text-overline text-grey-6">Panel administrativo</div>
           <div class="text-h4 text-weight-bold">Resumen general del sistema</div>
           <div class="text-body2 text-grey-7 q-mt-sm">
-            Total histórico en grande y un desglose discreto del estado actual de cada indicador.
+            Revisa la información más relevante de lo que ha pasado últimamente
           </div>
         </div>
 
