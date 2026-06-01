@@ -99,7 +99,6 @@
           <q-card class="dashboard-stat-card full-height">
             <q-card-section class="row items-start no-wrap justify-between q-pb-sm">
               <div>
-                <div class="text-caption text-grey-6">Histórico acumulado</div>
                 <div class="text-h5 text-weight-bold q-mt-xs">{{ card.label }}</div>
               </div>
 
@@ -185,7 +184,11 @@
 
       const cardAccent = (key) => accentMap[key] || { color: "grey-7", icon: "analytics" };
 
-      const formatNumber = (value) => new Intl.NumberFormat("es-ES").format(Number(value ?? 0));
+      const formatNumber = (value) => {
+        const number = Number(value);
+
+        return new Intl.NumberFormat("es-ES").format(Number.isFinite(number) ? number : 0);
+      };
 
       const formatDateTime = (value) => {
         if (!value) return "";
@@ -233,6 +236,11 @@
             error?.response?.data?.message ||
             error?.message ||
             "No se pudo cargar el resumen del panel administrativo.";
+
+          overviewMeta.value = {
+            periodDays: null,
+            generatedAt: "",
+          };
 
           cards.value = [];
         } finally {
