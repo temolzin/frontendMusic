@@ -17,7 +17,6 @@
           <p class="user-role">Rol: {{ getMe.role[0] }}</p>
         </q-item-section>
       </q-item>
-      <hr/>
     </q-card>
   </div>
 
