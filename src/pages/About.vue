@@ -66,7 +66,7 @@
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="https://cdn.pixabay.com/photo/2018/07/12/21/32/subscribe-3534409_640.jpg"
+            src="https://cdn.pixabay.com/photo/2018/07/12/21/32/subscribe-3534409_1280.jpg"
           />
         </q-card-section>
       </q-card-section>
@@ -91,7 +91,7 @@
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="https://cdn.pixabay.com/photo/2016/11/22/19/15/hand-1850120_640.jpg"
+            src="https://cdn.pixabay.com/photo/2016/11/22/19/15/hand-1850120_1280.jpg"
           />
         </q-card-section>
       </q-card-section>
@@ -117,7 +117,7 @@
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="https://cdn.pixabay.com/photo/2018/09/20/15/35/directory-3691159_640.jpg"
+            src="https://cdn.pixabay.com/photo/2018/09/20/15/35/directory-3691159_1280.jpg"
           />
         </q-card-section>
       </q-card-section>
@@ -143,7 +143,7 @@
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="https://cdn.pixabay.com/photo/2015/11/26/07/47/hands-1063442_640.jpg"
+            src="https://cdn.pixabay.com/photo/2015/11/26/07/47/hands-1063442_1280.jpg"
           />
         </q-card-section>
       </q-card-section>
@@ -160,7 +160,7 @@
       <q-item>
         <q-item-section avatar>
           <q-avatar>
-            <img src="https://cdn.pixabay.com/photo/2020/10/20/09/25/band-5669941_640.jpg">
+            <img src="https://cdn.pixabay.com/photo/2020/10/20/09/25/band-5669941_1280.jpg">
           </q-avatar>
         </q-item-section>
 
@@ -172,7 +172,7 @@
       <q-card-section horizontal>
         <q-img
           class="col-5"
-          src="https://cdn.pixabay.com/photo/2018/03/31/23/27/people-3279617_640.jpg"
+          src="https://cdn.pixabay.com/photo/2018/03/31/23/27/people-3279617_1280.jpg"
         />
         <q-card-section>
           ¡Potencia tu carrera musical con nuestra innovadora aplicación para grupos musicales!

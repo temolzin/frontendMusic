@@ -12,7 +12,7 @@
       >
         <q-carousel-slide
           :name="1"
-          img-src="https://cdn.pixabay.com/photo/2017/08/02/21/01/macbook-2573421_640.jpg"
+          img-src="https://cdn.pixabay.com/photo/2017/08/02/21/01/macbook-2573421_1280.jpg"
         >
           <div class="absolute-center custom-caption">
             <div class="text-h2">Usuarios</div>
@@ -26,7 +26,7 @@
   
         <q-carousel-slide
           :name="2"
-          img-src="https://cdn.pixabay.com/photo/2018/07/12/21/32/subscribe-3534409_640.jpg"
+          img-src="https://cdn.pixabay.com/photo/2018/07/12/21/32/subscribe-3534409_1280.jpg"
         >
           <div class="absolute-center custom-caption">
             <div class="text-h2">Roles</div>
