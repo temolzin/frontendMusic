@@ -3,7 +3,7 @@
     <q-carousel v-model="slide" transition-prev="scale" transition-next="scale" swipeable animated control-color="white"
       navigation padding arrows height="300px" class="bg-primary text-white shadow-1 rounded-borders">
       <q-carousel-slide name="style" class="column no-wrap flex-center"
-        img-src="https://img.freepik.com/premium-vector/afro-girl-enjoying-music-wearing-sunglasses-headphone-banner_518698-322.jpg">
+        img-src="https://cdn.pixabay.com/photo/2016/11/18/15/44/audience-1835431_1280.jpg">
         <div class="absolute-center custom-caption">
           <div class="responsive-text" id="text">
             No pierdas esta oportunidad de hacer realidad tus sueños y
