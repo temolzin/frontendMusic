@@ -45,7 +45,6 @@
         <q-card class="client-stat-card full-height">
           <q-card-section class="row items-start no-wrap justify-between q-pb-sm">
             <div>
-              <div class="text-caption text-grey-6">Histórico acumulado</div>
               <div class="text-h5 text-weight-bold q-mt-xs">{{ card.label }}</div>
             </div>
 
@@ -125,7 +124,7 @@
                 <q-linear-progress rounded size="6px" :value="favouriteProgress(card.breakdown.added_last_30_days)" color="accent" track-color="grey-3" />
               </div>
               <div v-if="Array.isArray(card.examples) && card.examples.length" class="q-mt-sm">
-                <div class="text-caption text-grey-6 q-mb-xs">Ejemplos recientes</div>
+                <div class="text-caption text-grey-6 q-mb-xs">Agregados recientemente</div>
                 <div v-for="example in card.examples.slice(0, 2)" :key="example.artist_id" class="item-line">
                   <div class="row items-start justify-between no-wrap">
                     <div class="text-body2 text-grey-8 ellipsis">{{ example.artist_name }}</div>
