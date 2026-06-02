@@ -111,15 +111,12 @@
                         <q-icon
                           name="event"
                           class="cursor-pointer"
-                          @click="showDate = true"
                         >
                           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
                             <q-date
-                              ref="qDateProxy"
                               v-model="formClient.event_date"
                               :options="dateOption"
                               :locale="spanishLocale()"
-                              @input="showDate = false"
                             >
                               <div class="row items-center justify-end q-gutter-sm q-pa-sm">
                                 <q-btn v-close-popup label="Cerrar" color="primary" flat />
@@ -635,7 +632,6 @@ export default defineComponent({
       starts,
       isQuickBuy: ref(false),
       quickBuyData: ref(null),
-      showDate: ref(false),
     };
   },
   methods: {
@@ -814,8 +810,9 @@ export default defineComponent({
       await this.gettCards();
       
       (isQuickBuy && artistDataEncoded) 
-        ? await this.loadQuickBuyArtist(artistDataEncoded, hoursParam)
-        : await this.getListShoppingCart().then(() => {
+        ? await 
+        this.loadQuickBuyArtist(artistDataEncoded, hoursParam)
+        : await this.getListShoppingCard().then(() => {
             if (!this.shoppingCardDetail.length) {
               this.$q.notify({
                 type: "warning",
@@ -1192,7 +1189,7 @@ export default defineComponent({
               .replace(/must be/gi, "debe ser")
               .replace(/length/gi, "longitud")
               .replace(/wrong/gi, "incorrecto")
-              .replace(/the/gi, "el");
+              .replace(/\bthe\b/gi, "el");
             if (error?.data?.description) {
               errorMessage = error.data.description
                 .replace(/cvv2/gi, "CVV")
@@ -1205,7 +1202,7 @@ export default defineComponent({
                 .replace(/must be/gi, "debe ser")
                 .replace(/length/gi, "longitud")
                 .replace(/wrong/gi, "incorrecto")
-                .replace(/the/gi, "el");
+                .replace(/\bthe\b/gi, "el");
             }
             
             this.$q.notify({
