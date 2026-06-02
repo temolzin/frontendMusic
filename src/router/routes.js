@@ -125,6 +125,7 @@ const routes = [
           title: "Gestión de Usuarios",
           middleware: [Middlewares.checkPermissions],
           requireLogin: true,
+          permissions: ["view-users"]
         },
       },
       {
@@ -170,6 +171,7 @@ const routes = [
         meta: {
           title: "Buzón",
           requireLogin: true,
+          permissions: ["view-users"],
         },
       },
       // Fin de rutas del admin
@@ -332,6 +334,18 @@ const routes = [
     path: "/:catchAll(.*)*",
     component: () => import("pages/Error404.vue"),
     meta: { title: "No encontrado" }
+  },
+
+  {
+    path: "/session-expired",
+    component: () => import("pages/SessionExpired.vue"),
+    meta: { title: "Sesión Expirada" }
+  },
+
+  {
+    path: "/forbidden",
+    component: () => import("pages/Forbidden.vue"),
+    meta: { title: "Acceso Denegado" }
   },
 ];
 
