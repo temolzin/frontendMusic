@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { api } from "boot/axios";
 
 const CARD_ORDER = ["cart", "purchases", "favourites"];
@@ -180,13 +180,18 @@ export default {
 
     const cardAccent = (key) => accentMap[key] || { color: "grey-7", icon: "analytics" };
 
-    const formatNumber = (value) => new Intl.NumberFormat("es-ES").format(Number(value ?? 0));
+    const formatNumber = (value) => {
+    const number = Number(value);
+    return new Intl.NumberFormat("es-ES").format(Number.isFinite(number) ? number : 0);
+};
 
-    const formatMoney = (value) =>
-      new Intl.NumberFormat("es-ES", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(Number(value ?? 0));
+const formatMoney = (value) => {
+  const number = Number(value);
+  return new Intl.NumberFormat("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number.isFinite(number) ? number : 0);
+};
 
     const formatDateTime = (value) => {
       if (!value) return "";
@@ -241,7 +246,9 @@ export default {
       }
     };
 
-    fetchOverview();
+    onMounted(() => {
+      fetchOverview();
+    });
 
     return {
       loading,
