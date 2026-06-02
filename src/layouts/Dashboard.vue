@@ -161,6 +161,20 @@
           <q-item
             clickable
             v-ripple
+            to="/artist/my-calendario"
+            v-if="$can('view-profile-artist')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="fas fa-solid fa-calendar" />
+            </q-item-section>
+
+            <q-item-section>Mi Calendario</q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
             to="/"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
