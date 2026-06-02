@@ -9,9 +9,8 @@ export default async function checkPermissions({ next, to, from, Router }) {
     try {
       await Store.dispatch("auth/getMeUser");
     } catch (err) {
-      if (Store.state.auth.me.name == null) {
-        window.localStorage.removeItem("token");
-      }
+      window.localStorage.removeItem("token");
+      return Router.push({ path: "/session-expired" });
     }
   }
 
@@ -27,17 +26,11 @@ export default async function checkPermissions({ next, to, from, Router }) {
     return next();
   }
 
-  if (!from.name) {
-    const canEnter = can(requiredPermissions);
-    if (canEnter) {
-      return next();
-    }
-    return Router.push({ name: from.name, params: from.params });
-  }
-
   const canEnter = can(requiredPermissions);
+
   if (canEnter) {
     return next();
   }
-  return Router.push({ name: from.name, params: from.params });
+
+  return Router.push({ path: "/forbidden" });
 }

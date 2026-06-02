@@ -1,40 +1,44 @@
 <template>
   <div class="error-page">
     <div class="error-card">
-
       <div class="staff-lines"></div>
 
       <div class="logo-wrap">
         <img src="/logovibeer-black.png" alt="Vibeer" class="logo-img" />
       </div>
 
-      <div class="error-code">404</div>
+      <div class="error-code">401</div>
 
       <div class="wave-deco">〜♩〜♪〜♫〜</div>
 
-      <div class="error-title">Página no encontrada</div>
+      <div class="error-title">Sesión Expirada</div>
 
       <p class="error-msg">
-        Esta nota no existe en nuestra partitura.<br />
-        Regresa y sigue disfrutando la música.
+        Tu sesión ha llegado al final del compás.<br />
+        Vuelve a iniciar sesión para continuar.
       </p>
 
       <q-btn
         unelevated
-        to="/"
-        label="Volver al Inicio"
+        label="Iniciar Sesión"
         class="back-btn"
         no-caps
+        @click="goToLogin"
       />
-
     </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
+
 export default defineComponent({
-  name: 'Error404'
+  name: 'SessionExpired',
+  methods: {
+    goToLogin() {
+      window.location.href = '/login'
+    }
+  }
 })
 </script>
 

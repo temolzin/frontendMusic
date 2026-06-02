@@ -8,23 +8,23 @@
         <img src="/logovibeer-black.png" alt="Vibeer" class="logo-img" />
       </div>
 
-      <div class="error-code">404</div>
+      <div class="error-code">403</div>
 
       <div class="wave-deco">〜♩〜♪〜♫〜</div>
 
-      <div class="error-title">Página no encontrada</div>
+      <div class="error-title">Acceso Denegado</div>
 
       <p class="error-msg">
-        Esta nota no existe en nuestra partitura.<br />
-        Regresa y sigue disfrutando la música.
+        No tienes permiso para entrar a este compás.<br />
+        Regresa a donde puedas seguir tocando.
       </p>
 
       <q-btn
         unelevated
-        to="/"
         label="Volver al Inicio"
         class="back-btn"
         no-caps
+        @click="goBack"
       />
 
     </div>
@@ -33,8 +33,14 @@
 
 <script>
 import { defineComponent } from 'vue'
+
 export default defineComponent({
-  name: 'Error404'
+  name: 'Forbidden',
+  methods: {
+    goBack() {
+      window.location.href = '/dashboard/home'
+    }
+  }
 })
 </script>
 
@@ -115,14 +121,14 @@ export default defineComponent({
   font-family: 'Bebas Neue', sans-serif;
   font-size: 112px;
   line-height: 1;
-  color: #094FAB;
+  color: #FF78A5;
   margin-bottom: 2px;
 }
 
 .wave-deco {
   font-size: 18px;
   letter-spacing: -1px;
-  color: #FF78A5;
+  color: #094FAB;
   margin-bottom: 14px;
   opacity: 0.85;
 }
@@ -158,6 +164,6 @@ export default defineComponent({
 }
 
 .back-btn:hover {
-  background: #094FAB !important;
+  background: #FF78A5 !important;
 }
 </style>
