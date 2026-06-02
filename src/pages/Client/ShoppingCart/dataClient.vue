@@ -27,12 +27,24 @@
                       ]" required />
                   </q-item>
                 </div>
-                <div class="col-12">
+                <div class="col-6">
                   <q-item>
                     <q-input dense outlined type="email" v-model="formClient.email" class="full-width" label="Email*"
                       :rules="[
                         (val) => !!val || 'El email es requerido',
                         (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || 'Email inválido'
+                      ]" required />
+                  </q-item>
+                </div>
+                <div class="col-6">
+                  <q-item>
+                    <q-input dense outlined type="tel" v-model="formClient.phone" class="full-width"
+                      label="Teléfono *" maxlength="10"
+                      @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
+                      :rules="[
+                        (val) => !!val || 'El teléfono es requerido',
+                        (val) => val.toString().length === 10 || 'El teléfono debe tener exactamente 10 dígitos',
+                        (val) => /^[0-9]+$/.test(val) || 'Solo se permiten números'
                       ]" required />
                   </q-item>
                 </div>
@@ -80,6 +92,68 @@
                         (val) => !!val || 'El país es requerido',
                         (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El país solo puede contener letras'
                       ]" required />
+                  </q-item>
+                </div>
+                <div class="col-6">
+                  <q-item>
+                    <q-input
+                      dense
+                      filled
+                      v-model="formClient.event_date"
+                      class="full-width"
+                      label="Fecha del evento *"
+                      :rules="[
+                        (val) => !!val || 'La fecha del evento es requerida'
+                      ]"
+                      required
+                    >
+                      <template v-slot:append>
+                        <q-icon
+                          name="event"
+                          class="cursor-pointer"
+                        >
+                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                            <q-date
+                              v-model="formClient.event_date"
+                              :options="dateOption"
+                              :locale="spanishLocale()"
+                            >
+                              <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                                <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                              </div>
+                            </q-date>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
+                  </q-item>
+                </div>
+                <div class="col-6">
+                  <q-item>
+                    <q-input
+                      dense
+                      outlined
+                      v-model="formClient.event_hour"
+                      class="full-width"
+                      label="Hora del evento *"
+                      :rules="[
+                        (val) => !!val || 'La hora del evento es requerida'
+                      ]"
+                      readonly
+                      required
+                    >
+                      <template v-slot:append>
+                        <q-icon name="schedule" class="cursor-pointer">
+                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                            <q-time v-model="formClient.event_hour" mask="HH:mm" format24h>
+                              <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                                <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                              </div>
+                            </q-time>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
                   </q-item>
                 </div>
                 <div class="col-6">
@@ -394,11 +468,14 @@
                   <div class="text-h6 text-center">Datos del Envio</div>
                   <div class="text-subtitle1">{{ formClient.first_name }} {{ formClient.first_last }}</div>
                   <div class="text-subtitle2">{{ formClient.email }}</div>
+                    <div class="text-subtitle2">{{ formClient.phone }}</div>
                   <div class="text-subtitle3">{{ formClient.adress_line2 }}</div>
                   <div class="text-subtitle4">{{ formClient.city }}</div>
                   <div class="text-subtitle5">{{ formClient.state_city }}</div>
                   <div class="text-subtitle6">{{ formClient.zip_code }}</div>
                   <div class="text-subtitle7">{{ formClient.country }}</div>
+                    <div class="text-subtitle8">{{ formClient.event_date }}</div>
+                    <div class="text-subtitle9">{{ formClient.event_hour }}</div>
                 </q-card-section>
                 <q-card-section class="col-7 q-pt-xs ">
                   <div class="text-h6 text-center">Detalles del Pago</div>
@@ -500,11 +577,14 @@ export default defineComponent({
       first_name: "",
       first_last: "",
       email: "",
+      phone: "",
       adress_line2: "",
       city: "",
       state_city: "",
       zip_code: "",
       country: "",
+      event_date: "",
+      event_hour: "",
     });
 
     const form = ref({
@@ -551,12 +631,32 @@ export default defineComponent({
       selectedCardIndex,
       starts,
       isQuickBuy: ref(false),
-      quickBuyData: ref(null)
+      quickBuyData: ref(null),
     };
   },
   methods: {
     castCard(card) {
       return card;
+    },
+
+    dateOption(date) {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = today.getMonth() + 1;
+      const dd = today.getDate();
+
+      const [year, month, day] = date.split("/");
+      return new Date(year, month - 1, day) >= new Date(yyyy, mm - 1, dd);
+    },
+
+    spanishLocale() {
+      return {
+        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        daysShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        firstDayOfWeek: 1
+      };
     },
 
     detectCardType(number) {
@@ -658,7 +758,7 @@ export default defineComponent({
     ...mapActions("shoppingCard", ["createPayment"]),
     async gettCards() {
       try {
-        await this.getCards();
+        await this.showCards();
       } catch (err) {
         if (err.response.data.message) {
           $q.notify({
@@ -707,18 +807,20 @@ export default defineComponent({
       const artistDataEncoded = this.$route.query.artistData;
       const hoursParam = this.$route.query.hours;
       
-      (isQuickBuy && artistDataEncoded) ? this.loadQuickBuyArtist(artistDataEncoded, hoursParam) : (
-        await this.gettCards(),
-        await this.showCards(),
-        await this.getListShoppingCard(),
-        !this.shoppingCardDetail.length && (
-          this.$q.notify({
-            type: "warning",
-            message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
-          }),
-          this.$router.push("/client/shopping-cart")
-        )
-      );
+      await this.gettCards();
+      
+      (isQuickBuy && artistDataEncoded) 
+        ? await 
+        this.loadQuickBuyArtist(artistDataEncoded, hoursParam)
+        : await this.getListShoppingCard().then(() => {
+            if (!this.shoppingCardDetail.length) {
+              this.$q.notify({
+                type: "warning",
+                message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
+              });
+              this.$router.push("/client/shopping-cart");
+            }
+          });
 
       try {
         await this.fetchProfile();
@@ -741,6 +843,7 @@ export default defineComponent({
           this.formClient.first_name = nameParts.length ? nameParts.shift() : '';
           this.formClient.first_last = nameParts.join(' ');
           this.formClient.email = u.email || '';
+          this.formClient.phone = u.phone || '';
           this.formClient.adress_line2 = u.address || '';
           this.formClient.city = u.city || '';
           this.formClient.state_city = u.state || '';
@@ -861,6 +964,7 @@ export default defineComponent({
           first_name: this.formClient.first_name,
           last_name: this.formClient.first_last,
           email: this.formClient.email,
+          phone: this.formClient.phone,
           address: this.formClient.adress_line2,
           city: this.formClient.city,
           state: this.formClient.state_city,
@@ -997,17 +1101,23 @@ export default defineComponent({
                 amount: this.shoppingCartTotal * 100,
                 customer_name: this.formClient.first_name + " " + this.formClient.first_last,
                 customer_email: this.formClient.email,
-                customer_phone: this.formClient.zip_code,
+                customer_phone: this.formClient.phone,
+                phone: this.formClient.phone,
                 order_details: {
                   first_name: this.formClient.first_name,
                   last_name: this.formClient.first_last,
                   email: this.formClient.email,
+                  phone: this.formClient.phone,
                   address: this.formClient.adress_line2,
                   city: this.formClient.city,
                   state: this.formClient.state_city,
                   zip_code: this.formClient.zip_code,
-                  country: "MX"
+                  country: "MX",
+                  event_date: this.formClient.event_date,
+                  event_hour: this.formClient.event_hour,
                 },
+                event_date: this.formClient.event_date,
+                event_hour: this.formClient.event_hour,
                 artistList: artistList,
                 description: `Compra de servicios musicales - Total: ${this.shoppingCartTotal} MXN`,
                 deviceSessionId: deviceDataId
@@ -1071,18 +1181,28 @@ export default defineComponent({
             errorMessage = errorMessage
               .replace(/cvv2/gi, "CVV")
               .replace(/card number/gi, "número de tarjeta")
+              .replace(/verification digit/gi, "dígito de verificación")
+              .replace(/expiration year/gi, "año de expiración")
+              .replace(/expiration month/gi, "mes de expiración")
+              .replace(/holder name/gi, "nombre del titular")
               .replace(/invalid/gi, "inválido")
               .replace(/must be/gi, "debe ser")
               .replace(/length/gi, "longitud")
-              .replace(/wrong/gi, "incorrecto");
+              .replace(/wrong/gi, "incorrecto")
+              .replace(/\bthe\b/gi, "el");
             if (error?.data?.description) {
               errorMessage = error.data.description
                 .replace(/cvv2/gi, "CVV")
                 .replace(/card number/gi, "número de tarjeta")
+                .replace(/verification digit/gi, "dígito de verificación")
+                .replace(/expiration year/gi, "año de expiración")
+                .replace(/expiration month/gi, "mes de expiración")
+                .replace(/holder name/gi, "nombre del titular")
                 .replace(/invalid/gi, "inválido")
                 .replace(/must be/gi, "debe ser")
                 .replace(/length/gi, "longitud")
-                .replace(/wrong/gi, "incorrecto");
+                .replace(/wrong/gi, "incorrecto")
+                .replace(/\bthe\b/gi, "el");
             }
             
             this.$q.notify({

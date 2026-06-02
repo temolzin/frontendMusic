@@ -42,7 +42,7 @@ export default {
     async getCard() {
       try {
         await this.getCards();
-        if (this.cards == "") {
+        if (!Array.isArray(this.cards) || this.cards.length === 0) {
           this.showInfo = true;
         }
       } catch (err) {

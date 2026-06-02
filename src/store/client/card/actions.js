@@ -2,7 +2,8 @@ import { api } from "boot/axios";
 
 export const getCards = async ({ commit }) => {
   await api.get("/api/client-card").then((response) => {
-    commit("setCards", response.data.client);
+    const cards = Array.isArray(response.data.client) ? response.data.client : (response.data.client ? [response.data.client] : []);
+    commit("setCards", cards);
   });
 };
 
@@ -26,6 +27,7 @@ export const updateCard = async ({ dispatch }, form) => {
 
 export const showCards = async ({ commit }) => {
   await api.get("/api/client-card").then((response) => {
-    commit("setUserCards", response.data.client);
+    const cards = Array.isArray(response.data.client) ? response.data.client : (response.data.client ? [response.data.client] : []);
+    commit("setCards", cards);
   });
 };
