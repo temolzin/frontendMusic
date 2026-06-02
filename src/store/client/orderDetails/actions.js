@@ -15,3 +15,21 @@ export const viewPurchaseHistory = async ({ commit }) => {
     console.error("Error fetching purchase history:", error);
   }
 };
+
+export const fetchChatMessages = async ({ commit }, artistSaleId) => {
+  try {
+    const response = await api.get(`/api/chat/messages/${artistSaleId}`);
+    commit("setChatMessages", response.data.messages);
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+  }
+};
+
+export const sendChatMessage = async ({ commit }, payload) => {
+  try {
+    const response = await api.post('/api/chat/messages', payload);
+    commit("addChatMessage", response.data.message);
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+};
