@@ -82,7 +82,7 @@
   <!-- Inicio de Formulario nuevo rol -->
   <section>
     <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="formCreate" persistent>
+      <q-dialog v-model="formCreate" persistent @hide="onReset">
         <q-card style="min-width: 350px">
           <q-card-section>
             <div class="text-h6">Crear rol</div>
@@ -335,7 +335,7 @@ export default {
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
-            message: `¿Estás seguro de eliminar el registro de ${name}?`,
+            message: `¿Estás seguro de eliminar el rol ${name}?`,
             cancel: "Cancelar",
             ok: "Confirmar",
             persistent: true,

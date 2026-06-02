@@ -20,7 +20,7 @@
             label="Nuevo"
             icon-right="fas fa-plus"
             size="sm"
-            @click="formCreate = true"
+            @click="clearForm(); formCreate = true"
             v-if="$can('create-users')"
           />
         </b>
@@ -83,7 +83,7 @@
   <!-- Inicio de Formulario nuevo usuario -->
   <section>
     <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="formCreate" persistent>
+      <q-dialog v-model="formCreate" persistent @hide="clearForm">
         <q-card style="min-width: 350px">
           <q-card-section>
             <div class="text-h6">
@@ -370,7 +370,7 @@ export default {
       this.$q
         .dialog({
           title: "Mensaje de confirmación",
-          message: `¿Estás seguro de eliminar el registro de ${props.row.name}?`,
+          message: `¿Estás seguro de eliminar al usuario ${props.row.name}?`,
           cancel: "Cancelar",
           ok: "Confirmar",
           persistent: true,
