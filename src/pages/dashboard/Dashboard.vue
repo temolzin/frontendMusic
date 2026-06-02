@@ -23,6 +23,35 @@
   <client-promotion v-if="getMe.role[0] == 'cliente'"></client-promotion>
   <notice-not-info v-if="getMe.role[0] == 'artista'"></notice-not-info>
   <artist-recomendation v-if="getMe.role[0] == 'artista'"></artist-recomendation>
+  <div v-if="getMe.role[0] == 'artista'" class="row q-pa-lg q-col-gutter-md justify-center">
+    <div class="col-12 col-sm-6 col-md-4">
+      <q-card class="text-center shadow-4">
+        <q-card-section>
+          <q-icon name="favorite" color="red" size="40px" />
+          <div class="text-h4 text-weight-bold q-mt-sm">{{ stats.favorites }}</div>
+          <div class="text-subtitle2 text-grey">Personas te tienen como favorito</div>
+        </q-card-section>
+      </q-card>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4">
+      <q-card class="text-center shadow-4">
+        <q-card-section>
+          <q-icon name="star" color="yellow" size="40px" />
+          <div class="text-h4 text-weight-bold q-mt-sm">{{ stats.rating }}</div>
+          <div class="text-subtitle2 text-grey">Calificación promedio ({{ stats.totalReviews }} reseñas)</div>
+        </q-card-section>
+      </q-card>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4">
+      <q-card class="text-center shadow-4">
+        <q-card-section>
+          <q-icon name="payments" color="green" size="40px" />
+          <div class="text-h4 text-weight-bold q-mt-sm">${{ Number(stats.totalSales).toLocaleString('es-MX') }}</div>
+          <div class="text-subtitle2 text-grey">Generados en {{ stats.totalHires }} contrataciones</div>
+        </q-card-section>
+      </q-card>
+    </div>
+  </div>
   <client-stats v-if="getMe.role[0] == 'cliente'"></client-stats>
   <client-card v-if="getMe.role[0] == 'cliente'"></client-card>
   <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general >
@@ -120,6 +149,13 @@ export default {
       columns,
       skeleton: true,
       showCard: true,
+      stats: {
+        favorites: 0,
+        rating: 0,
+        totalReviews: 0,
+        totalSales: 0,
+        totalHires: 0,
+      },
     };
   },
   computed: {
@@ -140,6 +176,22 @@ export default {
             message: err.response.data.message,
           });
         }
+      }
+    },
+    async loadStats() {
+      try {
+        const [favRes, ratingRes, salesRes] = await Promise.all([
+          this.$api.get("/api/artist/favourite_artists/count"),
+          this.$api.get("/api/artist/ratings/average"),
+          this.$api.get("/api/artist/sales/stats"),
+        ]);
+        this.stats.favorites = favRes.data.count;
+        this.stats.rating = ratingRes.data.average;
+        this.stats.totalReviews = ratingRes.data.total;
+        this.stats.totalSales = salesRes.data.total;
+        this.stats.totalHires = salesRes.data.count;
+      } catch (e) {
+        console.error("Error loading stats", e);
       }
     },
     search(slug) {
@@ -184,6 +236,9 @@ export default {
   },
   created() {
     this.gettFavouriteArtists();
+    if (this.getMe?.role?.[0] === 'artista') {
+      this.loadStats();
+    }
   },
   mounted() {
     $q = useQuasar();
