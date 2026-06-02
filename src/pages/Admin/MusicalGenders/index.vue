@@ -466,7 +466,7 @@ export default {
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
-            message: `¿Estás seguro de eliminar el registro de ${name}?`,
+            message: `¿Estás seguro de eliminar el género musical ${name}?`,
             cancel: "Cancelar",
             ok: "Confirmar",
             persistent: true,
