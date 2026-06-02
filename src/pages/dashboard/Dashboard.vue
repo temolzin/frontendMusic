@@ -23,6 +23,7 @@
   <client-promotion v-if="getMe.role[0] == 'cliente'"></client-promotion>
   <notice-not-info v-if="getMe.role[0] == 'artista'"></notice-not-info>
   <artist-recomendation v-if="getMe.role[0] == 'artista'"></artist-recomendation>
+  <client-stats v-if="getMe.role[0] == 'cliente'"></client-stats>
   <client-card v-if="getMe.role[0] == 'cliente'"></client-card>
   <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general >
 
@@ -102,6 +103,7 @@ import { mapGetters, mapActions } from "vuex";
 import { useQuasar } from "quasar";
 import ClientCard from "src/components/Client/ClientCard.vue";
 import ClientPromotion from "src/components/Client/ClientPromotion.vue";
+import ClientStats from "src/components/Client/ClientStats.vue";
 import ArtistRecomendation from "src/components/Artist/ArtistRecomendation.vue";
 import NoticeNotInfo from "src/components/Artist/NoticeNotInfo.vue";
 import NoticeGeneral from "src/components/admin/NoticeGeneral.vue";
@@ -110,7 +112,7 @@ import NoticeGeneral from "src/components/admin/NoticeGeneral.vue";
 let $q = useQuasar();
 
 export default {
-  components: { ClientCard, ClientPromotion, ArtistRecomendation,NoticeNotInfo,NoticeGeneral},
+  components: { ClientCard, ClientPromotion, ClientStats, ArtistRecomendation,NoticeNotInfo,NoticeGeneral},
   name: "Index",
   data() {
     const columns = [{ name: "name", field: "artist.name", sortable: true }];
