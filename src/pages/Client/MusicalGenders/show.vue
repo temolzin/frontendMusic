@@ -337,7 +337,7 @@ export default {
         this.addFavourite.artist_id = "";
       } catch (err) {
         if (err.response && err.response.data && err.response.data.message) {
-             this.$q.notify({
+            this.$q.notify({
             type: "negative",
             message: err.response.data.message,
           });
@@ -413,6 +413,7 @@ export default {
       });
     },
     handleHireNow(artist) {
+      const averageRating = Number(this.artist.ratings_avg_rating || artist.ratings_avg_rating || 0);
       const artistData = JSON.stringify({
         id: artist.id,
         name: artist.name,
@@ -420,7 +421,8 @@ export default {
         price_hour: artist.price_hour,
         zone: artist.zone,
         members: artist.members,
-        manager: artist.manager
+        manager: artist.manager,
+        rating: averageRating
       });
       let artistDataEncoded = '';
       try {

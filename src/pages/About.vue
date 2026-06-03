@@ -85,7 +85,9 @@
           <div class="text-overline">Paso 2</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Explora Nuestro Catálogo</div>
           <div class="text-caption">
-            Descubre a tus artistas favoritos en nuestro amplio catálogo. Tenemos a los mejores exponentes de la música en un solo lugar, desde los más famosos hasta tus próximos grandes descubrimientos.
+            <div class="text-caption">
+            Descubre a tus artistas favoritos en nuestro catálogo. Tenemos a los mejores exponentes de la música listos para tu evento.
+          </div>
           </div>
         </q-card-section>
         <q-card-section class="col-5 flex flex-center">

@@ -531,7 +531,7 @@
               </div>
               <div class="text-subtitle2 text-center">
                 <q-rating 
-                  :model-value="parseFloat(castProduct(product).artist?.ratings_avg_rating || 0)" 
+                  :model-value="parseFloat(castProduct(product).artist?.rating || castProduct(product).artist?.ratings_avg_rating || 0)"
                   :max="5" 
                   size="32px" 
                   color="yellow"
