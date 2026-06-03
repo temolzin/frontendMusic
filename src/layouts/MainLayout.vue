@@ -182,7 +182,7 @@
         <q-toolbar-title class="q-ml-md" style="font-size: 15px">
           Conócenos a través de nuestras redes sociales
         </q-toolbar-title>
-        <div class="q-col-gutter-md q-mr-md">
+        <div class="row items-center q-col-gutter-md q-mr-md">
           <a href="https://www.facebook.com/RootHeim" target="_blank" class="text-white">
             <q-icon name="fab fa-brands fa-facebook-f" size="20px" />
           </a>

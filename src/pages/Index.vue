@@ -190,15 +190,14 @@
           Política de privacidad
         </p>
         <p class="text-weight-regular" style="font-size: 12px">
-          The Ticket Factory es un nombre comercial del Grupo NEC . El Grupo NEC
-          desea enviarle boletines informativos y otros correos electrónicos
-          sobre nuestros gares y eventos que creemos que pueden interesarle . Al
-          registrarse , acepta recibirlos .
+          Vibeer recopila tu correo electrónico únicamente para enviarte 
+          información relevante sobre artistas y eventos. Al registrarte, 
+          aceptas recibir estas comunicaciones. Puedes cancelar tu suscripción 
+          en cualquier momento.
         </p>
         <p class="text-weight-regular" style="font-size: 12px">
-          Para obtener más información sobre las empresas de The NEC Group y
-          cómo utilizamos su información , consulte nuestra Política de
-          privacidad .
+          Para más información sobre cómo manejamos tus datos, consulta nuestra 
+          Política de privacidad.
         </p>
       </div>
     </div>
