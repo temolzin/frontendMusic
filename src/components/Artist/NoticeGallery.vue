@@ -232,11 +232,7 @@ export default {
   async gettGalleryArtist() {
     try {
       await this.getGalleryArtist();
-      if (this.galleryArtist && this.galleryArtist[0] != null) {
-        this.showGallery = true;
-      } else {
-        this.showGallery = false;
-      }
+      this.showGallery = (this.galleryArtist && this.galleryArtist[0] != null);
     } catch (err) {
       this.$q.notify({
         type: "negative",
