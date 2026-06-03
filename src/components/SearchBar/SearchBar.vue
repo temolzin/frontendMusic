@@ -93,10 +93,11 @@ export default {
       let artists = [];
       
       this.stateArtistList.forEach(artist => {
-        artist.musical_genders.forEach(genre => {
-          const obj = {name : genre.name, url: `/client/musical-genders/${genre.slug}`};
-          genres.push(obj);
-        });
+        if (artist.musical_genders && artist.musical_genders.length > 0) {
+          artist.musical_genders.forEach(genre => {
+            genres.push({ name: genre.name, url: `/client/musical-genders/${genre.slug}` });
+          });
+        }
       });
 
       this.stateArtistList.forEach(artist => {

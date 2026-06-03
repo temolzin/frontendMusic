@@ -167,12 +167,11 @@ export default {
   },
 
   created() {
+    $q = useQuasar();
     this.getArtistSaless();
   },
 
-  mounted() {
-    $q = useQuasar();
-  },
+  mounted() {},
 };
 </script>
 
