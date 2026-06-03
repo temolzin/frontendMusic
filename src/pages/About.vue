@@ -50,7 +50,7 @@
     </q-carousel>
   </div>
 
-  <div class="q-pa-md row items-start q-gutter-md">
+  <div class="q-pa-md row items-stretch justify-center q-mt-lg" style="gap: 35px;">
 
     <q-card class="my-card" flat bordered>
       <q-card-section horizontal>
