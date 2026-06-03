@@ -176,22 +176,7 @@ export default {
     ...mapActions("galleryArtist", ["createGalleryArtist"]),
     ...mapActions("galleryArtist", ["upDateGalleryArtist"]),
     ...mapActions("galleryArtist", ["deleteGalleryArtist"]),
-    async gettGalleryArtist() {
-      try {
-        await this.getGalleryArtist();
-        //console.log(this.galleryArtist);
-        if (this.galleryArtist[0] != null) {
-          this.showGallery = true;
-        } else this.showGallery = false;
-      } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.message,
-          });
-        }
-      }
-    },
+    
     async uploadSubImages(files) {
       try {
         this.sub_files_paths = files[0];
