@@ -110,8 +110,8 @@
         </q-card>
       </q-dialog>
 
-      <q-dialog v-model="isChatDialogOpen" persistent>
-        <q-card style="min-width: 600px; max-width: 80vw; display: flex; flex-direction: column;">
+<q-dialog v-model="isChatDialogOpen" persistent>
+  <q-card style="width: 90vw; max-width: 600px; display: flex; flex-direction: column;">
           <q-card-section class="row items-center bg-primary text-white q-pb-sm">
             <div class="text-h6">Chat con {{ activeChatPurchase?.artist?.name || 'el artista' }}</div>
             <q-space />
@@ -224,22 +224,27 @@ export default {
       this.selectedPurchase = purchase;
       this.showModal = true;
     },
-    async openChat(purchase) {
-      this.$store.commit("orderDetails/setChatMessages", []);
-      this.activeChatPurchase = purchase;
-      this.isChatDialogOpen = true;
-      await this.fetchChatMessages(purchase.id);
-    },
-    async sendMessage() {
-      if (this.newMessage.trim() !== '') {
-        const payload = {
-          artist_sale_id: this.activeChatPurchase.id,
-          message: this.newMessage
-        };
-        await this.sendChatMessage(payload);
-        this.newMessage = '';
-      }
+async openChat(purchase) {
+  this.$store.commit("orderDetails/setChatMessages", []);
+  this.activeChatPurchase = purchase;
+  this.newMessage = "";
+  this.isChatDialogOpen = true;
+  await this.fetchChatMessages(purchase.id);
+},
+async sendMessage() {
+  const messageText = this.newMessage.trim();
+  if (messageText !== '') {
+    const payload = {
+      artist_sale_id: this.activeChatPurchase.id,
+      message: messageText,
+    };
+
+    const sentMessage = await this.sendChatMessage(payload);
+    if (sentMessage) {
+      this.newMessage = '';
     }
+  }
+}
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
