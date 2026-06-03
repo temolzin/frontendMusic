@@ -23,7 +23,7 @@
                 label="Selecciona las imágenes (Máx. 5)"
                 max-files="5"
                 multiple
-                accept=".jpg, image/*"
+                accept=".jpg, .jpeg, .png, .jpe"
                 :factory="uploadSubImages"
                 @added="(files) => validateAddedFiles(files, 'uploaderCreate')"
                 @rejected="onRejected"
@@ -123,7 +123,7 @@
                 label="Selecciona las imagenes (Max 5)"
                 max-files="5"
                 multiple
-                accept=".jpg, image/*"
+                accept=".jpg, .jpeg, .png, .jpe"
                 :factory="updateSubImages"
                 @added="(files) => validateAddedFiles(files, 'uploaderEdit')"
                 @rejected="onRejected"
