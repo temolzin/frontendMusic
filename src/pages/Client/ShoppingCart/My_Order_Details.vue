@@ -67,7 +67,7 @@
                     <td>
                       <p class="artist-zone">{{ purchase.artist?.manager?.name || 'N/A' }}</p>
                       <p>
-                        <q-btn flat rounded color="primary" label="Enviar Mensaje" />
+                        <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(purchase)" />
                       </p>
                     </td>
                     <td class="text-left">
@@ -109,6 +109,62 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
+<q-dialog v-model="isChatDialogOpen" persistent>
+  <q-card style="width: 90vw; max-width: 600px; display: flex; flex-direction: column;">
+          <q-card-section class="row items-center bg-primary text-white q-pb-sm">
+            <div class="text-h6">Chat con {{ activeChatPurchase?.artist?.name || 'el artista' }}</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+
+          <q-card-section
+            class="scroll"
+            style="height: 50vh;"
+            :class="$q.dark.isActive ? 'bg-dark' : 'bg-grey-2'"
+          >
+            <div class="q-pa-md row justify-center">
+              <div style="width: 100%; max-width: 500px">
+                <div v-if="(getChatMessages || []).length === 0" class="text-center text-grey q-py-md">
+                  No hay mensajes aún. ¡Escribe el primero!
+                </div>
+                <q-chat-message
+                  v-for="msg in (getChatMessages || [])"
+                  :key="msg.id"
+                  :name="msg.created_by === getMe?.id ? 'Yo' : activeChatPurchase?.artist?.name"
+                  :avatar="msg.created_by === getMe?.id ? (getMe?.image_profile || getMe?.image || 'https://cdn.quasar.dev/img/avatar4.jpg') : activeChatPurchase?.artist?.image"
+                  :text="[msg.message]"
+                  :sent="msg.created_by === getMe?.id"
+                  :bg-color="msg.created_by === getMe?.id ? 'primary' : ($q.dark.isActive ? 'grey-8' : 'positive')"
+                  :text-color="msg.created_by === getMe?.id ? 'white' : ($q.dark.isActive ? 'white' : 'black')"
+                  :stamp="formatChatDate(msg.created_at)"
+                />
+              </div>
+            </div>
+          </q-card-section>
+
+          <q-card-actions
+            class="q-pa-md"
+            :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-white'"
+            :style="$q.dark.isActive ? 'border-top: 1px solid #424242;' : 'border-top: 1px solid #e0e0e0;'"
+          >
+            <q-input
+              v-model="newMessage"
+              outlined
+              dense
+              class="full-width"
+              placeholder="Escribe un mensaje..."
+              @keyup.enter="sendMessage"
+              :bg-color="$q.dark.isActive ? 'grey-9' : 'white'"
+              :label-color="$q.dark.isActive ? 'grey-4' : 'grey-8'"
+            >
+              <template v-slot:after>
+                <q-btn round dense flat icon="send" color="primary" @click="sendMessage" />
+              </template>
+            </q-input>
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-container>
   </q-page>
 </template>
@@ -125,10 +181,17 @@ export default {
       filterDate: "",
       showModal: false,
       selectedPurchase: null,
+      isChatDialogOpen: false,
+      newMessage: "",
+      activeChatPurchase: null,
     };
   },
   methods: {
-    ...mapActions("orderDetails", ["viewPurchaseHistory"]),
+    ...mapActions("orderDetails", [
+      "viewPurchaseHistory",
+      "fetchChatMessages",
+      "sendChatMessage"
+    ]),
     formatDate(rawDate) {
       const months = [
         "enero",
@@ -152,13 +215,40 @@ export default {
 
       return `${day} de ${months[monthIndex]} del ${year}`;
     },
+    formatChatDate(rawDate) {
+      if (!rawDate) return '';
+      const date = new Date(rawDate);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    },
     openOrderModal(purchase) {
       this.selectedPurchase = purchase;
       this.showModal = true;
     },
+async openChat(purchase) {
+  this.$store.commit("orderDetails/setChatMessages", []);
+  this.activeChatPurchase = purchase;
+  this.newMessage = "";
+  this.isChatDialogOpen = true;
+  await this.fetchChatMessages(purchase.id);
+},
+async sendMessage() {
+  const messageText = this.newMessage.trim();
+  if (messageText !== '') {
+    const payload = {
+      artist_sale_id: this.activeChatPurchase.id,
+      message: messageText,
+    };
+
+    const sentMessage = await this.sendChatMessage(payload);
+    if (sentMessage) {
+      this.newMessage = '';
+    }
+  }
+}
   },
   computed: {
-    ...mapGetters("orderDetails", ["stateListShopingCard"]),
+    ...mapGetters("auth", ["getMe"]),
+    ...mapGetters("orderDetails", ["stateListShopingCard", "getChatMessages"]),
     dateOptions() {
       const currentYear = new Date().getFullYear();
       return [
@@ -220,5 +310,11 @@ export default {
 <style scoped>
 .table-responsive {
   width: 100%;
+}
+
+:deep(.q-message-avatar) {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
 }
 </style>
