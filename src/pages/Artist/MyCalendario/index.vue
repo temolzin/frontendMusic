@@ -83,7 +83,7 @@
                           <div class="event-right">
                             <q-badge
                               :color="event.completed ? 'positive' : 'warning'"
-                              :label="event.completed ? 'Completed' : 'Pending'"
+                              :label="event.completed ? 'Completado' : 'Pendiente'"
                             />
                             <q-icon
                               :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
@@ -96,23 +96,23 @@
                         <q-slide-transition>
                           <div v-show="expanded[event.id]" class="q-mt-md">
                             <q-separator class="q-mb-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Event</div>
+                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Evento</div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Description:</span>
+                              <span class="detail-label">Descripción:</span>
                               <span class="detail-value">{{ event.description }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Rate:</span>
+                              <span class="detail-label">Tarifa:</span>
                               <span class="detail-value text-positive text-weight-bold">${{ event.rate }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Contact:</span>
+                              <span class="detail-label">Contacto:</span>
                               <span class="detail-value">{{ event.contact }}</span>
                             </div>
                             <q-separator class="q-my-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Client</div>
+                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Name:</span>
+                              <span class="detail-label">Nombre:</span>
                               <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
@@ -120,23 +120,23 @@
                               <span class="detail-value">{{ event.customerEmail }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Phone:</span>
+                              <span class="detail-label">Teléfono:</span>
                               <span class="detail-value">{{ event.customerPhone }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Address:</span>
+                              <span class="detail-label">Dirección:</span>
                               <span class="detail-value">{{ event.customerAddress }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">City:</span>
+                              <span class="detail-label">Ciudad:</span>
                               <span class="detail-value">{{ event.customerCity }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">State:</span>
+                              <span class="detail-label">Estado:</span>
                               <span class="detail-value">{{ event.customerState }}</span>
                             </div>
                             <div class="detail-item">
-                              <span class="detail-label">Zip Code:</span>
+                              <span class="detail-label">Código Postal:</span>
                               <span class="detail-value">{{ event.customerZipCode }}</span>
                             </div>
                             <q-separator class="q-my-md" />
@@ -332,8 +332,8 @@ export default defineComponent({
         this.contracts = (response.data?.sales && Array.isArray(response.data.sales))
           ? response.data.sales.map((sale) => ({
               id: sale.id,
-              title: `Event ${sale.customer_first_name || 'Unknown'}`,
-              description: `Contract for ${sale.customer_first_name || 'Unknown'} ${sale.customer_last_name || 'Unknown'}`,
+              title: `Evento ${sale.customer_first_name || 'Desconocido'}`,
+              description: `Contrato para ${sale.customer_first_name || 'Desconocido'} ${sale.customer_last_name || 'Desconocido'}`,
               date: this.parseDateToString(sale.event_date),
               time: sale.event_hour,
               location: sale.customer_address,
@@ -379,68 +379,6 @@ export default defineComponent({
       } catch {
         return this.getTodayString();
       }
-    },
-
-    loadSampleData() {
-      this.contracts = [
-        {
-          id: 1,
-          title: 'Event Javier',
-          description: 'Contract for Javier Martínez',
-          date: this.getTodayString(),
-          time: '08:00',
-          location: 'Main Street 123',
-          rate: 6000,
-          contact: '5512345678',
-          completed: false,
-          customerFirstName: 'Javier',
-          customerLastName: 'Martínez',
-          customerEmail: 'javier@example.com',
-          customerPhone: '5512345678',
-          customerAddress: 'Main Street 123',
-          customerCity: 'Mexico City',
-          customerState: 'CDMX',
-          customerZipCode: '28001',
-        },
-        {
-          id: 2,
-          title: 'Event Andrea',
-          description: 'Contract for Andrea López',
-          date: this.getTodayString(),
-          time: '10:00',
-          location: 'Main Street 123',
-          rate: 9000,
-          contact: '5512345678',
-          completed: true,
-          customerFirstName: 'Andrea',
-          customerLastName: 'López',
-          customerEmail: 'andrea@example.com',
-          customerPhone: '5512345678',
-          customerAddress: 'Main Street 123',
-          customerCity: 'Mexico City',
-          customerState: 'CDMX',
-          customerZipCode: '28001',
-        },
-        {
-          id: 3,
-          title: 'Event Carlos',
-          description: 'Contract for Carlos González',
-          date: this.getTodayString(),
-          time: '14:00',
-          location: 'Main Street 123',
-          rate: 12000,
-          contact: '5512345678',
-          completed: false,
-          customerFirstName: 'Carlos',
-          customerLastName: 'González',
-          customerEmail: 'carlos@example.com',
-          customerPhone: '5512345678',
-          customerAddress: 'Main Street 123',
-          customerCity: 'Mexico City',
-          customerState: 'CDMX',
-          customerZipCode: '28001',
-        },
-      ];
     },
 
     toggleExpanded(id) {

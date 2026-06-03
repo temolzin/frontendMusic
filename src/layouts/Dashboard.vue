@@ -169,7 +169,7 @@
               <q-icon name="fas fa-solid fa-calendar" />
             </q-item-section>
 
-            <q-item-section>My Calendar</q-item-section>
+            <q-item-section>Mi Calendario</q-item-section>
           </q-item>
 
           <q-item
