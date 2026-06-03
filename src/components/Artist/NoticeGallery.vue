@@ -257,7 +257,7 @@ export default {
         uploader.removeFile(file);
         this.$q.notify({
           type: "negative",
-          message: `El archivo "${file.name}" no tiene un formato válido (Solo jpg, jpeg, png).`,
+          message: `El archivo "${file.name}" no tiene un formato válido (Solo jpg, jpeg, png, jpe).`,
         });
       }
     });
