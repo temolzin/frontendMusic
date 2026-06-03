@@ -10,7 +10,7 @@
         <!-- Bottom Serach -->
         <q-toolbar-title>
           <div class="row q-ma-md">
-            <SearchBar></SearchBar>
+            <SearchBar v-if="getMe.role[0] === 'cliente'"></SearchBar>
           </div>
         </q-toolbar-title>
         <!-- Fin Bottom Serach -->

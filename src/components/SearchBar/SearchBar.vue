@@ -50,6 +50,7 @@ export default {
       isActiveDarkMode: ref(false),
       options: ref(),
       allOptions: [],
+      searchBar: ref(null),
     };
   },
   computed: {
@@ -77,6 +78,8 @@ export default {
       }
     },
     redirectToRoute(value) {
+      this.searchBar = null;
+      this.options = [];
       this.$router.push(value);      
     },
     removeDuplicates(arr) {
@@ -97,8 +100,9 @@ export default {
       });
 
       this.stateArtistList.forEach(artist => {
-        const obj = {name : artist.name, url: `/client/musical-genders/${artist.musical_genders[0].name}/${artist.slug}`};
-        artists.push(obj);
+        if (artist.musical_genders && artist.musical_genders[0]) {
+          artists.push({ name: artist.name, url: `/client/musical-genders/search/${artist.slug}` });
+        }
       });
 
       this.allOptions = this.removeDuplicates([...genres, ...artists]);
