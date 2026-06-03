@@ -3,6 +3,7 @@
     <div class="page-header q-mb-md">
       <h4 class="q-my-none">Mi Calendario</h4>
       <p class="text-subtitle2 text-grey">Ver tus contratos programados</p>
+      <p v-if="lastRefreshTime" class="text-caption text-grey-7 q-mt-xs">Última actualización: {{ formatLastRefresh }}</p>
     </div>
 
     <div v-if="loading" class="text-center q-py-lg">
@@ -301,6 +302,8 @@ export default defineComponent({
       expanded: {},
       contracts: [],
       loading: true,
+      refreshInterval: null,
+      lastRefreshTime: null,
     };
   },
   computed: {
@@ -314,7 +317,20 @@ export default defineComponent({
       return this.contracts.filter((c) => !c.completed).length;
     },
     eventDates() {
-      return [...new Set(this.contracts.map((c) => c.date))];
+      const eventsByDate = {};
+      this.contracts.forEach((c) => {
+        if (!eventsByDate[c.date]) {
+          eventsByDate[c.date] = [];
+        }
+        eventsByDate[c.date].push(c);
+      });
+      return Object.keys(eventsByDate);
+    },
+    formatLastRefresh() {
+      if (!this.lastRefreshTime) return null;
+      const hours = String(this.lastRefreshTime.getHours()).padStart(2, '0');
+      const minutes = String(this.lastRefreshTime.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
     },
   },
   methods: {
@@ -364,18 +380,24 @@ export default defineComponent({
         this.contracts = [];
       } finally {
         this.loading = false;
+        this.lastRefreshTime = new Date();
       }
     },
 
     parseDateToString(dateVal) {
       if (!dateVal) return this.getTodayString();
       try {
+        let dateStr = dateVal.toString();
+        if (dateStr.includes('-')) {
+          const [y, m, d] = dateStr.split('T')[0].split('-');
+          return `${y}/${m}/${d}`;
+        }
         const d = new Date(dateVal);
         if (isNaN(d.getTime())) return this.getTodayString();
         const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        return `${y}/${m}/${day}`;
+        return `${y}/${month}/${day}`;
       } catch {
         return this.getTodayString();
       }
@@ -422,9 +444,26 @@ export default defineComponent({
         return dateStr;
       }
     },
+
+    getEventsCountByDate(dateStr) {
+      return this.contracts.filter((c) => c.date === dateStr).length;
+    },
+
+    hasMultipleEventsOnDate(dateStr) {
+      return this.getEventsCountByDate(dateStr) > 1;
+    },
   },
   mounted() {
     this.loadContracts();
+    this.refreshInterval = setInterval(() => {
+      this.loadContracts();
+    }, 5000);
+  },
+
+  beforeUnmount() {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
   },
 });
 </script>
