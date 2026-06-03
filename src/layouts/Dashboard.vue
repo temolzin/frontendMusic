@@ -161,7 +161,7 @@
           <q-item
             clickable
             v-ripple
-            to="/artist/my-calendario"
+            to="/artist/my-calendar"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
           >
@@ -169,7 +169,7 @@
               <q-icon name="fas fa-solid fa-calendar" />
             </q-item-section>
 
-            <q-item-section>Mi Calendario</q-item-section>
+            <q-item-section>My Calendar</q-item-section>
           </q-item>
 
           <q-item

@@ -1,13 +1,13 @@
 <template>
-  <div class="calendario-container">
+  <div class="calendar-container">
     <div class="page-header q-mb-md">
       <h4 class="q-my-none">Mi Calendario</h4>
-      <p class="text-subtitle2 text-grey">Visualiza tus contrataciones programadas</p>
+      <p class="text-subtitle2 text-grey">Ver tus contratos programados</p>
     </div>
 
     <div v-if="loading" class="text-center q-py-lg">
       <q-spinner size="50px" color="primary" />
-      <p class="text-grey q-mt-md">Cargando contrataciones...</p>
+      <p class="text-grey q-mt-md">Cargando contratos...</p>
     </div>
 
     <div v-else>
@@ -83,7 +83,7 @@
                           <div class="event-right">
                             <q-badge
                               :color="event.completed ? 'positive' : 'warning'"
-                              :label="event.completed ? 'Completada' : 'Pendiente'"
+                              :label="event.completed ? 'Completed' : 'Pending'"
                             />
                             <q-icon
                               :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
@@ -96,23 +96,23 @@
                         <q-slide-transition>
                           <div v-show="expanded[event.id]" class="q-mt-md">
                             <q-separator class="q-mb-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Evento</div>
+                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Event</div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Descripción:</span>
+                              <span class="detail-label">Description:</span>
                               <span class="detail-value">{{ event.description }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Tarifa:</span>
+                              <span class="detail-label">Rate:</span>
                               <span class="detail-value text-positive text-weight-bold">${{ event.rate }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Contacto:</span>
+                              <span class="detail-label">Contact:</span>
                               <span class="detail-value">{{ event.contact }}</span>
                             </div>
                             <q-separator class="q-my-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
+                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Client</div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Nombre:</span>
+                              <span class="detail-label">Name:</span>
                               <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
@@ -120,34 +120,34 @@
                               <span class="detail-value">{{ event.customerEmail }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Teléfono:</span>
+                              <span class="detail-label">Phone:</span>
                               <span class="detail-value">{{ event.customerPhone }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Dirección:</span>
+                              <span class="detail-label">Address:</span>
                               <span class="detail-value">{{ event.customerAddress }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Ciudad:</span>
+                              <span class="detail-label">City:</span>
                               <span class="detail-value">{{ event.customerCity }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Estado:</span>
+                              <span class="detail-label">State:</span>
                               <span class="detail-value">{{ event.customerState }}</span>
                             </div>
                             <div class="detail-item">
-                              <span class="detail-label">Código Postal:</span>
+                              <span class="detail-label">Zip Code:</span>
                               <span class="detail-value">{{ event.customerZipCode }}</span>
                             </div>
                             <q-separator class="q-my-md" />
-                            <div v-if="isEventDatePassed(event.date) && !event.completed" class="action-section">
+                            <div v-if="isEventDateAndTimePassed(event.date, event.time) && !event.completed" class="action-section">
                               <q-btn
                                 color="positive"
                                 label="Marcar como completado"
                                 outline
                                 size="sm"
                                 icon="check_circle"
-                                @click="markAsCompleted(event.id)"
+                                @click.stop="markAsCompleted(event.id)"
                                 class="full-width"
                               />
                             </div>
@@ -159,7 +159,7 @@
                 </div>
                 <div v-else class="text-center q-py-lg text-grey">
                   <q-icon name="calendar_today" size="lg" />
-                  <p>No hay contrataciones para hoy</p>
+                  <p>Sin contratos para hoy</p>
                 </div>
               </q-tab-panel>
 
@@ -171,7 +171,12 @@
                       bordered
                       class="event-card"
                       :class="{ completed: event.completed }"
+                      role="button"
+                      :tabindex="0"
+                      :aria-expanded="expanded[event.id] ? 'true' : 'false'"
                       @click="toggleExpanded(event.id)"
+                      @keydown.enter.prevent="toggleExpanded(event.id)"
+                      @keydown.space.prevent="toggleExpanded(event.id)"
                     >
                       <q-card-section class="q-pa-md">
                         <div class="event-header">
@@ -187,7 +192,7 @@
                           <div class="event-right">
                             <q-badge
                               :color="event.completed ? 'positive' : 'warning'"
-                              :label="event.completed ? 'Completada' : 'Pendiente'"
+                              :label="event.completed ? 'Completado' : 'Pendiente'"
                             />
                             <q-icon
                               :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
@@ -244,14 +249,14 @@
                               <span class="detail-value">{{ event.customerZipCode }}</span>
                             </div>
                             <q-separator class="q-my-md" />
-                            <div v-if="isEventDatePassed(event.date) && !event.completed" class="action-section">
+                            <div v-if="isEventDateAndTimePassed(event.date, event.time) && !event.completed" class="action-section">
                               <q-btn
                                 color="positive"
                                 label="Marcar como completado"
                                 outline
                                 size="sm"
                                 icon="check_circle"
-                                @click="markAsCompleted(event.id)"
+                                @click.stop="markAsCompleted(event.id)"
                                 class="full-width"
                               />
                             </div>
@@ -263,7 +268,7 @@
                 </div>
                 <div v-else class="text-center q-py-lg text-grey">
                   <q-icon name="event" size="lg" />
-                  <p>No hay contrataciones registradas</p>
+                  <p>Sin contratos registrados</p>
                 </div>
               </q-tab-panel>
             </q-tab-panels>
@@ -281,7 +286,7 @@ import langEs from 'quasar/lang/es';
 import { api } from 'boot/axios';
 
 export default defineComponent({
-  name: 'MyCalendario',
+  name: 'MyCalendar',
 
   setup() {
     const $q = useQuasar();
@@ -300,7 +305,7 @@ export default defineComponent({
   },
   computed: {
     todayEvents() {
-      return this.contracts.filter((c) => c.date === this.selectedDate);
+      return this.contracts.filter((c) => c.date === this.getTodayString());
     },
     completedCount() {
       return this.contracts.filter((c) => c.completed).length;
@@ -324,32 +329,39 @@ export default defineComponent({
     async loadContracts() {
       try {
         const response = await api.get('/api/artist-sales');
-        if (response.data?.sales && Array.isArray(response.data.sales)) {
-          this.contracts = response.data.sales.map((sale) => ({
-            id: sale.id,
-            title: `Evento ${sale.customer_first_name}`,
-            description: `Contratación para ${sale.customer_first_name} ${sale.customer_last_name}`,
-            date: this.parseDateToString(sale.event_date),
-            time: sale.event_hour,
-            location: sale.customer_address,
-            rate: sale.amount,
-            contact: sale.customer_phone,
-            completed: false,
-            customerFirstName: sale.customer_first_name || '',
-            customerLastName: sale.customer_last_name || '',
-            customerEmail: sale.customer_email || '',
-            customerPhone: sale.customer_phone || '',
-            customerAddress: sale.customer_address || '',
-            customerCity: sale.customer_city || '',
-            customerState: sale.customer_state || '',
-            customerZipCode: sale.customer_zip_code || '',
-          }));
-        } else {
-          this.loadSampleData();
-        }
+        this.contracts = (response.data?.sales && Array.isArray(response.data.sales))
+          ? response.data.sales.map((sale) => ({
+              id: sale.id,
+              title: `Event ${sale.customer_first_name || 'Unknown'}`,
+              description: `Contract for ${sale.customer_first_name || 'Unknown'} ${sale.customer_last_name || 'Unknown'}`,
+              date: this.parseDateToString(sale.event_date),
+              time: sale.event_hour,
+              location: sale.customer_address,
+              rate: sale.amount,
+              contact: sale.customer_phone,
+              completed: false,
+              customerFirstName: sale.customer_first_name || '',
+              customerLastName: sale.customer_last_name || '',
+              customerEmail: sale.customer_email || '',
+              customerPhone: sale.customer_phone || '',
+              customerAddress: sale.customer_address || '',
+              customerCity: sale.customer_city || '',
+              customerState: sale.customer_state || '',
+              customerZipCode: sale.customer_zip_code || '',
+            }))
+          : (this.$q.notify({
+              type: 'negative',
+              message: 'No se pudieron cargar los eventos. Intenta de nuevo más tarde.',
+              position: 'top',
+            }), []);
       } catch (error) {
         console.error('Error loading artist-sales:', error);
-        this.loadSampleData();
+        this.$q.notify({
+          type: 'negative',
+          message: 'Error cargando eventos. Intenta de nuevo más tarde.',
+          position: 'top',
+        });
+        this.contracts = [];
       } finally {
         this.loading = false;
       }
@@ -373,11 +385,11 @@ export default defineComponent({
       this.contracts = [
         {
           id: 1,
-          title: 'Evento Javier',
-          description: 'Contratación para Javier Martínez',
+          title: 'Event Javier',
+          description: 'Contract for Javier Martínez',
           date: this.getTodayString(),
           time: '08:00',
-          location: 'Calle Principal 123',
+          location: 'Main Street 123',
           rate: 6000,
           contact: '5512345678',
           completed: false,
@@ -385,18 +397,18 @@ export default defineComponent({
           customerLastName: 'Martínez',
           customerEmail: 'javier@example.com',
           customerPhone: '5512345678',
-          customerAddress: 'Calle Principal 123',
-          customerCity: 'Ciudad de México',
+          customerAddress: 'Main Street 123',
+          customerCity: 'Mexico City',
           customerState: 'CDMX',
           customerZipCode: '28001',
         },
         {
           id: 2,
-          title: 'Evento Andrea',
-          description: 'Contratación para Andrea López',
+          title: 'Event Andrea',
+          description: 'Contract for Andrea López',
           date: this.getTodayString(),
           time: '10:00',
-          location: 'Calle Principal 123',
+          location: 'Main Street 123',
           rate: 9000,
           contact: '5512345678',
           completed: true,
@@ -404,18 +416,18 @@ export default defineComponent({
           customerLastName: 'López',
           customerEmail: 'andrea@example.com',
           customerPhone: '5512345678',
-          customerAddress: 'Calle Principal 123',
-          customerCity: 'Ciudad de México',
+          customerAddress: 'Main Street 123',
+          customerCity: 'Mexico City',
           customerState: 'CDMX',
           customerZipCode: '28001',
         },
         {
           id: 3,
-          title: 'Evento Carlos',
-          description: 'Contratación para Carlos González',
+          title: 'Event Carlos',
+          description: 'Contract for Carlos González',
           date: this.getTodayString(),
           time: '14:00',
-          location: 'Calle Principal 123',
+          location: 'Main Street 123',
           rate: 12000,
           contact: '5512345678',
           completed: false,
@@ -423,8 +435,8 @@ export default defineComponent({
           customerLastName: 'González',
           customerEmail: 'carlos@example.com',
           customerPhone: '5512345678',
-          customerAddress: 'Calle Principal 123',
-          customerCity: 'Ciudad de México',
+          customerAddress: 'Main Street 123',
+          customerCity: 'Mexico City',
           customerState: 'CDMX',
           customerZipCode: '28001',
         },
@@ -435,13 +447,15 @@ export default defineComponent({
       this.expanded = { ...this.expanded, [id]: !this.expanded[id] };
     },
 
-    isEventDatePassed(dateStr) {
+    isEventDateAndTimePassed(dateStr, timeStr) {
       const [year, month, day] = dateStr.split('/');
       const eventDate = new Date(Number(year), Number(month) - 1, Number(day));
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      
       eventDate.setHours(0, 0, 0, 0);
-      return eventDate <= today;
+      today.setHours(0, 0, 0, 0);
+      
+      return today > eventDate;
     },
 
     markAsCompleted(eventId) {
@@ -478,7 +492,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.calendario-container {
+.calendar-container {
   padding: 20px;
 
   .page-header {

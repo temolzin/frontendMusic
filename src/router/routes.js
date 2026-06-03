@@ -200,11 +200,11 @@ const routes = [
         },
       },
       {
-        name: "artist.my-calendario",
-        path: "/artist/my-calendario",
-        component: () => import("pages/Artist/MyCalendario/index.vue"),
+        name: "artist.my-calendar",
+        path: "/artist/my-calendar",
+        component: () => import("pages/Artist/MyCalendar/index.vue"),
         meta: {
-          title: "Mi Calendario",
+          title: "My Calendar",
           middleware: [Middlewares.checkPermissions],
           requireLogin: true,
           permissions: ["view-profile-artist"],
