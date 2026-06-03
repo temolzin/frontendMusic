@@ -19,11 +19,13 @@
 
             <q-card-section class="q-pt-none">
               <q-uploader
+                ref="uploaderCreate"
                 label="Selecciona las imágenes (Máx. 5)"
                 max-files="5"
                 multiple
                 accept=".jpg, image/*"
                 :factory="uploadSubImages"
+                @added="(files) => validateAddedFiles(files, 'uploaderCreate')"
                 @rejected="onRejected"
                 color="accent"
                 max-file-size="1000000"
@@ -104,8 +106,8 @@
               <p class="">
                 Todas las imágenes anteriores serán eliminadas y sustituidas por
                 las que selecciones.
+                ¿Estás seguro de eliminar las imágenes anteriores?
               </p>
-              ¿Estás seguro de eliminar las imágenes anteriores?
               <q-btn
                 :disable="btnDelete"
                 label="Confirmar"
@@ -116,12 +118,14 @@
 
             <q-card-section class="q-pt-none">
               <q-uploader
+                ref="uploaderEdit"
                 :disable="formGalleryShow"
                 label="Selecciona las imagenes (Max 5)"
                 max-files="5"
                 multiple
                 accept=".jpg, image/*"
                 :factory="updateSubImages"
+                @added="(files) => validateAddedFiles(files, 'uploaderEdit')"
                 @rejected="onRejected"
                 color="accent"
                 max-file-size="1000000"
@@ -188,53 +192,91 @@ export default {
         }
       }
     },
-
     async uploadSubImages(files) {
       try {
         this.sub_files_paths = files[0];
         let InstFormData = new FormData();
         InstFormData.append("sub_files_paths", this.sub_files_paths);
-        await this.createGalleryArtist(InstFormData).then(() => {
-          this.showGallery = true;
-          $q.notify({
-            type: "positive",
-            message: "Imagen subida correctamente",
-          });
+        
+        await this.createGalleryArtist(InstFormData);
+        
+        this.showGallery = true;
+        this.$q.notify({
+          type: "positive",
+          message: "Imagen subida correctamente",
         });
         this.sub_files_paths = null;
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
+          if (this.$refs.uploaderCreate) {
+            this.$refs.uploaderCreate.reset(); 
+          }
+          this.$q.notify({ 
             type: "negative",
-            message: err.response.data.message,
+            message: "Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.",
           });
         }
-      }
     },
-    async updateSubImages(files) {
-      try {
-        this.sub_files_paths = files[0];
-        let InstFormData = new FormData();
-        InstFormData.append("sub_files_paths", files[0]);
-        await this.upDateGalleryArtist(InstFormData).then(() => {
-          this.showGallery = true;
-          $q.notify({
-            type: "positive",
-            message: "Imagen subida correctamente",
-          });
-          this.btnDelete = false;
-          this.formGalleryShow = true;
-          this.formGalleryEdit = false;
+  async updateSubImages(files) {
+    try {
+      this.sub_files_paths = files[0];
+      let InstFormData = new FormData();
+      InstFormData.append("sub_files_paths", files[0]);
+      
+      await this.upDateGalleryArtist(InstFormData);
+      
+      this.showGallery = true;
+      this.$q.notify({ 
+        type: "positive",
+        message: "Imagen subida correctamente",
+      });
+      this.btnDelete = false;
+      this.formGalleryShow = true;
+      this.formGalleryEdit = false;
+    } catch (err) {
+      if (this.$refs.uploaderEdit) {
+        this.$refs.uploaderEdit.reset();
+      }
+
+      this.$q.notify({
+        type: "negative",
+        message: "Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.",
+      });
+    }
+  },
+
+  async gettGalleryArtist() {
+    try {
+      await this.getGalleryArtist();
+      if (this.galleryArtist && this.galleryArtist[0] != null) {
+        this.showGallery = true;
+      } else {
+        this.showGallery = false;
+      }
+    } catch (err) {
+      this.$q.notify({
+        type: "negative",
+        message: err.message || "Error al obtener la galería",
+      });
+    }
+  },
+  validateAddedFiles(files, uploaderRef) {
+    const uploader = this.$refs[uploaderRef];
+    if (!uploader) return;
+
+    const validExtensions = ['jpg', 'jpeg', 'png', 'jpe'];
+
+    files.forEach((file) => {
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+
+      if (!validExtensions.includes(fileExtension)) {
+        uploader.removeFile(file);
+        this.$q.notify({
+          type: "negative",
+          message: `El archivo "${file.name}" no tiene un formato válido (Solo jpg, jpeg, png).`,
         });
-      } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
-        }
       }
-    },
+    });
+  },
     formDelete() {
       this.$q
         .dialog({
