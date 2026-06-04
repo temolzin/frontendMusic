@@ -314,7 +314,14 @@ export default defineComponent({
       return this.contracts.filter((c) => !c.completed).length;
     },
     eventDates() {
-      return [...new Set(this.contracts.map((c) => c.date))];
+      const eventsByDate = {};
+      this.contracts.forEach((c) => {
+        if (!eventsByDate[c.date]) {
+          eventsByDate[c.date] = [];
+        }
+        eventsByDate[c.date].push(c);
+      });
+      return Object.keys(eventsByDate);
     },
   },
   methods: {
@@ -328,7 +335,7 @@ export default defineComponent({
 
     async loadContracts() {
       try {
-        const response = await api.get('/api/artist-sales');
+        const response = await api.get('/api/artist/sales/details');
         this.contracts = (response.data?.sales && Array.isArray(response.data.sales))
           ? response.data.sales.map((sale) => ({
               id: sale.id,
@@ -370,12 +377,20 @@ export default defineComponent({
     parseDateToString(dateVal) {
       if (!dateVal) return this.getTodayString();
       try {
+        let dateStr = dateVal.toString();
+        if (dateStr.includes('-')) {
+          const datePart = dateStr.split('T')[0].split(' ')[0];
+          const [y, mRaw, dRaw] = datePart.split('-');
+          const m = String(mRaw).padStart(2, '0');
+          const d = String(dRaw).padStart(2, '0');
+          return `${y}/${m}/${d}`;
+        }
         const d = new Date(dateVal);
         if (isNaN(d.getTime())) return this.getTodayString();
         const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        return `${y}/${m}/${day}`;
+        return `${y}/${month}/${day}`;
       } catch {
         return this.getTodayString();
       }
@@ -421,6 +436,14 @@ export default defineComponent({
       } catch {
         return dateStr;
       }
+    },
+
+    getEventsCountByDate(dateStr) {
+      return this.contracts.filter((c) => c.date === dateStr).length;
+    },
+
+    hasMultipleEventsOnDate(dateStr) {
+      return this.getEventsCountByDate(dateStr) > 1;
     },
   },
   mounted() {

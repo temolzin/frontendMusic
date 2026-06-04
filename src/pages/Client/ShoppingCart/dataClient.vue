@@ -632,6 +632,7 @@ export default defineComponent({
       starts,
       isQuickBuy: ref(false),
       quickBuyData: ref(null),
+      occupiedDates: ref([]),
     };
   },
   methods: {
@@ -642,11 +643,64 @@ export default defineComponent({
     dateOption(date) {
       const today = new Date();
       const yyyy = today.getFullYear();
-      const mm = today.getMonth() + 1;
-      const dd = today.getDate();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${yyyy}/${mm}/${dd}`;
+      const isValidDate = date >= todayStr;
+      const isOccupied = this.occupiedDates.includes(date);
+      
+      return isValidDate && !isOccupied;
+    },
 
-      const [year, month, day] = date.split("/");
-      return new Date(year, month - 1, day) >= new Date(yyyy, mm - 1, dd);
+    async loadOccupiedDates(artistId) {
+      if (!artistId) {
+        this.occupiedDates = [];
+        return;
+      }
+      try {
+        const url = `/api/artist-sales?artist_id=${artistId}`;
+        const response = await api.get(url);
+        
+        if (response.data?.sales && Array.isArray(response.data.sales)) {
+          this.occupiedDates = response.data.sales.map((sale) => {
+            let dateVal = sale.event_date;
+            if (!dateVal) return null;
+            try {
+              let dateStr = dateVal.toString();
+
+              if (dateStr.includes('-')) {
+                const datePart = dateStr.split('T')[0].split(' ')[0];
+                const [y, mRaw, dRaw] = datePart.split('-');
+                const m = String(mRaw).padStart(2, '0');
+                const d = String(dRaw).padStart(2, '0');
+                return `${y}/${m}/${d}`;
+              }
+              
+              const d = new Date(dateVal);
+              if (isNaN(d.getTime())) {
+                console.warn('Invalid date:', dateVal);
+                return null;
+              }
+              const y = d.getFullYear();
+              const month = String(d.getMonth() + 1).padStart(2, '0');
+              const day = String(d.getDate()).padStart(2, '0');
+              const formatted = `${y}/${month}/${day}`;
+              return formatted;
+            } catch (e) {
+              console.error('Error parsing date:', dateVal, e);
+              return null;
+            }
+          }).filter(d => d !== null);
+        }
+      } catch (err) {
+        console.error('Error loading occupied dates:', err.message);
+        this.$q.notify({
+          type: 'warning',
+          message: 'No se pudieron cargar las fechas ocupadas. Por favor, verifica que el artista sea válido.',
+          timeout: 3000
+        });
+        this.occupiedDates = [];
+      }
     },
 
     spanishLocale() {
@@ -695,42 +749,31 @@ export default defineComponent({
     castProduct(product) {
       return product;
     },
+    
     validateStep2() {
-      if (!this.paymentMethod) {
-        this.$q.notify({
-          type: "negative",
-          message: "Debes seleccionar un método de pago",
-        });
-        return;
-      }
-
-      if (this.paymentMethod === 'card') {
-        if (!this.selectedCard || !this.selectedCard.number_card) {
-          this.$q.notify({
+      !this.paymentMethod ? (this.$q.notify({
+        type: "negative",
+        message: "Debes seleccionar un método de pago",
+      }), this.$router.go(0))
+      : this.paymentMethod === 'card' ? (
+          (!this.selectedCard || !this.selectedCard.number_card) ? (this.$q.notify({
             type: "negative",
             message: "Debes seleccionar una tarjeta",
-          });
-          return;
-        }
-
-        if (!this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4) {
-          this.$q.notify({
+          }), this.$router.go(0))
+          : (!this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4) ? (this.$q.notify({
             type: "negative",
             message: "El CVV debe tener 3 o 4 dígitos",
-          });
-          return;
-        }
-      } else if (this.paymentMethod === 'cash') {
-        if (!this.model) {
-          this.$q.notify({
+          }), this.$router.go(0))
+          : (this.step = 3)
+        )
+      : this.paymentMethod === 'cash' ? (
+          !this.model ? (this.$q.notify({
             type: "negative",
             message: "Debes seleccionar un punto de pago en efectivo",
-          });
-          return;
-        }
-      }
-
-      this.step = 3;
+          }), this.$router.go(0))
+          : (this.step = 3)
+        )
+      : null;
     },
     validateCardNumber() {
       const val = this.form.number_card;
@@ -760,12 +803,10 @@ export default defineComponent({
       try {
         await this.showCards();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
-        }
+        err.response?.data?.message && this.$q.notify({
+          type: "negative",
+          message: err.response.data.message,
+        });
       }
     },
     async loadQuickBuyArtist(artistDataEncoded, hours) {
@@ -793,6 +834,7 @@ export default defineComponent({
           price: clientPrice
         };
         
+        await this.loadOccupiedDates(artistId);
         this.isQuickBuy = true;
       } catch (err) {
         this.$q.notify({
@@ -812,14 +854,14 @@ export default defineComponent({
       (isQuickBuy && artistDataEncoded) 
         ? await 
         this.loadQuickBuyArtist(artistDataEncoded, hoursParam)
-        : await this.getListShoppingCard().then(() => {
-            if (!this.shoppingCardDetail.length) {
-              this.$q.notify({
-                type: "warning",
-                message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
-              });
-              this.$router.push("/client/shopping-cart");
-            }
+        : await this.getListShoppingCard().then(async () => {
+            this.shoppingCardDetail.length === 0
+              ? (this.$q.notify({
+                  type: "warning",
+                  message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
+                }),
+                this.$router.push("/client/shopping-cart"))
+              : this.shoppingCardDetail[0]?.artist_id && (await this.loadOccupiedDates(this.shoppingCardDetail[0].artist_id));
           });
 
       try {
@@ -828,30 +870,27 @@ export default defineComponent({
 
       }
 
-      if ((!this.selectedCard || !this.selectedCard.id) && this.stateUserCards?.length) {
-        this.selectedCardIndex = 0;
-        this.selectedCard = { ...this.stateUserCards[0] };
-      }
+      (!this.selectedCard || !this.selectedCard.id) && this.stateUserCards?.length && (
+        (this.selectedCardIndex = 0),
+        (this.selectedCard = { ...this.stateUserCards[0] })
+      );
     },
     async fetchProfile() {
       try {
-        const resp = await api.get('/api/client/profile');
-        if (resp.data && resp.data.success && resp.data.user) {
-          const u = resp.data.user;
-          const fullName = (u.name || '').trim().replace(/\s+/g, ' ');
-          const nameParts = fullName ? fullName.split(' ') : [];
-          this.formClient.first_name = nameParts.length ? nameParts.shift() : '';
-          this.formClient.first_last = nameParts.join(' ');
-          this.formClient.email = u.email || '';
-          this.formClient.phone = u.phone || '';
-          this.formClient.adress_line2 = u.address || '';
-          this.formClient.city = u.city || '';
-          this.formClient.state_city = u.state || '';
-          this.formClient.zip_code = u.zip_code || '';
-          this.formClient.country = u.country || '';
-        }
+        const resp = await api.get('/api/client/last-order');
+        resp.data?.success && resp.data?.order && (() => {
+          const o = resp.data.order;
+          this.formClient.first_name = o.first_name || '';
+          this.formClient.first_last = o.last_name || '';
+          this.formClient.email = o.email || '';
+          this.formClient.phone = o.phone || '';
+          this.formClient.adress_line2 = o.address || '';
+          this.formClient.city = o.city || '';
+          this.formClient.state_city = o.state || '';
+          this.formClient.zip_code = o.zip_code || '';
+          this.formClient.country = 'México';
+        })();
       } catch (err) {
-
       }
     },
     async createNewOrders() {
@@ -872,50 +911,32 @@ export default defineComponent({
       }
     },
     async createCardNew() {
-      let cardData = this.form;
-      if (this.form && this.form.value) {
-        cardData = this.form.value;
-      }
+      const cardData = this.form?.value || this.form;
 
       if (!cardData.name || cardData.name.trim().length < 3) {
-        this.$q.notify({
-          type: "negative",
-          message: "El nombre debe tener al menos 3 caracteres",
-        });
+        this.$q.notify({ type: "negative", message: "El nombre debe tener al menos 3 caracteres" });
         return;
       }
 
       if (!cardData.number_card) {
-        this.$q.notify({
-          type: "negative",
-          message: "El número de tarjeta es requerido",
-        });
+        this.$q.notify({ type: "negative", message: "El número de tarjeta es requerido" });
         return;
       }
 
       const digits = (cardData.number_card.match(/\d/g) || []).length;
       if (digits !== 16) {
-        this.$q.notify({
-          type: "negative",
-          message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}`,
-        });
+        this.$q.notify({ type: "negative", message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}` });
         return;
       }
 
       const cardClean = cardData.number_card.replace(/[\s-]/g, '');
       if (!this.luhnCheck(cardClean)) {
-        this.$q.notify({
-          type: "negative",
-          message: "El número de tarjeta no es válido (validación Luhn)",
-        });
+        this.$q.notify({ type: "negative", message: "El número de tarjeta no es válido (validación Luhn)" });
         return;
       }
 
       if (!cardData.expiration_date) {
-        this.$q.notify({
-          type: "negative",
-          message: "La fecha de expiración es requerida",
-        });
+        this.$q.notify({ type: "negative", message: "La fecha de expiración es requerida" });
         return;
       }
 
@@ -930,23 +951,16 @@ export default defineComponent({
         await this.gettCards();
         await this.showCards();
 
-        if (this.stateUserCards?.length) {
+        this.stateUserCards?.length && (() => {
           const lastIndex = this.stateUserCards.length - 1;
           this.selectedCardIndex = lastIndex;
           this.selectedCard = { ...this.stateUserCards[lastIndex] };
-        }
+        })();
       } catch (err) {
-        if (err.response?.data?.message) {
-          this.$q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
-        } else {
-          this.$q.notify({
-            type: "negative",
-            message: "Error al crear la tarjeta",
-          });
-        }
+        this.$q.notify({
+          type: "negative",
+          message: err.response?.data?.message || "Error al crear la tarjeta",
+        });
       }
     },
     maskCardNumber(cardNumber) {
@@ -975,7 +989,6 @@ export default defineComponent({
         const response = await api.post("/api/client/save-address", addressData);
         
         if (response.data.success) {
-          console.log("Dirección guardada correctamente");
         }
       } catch (error) {
         console.error("Error guardando dirección:", error);
@@ -983,69 +996,32 @@ export default defineComponent({
       }
     },
     async pay() {
-      if (!this.selectedCard || !this.selectedCard.number_card) {
-        this.$q.notify({
-          type: "negative",
-          message: "Debes seleccionar una tarjeta",
-        });
-        return;
-      }
+      const validateAndNotify = (condition, message) => {
+        return condition && (this.$q.notify({type: "negative", message}), true);
+      };
 
-      const digits = (this.selectedCard.number_card.match(/\d/g) || []).length;
-      if (digits !== 16) {
-        this.$q.notify({
-          type: "negative",
-          message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}`,
-        });
-        return;
-      }
-
-      if (!this.selectedCard.expiration_date || this.selectedCard.expiration_date.length !== 5) {
-        this.$q.notify({
-          type: "negative",
-          message: "La fecha de expiración debe estar en formato mm/YY",
-        });
-        return;
-      }
-
-      const [month, year] = this.selectedCard.expiration_date.split("/");
-      const monthNum = parseInt(month, 10);
-      if (monthNum < 1 || monthNum > 12) {
-        this.$q.notify({
-          type: "negative",
-          message: "El mes debe estar entre 01 y 12",
-        });
-        return;
-      }
-
-      if (!this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4) {
-        this.$q.notify({
-          type: "negative",
-          message: "El CVV debe tener 3 o 4 dígitos",
-        });
-        return;
-      }
-
-      const expectedCvvLength = this.getExpectedCvvLength(this.selectedCard.number_card);
-      if (this.cvv.toString().length !== expectedCvvLength) {
-        this.$q.notify({
-          type: "negative",
-          message: expectedCvvLength === 4
+      const digits = (this.selectedCard?.number_card?.match(/\d/g) || []).length;
+      
+      validateAndNotify(!this.selectedCard?.number_card, "Debes seleccionar una tarjeta")
+      || validateAndNotify(digits !== 16, `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}`)
+      || validateAndNotify(!this.selectedCard?.expiration_date || this.selectedCard.expiration_date.length !== 5, "La fecha de expiración debe estar en formato mm/YY")
+      || (() => {
+        const [month] = this.selectedCard.expiration_date.split("/");
+        const monthNum = parseInt(month, 10);
+        return validateAndNotify(monthNum < 1 || monthNum > 12, "El mes debe estar entre 01 y 12");
+      })()
+      || validateAndNotify(!this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4, "El CVV debe tener 3 o 4 dígitos")
+      || (() => {
+        const expectedCvvLength = this.getExpectedCvvLength(this.selectedCard.number_card);
+        return validateAndNotify(this.cvv.toString().length !== expectedCvvLength,
+          expectedCvvLength === 4
             ? "Esta tarjeta requiere un CVV de 4 dígitos"
-            : "Esta tarjeta requiere un CVV de 3 dígitos",
-          position: "top",
-        });
-        return;
-      }
-
-      if (typeof OpenPay === "undefined") {
-        this.$q.notify({
-          type: "negative",
-          message: "Error: OpenPay no está cargado. Recarga la página.",
-        });
-        return;
-      }
-
+            : "Esta tarjeta requiere un CVV de 3 dígitos");
+      })()
+      || validateAndNotify(typeof OpenPay === "undefined", "Error: OpenPay no está cargado. Recarga la página.") || this.processPay();
+    },
+    
+    processPay() {
       this.$q.loading.show({
         message: "Procesando tu pago...",
         spinnerColor: "primary",
@@ -1066,6 +1042,7 @@ export default defineComponent({
         }
 
         const card_number = this.selectedCard.number_card.replace(/\s/g, "");
+        const [month, year] = this.selectedCard.expiration_date.split('/');
 
         OpenPay.token.create(
           {
@@ -1223,19 +1200,17 @@ export default defineComponent({
       }
     },
     onReset() {
-      if (this.form && this.form.value) {
-        this.form.value.id = "";
-        this.form.value.name = "";
-        this.form.value.number_card = "";
-        this.form.value.expiration_date = "";
-      } else {
-        this.form = {
-          id: "",
-          name: "",
-          number_card: "",
-          expiration_date: "",
-        };
-      }
+      (this.form?.value) 
+        ? (this.form.value.id = "", 
+           this.form.value.name = "", 
+           this.form.value.number_card = "", 
+           this.form.value.expiration_date = "")
+        : (this.form = {
+            id: "",
+            name: "",
+            number_card: "",
+            expiration_date: "",
+          });
     }
   },
   computed: {
