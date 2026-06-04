@@ -697,7 +697,6 @@ export default defineComponent({
           message: 'No se pudieron cargar las fechas ocupadas. Por favor, verifica que el artista sea válido.',
           timeout: 3000
         });
-        this.occupiedDates = [];
       }
     },
 
