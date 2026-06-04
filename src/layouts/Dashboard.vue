@@ -127,7 +127,7 @@
               <q-icon name="fas fa-newspaper" />
             </q-item-section>
 
-            <q-item-section> Newsletter </q-item-section>
+            <q-item-section> Envío de Correos </q-item-section>
           </q-item>
 
           <q-item
