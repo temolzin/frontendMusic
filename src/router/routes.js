@@ -169,7 +169,7 @@ const routes = [
         path: "/admin/newsletter/index",
         component: import("pages/Admin/EmailSubscribedUsers/index.vue"),
         meta: {
-          title: "Buzón",
+          title: "Envío de Correos",
           requireLogin: true,
           permissions: ["view-users"],
         },

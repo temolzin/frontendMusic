@@ -1,7 +1,7 @@
 <template>
     <q-card style="margin-top:-50px; width: 100%; padding: 10px;">
         <q-card-section>
-        <h3 class="q-mb-md" style="margin-bottom: 35px;">Newsletter</h3>
+        <h3 class="q-mb-md" style="margin-bottom: 35px;">Envío de Correos</h3>
             <q-select
             v-model="selectedRoles"
             :options="rolesOptions"
@@ -37,7 +37,7 @@
             toolbar-text-color="white"
             required
             :definitions="{
-                bold: {label: 'Bold', icon: null, tip: 'My bold tooltip'}
+                bold: {label: 'Negrita', icon: null, tip: 'Poner texto en negrita'}
             }"
             ></q-editor>
 
