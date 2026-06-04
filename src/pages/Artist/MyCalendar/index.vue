@@ -3,7 +3,6 @@
     <div class="page-header q-mb-md">
       <h4 class="q-my-none">Mi Calendario</h4>
       <p class="text-subtitle2 text-grey">Ver tus contratos programados</p>
-      <p v-if="lastRefreshTime" class="text-caption text-grey-7 q-mt-xs">Última actualización: {{ formatLastRefresh }}</p>
     </div>
 
     <div v-if="loading" class="text-center q-py-lg">
@@ -302,8 +301,6 @@ export default defineComponent({
       expanded: {},
       contracts: [],
       loading: true,
-      refreshInterval: null,
-      lastRefreshTime: null,
     };
   },
   computed: {
@@ -326,12 +323,6 @@ export default defineComponent({
       });
       return Object.keys(eventsByDate);
     },
-    formatLastRefresh() {
-      if (!this.lastRefreshTime) return null;
-      const hours = String(this.lastRefreshTime.getHours()).padStart(2, '0');
-      const minutes = String(this.lastRefreshTime.getMinutes()).padStart(2, '0');
-      return `${hours}:${minutes}`;
-    },
   },
   methods: {
     getTodayString() {
@@ -344,7 +335,7 @@ export default defineComponent({
 
     async loadContracts() {
       try {
-        const response = await api.get('/api/artist-sales');
+        const response = await api.get('/api/artist/sales/details');
         this.contracts = (response.data?.sales && Array.isArray(response.data.sales))
           ? response.data.sales.map((sale) => ({
               id: sale.id,
@@ -380,7 +371,6 @@ export default defineComponent({
         this.contracts = [];
       } finally {
         this.loading = false;
-        this.lastRefreshTime = new Date();
       }
     },
 
@@ -389,7 +379,10 @@ export default defineComponent({
       try {
         let dateStr = dateVal.toString();
         if (dateStr.includes('-')) {
-          const [y, m, d] = dateStr.split('T')[0].split('-');
+          const datePart = dateStr.split('T')[0].split(' ')[0];
+          const [y, mRaw, dRaw] = datePart.split('-');
+          const m = String(mRaw).padStart(2, '0');
+          const d = String(dRaw).padStart(2, '0');
           return `${y}/${m}/${d}`;
         }
         const d = new Date(dateVal);
@@ -455,15 +448,6 @@ export default defineComponent({
   },
   mounted() {
     this.loadContracts();
-    this.refreshInterval = setInterval(() => {
-      this.loadContracts();
-    }, 5000);
-  },
-
-  beforeUnmount() {
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-    }
   },
 });
 </script>

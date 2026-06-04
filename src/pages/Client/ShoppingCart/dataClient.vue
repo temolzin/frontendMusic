@@ -669,10 +669,11 @@ export default defineComponent({
               let dateStr = dateVal.toString();
 
               if (dateStr.includes('-')) {
-                const datePart = dateStr.split('T')[0];
-                const [y, m, d] = datePart.split('-');
-                const formatted = `${y}/${m}/${d}`;
-                return formatted;
+                const datePart = dateStr.split('T')[0].split(' ')[0];
+                const [y, mRaw, dRaw] = datePart.split('-');
+                const m = String(mRaw).padStart(2, '0');
+                const d = String(dRaw).padStart(2, '0');
+                return `${y}/${m}/${d}`;
               }
               
               const d = new Date(dateVal);
@@ -748,6 +749,7 @@ export default defineComponent({
     castProduct(product) {
       return product;
     },
+    
     validateStep2() {
       !this.paymentMethod ? (this.$q.notify({
         type: "negative",
@@ -911,32 +913,32 @@ export default defineComponent({
     async createCardNew() {
       const cardData = this.form?.value || this.form;
 
-      (!cardData.name || cardData.name.trim().length < 3) && (this.$q.notify({
-        type: "negative",
-        message: "El nombre debe tener al menos 3 caracteres",
-      }), this.$router.go(0), null) || true;
+      if (!cardData.name || cardData.name.trim().length < 3) {
+        this.$q.notify({ type: "negative", message: "El nombre debe tener al menos 3 caracteres" });
+        return;
+      }
 
-      !cardData.number_card && (this.$q.notify({
-        type: "negative",
-        message: "El número de tarjeta es requerido",
-      }), this.$router.go(0), null) || true;
+      if (!cardData.number_card) {
+        this.$q.notify({ type: "negative", message: "El número de tarjeta es requerido" });
+        return;
+      }
 
       const digits = (cardData.number_card.match(/\d/g) || []).length;
-      digits !== 16 && (this.$q.notify({
-        type: "negative",
-        message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}`,
-      }), this.$router.go(0), null) || true;
+      if (digits !== 16) {
+        this.$q.notify({ type: "negative", message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}` });
+        return;
+      }
 
       const cardClean = cardData.number_card.replace(/[\s-]/g, '');
-      !this.luhnCheck(cardClean) && (this.$q.notify({
-        type: "negative",
-        message: "El número de tarjeta no es válido (validación Luhn)",
-      }), this.$router.go(0), null) || true;
+      if (!this.luhnCheck(cardClean)) {
+        this.$q.notify({ type: "negative", message: "El número de tarjeta no es válido (validación Luhn)" });
+        return;
+      }
 
-      !cardData.expiration_date && (this.$q.notify({
-        type: "negative",
-        message: "La fecha de expiración es requerida",
-      }), this.$router.go(0), null) || true;
+      if (!cardData.expiration_date) {
+        this.$q.notify({ type: "negative", message: "La fecha de expiración es requerida" });
+        return;
+      }
 
       try {
         await this.createCard(cardData);
