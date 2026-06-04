@@ -653,16 +653,13 @@ export default defineComponent({
     },
 
     async loadOccupiedDates(artistId) {
-      if (!artistId) {
-        this.occupiedDates = [];
-        return;
-      }
+      if (!artistId) return;
       try {
         const url = `/api/artist-sales?artist_id=${artistId}`;
         const response = await api.get(url);
-        
+    
         if (response.data?.sales && Array.isArray(response.data.sales)) {
-          this.occupiedDates = response.data.sales.map((sale) => {
+          const newDates = response.data.sales.map((sale) => {
             let dateVal = sale.event_date;
             if (!dateVal) return null;
             try {
@@ -691,6 +688,7 @@ export default defineComponent({
               return null;
             }
           }).filter(d => d !== null);
+          this.occupiedDates = [...new Set([...this.occupiedDates, ...newDates])];
         }
       } catch (err) {
         console.error('Error loading occupied dates:', err.message);
@@ -861,7 +859,11 @@ export default defineComponent({
                   message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
                 }),
                 this.$router.push("/client/shopping-cart"))
-              : this.shoppingCardDetail[0]?.artist_id && (await this.loadOccupiedDates(this.shoppingCardDetail[0].artist_id));
+                : (this.occupiedDates = [], await Promise.all(
+                    this.shoppingCardDetail
+                      .filter(item => item.artist_id)
+                      .map(item => this.loadOccupiedDates(item.artist_id))
+                  ));
           });
 
       try {
