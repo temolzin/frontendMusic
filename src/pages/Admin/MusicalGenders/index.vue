@@ -407,6 +407,20 @@ export default {
       }
     },
     async createNewMusicalGender() {
+      const newName = this.form.name ? this.form.name.trim().toLowerCase() : "";
+
+      const duplicateExists = this.rows.some(
+        (row) => row.name.trim().toLowerCase() === newName
+      );
+
+      if (duplicateExists) {
+        this.$q.notify({
+          type: "negative",
+          message: `El género musical "${this.form.name}" ya existe en el sistema.`,
+          position: "bottom"
+        });
+        return;
+      }
       try {
         await this.createMusicalGender(this.form);
         this.formCreate = false;
@@ -416,7 +430,7 @@ export default {
           message: `Género musical creado correctamente`,
         });
       } catch (err) {
-        if (err.response.data.message) {
+        if (err.response && err.response.data && err.response.data.message) {
           $q.notify({
             type: "negative",
             message: err.response.data.message,
