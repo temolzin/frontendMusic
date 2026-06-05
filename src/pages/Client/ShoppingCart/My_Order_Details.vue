@@ -8,9 +8,10 @@
               Mis Compras
             </div>
           </div>
-          <div class="container">
-            <div class="row">
-              <div class="q-pa-md col-md-5" style="border-right: 2px solid #b7abab; width: 550px">
+          
+          <div class="q-py-md">
+            <div class="row q-col-gutter-md items-center">
+              <div class="col-12 col-sm-6">
                 <q-input rounded outlined v-model="filterName" placeholder="Buscar por nombre...">
                   <template v-slot:append>
                     <q-icon name="search" />
@@ -18,7 +19,7 @@
                 </q-input>
               </div>
 
-              <div class="q-pa-md" style="width: 585px">
+              <div class="col-12 col-sm-6">
                 <q-select class="text-left" v-model="filterDate" :options="dateOptions" label="Todas">
                   <img class="bf-ui-icon bf-ui-icon--filter"
                     src="https://http2.mlstatic.com/frontend-assets/bf-ui-library/3.5.0/assets/icons/filter.svg" style="
@@ -41,7 +42,7 @@
             <div v-else>
               <q-markup-table dense flat bordered class="table-responsive">
                 <tbody v-for="(purchase, index) in filteredPurchases" :key="index">
-                  <tr class="bg-primary text-white text-center">
+                  <tr v-if="index === 0 || formatDate(purchase.created_at) !== formatDate(filteredPurchases[index - 1].created_at)" class="bg-primary text-white text-center">
                     <th style="font-size: 15px">
                       {{ formatDate(purchase.created_at) }}
                     </th>
@@ -57,8 +58,6 @@
                       </div>
                     </td>
                     <td class="text-left">
-                      <strong class="bf-ui-rich-text">Contratado el {{ formatDate(purchase.created_at) }}</strong>
-                      <br>
                       <br class="detail-artist-name">{{ purchase.artist?.name || 'N/A' }}
                       <br class="detail-artist-zone">{{ purchase.artist?.zone || 'N/A' }}
                       <br class="detail-hours">Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
