@@ -394,6 +394,9 @@ export default {
         });
       }
     },
+    hasPermission(permission) {
+      return this.$can(permission);
+    },
     logout() {
       this.$q.dark.set(false);
       this.isActiveDarkMode = false;
