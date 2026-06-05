@@ -299,18 +299,19 @@ export default {
 
   watch: {
     isChatDialogOpen(newVal) {
-      if (newVal) {
-        this.chatPolling = setInterval(() => {
-          if (this.activeChatPurchase) {
-            this.fetchChatMessages(this.activeChatPurchase.id);
-          }
-        }, 3000);
-      } else {
+      if (!newVal) {
         if (this.chatPolling) {
           clearInterval(this.chatPolling);
           this.chatPolling = null;
         }
+        return;
       }
+
+      this.chatPolling = setInterval(() => {
+        if (this.activeChatPurchase) {
+          this.fetchChatMessages(this.activeChatPurchase.id);
+        }
+      }, 3000);
     },
     getChatMessages(newVal, oldVal) {
       if (newVal && oldVal && newVal.length > oldVal.length) {
