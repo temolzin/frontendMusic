@@ -8,9 +8,10 @@
               Mis Compras
             </div>
           </div>
-          <div class="container">
-            <div class="row">
-              <div class="q-pa-md col-md-5" style="border-right: 2px solid #b7abab; width: 550px">
+          
+          <div class="q-py-md">
+            <div class="row q-col-gutter-md items-center">
+              <div class="col-12 col-sm-6">
                 <q-input rounded outlined v-model="filterName" placeholder="Buscar por nombre...">
                   <template v-slot:append>
                     <q-icon name="search" />
@@ -18,7 +19,7 @@
                 </q-input>
               </div>
 
-              <div class="q-pa-md" style="width: 585px">
+              <div class="col-12 col-sm-6">
                 <q-select class="text-left" v-model="filterDate" :options="dateOptions" label="Todas">
                   <img class="bf-ui-icon bf-ui-icon--filter"
                     src="https://http2.mlstatic.com/frontend-assets/bf-ui-library/3.5.0/assets/icons/filter.svg" style="
@@ -41,7 +42,7 @@
             <div v-else>
               <q-markup-table dense flat bordered class="table-responsive">
                 <tbody v-for="(purchase, index) in filteredPurchases" :key="index">
-                  <tr class="bg-primary text-white text-center">
+                  <tr v-if="index === 0 || formatDate(purchase.created_at) !== formatDate(filteredPurchases[index - 1].created_at)" class="bg-primary text-white text-center">
                     <th style="font-size: 15px">
                       {{ formatDate(purchase.created_at) }}
                     </th>
@@ -57,8 +58,6 @@
                       </div>
                     </td>
                     <td class="text-left">
-                      <strong class="bf-ui-rich-text">Contratado el {{ formatDate(purchase.created_at) }}</strong>
-                      <br>
                       <br class="detail-artist-name">{{ purchase.artist?.name || 'N/A' }}
                       <br class="detail-artist-zone">{{ purchase.artist?.zone || 'N/A' }}
                       <br class="detail-hours">Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
@@ -110,8 +109,8 @@
         </q-card>
       </q-dialog>
 
-<q-dialog v-model="isChatDialogOpen" persistent>
-  <q-card style="width: 90vw; max-width: 600px; display: flex; flex-direction: column;">
+      <q-dialog v-model="isChatDialogOpen" persistent>
+        <q-card style="width: 90vw; max-width: 600px; display: flex; flex-direction: column;">
           <q-card-section class="row items-center bg-primary text-white q-pb-sm">
             <div class="text-h6">Chat con {{ activeChatPurchase?.artist?.name || 'el artista' }}</div>
             <q-space />
@@ -122,6 +121,7 @@
             class="scroll"
             style="height: 50vh;"
             :class="$q.dark.isActive ? 'bg-dark' : 'bg-grey-2'"
+            ref="chatScrollArea"
           >
             <div class="q-pa-md row justify-center">
               <div style="width: 100%; max-width: 500px">
@@ -137,7 +137,7 @@
                   :sent="msg.created_by === getMe?.id"
                   :bg-color="msg.created_by === getMe?.id ? 'primary' : ($q.dark.isActive ? 'grey-8' : 'positive')"
                   :text-color="msg.created_by === getMe?.id ? 'white' : ($q.dark.isActive ? 'white' : 'black')"
-                  :stamp="formatChatDate(msg.created_at)"
+                  :stamp="getStamp(msg)"
                 />
               </div>
             </div>
@@ -184,6 +184,7 @@ export default {
       isChatDialogOpen: false,
       newMessage: "",
       activeChatPurchase: null,
+      chatPolling: null,
     };
   },
   methods: {
@@ -220,31 +221,49 @@ export default {
       const date = new Date(rawDate);
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     },
+    getStamp(msg) {
+      const time = this.formatChatDate(msg.created_at);
+      if (msg.created_by === this.getMe?.id) {
+        return msg.is_read ? `${time}  ✓✓` : `${time}  ✓`;
+      }
+      return time;
+    },
     openOrderModal(purchase) {
       this.selectedPurchase = purchase;
       this.showModal = true;
     },
-async openChat(purchase) {
-  this.$store.commit("orderDetails/setChatMessages", []);
-  this.activeChatPurchase = purchase;
-  this.newMessage = "";
-  this.isChatDialogOpen = true;
-  await this.fetchChatMessages(purchase.id);
-},
-async sendMessage() {
-  const messageText = this.newMessage.trim();
-  if (messageText !== '') {
-    const payload = {
-      artist_sale_id: this.activeChatPurchase.id,
-      message: messageText,
-    };
+    async openChat(purchase) {
+      this.$store.commit("orderDetails/setChatMessages", []);
+      this.activeChatPurchase = purchase;
+      this.newMessage = "";
+      this.isChatDialogOpen = true;
+      await this.fetchChatMessages(purchase.id);
+      this.scrollToBottom();
+    },
+    async sendMessage() {
+      const messageText = this.newMessage.trim();
+      if (messageText !== '') {
+        const payload = {
+          artist_sale_id: this.activeChatPurchase.id,
+          message: messageText,
+        };
 
-    const sentMessage = await this.sendChatMessage(payload);
-    if (sentMessage) {
-      this.newMessage = '';
+        const sentMessage = await this.sendChatMessage(payload);
+        if (sentMessage) {
+          this.newMessage = '';
+          await this.fetchChatMessages(this.activeChatPurchase.id);
+          this.scrollToBottom();
+        }
+      }
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        if (this.$refs.chatScrollArea) {
+          const scrollTarget = this.$refs.chatScrollArea.$el || this.$refs.chatScrollArea;
+          scrollTarget.scrollTop = scrollTarget.scrollHeight;
+        }
+      });
     }
-  }
-}
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
@@ -299,6 +318,26 @@ async sendMessage() {
   watch: {
     stateListShopingCard(newVal) {
       console.log("stateListShopingCard updated:", newVal);
+    },
+    isChatDialogOpen(newVal) {
+      if (!newVal) {
+        if (this.chatPolling) {
+          clearInterval(this.chatPolling);
+          this.chatPolling = null;
+        }
+        return;
+      }
+
+      this.chatPolling = setInterval(() => {
+        if (this.activeChatPurchase) {
+          this.fetchChatMessages(this.activeChatPurchase.id);
+        }
+      }, 3000);
+    },
+    getChatMessages(newVal, oldVal) {
+      if (newVal && oldVal && newVal.length > oldVal.length) {
+        this.scrollToBottom();
+      }
     }
   },
   mounted() {

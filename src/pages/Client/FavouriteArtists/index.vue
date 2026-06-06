@@ -6,6 +6,7 @@
         card-class="bg-primary text-white"
         :rows="stateFavouriteArtists"
         :columns="columns"
+        :pagination="pagination"
         row-key="name"
         no-data-label="Sin registros"
         no-results-label="Ningún registro coincidente"
@@ -117,6 +118,9 @@ export default {
     return {
       columns,
       skeleton: true,
+      pagination: {
+        rowsPerPage: 6
+      }
     };
   },
   methods: {

@@ -1,5 +1,5 @@
 <template>
-  <div class="calendar-container">
+  <div class="calendar-container" :class="{ 'calendar-dark': mode }">
     <div class="page-header q-mb-md">
       <h4 class="q-my-none">Mi Calendario</h4>
       <p class="text-subtitle2 text-grey">Ver tus contratos programados</p>
@@ -314,7 +314,17 @@ export default defineComponent({
       return this.contracts.filter((c) => !c.completed).length;
     },
     eventDates() {
-      return [...new Set(this.contracts.map((c) => c.date))];
+      const eventsByDate = {};
+      this.contracts.forEach((c) => {
+        if (!eventsByDate[c.date]) {
+          eventsByDate[c.date] = [];
+        }
+        eventsByDate[c.date].push(c);
+      });
+      return Object.keys(eventsByDate);
+    },
+    mode() {
+      return this.$q.dark.isActive;
     },
   },
   methods: {
@@ -328,7 +338,7 @@ export default defineComponent({
 
     async loadContracts() {
       try {
-        const response = await api.get('/api/artist-sales');
+        const response = await api.get('/api/artist/sales/details');
         this.contracts = (response.data?.sales && Array.isArray(response.data.sales))
           ? response.data.sales.map((sale) => ({
               id: sale.id,
@@ -370,12 +380,20 @@ export default defineComponent({
     parseDateToString(dateVal) {
       if (!dateVal) return this.getTodayString();
       try {
+        let dateStr = dateVal.toString();
+        if (dateStr.includes('-')) {
+          const datePart = dateStr.split('T')[0].split(' ')[0];
+          const [y, mRaw, dRaw] = datePart.split('-');
+          const m = String(mRaw).padStart(2, '0');
+          const d = String(dRaw).padStart(2, '0');
+          return `${y}/${m}/${d}`;
+        }
         const d = new Date(dateVal);
         if (isNaN(d.getTime())) return this.getTodayString();
         const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        return `${y}/${m}/${day}`;
+        return `${y}/${month}/${day}`;
       } catch {
         return this.getTodayString();
       }
@@ -421,6 +439,14 @@ export default defineComponent({
       } catch {
         return dateStr;
       }
+    },
+
+    getEventsCountByDate(dateStr) {
+      return this.contracts.filter((c) => c.date === dateStr).length;
+    },
+
+    hasMultipleEventsOnDate(dateStr) {
+      return this.getEventsCountByDate(dateStr) > 1;
     },
   },
   mounted() {
@@ -709,6 +735,174 @@ export default defineComponent({
           }
         }
       }
+    }
+  }
+}
+
+.calendar-container.calendar-dark {
+  min-height: calc(100vh - 50px);
+  background: #0f172a;
+  color: #e2e8f0;
+
+  .page-header {
+    h4 {
+      color: #f8fafc;
+    }
+
+    p {
+      color: #94a3b8 !important;
+    }
+  }
+
+  .calendar-splitter {
+    border-color: #334155;
+    background: #111827;
+
+    :deep(.q-splitter__separator) {
+      background: #334155;
+    }
+  }
+
+  .left-panel,
+  .right-panel,
+  .tab-content,
+  :deep(.q-tab-panels),
+  :deep(.q-tab-panel) {
+    background: #111827;
+    color: #e2e8f0;
+  }
+
+  .left-panel {
+    h6 {
+      color: #f8fafc;
+    }
+
+    :deep(.q-date) {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-color: #334155;
+
+      .q-date__header {
+        background: #0f172a;
+        color: #f8fafc;
+      }
+
+      .q-date__navigation,
+      .q-date__calendar-weekdays {
+        color: #cbd5e1;
+      }
+
+      .q-date__calendar-item {
+        color: #e2e8f0;
+      }
+
+      .q-date__calendar-days-container {
+        background: #1e293b;
+      }
+    }
+
+    .summary-section {
+      .summary-card {
+        background: #1e293b !important;
+        border-color: #334155;
+
+        .summary-row {
+          .label {
+            color: #cbd5e1;
+          }
+        }
+      }
+    }
+  }
+
+  .right-panel {
+    :deep(.q-tabs) {
+      border-bottom-color: #334155;
+      background: #0f172a;
+      color: #f8fafc;
+
+      .q-tab {
+        color: #f8fafc;
+      }
+
+      .q-tab--active {
+        color: #60a5fa;
+      }
+    }
+
+    .tab-content {
+      :deep(.q-tab-panel) {
+        &::-webkit-scrollbar-track {
+          background: #0f172a;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #475569;
+
+          &:hover {
+            background: #64748b;
+          }
+        }
+      }
+    }
+
+    .events-list {
+      .event-card {
+        background: #1e293b;
+        border-color: #334155;
+        border-left-color: #f59e0b;
+        color: #e2e8f0;
+
+        &:hover {
+          box-shadow: 0 2px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        &.completed {
+          background: #16281f;
+          border-left-color: #22c55e;
+        }
+
+        .event-header {
+          > div:first-child {
+            .text-h6 {
+              color: #f8fafc;
+            }
+
+            .text-caption {
+              color: #94a3b8 !important;
+            }
+          }
+        }
+
+        .detail-section-title {
+          color: #60a5fa;
+          border-bottom-color: #334155;
+        }
+
+        .detail-item {
+          .detail-label {
+            color: #cbd5e1;
+          }
+
+          .detail-value {
+            color: #e2e8f0;
+
+            &.text-positive {
+              color: #4ade80;
+            }
+          }
+        }
+
+        :deep(.q-separator) {
+          background: #334155;
+        }
+      }
+    }
+  }
+
+  .text-center {
+    p {
+      color: #94a3b8;
     }
   }
 }
