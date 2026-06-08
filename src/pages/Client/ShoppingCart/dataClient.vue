@@ -1022,7 +1022,7 @@ export default defineComponent({
       || validateAndNotify(typeof OpenPay === "undefined", "Error: OpenPay no está cargado. Recarga la página.") || this.processPay();
     },
     
-    processPay() {
+    async processPay() {
       this.$q.loading.show({
         message: "Procesando tu pago...",
         spinnerColor: "primary",

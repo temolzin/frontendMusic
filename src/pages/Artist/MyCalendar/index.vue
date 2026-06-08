@@ -109,20 +109,6 @@
                               <span class="detail-label">Contacto:</span>
                               <span class="detail-value">{{ event.contact }}</span>
                             </div>
-                            <q-separator class="q-my-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Nombre:</span>
-                              <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Email:</span>
-                              <span class="detail-value">{{ event.customerEmail }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Teléfono:</span>
-                              <span class="detail-value">{{ event.customerPhone }}</span>
-                            </div>
                             <div class="detail-item q-mb-sm">
                               <span class="detail-label">Dirección:</span>
                               <span class="detail-value">{{ event.customerAddress }}</span>
@@ -135,9 +121,15 @@
                               <span class="detail-label">Estado:</span>
                               <span class="detail-value">{{ event.customerState }}</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item q-mb-sm">
                               <span class="detail-label">Código Postal:</span>
                               <span class="detail-value">{{ event.customerZipCode }}</span>
+                            </div>
+                            <q-separator class="q-my-md" />
+                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
+                            <div class="detail-item q-mb-sm">
+                              <span class="detail-label">Nombre:</span>
+                              <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
                             </div>
                             <q-separator class="q-my-md" />
                             <div v-if="isEventDateAndTimePassed(event.date, event.time) && !event.completed" class="action-section">
@@ -218,20 +210,6 @@
                               <span class="detail-label">Contacto:</span>
                               <span class="detail-value">{{ event.contact }}</span>
                             </div>
-                            <q-separator class="q-my-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Nombre:</span>
-                              <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Email:</span>
-                              <span class="detail-value">{{ event.customerEmail }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Teléfono:</span>
-                              <span class="detail-value">{{ event.customerPhone }}</span>
-                            </div>
                             <div class="detail-item q-mb-sm">
                               <span class="detail-label">Dirección:</span>
                               <span class="detail-value">{{ event.customerAddress }}</span>
@@ -244,9 +222,15 @@
                               <span class="detail-label">Estado:</span>
                               <span class="detail-value">{{ event.customerState }}</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item q-mb-sm">
                               <span class="detail-label">Código Postal:</span>
                               <span class="detail-value">{{ event.customerZipCode }}</span>
+                            </div>
+                            <q-separator class="q-my-md" />
+                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
+                            <div class="detail-item q-mb-sm">
+                              <span class="detail-label">Nombre:</span>
+                              <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
                             </div>
                             <q-separator class="q-my-md" />
                             <div v-if="isEventDateAndTimePassed(event.date, event.time) && !event.completed" class="action-section">
