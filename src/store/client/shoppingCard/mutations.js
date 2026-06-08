@@ -5,3 +5,8 @@ export const setListShopingCard = (state, listShopingCard) => {
 export const setCountListShopingCard = (state, countListShopingCard) => {
   state.countListShopingCard = countListShopingCard;
 };
+
+export const resetShoppingCard = (state) => {
+  state.listShopingCard = [];
+  state.countListShopingCard = [];
+};

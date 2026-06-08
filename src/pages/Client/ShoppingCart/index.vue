@@ -25,8 +25,8 @@
               <!-- Contenido de la primera tabla aquí -->
               <tbody>
                 <tr
-                  v-for="(product, index) in shoppingCardDetail"
-                  :key="index"
+                  v-for="product in shoppingCardDetail"
+                  :key="product.id || product.artist_id"
                 >
                   <td class="text-center">
                     <q-img
@@ -65,7 +65,7 @@
                       round
                       icon="remove_circle_outline"
                       v-on:click="
-                        changeQuantity(product.artist, product.hours, false)
+                        changeQuantity(product, false)
                       "
                       v-else
                     />
@@ -75,7 +75,7 @@
                       round
                       icon="add_circle_outline"
                       v-on:click="
-                        changeQuantity(product.artist, product.hours, true)
+                        changeQuantity(product, true)
                       "
                     />
                   </td>
@@ -220,16 +220,14 @@ export default {
         console.error(error);
       }
     },
-    async changeQuantity(artist, cantHours, type) {
-      this.item.artist_id = artist.id;
+    async changeQuantity(product, type) {
+      const nextHours = type ? product.hours + 1 : product.hours - 1;
+      const item = {
+        artist_id: product.artist_id,
+        hours_artist: nextHours,
+      };
 
-      if (type) {
-        this.item.hours_artist = cantHours + 1;
-        await this.updateItemShoppingCart(this.item);
-      } else {
-        this.item.hours_artist = cantHours - 1;
-        await this.updateItemShoppingCart(this.item);
-      }
+      await this.updateItemShoppingCart(item);
     },
   },
   computed: {
