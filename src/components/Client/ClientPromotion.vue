@@ -12,7 +12,7 @@
     >
       <q-carousel-slide
         :name="1"
-        img-src="https://cdn.pixabay.com/photo/2017/01/18/17/14/girl-1990347_960_720.jpg"
+        img-src="http://images.unsplash.com/photo-1769028871759-8099b7474ac4?q=80&w=1962&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
       >
         <div class="absolute-center custom-caption">
           <div class="text-h2">Ofertas Imperdibles</div>
@@ -40,7 +40,7 @@
 
       <q-carousel-slide
         :name="3"
-        img-src="https://cdn.pixabay.com/photo/2014/05/21/15/18/musician-349790_960_720.jpg"
+        img-src="https://images.unsplash.com/photo-1587321540903-e0a4cbefb0a4?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
       >
         <div class="absolute-center custom-caption">
           <div class="text-h2">Mis Compras</div>

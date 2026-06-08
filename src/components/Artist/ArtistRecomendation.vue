@@ -25,6 +25,7 @@
       </q-carousel-slide>
 
       <q-carousel-slide
+        v-if="false"
         :name="2"
         img-src="https://cdn.pixabay.com/photo/2017/08/14/04/48/ceiling-2639360_960_720.jpg"
       >
