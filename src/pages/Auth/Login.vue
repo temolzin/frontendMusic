@@ -160,7 +160,7 @@
                 </div>
 
                 <div class="text-center q-mt-sm">
-                  ¿Primera vez en GSM?
+                  ¿Primera vez en vibeer?
                   <router-link class="text-primary" to="/register">
                     Regístrate
                   </router-link>

@@ -152,7 +152,7 @@
                     (opt) =>
                       Object(opt) === opt && 'name' in opt
                         ? opt.name
-                        : '- Null -'
+                        : 'Seleccionar'
                   "
                   emit-value
                   map-options
@@ -568,7 +568,7 @@
                     (opt) =>
                       Object(opt) === opt && 'name' in opt
                         ? opt.name
-                        : '- Null -'
+                        : 'Seleccionar'
                   "
                   emit-value
                   map-options

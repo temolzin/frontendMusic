@@ -45,10 +45,6 @@ export default {
       try {
         this.getMeUser()
           .then(() => {
-            $q.notify({
-              type: "positive",
-              message: "Usuario encontrado",
-            });
             //const toPath = this.$route.query.to || "/dashboard/home";
             this.$router.push({ name: "dashboardH" });
           })
