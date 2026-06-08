@@ -1031,9 +1031,11 @@ export default defineComponent({
       });
 
       try {
-        OpenPay.setId(this.$q.config.OpenPayID);
-        OpenPay.setApiKey(this.$q.config.OpenPayKey);
-        OpenPay.setSandboxMode(this.$q.config.OpenPaySanboxMode);
+        const keysRes = await this.$api.get('/api/openpay-keys/public');
+        const openpayKeys = keysRes.data.data;
+        OpenPay.setId(openpayKeys.openpay_id);
+        OpenPay.setApiKey(openpayKeys.openpay_public_key);
+        OpenPay.setSandboxMode(true);
 
         let deviceDataId = null;
         try {

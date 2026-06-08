@@ -191,7 +191,7 @@ const routes = [
       {
         name: "artist.view-sales",
         path: "/artist/artistSales",
-        component: import("pages/Artist/Sales.vue"),
+        component: () => import("pages/Artist/Sales.vue"),
         meta: {
           title: "Ventas",
           middleware: [Middlewares.checkPermissions],

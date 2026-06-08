@@ -53,7 +53,73 @@
     </div>
   </div>
   <client-card v-if="getMe.role[0] == 'cliente'"></client-card>
-  <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general >
+  <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general>
+
+  <div v-if="getMe.role[0] == 'administrador'" class="q-pa-md">
+    <q-btn
+      unelevated
+      color="primary"
+      icon="payment"
+      label="Configurar OpenPay"
+      @click="openpayModal = true"
+    />
+  </div>
+
+  <q-dialog v-model="openpayModal" persistent>
+    <q-card style="width: 500px; max-width: 90vw;">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Configuración OpenPay</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="q-pt-sm q-pb-sm">
+        <div class="text-subtitle2 text-grey q-mb-sm">Credenciales de la pasarela de pago</div>
+
+        <q-input
+          v-model="openpayForm.openpay_id"
+          label="ID de OpenPay"
+          outlined
+          dense
+          class="q-mb-md"
+        />
+        <q-input
+          v-model="openpayForm.openpay_secret"
+          label="Llave Secreta"
+          outlined
+          dense
+          :type="showSecret ? 'text' : 'password'"
+          class="q-mb-md"
+        >
+          <template #append>
+            <q-icon
+              :name="showSecret ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="showSecret = !showSecret"
+            />
+          </template>
+        </q-input>
+        <q-input
+          v-model="openpayForm.openpay_public_key"
+          label="Llave Pública"
+          outlined
+          dense
+          class="q-mb-sm"
+        />
+      </q-card-section>
+
+      <q-card-actions align="right" class="q-pa-sm">
+        <q-btn flat label="Cancelar" v-close-popup />
+        <q-btn
+          unelevated
+          label="Guardar"
+          color="primary"
+          :loading="openpayLoading"
+          @click="saveOpenpayKeys"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 
   <q-page padding>
     <q-table v-if="getMe.role[0] === 'cliente' && skeleton == false"
@@ -147,6 +213,14 @@ export default {
       columns,
       skeleton: true,
       showCard: true,
+      openpayModal: false,
+      showSecret: false,
+      openpayLoading: false,
+      openpayForm: {
+        openpay_id: "",
+        openpay_secret: "",
+        openpay_public_key: "",
+      },
       stats: {
         favorites: 0,
         rating: 0,
@@ -190,6 +264,30 @@ export default {
         this.stats.totalHires = salesRes.data.count;
       } catch (e) {
         console.error("Error loading stats", e);
+      }
+    },
+    async loadOpenpayKeys() {
+      try {
+        const res = await this.$api.get("/api/admin/openpay-keys");
+        if (res.data.success && res.data.data) {
+          this.openpayForm.openpay_id = res.data.data.openpay_id;
+          this.openpayForm.openpay_secret = res.data.data.openpay_secret;
+          this.openpayForm.openpay_public_key = res.data.data.openpay_public_key;
+        }
+      } catch (e) {
+        console.error("Error cargando keys OpenPay", e);
+      }
+    },
+    async saveOpenpayKeys() {
+      this.openpayLoading = true;
+      try {
+        await this.$api.put("/api/admin/openpay-keys", this.openpayForm);
+        this.$q.notify({ type: "positive", message: "Credenciales guardadas correctamente" });
+        this.openpayModal = false;
+      } catch (e) {
+        this.$q.notify({ type: "negative", message: "Error al guardar las credenciales" });
+      } finally {
+        this.openpayLoading = false;
       }
     },
     search(slug) {
@@ -236,6 +334,9 @@ export default {
     this.gettFavouriteArtists();
     if (this.getMe?.role?.[0] === 'artista') {
       this.loadStats();
+    }
+    if (this.getMe?.role?.[0] === 'administrador') {
+      this.loadOpenpayKeys();
     }
   },
   mounted() {
