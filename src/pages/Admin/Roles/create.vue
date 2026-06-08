@@ -30,7 +30,7 @@
           "
           :option-label="
             (opt) =>
-              Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'
+              Object(opt) === opt && 'name' in opt ? opt.name : 'Seleccionar'
           "
           emit-value
           map-options

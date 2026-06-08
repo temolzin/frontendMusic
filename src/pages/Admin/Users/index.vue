@@ -134,7 +134,7 @@
                 "
                 :option-label="
                   (opt) =>
-                    Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'
+                    Object(opt) === opt && 'name' in opt ? opt.name : 'Seleccionar'
                 "
                 emit-value
                 map-options
@@ -144,7 +144,7 @@
                 color="green"
                 :loading="false"
                 :options="roles"
-                :rules="[(val) => !!val || 'Field is required']"
+                :rules="[(val) => !!val || 'Campo obligatorio']"
               />
               <!-- Fin Select -->
               <q-card-actions align="right" class="text-primary">
