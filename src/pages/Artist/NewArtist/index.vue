@@ -869,6 +869,51 @@ export default {
             InstFormData.append("image_manager", this.formCreate.image_manager);
             const selection = JSON.stringify(this.formCreate.selection);
             InstFormData.append("selection", selection);
+
+            const socialDomainMap = {
+              Instagram: 'instagram.com',
+              'X (Twitter)': 'twitter.com',
+              YouTube: 'youtube.com',
+              Facebook: 'facebook.com',
+              TikTok: 'tiktok.com',
+              Spotify: 'spotify.com',
+              'Apple Music': 'music.apple.com',
+              SoundCloud: 'soundcloud.com',
+              Bandcamp: 'bandcamp.com',
+              LinkedIn: 'linkedin.com',
+            };
+
+            for (const red of this.formCreate.social_media) {
+              if (!red.nombre || !red.url) {
+                this.$q.notify({
+                  type: 'negative',
+                  message: 'Cada red social debe tener nombre y URL.',
+                });
+                return;
+              }
+
+              try {
+                new URL(red.url);
+              } catch {
+                this.$q.notify({
+                  type: 'negative',
+                  message: `La URL de ${red.nombre} no es válida.`,
+                });
+                return;
+              }
+
+              const expectedDomain = socialDomainMap[red.nombre];
+              const actualHost = new URL(red.url).hostname.replace('www.', '');
+
+              if (expectedDomain && !actualHost.includes(expectedDomain)) {
+                this.$q.notify({
+                  type: 'negative',
+                  message: `La URL de ${red.nombre} debe pertenecer a ${expectedDomain}.`,
+                });
+                return;
+              }
+            }
+
             const social_media = JSON.stringify(this.formCreate.social_media);
             InstFormData.append("social_media", social_media);
 
@@ -981,6 +1026,51 @@ export default {
           InstFormData.append("email_manager", this.formCreate.email_manager);
           const selection = JSON.stringify(this.formCreate.selection);
           InstFormData.append("selection", selection);
+
+          const socialDomainMap = {
+            Instagram: 'instagram.com',
+            'X (Twitter)': 'twitter.com',
+            YouTube: 'youtube.com',
+            Facebook: 'facebook.com',
+            TikTok: 'tiktok.com',
+            Spotify: 'spotify.com',
+            'Apple Music': 'music.apple.com',
+            SoundCloud: 'soundcloud.com',
+            Bandcamp: 'bandcamp.com',
+            LinkedIn: 'linkedin.com',
+          };
+
+          for (const red of this.formCreate.social_media) {
+            if (!red.nombre || !red.url) {
+              this.$q.notify({
+                type: 'negative',
+                message: 'Cada red social debe tener nombre y URL.',
+              });
+              return;
+            }
+
+            try {
+              new URL(red.url);
+            } catch {
+              this.$q.notify({
+                type: 'negative',
+                message: `La URL de ${red.nombre} no es válida.`,
+              });
+              return;
+            }
+
+            const expectedDomain = socialDomainMap[red.nombre];
+            const actualHost = new URL(red.url).hostname.replace('www.', '');
+
+            if (expectedDomain && !actualHost.includes(expectedDomain)) {
+              this.$q.notify({
+                type: 'negative',
+                message: `La URL de ${red.nombre} debe pertenecer a ${expectedDomain}.`,
+              });
+              return;
+            }
+          }
+
           const social_media = JSON.stringify(this.formCreate.social_media);
           InstFormData.append("social_media", social_media);
 
