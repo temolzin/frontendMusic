@@ -424,21 +424,16 @@ export default defineComponent({
     async markAsCompleted(event) {
       try {
         const response = await api.put(`/api/artist/sales/${event.id}/complete`);
-        if (response.data?.success) {
+        const ok = response.data?.success;
+        if (ok) {
           event.status = 'completed';
           this.expanded = { ...this.expanded, [event.id]: false };
-          this.$q.notify({
-            type: 'positive',
-            message: 'Evento marcado como completado',
-            position: 'top',
-          });
-        } else {
-          this.$q.notify({
-            type: 'negative',
-            message: response.data?.message || 'Error al marcar como completado',
-            position: 'top',
-          });
         }
+        this.$q.notify({
+          type: ok ? 'positive' : 'negative',
+          message: ok ? 'Evento marcado como completado' : (response.data?.message || 'Error al marcar como completado'),
+          position: 'top',
+        });
       } catch (error) {
         this.$q.notify({
           type: 'negative',
