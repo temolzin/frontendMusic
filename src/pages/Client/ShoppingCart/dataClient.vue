@@ -464,40 +464,89 @@
 
             <q-card class="rounded-borders">
               <q-card-section horizontal>
-                <q-card-section class="col-5 q-pt-xs">
-                  <div class="text-h6 text-center">Datos del Envio</div>
-                  <div class="text-subtitle1">{{ formClient.first_name }} {{ formClient.first_last }}</div>
-                  <div class="text-subtitle2">{{ formClient.email }}</div>
-                    <div class="text-subtitle2">{{ formClient.phone }}</div>
-                  <div class="text-subtitle3">{{ formClient.adress_line2 }}</div>
-                  <div class="text-subtitle4">{{ formClient.city }}</div>
-                  <div class="text-subtitle5">{{ formClient.state_city }}</div>
-                  <div class="text-subtitle6">{{ formClient.zip_code }}</div>
-                  <div class="text-subtitle7">{{ formClient.country }}</div>
-                    <div class="text-subtitle8">{{ formClient.event_date }}</div>
-                    <div class="text-subtitle9">{{ formClient.event_hour }}</div>
-                </q-card-section>
-                <q-card-section class="col-7 q-pt-xs ">
-                  <div class="text-h6 text-center">Detalles del Pago</div>
-                  <div v-if="paymentMethod === 'card'">
-                    <div class="text-subtitle1 q-mb-xs">Tipo de Tarjeta - {{ detectCardType(selectedCard.number_card) }}</div>
-                    <div class="text-subtitle1 q-mb-xs">
-                      Titular de la tarjeta - {{ selectedCard.name }}
-                    </div>
-                    <div class="text-subtitle1 q-mb-xs">
-                      Número de la Tarjeta - {{ maskCardNumber(selectedCard.number_card) }}
-                    </div>
-                    <div class="text-subtitle1 q-mb-xs">
-                      Fecha de Expiración - {{ selectedCard.expiration_date }}
-                    </div>
+                <q-card-section class="col-6 q-pt-xs">
+                  <div class="text-h6 text-center q-mb-md">Datos del Evento</div>
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="home" color="primary" size="xs" class="q-mr-sm" />
+                    <span class="text-caption">{{ formClient.adress_line2 }}</span>
                   </div>
-                  <div v-if="paymentMethod === 'cash'">
-                    <div class="text-subtitle1 q-mb-xs">Método de Pago - Efectivo</div>
-                    <div class="text-subtitle1 q-mb-xs">
-                      Punto de Pago - {{ model }}
-                    </div>
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="location_city" color="primary" size="xs" class="q-mr-sm" />
+                    <span class="text-caption">{{ formClient.city }}, {{ formClient.state_city }}</span>
+                  </div>
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="markunread_mailbox" color="primary" size="xs" class="q-mr-sm" />
+                    <span class="text-caption">CP {{ formClient.zip_code }}, {{ formClient.country }}</span>
+                  </div>
+                  <q-separator class="q-my-sm" />
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="event" color="deep-orange" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-weight-medium">{{ formClient.event_date ? formClient.event_date.split('/').reverse().join('/') : '' }}</span>
+                  </div>
+                  <div class="row items-center">
+                    <q-icon name="schedule" color="deep-orange" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-weight-medium">{{ formClient.event_hour }}</span>
+                  </div>
+                  <q-separator class="q-my-sm" />
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="person" color="primary" size="xs" class="q-mr-sm" />
+                    <span class="text-caption">{{ formClient.first_name }} {{ formClient.first_last }}</span>
                   </div>
                 </q-card-section>
+                <q-card-section class="col-6 q-pt-xs">
+                <div class="text-h6 text-center q-mb-md">Detalles del Pago</div>
+                <div v-if="paymentMethod === 'card'">
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="credit_card" color="primary" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-grey-7">Tipo</span>
+                    <span class="text-caption text-weight-medium q-ml-sm">{{ detectCardType(selectedCard.number_card) }}</span>
+                  </div>
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="person" color="primary" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-grey-7">Titular</span>
+                    <span class="text-caption text-weight-medium q-ml-sm">{{ selectedCard.name }}</span>
+                  </div>
+                  <q-separator class="q-my-sm" />
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="dialpad" color="primary" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-grey-7">Número</span>
+                    <span class="text-caption text-weight-medium q-ml-sm">{{ maskCardNumber(selectedCard.number_card) }}</span>
+                  </div>
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="date_range" color="primary" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-grey-7">Vence</span>
+                    <span class="text-caption text-weight-medium q-ml-sm">{{ selectedCard.expiration_date }}</span>
+                  </div>
+                  <q-separator class="q-my-sm" />
+                  <div class="row items-center">
+                    <q-icon name="paid" color="positive" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-grey-7">Total a cobrar</span>
+                    <span class="text-caption text-weight-bold text-positive q-ml-sm">
+                      ${{ shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} MXN
+                    </span>
+                  </div>
+                </div>
+                <div v-if="paymentMethod === 'cash'">
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="payments" color="positive" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-grey">Método</span>
+                    <span class="text-caption text-weight-medium q-ml-sm">Efectivo</span>
+                  </div>
+                  <div class="row items-center q-mb-sm">
+                    <q-icon name="account_balance" color="primary" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-grey">Punto de pago</span>
+                    <span class="text-caption text-weight-medium q-ml-sm">{{ model }}</span>
+                  </div>
+                  <q-separator class="q-my-sm" />
+                  <div class="row items-center">
+                    <q-icon name="paid" color="positive" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-grey">Total a pagar</span>
+                    <span class="text-caption text-weight-bold text-positive q-ml-sm">
+                      ${{ shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} MXN
+                    </span>
+                  </div>
+                </div>
+              </q-card-section>
               </q-card-section>
             </q-card>
 
