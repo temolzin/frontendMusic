@@ -257,7 +257,7 @@
                   class="row q-mt-sm"
                 >
                   <q-select
-                    v-model="formCreate.social_media[index].nombre"
+                    v-model="formCreate.social_media[index].name"
                     class="col-5 q-mr-sm"
                     label="Red Social"
                     :options="socialMediaOptions"
@@ -284,7 +284,7 @@
                   color="primary"
                   label="Agregar red social"
                   class="q-mt-sm"
-                  @click="formCreate.social_media.push({ nombre: '', url: '' })"
+                  @click="formCreate.social_media.push({ name: '', url: '' })"
                 />
               </div>
               <div class="q-pt-lg col-12">
@@ -390,7 +390,7 @@
               target="_blank"
               class="social-link"
             >
-              {{ red.nombre }}
+              {{ red.name }}
             </a>
           </div>
         </div>
@@ -672,7 +672,7 @@
                   class="row q-mt-sm"
                 >
                   <q-select
-                    v-model="formCreate.social_media[index].nombre"
+                    v-model="formCreate.social_media[index].name"
                     class="col-5 q-mr-sm"
                     label="Nombre"
                     :options="socialMediaOptions"
@@ -699,7 +699,7 @@
                   color="primary"
                   label="Agregar red social"
                   class="q-mt-sm"
-                  @click="formCreate.social_media.push({ nombre: '', url: '' })"
+                  @click="formCreate.social_media.push({ name: '', url: '' })"
                 />
               </div>
               <div class="q-pt-lg col-12">
@@ -769,7 +769,7 @@ export default {
         email_manager: "",
         image_manager: [],
         selection: [],
-        social_media: [{ nombre: "", url: "" }],
+        social_media: [{ name: "", url: "" }],
       },
       linkWhatsApp: "",
       linkCorreo: "",
@@ -884,7 +884,7 @@ export default {
             };
 
             for (const red of this.formCreate.social_media) {
-              if (!red.nombre || !red.url) {
+              if (!red.name || !red.url) {
                 this.$q.notify({
                   type: 'negative',
                   message: 'Cada red social debe tener nombre y URL.',
@@ -897,18 +897,18 @@ export default {
               } catch {
                 this.$q.notify({
                   type: 'negative',
-                  message: `La URL de ${red.nombre} no es válida.`,
+                  message: `La URL de ${red.name} no es válida.`,
                 });
                 return;
               }
 
-              const expectedDomain = socialDomainMap[red.nombre];
+              const expectedDomain = socialDomainMap[red.name];
               const actualHost = new URL(red.url).hostname.replace('www.', '');
 
               if (expectedDomain && !actualHost.includes(expectedDomain)) {
                 this.$q.notify({
                   type: 'negative',
-                  message: `La URL de ${red.nombre} debe pertenecer a ${expectedDomain}.`,
+                  message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
                 });
                 return;
               }
@@ -1041,7 +1041,7 @@ export default {
           };
 
           for (const red of this.formCreate.social_media) {
-            if (!red.nombre || !red.url) {
+            if (!red.name || !red.url) {
               this.$q.notify({
                 type: 'negative',
                 message: 'Cada red social debe tener nombre y URL.',
@@ -1054,18 +1054,18 @@ export default {
             } catch {
               this.$q.notify({
                 type: 'negative',
-                message: `La URL de ${red.nombre} no es válida.`,
+                message: `La URL de ${red.name} no es válida.`,
               });
               return;
             }
 
-            const expectedDomain = socialDomainMap[red.nombre];
+            const expectedDomain = socialDomainMap[red.name];
             const actualHost = new URL(red.url).hostname.replace('www.', '');
 
             if (expectedDomain && !actualHost.includes(expectedDomain)) {
               this.$q.notify({
                 type: 'negative',
-                message: `La URL de ${red.nombre} debe pertenecer a ${expectedDomain}.`,
+                message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
               });
               return;
             }
