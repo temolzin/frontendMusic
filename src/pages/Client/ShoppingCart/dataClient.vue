@@ -1229,7 +1229,19 @@ export default defineComponent({
     },
 
     async processCashPay() {
-      this.$q.loading.show({ message: "Generando referencia de pago...", spinnerColor: "primary" });
+      if (!this.formClient.email || !this.formClient.phone || !this.shoppingCartTotal) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Por favor, completa los campos del cliente.',
+          position: 'top'
+        });
+        return;
+      }
+
+      this.$q.loading.show({
+        message: 'Generando referencia de pago...',
+        spinnerColor: 'primary'
+      });
 
       try {
         const artistList = this.isQuickBuy
@@ -1241,34 +1253,43 @@ export default defineComponent({
           amount: this.shoppingCartTotal * 100,
           order_details: {
             first_name: this.formClient.first_name,
-            last_name:  this.formClient.first_last,
-            email:      this.formClient.email,
-            phone:      this.formClient.phone,
-            address:    this.formClient.adress_line2,
-            city:       this.formClient.city,
-            state:      this.formClient.state_city,
-            zip_code:   this.formClient.zip_code,
+            last_name: this.formClient.first_last,
+            email: this.formClient.email,
+            phone: this.formClient.phone,
+            address: this.formClient.adress_line2,
+            city: this.formClient.city,
+            state: this.formClient.state_city,
+            zip_code: this.formClient.zip_code,
             event_date: this.formClient.event_date,
             event_hour: this.formClient.event_hour,
           },
           artistList,
         };
 
-        const response = await api.post("/api/payment/cash", payload);
+        const response = await api.post('/api/payment/cash', payload);
 
-        this.$q.loading.hide();
+        if (response.data && response.data.data) {
+          this.cashReference = response.data.data;
 
-        this.cashReference = response.data.data;
-        this.showCashDialog = true;
+          this.$q.notify({
+            type: 'positive',
+            message: 'Referencia de pago generada correctamente.',
+            position: 'top'
+          });
 
+          this.showCashDialog = true;
+        }
       } catch (err) {
-        this.$q.loading.hide();
+        console.error('Error procesando pago:', err);
+
         this.$q.notify({
-          type: "negative",
-          message: err.response?.data?.error?.description ?? err.message ?? "Error al generar la referencia",
-          position: "top",
+          type: 'negative',
+          message: err.response?.data?.message || err.response?.data?.error?.description || 'Error al generar la referencia',
+          position: 'top',
           timeout: 5000,
         });
+      } finally {
+        this.$q.loading.hide();
       }
     },
 
