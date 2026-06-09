@@ -53,7 +53,7 @@
       </q-carousel>
     </div>
 
-    <div class="admin-overview q-pa-md q-mt-lg q-mb-md">
+    <div class="admin-overview q-pa-md q-mt-lg q-mb-md" :class="{ 'admin-overview--dark': $q.dark.isActive }">
       <div class="row items-end justify-between q-col-gutter-md q-mb-md">
         <div class="col-12 col-md-8">
           <div class="text-overline text-grey-6">Panel administrativo</div>
@@ -278,6 +278,18 @@
   .admin-overview
     background: radial-gradient(circle at top left, rgba(25, 118, 210, 0.08), transparent 42%), linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.98))
     border-radius: 18px
+
+  .admin-overview--dark
+    background: transparent !important
+    border: none !important
+
+  .admin-overview--dark .text-h4,
+  .admin-overview--dark .text-subtitle1
+    color: #e2e8f0 !important
+
+  .admin-overview--dark .text-grey-6,
+  .admin-overview--dark .text-grey-7
+    color: #94a3b8 !important
 
   .dashboard-stat-card
     border-radius: 18px
