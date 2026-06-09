@@ -8,8 +8,8 @@
           class="image-banner"
         />
       </template>
-      <div class="text-h1 text-grey-2 text-center text-weight-bold">
-        Vibeer
+      <div class="text-h1 text-grey-2 text-center text-weight-bold brand-logo">
+        vibeer
       </div>
       <div
         class="line"
@@ -328,5 +328,9 @@ export default {
 }
 .center {
   margin: auto;
+}
+.brand-logo {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: -2px;
 }
 </style>
