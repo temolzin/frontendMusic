@@ -498,29 +498,29 @@
                 <div v-if="paymentMethod === 'card'">
                   <div class="row items-center q-mb-sm">
                     <q-icon name="credit_card" color="primary" size="xs" class="q-mr-sm" />
-                    <span class="text-caption text-grey">Tipo</span>
+                    <span class="text-caption text-grey-7">Tipo</span>
                     <span class="text-caption text-weight-medium q-ml-sm">{{ detectCardType(selectedCard.number_card) }}</span>
                   </div>
                   <div class="row items-center q-mb-sm">
                     <q-icon name="person" color="primary" size="xs" class="q-mr-sm" />
-                    <span class="text-caption text-grey">Titular</span>
+                    <span class="text-caption text-grey-7">Titular</span>
                     <span class="text-caption text-weight-medium q-ml-sm">{{ selectedCard.name }}</span>
                   </div>
                   <q-separator class="q-my-sm" />
                   <div class="row items-center q-mb-sm">
                     <q-icon name="dialpad" color="primary" size="xs" class="q-mr-sm" />
-                    <span class="text-caption text-grey">Número</span>
+                    <span class="text-caption text-grey-7">Número</span>
                     <span class="text-caption text-weight-medium q-ml-sm">{{ maskCardNumber(selectedCard.number_card) }}</span>
                   </div>
                   <div class="row items-center q-mb-sm">
                     <q-icon name="date_range" color="primary" size="xs" class="q-mr-sm" />
-                    <span class="text-caption text-grey">Vence</span>
+                    <span class="text-caption text-grey-7">Vence</span>
                     <span class="text-caption text-weight-medium q-ml-sm">{{ selectedCard.expiration_date }}</span>
                   </div>
                   <q-separator class="q-my-sm" />
                   <div class="row items-center">
                     <q-icon name="paid" color="positive" size="xs" class="q-mr-sm" />
-                    <span class="text-caption text-grey">Total a cobrar</span>
+                    <span class="text-caption text-grey-7">Total a cobrar</span>
                     <span class="text-caption text-weight-bold text-positive q-ml-sm">
                       ${{ shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} MXN
                     </span>
