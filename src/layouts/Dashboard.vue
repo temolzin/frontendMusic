@@ -173,6 +173,7 @@
           </q-item>
 
           <q-item
+            v-show="false"
             clickable
             v-ripple
             to="/"

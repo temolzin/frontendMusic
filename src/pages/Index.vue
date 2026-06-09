@@ -9,7 +9,7 @@
         />
       </template>
       <div class="text-h1 text-grey-2 text-center text-weight-bold">
-        Vibeer
+        vibeer
       </div>
       <div
         class="line"

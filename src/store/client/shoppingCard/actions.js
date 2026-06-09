@@ -14,6 +14,10 @@ export const getCountListShoppingCard = async ({ commit }) => {
   });
 };
 
+export const resetShoppingCard = ({ commit }) => {
+  commit("resetShoppingCard");
+};
+
 export const create_order = async ({ dispatch }, payload) => {
   await api.post("/api/cliente/shopping_card/create", payload).then((response) => {
       dispatch("getListShoppingCard");
