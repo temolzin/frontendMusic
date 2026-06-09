@@ -390,6 +390,7 @@
               target="_blank"
               class="social-link"
             >
+              <q-icon :name="socialIconMap[red.name] || 'fas fa-link'" size="20px" class="q-mr-xs" />
               {{ red.name }}
             </a>
           </div>
@@ -785,6 +786,18 @@ export default {
         "Bandcamp",
         "LinkedIn",
       ],
+      socialIconMap: {
+        Instagram: 'fab fa-instagram',
+        'X (Twitter)': 'fab fa-x-twitter',
+        YouTube: 'fab fa-youtube',
+        Facebook: 'fab fa-facebook',
+        TikTok: 'fab fa-tiktok',
+        Spotify: 'fab fa-spotify',
+        'Apple Music': 'fab fa-apple',
+        SoundCloud: 'fab fa-soundcloud',
+        Bandcamp: 'fab fa-bandcamp',
+        LinkedIn: 'fab fa-linkedin',
+      },
     };
   },
   methods: {
