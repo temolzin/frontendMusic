@@ -283,6 +283,14 @@
     background: transparent !important
     border: none !important
 
+  .admin-overview--dark .text-h4,
+  .admin-overview--dark .text-subtitle1
+    color: #e2e8f0 !important
+
+  .admin-overview--dark .text-grey-6,
+  .admin-overview--dark .text-grey-7
+    color: #94a3b8 !important
+
   .dashboard-stat-card
     border-radius: 18px
     min-height: 100%
