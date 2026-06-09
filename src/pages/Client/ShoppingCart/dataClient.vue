@@ -502,7 +502,7 @@
             </q-card>
 
             <q-stepper-navigation>
-              <q-btn rounded @click="pay()" class="float-right q-mr-md q-mb-md" color="blue"
+              <q-btn rounded @click="paymentMethod === 'cash' ? payCash() : pay()" class="float-right q-mr-md q-mb-md" color="blue"
                 label="Realizar Compra" />
               <q-btn flat @click="step = 2" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
             </q-stepper-navigation>
@@ -559,6 +559,23 @@
         </q-card>
       </div>
     </div>
+
+    <q-dialog v-model="showCashDialog" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section class="bg-primary text-white text-center">
+          <div class="text-h6">¡Referencia generada!</div>
+        </q-card-section>
+        <q-card-section class="text-center q-pt-md">
+          <div class="text-subtitle1 q-mb-sm">Realiza tu pago en: <strong>{{ cashReference?.store }}</strong></div>
+          <div class="text-h5 text-primary q-mb-sm"><strong>{{ cashReference?.reference }}</strong></div>
+          <div class="text-caption text-grey">Vence: {{ cashReference?.due_date }}</div>
+          <q-img v-if="cashReference?.barcode" :src="cashReference.barcode" style="max-width: 250px" class="q-mt-md" />
+        </q-card-section>
+        <q-card-actions align="center">
+          <q-btn rounded color="primary" label="Entendido" @click="showCashDialog = false; $router.push('/client/shopping-cart/view-my-order-details')" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -633,6 +650,8 @@ export default defineComponent({
       isQuickBuy: ref(false),
       quickBuyData: ref(null),
       occupiedDates: ref([]),
+      cashReference: ref(null),
+      showCashDialog: ref(false),
     };
   },
   methods: {
@@ -1021,8 +1040,14 @@ export default defineComponent({
       })()
       || validateAndNotify(typeof OpenPay === "undefined", "Error: OpenPay no está cargado. Recarga la página.") || this.processPay();
     },
-    
-    processPay() {
+
+    payCash() {
+      !this.model
+        ? this.$q.notify({ type: "negative", message: "Debes seleccionar un punto de pago" })
+        : this.processCashPay();
+    },
+
+    async processPay() {
       this.$q.loading.show({
         message: "Procesando tu pago...",
         spinnerColor: "primary",
@@ -1202,6 +1227,51 @@ export default defineComponent({
         });
       }
     },
+
+    async processCashPay() {
+      this.$q.loading.show({ message: "Generando referencia de pago...", spinnerColor: "primary" });
+
+      try {
+        const artistList = this.isQuickBuy
+          ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours }]
+          : this.shoppingCardDetail.map((e) => ({ artist_id: e.artist_id, hours: e.hours }));
+
+        const payload = {
+          store: this.model,
+          amount: this.shoppingCartTotal * 100,
+          order_details: {
+            first_name: this.formClient.first_name,
+            last_name:  this.formClient.first_last,
+            email:      this.formClient.email,
+            phone:      this.formClient.phone,
+            address:    this.formClient.adress_line2,
+            city:       this.formClient.city,
+            state:      this.formClient.state_city,
+            zip_code:   this.formClient.zip_code,
+            event_date: this.formClient.event_date,
+            event_hour: this.formClient.event_hour,
+          },
+          artistList,
+        };
+
+        const response = await api.post("/api/payment/cash", payload);
+
+        this.$q.loading.hide();
+
+        this.cashReference = response.data.data;
+        this.showCashDialog = true;
+
+      } catch (err) {
+        this.$q.loading.hide();
+        this.$q.notify({
+          type: "negative",
+          message: err.response?.data?.error?.description ?? err.message ?? "Error al generar la referencia",
+          position: "top",
+          timeout: 5000,
+        });
+      }
+    },
+
     onReset() {
       (this.form?.value) 
         ? (this.form.value.id = "", 
