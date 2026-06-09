@@ -40,6 +40,10 @@
                   <span class="label">Pendientes</span>
                   <span class="value text-warning">{{ pendingCount }}</span>
                 </div>
+                <div class="summary-row q-mt-md">
+                  <span class="label">Expirados</span>
+                  <span class="value text-red">{{ expiredCount }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -66,7 +70,7 @@
                       flat
                       bordered
                       class="event-card"
-                      :class="{ completed: event.completed }"
+                      :class="{ completed: event.status === 'completed', expired: event.status === 'expired' }"
                       @click="toggleExpanded(event.id)"
                     >
                       <q-card-section class="q-pa-md">
@@ -82,8 +86,8 @@
                           </div>
                           <div class="event-right">
                             <q-badge
-                              :color="event.completed ? 'positive' : 'warning'"
-                              :label="event.completed ? 'Completado' : 'Pendiente'"
+                              :color="statusColor(event.status)"
+                              :label="statusLabel(event.status)"
                             />
                             <q-icon
                               :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
@@ -100,6 +104,14 @@
                             <div class="detail-item q-mb-sm">
                               <span class="detail-label">Descripción:</span>
                               <span class="detail-value">{{ event.description }}</span>
+                            </div>
+                            <div class="detail-item q-mb-sm">
+                              <span class="detail-label">Inicio:</span>
+                              <span class="detail-value">{{ formatEventTime(event.time) }}</span>
+                            </div>
+                            <div class="detail-item q-mb-sm">
+                              <span class="detail-label">Duración:</span>
+                              <span class="detail-value">{{ event.eventHours ? event.eventHours + ' hrs' : 'N/A' }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
                               <span class="detail-label">Tarifa:</span>
@@ -132,14 +144,14 @@
                               <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
                             </div>
                             <q-separator class="q-my-md" />
-                            <div v-if="isEventDateAndTimePassed(event.date, event.time) && !event.completed" class="action-section">
+                            <div v-if="event.status === 'pending' && event.canComplete" class="action-section">
                               <q-btn
                                 color="positive"
                                 label="Marcar como completado"
                                 outline
                                 size="sm"
                                 icon="check_circle"
-                                @click.stop="markAsCompleted(event.id)"
+                                @click.stop="markAsCompleted(event)"
                                 class="full-width"
                               />
                             </div>
@@ -162,7 +174,7 @@
                       flat
                       bordered
                       class="event-card"
-                      :class="{ completed: event.completed }"
+                      :class="{ completed: event.status === 'completed', expired: event.status === 'expired' }"
                       role="button"
                       :tabindex="0"
                       :aria-expanded="expanded[event.id] ? 'true' : 'false'"
@@ -183,8 +195,8 @@
                           </div>
                           <div class="event-right">
                             <q-badge
-                              :color="event.completed ? 'positive' : 'warning'"
-                              :label="event.completed ? 'Completado' : 'Pendiente'"
+                              :color="statusColor(event.status)"
+                              :label="statusLabel(event.status)"
                             />
                             <q-icon
                               :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
@@ -201,6 +213,14 @@
                             <div class="detail-item q-mb-sm">
                               <span class="detail-label">Descripción:</span>
                               <span class="detail-value">{{ event.description }}</span>
+                            </div>
+                            <div class="detail-item q-mb-sm">
+                              <span class="detail-label">Inicio:</span>
+                              <span class="detail-value">{{ formatEventTime(event.time) }}</span>
+                            </div>
+                            <div class="detail-item q-mb-sm">
+                              <span class="detail-label">Duración:</span>
+                              <span class="detail-value">{{ event.eventHours ? event.eventHours + ' hrs' : 'N/A' }}</span>
                             </div>
                             <div class="detail-item q-mb-sm">
                               <span class="detail-label">Tarifa:</span>
@@ -233,14 +253,14 @@
                               <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
                             </div>
                             <q-separator class="q-my-md" />
-                            <div v-if="isEventDateAndTimePassed(event.date, event.time) && !event.completed" class="action-section">
+                            <div v-if="event.status === 'pending' && event.canComplete" class="action-section">
                               <q-btn
                                 color="positive"
                                 label="Marcar como completado"
                                 outline
                                 size="sm"
                                 icon="check_circle"
-                                @click.stop="markAsCompleted(event.id)"
+                                @click.stop="markAsCompleted(event)"
                                 class="full-width"
                               />
                             </div>
@@ -292,10 +312,13 @@ export default defineComponent({
       return this.contracts.filter((c) => c.date === this.getTodayString());
     },
     completedCount() {
-      return this.contracts.filter((c) => c.completed).length;
+      return this.contracts.filter((c) => c.status === 'completed').length;
     },
     pendingCount() {
-      return this.contracts.filter((c) => !c.completed).length;
+      return this.contracts.filter((c) => c.status === 'pending').length;
+    },
+    expiredCount() {
+      return this.contracts.filter((c) => c.status === 'expired').length;
     },
     eventDates() {
       const eventsByDate = {};
@@ -330,10 +353,12 @@ export default defineComponent({
               description: `Contrato para ${sale.customer_first_name || 'Desconocido'} ${sale.customer_last_name || 'Desconocido'}`,
               date: this.parseDateToString(sale.event_date),
               time: sale.event_hour,
+              eventHours: sale.event_hours,
               location: sale.customer_address,
               rate: sale.amount,
               contact: sale.customer_phone,
-              completed: false,
+              status: sale.event_status || 'pending',
+              canComplete: sale.can_complete || false,
               customerFirstName: sale.customer_first_name || '',
               customerLastName: sale.customer_last_name || '',
               customerEmail: sale.customer_email || '',
@@ -387,23 +412,63 @@ export default defineComponent({
       this.expanded = { ...this.expanded, [id]: !this.expanded[id] };
     },
 
-    isEventDateAndTimePassed(dateStr, timeStr) {
+    isEventDateAndTimePassed(dateStr, timeStr, eventHours) {
+      if (!dateStr || !timeStr) return false;
       const [year, month, day] = dateStr.split('/');
-      const eventDate = new Date(Number(year), Number(month) - 1, Number(day));
-      const today = new Date();
-      
-      eventDate.setHours(0, 0, 0, 0);
-      today.setHours(0, 0, 0, 0);
-      
-      return today > eventDate;
+      const [hour, minute] = timeStr.split(':');
+      const eventEnd = new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
+      eventEnd.setHours(eventEnd.getHours() + (eventHours || 0));
+      return new Date() > eventEnd;
     },
 
-    markAsCompleted(eventId) {
-      const event = this.contracts.find((e) => e.id === eventId);
-      if (event) {
-        event.completed = true;
-        this.expanded = { ...this.expanded, [eventId]: false };
+    async markAsCompleted(event) {
+      try {
+        const response = await api.put(`/api/artist/sales/${event.id}/complete`);
+        if (response.data?.success) {
+          event.status = 'completed';
+          this.expanded = { ...this.expanded, [event.id]: false };
+          this.$q.notify({
+            type: 'positive',
+            message: 'Evento marcado como completado',
+            position: 'top',
+          });
+        } else {
+          this.$q.notify({
+            type: 'negative',
+            message: response.data?.message || 'Error al marcar como completado',
+            position: 'top',
+          });
+        }
+      } catch (error) {
+        this.$q.notify({
+          type: 'negative',
+          message: error.response?.data?.message || 'Error al marcar como completado',
+          position: 'top',
+        });
       }
+    },
+
+    statusColor(status) {
+      if (status === 'completed') return 'positive';
+      if (status === 'expired') return 'negative';
+      return 'warning';
+    },
+
+    statusLabel(status) {
+      if (status === 'completed') return 'Completado';
+      if (status === 'expired') return 'Expirado';
+      return 'Pendiente';
+    },
+
+    formatEventTime(timeStr) {
+      if (!timeStr) return 'N/A';
+      const parts = timeStr.split(':');
+      if (parts.length < 2) return timeStr;
+      const h = parseInt(parts[0], 10);
+      const m = parts[1];
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      return `${String(h12).padStart(2, '0')}:${m} ${ampm}`;
     },
 
     formatTime(dateStr) {
@@ -607,6 +672,15 @@ export default defineComponent({
 
           :deep(.q-card__section) {
             opacity: 0.95;
+          }
+        }
+
+        &.expired {
+          border-left-color: #f44336;
+          background: #fff5f5;
+
+          :deep(.q-card__section) {
+            opacity: 0.85;
           }
         }
 
@@ -844,6 +918,11 @@ export default defineComponent({
         &.completed {
           background: #16281f;
           border-left-color: #22c55e;
+        }
+
+        &.expired {
+          background: #2d1b1b;
+          border-left-color: #ef4444;
         }
 
         .event-header {
