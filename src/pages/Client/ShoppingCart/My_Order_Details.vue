@@ -100,7 +100,11 @@
               <div class="text-subtitle2"><strong>ID Transacción:</strong></div>
               <div class="text-caption text-primary">{{ selectedPurchase.openpay_transaction_id }}</div>
               <q-separator spaced />
-              <div class="text-subtitle2"><strong>Estado:</strong> <span class="text-green">Completado</span></div>
+              <div class="text-subtitle2"><strong>Estado:</strong> 
+                <span :class="selectedPurchase.status === 'pending' ? 'text-orange' : 'text-green'">
+                  {{ selectedPurchase.status === 'pending' ? 'Pendiente' : 'Completado' }}
+                </span>
+              </div>
             </div>
           </q-card-section>
           <q-card-actions align="right">
