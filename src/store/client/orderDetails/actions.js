@@ -42,3 +42,29 @@ export const sendChatMessage = async ({ commit }, payload) => {
     return null;
   }
 };
+
+export const fetchArtistRating = async ({ commit }, payload) => {
+  try {
+    const response = await api.get(`/api/client/artists/${payload.artistId}/my-rating`);
+    if (response.data && response.data.rating) {
+      commit("setArtistRating", { purchaseId: payload.purchaseId, rating: response.data.rating });
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching artist rating:", error);
+    throw error;
+  }
+};
+
+export const submitArtistRating = async ({ commit }, payload) => {
+  try {
+    const response = await api.post(`/api/client/artists/${payload.artistId}/rate`, {
+      rating: payload.rating
+    });
+    commit("setArtistRating", { purchaseId: payload.purchaseId, rating: payload.rating });
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting artist rating:", error);
+    throw error;
+  }
+};

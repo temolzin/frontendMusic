@@ -9,3 +9,10 @@ export const setChatMessages = (state, messages) => {
 export const addChatMessage = (state, message) => {
   state.chatMessages.push(message);
 };
+
+export const setArtistRating = (state, payload) => {
+  state.artistRatings = {
+    ...state.artistRatings,
+    [payload.purchaseId]: payload.rating
+  };
+};
