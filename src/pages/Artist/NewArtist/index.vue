@@ -257,7 +257,7 @@
                   class="row q-mt-sm"
                 >
                   <q-select
-                    v-model="formCreate.social_media[index].nombre"
+                    v-model="formCreate.social_media[index].name"
                     class="col-5 q-mr-sm"
                     label="Red Social"
                     :options="socialMediaOptions"
@@ -284,7 +284,7 @@
                   color="primary"
                   label="Agregar red social"
                   class="q-mt-sm"
-                  @click="formCreate.social_media.push({ nombre: '', url: '' })"
+                  @click="formCreate.social_media.push({ name: '', url: '' })"
                 />
               </div>
               <div class="q-pt-lg col-12">
@@ -390,7 +390,8 @@
               target="_blank"
               class="social-link"
             >
-              {{ red.nombre }}
+              <q-icon :name="socialIconMap[red.name] || 'fas fa-link'" size="20px" class="q-mr-xs" />
+              {{ red.name }}
             </a>
           </div>
         </div>
@@ -672,7 +673,7 @@
                   class="row q-mt-sm"
                 >
                   <q-select
-                    v-model="formCreate.social_media[index].nombre"
+                    v-model="formCreate.social_media[index].name"
                     class="col-5 q-mr-sm"
                     label="Nombre"
                     :options="socialMediaOptions"
@@ -699,7 +700,7 @@
                   color="primary"
                   label="Agregar red social"
                   class="q-mt-sm"
-                  @click="formCreate.social_media.push({ nombre: '', url: '' })"
+                  @click="formCreate.social_media.push({ name: '', url: '' })"
                 />
               </div>
               <div class="q-pt-lg col-12">
@@ -769,7 +770,7 @@ export default {
         email_manager: "",
         image_manager: [],
         selection: [],
-        social_media: [{ nombre: "", url: "" }],
+        social_media: [{ name: "", url: "" }],
       },
       linkWhatsApp: "",
       linkCorreo: "",
@@ -785,6 +786,18 @@ export default {
         "Bandcamp",
         "LinkedIn",
       ],
+      socialIconMap: {
+        Instagram: 'fab fa-instagram',
+        'X (Twitter)': 'fab fa-x-twitter',
+        YouTube: 'fab fa-youtube',
+        Facebook: 'fab fa-facebook',
+        TikTok: 'fab fa-tiktok',
+        Spotify: 'fab fa-spotify',
+        'Apple Music': 'fab fa-apple',
+        SoundCloud: 'fab fa-soundcloud',
+        Bandcamp: 'fab fa-bandcamp',
+        LinkedIn: 'fab fa-linkedin',
+      },
     };
   },
   methods: {
@@ -869,6 +882,51 @@ export default {
             InstFormData.append("image_manager", this.formCreate.image_manager);
             const selection = JSON.stringify(this.formCreate.selection);
             InstFormData.append("selection", selection);
+
+            const socialDomainMap = {
+              Instagram: 'instagram.com',
+              'X (Twitter)': 'twitter.com',
+              YouTube: 'youtube.com',
+              Facebook: 'facebook.com',
+              TikTok: 'tiktok.com',
+              Spotify: 'spotify.com',
+              'Apple Music': 'music.apple.com',
+              SoundCloud: 'soundcloud.com',
+              Bandcamp: 'bandcamp.com',
+              LinkedIn: 'linkedin.com',
+            };
+
+            for (const red of this.formCreate.social_media) {
+              if (!red.name || !red.url) {
+                this.$q.notify({
+                  type: 'negative',
+                  message: 'Cada red social debe tener nombre y URL.',
+                });
+                return;
+              }
+
+              try {
+                new URL(red.url);
+              } catch {
+                this.$q.notify({
+                  type: 'negative',
+                  message: `La URL de ${red.name} no es válida.`,
+                });
+                return;
+              }
+
+              const expectedDomain = socialDomainMap[red.name];
+              const actualHost = new URL(red.url).hostname.replace('www.', '');
+
+              if (expectedDomain && !actualHost.includes(expectedDomain)) {
+                this.$q.notify({
+                  type: 'negative',
+                  message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
+                });
+                return;
+              }
+            }
+
             const social_media = JSON.stringify(this.formCreate.social_media);
             InstFormData.append("social_media", social_media);
 
@@ -981,6 +1039,51 @@ export default {
           InstFormData.append("email_manager", this.formCreate.email_manager);
           const selection = JSON.stringify(this.formCreate.selection);
           InstFormData.append("selection", selection);
+
+          const socialDomainMap = {
+            Instagram: 'instagram.com',
+            'X (Twitter)': 'twitter.com',
+            YouTube: 'youtube.com',
+            Facebook: 'facebook.com',
+            TikTok: 'tiktok.com',
+            Spotify: 'spotify.com',
+            'Apple Music': 'music.apple.com',
+            SoundCloud: 'soundcloud.com',
+            Bandcamp: 'bandcamp.com',
+            LinkedIn: 'linkedin.com',
+          };
+
+          for (const red of this.formCreate.social_media) {
+            if (!red.name || !red.url) {
+              this.$q.notify({
+                type: 'negative',
+                message: 'Cada red social debe tener nombre y URL.',
+              });
+              return;
+            }
+
+            try {
+              new URL(red.url);
+            } catch {
+              this.$q.notify({
+                type: 'negative',
+                message: `La URL de ${red.name} no es válida.`,
+              });
+              return;
+            }
+
+            const expectedDomain = socialDomainMap[red.name];
+            const actualHost = new URL(red.url).hostname.replace('www.', '');
+
+            if (expectedDomain && !actualHost.includes(expectedDomain)) {
+              this.$q.notify({
+                type: 'negative',
+                message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
+              });
+              return;
+            }
+          }
+
           const social_media = JSON.stringify(this.formCreate.social_media);
           InstFormData.append("social_media", social_media);
 

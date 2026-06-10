@@ -69,7 +69,7 @@
                     target="_blank"
                     class="q-mr-sm"
                   >
-                    <q-btn round color="primary" :icon="socialIcon(red.nombre)" size="10px" />
+                    <q-btn round color="primary" :icon="socialIcon(red.name)" size="10px" />
                   </a>
                 </div>
               </div>
@@ -307,15 +307,20 @@ export default {
         });
       }
     },
-    socialIcon(nombre) {
+    socialIcon(name) {
       const icons = {
-        'Facebook': 'facebook',
-        'Instagram': 'instagram',
-        'X (Twitter)': 'close',
-        'YouTube': 'smart_display',
-        'TikTok': 'music_note',
+        'Instagram':   'fab fa-instagram',
+        'X (Twitter)': 'fab fa-x-twitter',
+        'YouTube':     'fab fa-youtube',
+        'Facebook':    'fab fa-facebook',
+        'TikTok':      'fab fa-tiktok',
+        'Spotify':     'fab fa-spotify',
+        'Apple Music': 'fab fa-apple',
+        'SoundCloud':  'fab fa-soundcloud',
+        'Bandcamp':    'fab fa-bandcamp',
+        'LinkedIn':    'fab fa-linkedin',
       };
-      return icons[nombre] || 'link';
+      return icons[name] || 'fas fa-link';
     },
     ...mapActions("clientMusicalGenders", ["getArtistBySlug"]),
     ...mapActions("shoppingCard", ["updateItemShoppingCart"]),
