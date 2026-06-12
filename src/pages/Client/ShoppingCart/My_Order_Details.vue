@@ -71,9 +71,9 @@
                       </p>
                     </td>
                     <td class="text-center">
-                      <div class="text-subtitle2 q-mb-xs" :class="eventStatusColor(purchase.event_status)">
+                      <q-badge :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs">
                         {{ eventStatusLabel(purchase.event_status) }}
-                      </div>
+                      </q-badge>
                       <div v-if="isEventCompleted(purchase)">
                         <q-btn
                           size="sm"
@@ -97,44 +97,67 @@
           </q-col>
         </q-card-group>
       </div>
-
       <q-dialog v-model="showModal" transition-show="rotate" transition-hide="rotate">
-        <q-card style="width: 450px" class="q-px-sm q-pb-md">
-          <q-card-section class="row items-center">
-            <div class="text-h6">Detalle de la compra</div>
+        <q-card style="width: 480px; border-radius: 16px" class="q-pa-md">
+          <q-card-section class="row items-center q-pb-none">
+            <div class="text-h6 text-primary text-weight-bold">Detalle de la compra</div>
             <q-space />
-            <q-btn icon="close" flat round dense v-close-popup />
+            <q-btn icon="close" flat round dense v-close-popup color="grey" />
           </q-card-section>
-          <q-separator />
-          <q-card-section>
-            <div v-if="selectedPurchase">
-              <div class="text-h7">
-                Fecha: {{ formatDate(selectedPurchase.created_at) }}
-              </div>
-              <q-separator spaced />
-              <div class="text-subtitle2"><strong>Artista:</strong> {{ selectedPurchase.artist?.name || 'N/A' }}</div>
-              <div class="text-subtitle2"><strong>Monto:</strong> ${{ (parseFloat(selectedPurchase.amount) || 0).toFixed(2) }} MXN</div>
-              <q-separator spaced />
-              <div class="text-subtitle2"><strong>ID Transacción:</strong></div>
-              <div class="text-caption text-primary">{{ selectedPurchase.openpay_transaction_id }}</div>
-              
-              <q-separator spaced />
-              <div class="text-subtitle2"><strong>Estado:</strong> 
-                <span :class="selectedPurchase.status === 'pending' ? 'text-orange' : 'text-green'">
-                  {{ selectedPurchase.status === 'pending' ? 'Pendiente' : 'Completado' }}
-                </span>
-              </div>
-
-              <q-separator spaced />
-              <div class="text-subtitle2"><strong>Estado del Evento:</strong>
-                <span :class="eventStatusColor(selectedPurchase.event_status)">
-                  {{ eventStatusLabel(selectedPurchase.event_status) }}
-                </span>
+          <q-separator class="q-my-md" />
+          <q-card-section v-if="selectedPurchase" class="q-pt-none">
+            <div class="row items-center q-mb-md">
+              <q-avatar size="60px" class="q-mr-md">
+                <q-img :src="selectedPurchase.artist?.image" style="border-radius: 50%" />
+              </q-avatar>
+              <div>
+                <div class="text-subtitle1 text-weight-bold">{{ selectedPurchase.artist?.name || 'N/A' }}</div>
+                <div class="text-caption text-grey">{{ selectedPurchase.artist?.zone || '' }}</div>
               </div>
             </div>
+            <q-list bordered separator class="rounded-borders">
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Fecha</q-item-label>
+                  <q-item-label>{{ formatDate(selectedPurchase.created_at) }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Monto</q-item-label>
+                  <q-item-label class="text-weight-bold text-primary">${{ (parseFloat(selectedPurchase.amount) || 0).toFixed(2) }} MXN</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>ID Transacción</q-item-label>
+                  <q-item-label class="text-caption text-primary" style="word-break: break-all">{{ selectedPurchase.openpay_transaction_id }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Estado del evento</q-item-label>
+                  <q-item-label>
+                    <q-badge :color="eventStatusColor(selectedPurchase.event_status)" class="q-px-sm q-py-xs">
+                      {{ eventStatusLabel(selectedPurchase.event_status) }}
+                    </q-badge>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Estado del pago</q-item-label>
+                  <q-item-label>
+                    <q-badge :color="selectedPurchase.status === 'pending' ? 'orange' : 'green'" class="q-px-sm q-py-xs">
+                      {{ selectedPurchase.status === 'pending' ? 'Pendiente' : 'Completado' }}
+                    </q-badge>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
           </q-card-section>
-          <q-card-actions align="right">
-            <q-btn flat label="Cerrar" color="primary" v-close-popup />
+          <q-card-actions align="right" class="q-pt-md">
+            <q-btn flat label="Cerrar" color="primary" v-close-popup size="md" class="q-px-xl" />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -300,9 +323,9 @@ export default {
       this.showModal = true;
     },
     eventStatusColor(status) {
-      if (status === 'completed') return 'text-green';
-      if (status === 'expired') return 'text-red';
-      return 'text-orange';
+      if (status === 'completed') return 'positive';
+      if (status === 'expired') return 'negative';
+      return 'warning';
     },
     eventStatusLabel(status) {
       if (status === 'completed') return 'Completado';
