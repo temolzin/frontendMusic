@@ -1416,7 +1416,7 @@ export default defineComponent({
     },
 
     async downloadReceiptImage() {
-      this.$q.loading.show({ message: 'Generando imagen...', spinnerColor: 'primary' });
+      this.$q.loading.show({ message: 'Descargando imagen...', spinnerColor: 'primary' });
       try {
         const canvas = await this.captureReceipt();
         const ref = this.cashReference?.reference || 'referencia';
@@ -1434,7 +1434,7 @@ export default defineComponent({
     },
 
     async downloadReceiptPDF() {
-      this.$q.loading.show({ message: 'Generando PDF...', spinnerColor: 'primary' });
+      this.$q.loading.show({ message: 'Descargando PDF...', spinnerColor: 'primary' });
       try {
         const canvas = await this.captureReceipt();
         const imgData = canvas.toDataURL('image/png');

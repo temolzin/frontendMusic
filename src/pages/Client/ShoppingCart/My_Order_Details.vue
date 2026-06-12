@@ -489,7 +489,6 @@ export default {
       try {
         const response = await api.post('/api/payment/cash/regenerate', {
           artist_sale_id: purchase.id,
-          store: purchase.store || 'Tienda',
         });
         if (response.data && response.data.data) {
           this.regeneratedRef = response.data.data;
