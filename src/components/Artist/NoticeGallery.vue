@@ -255,7 +255,26 @@ export default {
           type: "negative",
           message: `El archivo "${file.name}" no tiene un formato válido (Solo jpg, jpeg, png, jpe).`,
         });
+        return;
       }
+
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        if (img.width <= img.height) {
+          uploader.removeFile(file);
+          this.$q.notify({
+            type: "negative",
+            message: `"${file.name}" debe ser horizontal (ancho mayor que alto).`,
+          });
+        }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        uploader.removeFile(file);
+      };
+      img.src = url;
     });
   },
     formDelete() {
