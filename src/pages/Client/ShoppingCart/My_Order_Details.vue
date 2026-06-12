@@ -3,8 +3,8 @@
     <q-container>
       <div class="q-pa-md">
         <q-card-group>
-          <div class="bg-primary text-white text-left" colspan="5">
-            <div colspan="5" class="artist-name-2" style="font-size: 22px; border-radius: 5px">
+          <div class="bg-primary text-white text-left" colspan="6">
+            <div colspan="6" class="artist-name-2" style="font-size: 22px; border-radius: 5px">
               Mis Compras
             </div>
           </div>
@@ -39,13 +39,14 @@
             <div v-if="filteredPurchases.length === 0" class="text-center q-pa-lg">
               <p class="text-h6 text-grey-7">No tienes compras registradas</p>
             </div>
-            <div v-else>
+            <div v-if="filteredPurchases.length > 0">
               <q-markup-table dense flat bordered class="table-responsive">
                 <tbody v-for="(purchase, index) in filteredPurchases" :key="index">
                   <tr v-if="index === 0 || formatDate(purchase.created_at) !== formatDate(filteredPurchases[index - 1].created_at)" class="bg-primary text-white text-center">
                     <th style="font-size: 15px">
                       {{ formatDate(purchase.created_at) }}
                     </th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -68,6 +69,23 @@
                       <p>
                         <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(purchase)" />
                       </p>
+                    </td>
+                    <td class="text-center">
+                      <div class="text-subtitle2 q-mb-xs" :class="eventStatusColor(purchase.event_status)">
+                        {{ eventStatusLabel(purchase.event_status) }}
+                      </div>
+                      <div v-if="isEventCompleted(purchase)">
+                        <q-btn
+                          size="sm"
+                          unelevated
+                          rounded
+                          color="amber"
+                          :text-color="$q.dark.isActive ? 'white' : 'dark'"
+                          icon="star"
+                          label="CALIFICAR"
+                          @click="openRatingModal(purchase)"
+                        />
+                      </div>
                     </td>
                     <td class="text-left">
                       <q-btn unelevated rounded color="primary" label="ver compra" @click="openOrderModal(purchase)" />
@@ -99,10 +117,18 @@
               <q-separator spaced />
               <div class="text-subtitle2"><strong>ID Transacción:</strong></div>
               <div class="text-caption text-primary">{{ selectedPurchase.openpay_transaction_id }}</div>
+              
               <q-separator spaced />
               <div class="text-subtitle2"><strong>Estado:</strong> 
                 <span :class="selectedPurchase.status === 'pending' ? 'text-orange' : 'text-green'">
                   {{ selectedPurchase.status === 'pending' ? 'Pendiente' : 'Completado' }}
+                </span>
+              </div>
+
+              <q-separator spaced />
+              <div class="text-subtitle2"><strong>Estado del Evento:</strong>
+                <span :class="eventStatusColor(selectedPurchase.event_status)">
+                  {{ eventStatusLabel(selectedPurchase.event_status) }}
                 </span>
               </div>
             </div>
@@ -110,6 +136,37 @@
           <q-card-actions align="right">
             <q-btn flat label="Cerrar" color="primary" v-close-popup />
           </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="isRatingModalOpen" persistent>
+        <q-card style="min-width: 350px; border-radius: 12px;">
+          <q-card-section class="bg-primary text-white row items-center">
+            <div class="text-h6">Calificar Servicio</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+
+          <q-card-section class="column items-center q-pt-xl q-pb-xl">
+            <template v-if="isLoadingRating">
+              <q-spinner color="primary" size="3em" />
+              <div class="text-subtitle2 q-mt-md text-grey">Cargando calificación...</div>
+            </template>
+            <template v-if="!isLoadingRating">
+              <div class="text-subtitle1 q-mb-md text-center">
+                ¿Qué te pareció el servicio de <strong>{{ transactionToRate?.artist?.name || 'este artista' }}</strong>?
+              </div>
+              <q-rating
+                v-model="ratingValue"
+                size="3em"
+                color="yellow"
+                icon="star_border"
+                icon-selected="star"
+                no-reset
+                @update:model-value="submitTransactionRating"
+              />
+            </template>
+          </q-card-section>
         </q-card>
       </q-dialog>
 
@@ -189,13 +246,19 @@ export default {
       newMessage: "",
       activeChatPurchase: null,
       chatPolling: null,
+      isRatingModalOpen: false,
+      transactionToRate: null,
+      ratingValue: 0,
+      isLoadingRating: false,
     };
   },
   methods: {
     ...mapActions("orderDetails", [
       "viewPurchaseHistory",
       "fetchChatMessages",
-      "sendChatMessage"
+      "sendChatMessage",
+      "fetchArtistRating",
+      "submitArtistRating"
     ]),
     formatDate(rawDate) {
       const months = [
@@ -236,6 +299,66 @@ export default {
       this.selectedPurchase = purchase;
       this.showModal = true;
     },
+    eventStatusColor(status) {
+      if (status === 'completed') return 'text-green';
+      if (status === 'expired') return 'text-red';
+      return 'text-orange';
+    },
+    eventStatusLabel(status) {
+      if (status === 'completed') return 'Completado';
+      if (status === 'expired') return 'Expirado';
+      return 'Pendiente';
+    },
+    isEventCompleted(purchase) {
+      return purchase && purchase.event_status === 'completed';
+    },
+    async openRatingModal(purchase) {
+      this.transactionToRate = purchase;
+      this.ratingValue = this.getArtistRatings[purchase.id] || 0;
+      this.isRatingModalOpen = true;
+      this.isLoadingRating = true;
+
+      try {
+        await this.fetchArtistRating({
+          artistId: purchase.artist.id,
+          purchaseId: purchase.id
+        });
+        this.ratingValue = this.getArtistRatings[purchase.id] || 0;
+      } catch (e) {
+        console.error("No se pudo cargar la calificación previa", e);
+      } finally {
+        this.isLoadingRating = false;
+      }
+    },
+    async submitTransactionRating(val) {
+      if (!val || val === 0) return;
+
+      try {
+        await this.submitArtistRating({
+          artistId: this.transactionToRate.artist.id,
+          purchaseId: this.transactionToRate.id,
+          rating: val
+        });
+
+        this.$q.notify({
+          type: "positive",
+          message: "¡Calificación guardada con éxito!",
+          position: "top"
+        });
+        
+        setTimeout(() => {
+          this.isRatingModalOpen = false;
+        }, 600);
+
+      } catch (err) {
+        console.error("Error al calificar:", err);
+        this.$q.notify({
+          type: "negative",
+          message: "Error al guardar la calificación",
+          position: "top"
+        });
+      }
+    },
     async openChat(purchase) {
       this.$store.commit("orderDetails/setChatMessages", []);
       this.activeChatPurchase = purchase;
@@ -271,7 +394,7 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
-    ...mapGetters("orderDetails", ["stateListShopingCard", "getChatMessages"]),
+    ...mapGetters("orderDetails", ["stateListShopingCard", "getChatMessages", "getArtistRatings"]),
     dateOptions() {
       const currentYear = new Date().getFullYear();
       return [

@@ -184,21 +184,6 @@
               <small>Hola soy {{ artist.manager.name }}</small>
             </h3>
             <p class="info2 q-mt-md">Manager del grupo {{ artist.name }}</p>
-              <p>
-                Ofrecemos nuestros servicios al público en general. ¡Contáctame!
-              </p>
-            <p class="q-mb-sm">
-              Teléfono:
-              <q-icon name="phone" class="q-mr-sm"></q-icon>
-              <a :href="linkWhatsApp" target="_blank">
-                {{ artist.manager.phone }}
-              </a>
-            </p>
-            <p class="q-mb-sm">
-              Correo:
-              <q-icon name="mail" class="q-mr-sm"></q-icon>
-              <a :href="linkCorreo"> {{ artist.manager.email }}</a>
-            </p>
           </div>
         </div>
       </div>
