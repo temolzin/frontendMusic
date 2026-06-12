@@ -96,7 +96,6 @@
       </q-carousel>
     </div>
 
-    <!-- Inicio de Formulario para editar galeria de imagenes -->
     <section>
       <div class="q-pa-md q-gutter-sm">
         <q-dialog v-model="formGalleryEdit" persistent>
@@ -148,6 +147,63 @@
     </section>
     <!-- Fin de Formulario para editar galeria de imagenes -->
   </div>
+
+  <div class="q-mt-xl q-mb-lg">
+    <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
+      Videos
+      <q-btn round color="primary" icon="add" @click="formVideo = true" />
+    </h3>
+
+    <div v-if="artistVideos && artistVideos.length > 0" class="row q-gutter-md q-mb-lg justify-center">
+      <div
+        v-for="video in artistVideos"
+        :key="video.id"
+        class="col-12 col-md-5 relative-position"
+      >
+        <q-card class="video-card">
+          <a :href="`https://www.youtube.com/watch?v=${video.youtube_url}`" target="_blank">
+            <img :src="`https://img.youtube.com/vi/${video.youtube_url}/hqdefault.jpg`" class="video-thumb" />
+            <q-icon name="play_circle" class="play-icon" color="white" size="4rem" />
+          </a>
+          <q-card-section class="q-py-sm">
+            <div class="text-subtitle2 ellipsis">{{ video.title }}</div>
+          </q-card-section>
+        </q-card>
+        <q-btn
+          round
+          dense
+          color="negative"
+          icon="delete"
+          class="absolute-top-right q-ma-sm"
+          @click="confirmDeleteVideo(video.id)"
+        />
+      </div>
+    </div>
+
+    <p v-else :class="mode ? 'text-grey-4' : 'text-grey-7'" class="text-center">
+      Aún no has agregado videos.
+    </p>
+
+    <q-dialog v-model="formVideo" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">Agregar video de YouTube</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-input
+            v-model="newVideoUrl"
+            label="URL del video (ej: https://youtu.be/xxxxx)"
+            outlined
+            dense
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="primary" v-close-popup @click="newVideoUrl = ''" />
+          <q-btn label="Agregar" color="primary" @click="submitVideo" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
 </template>
 
 <script>
@@ -164,6 +220,8 @@ export default {
       formGalleryShow: true,
       formGallery: false,
       formGalleryEdit: false,
+      formVideo: false,
+      newVideoUrl: "",
       sub_files_paths: null,
       slide: ref(1),
       autoplay: ref(true),
@@ -176,6 +234,7 @@ export default {
     ...mapActions("galleryArtist", ["createGalleryArtist"]),
     ...mapActions("galleryArtist", ["upDateGalleryArtist"]),
     ...mapActions("galleryArtist", ["deleteGalleryArtist"]),
+    ...mapActions("videoArtist", ["getArtistVideos", "createArtistVideo", "deleteArtistVideo"]),
     
     async uploadSubImages(files) {
       try {
@@ -286,6 +345,61 @@ export default {
           }
         });
     },
+    extractYouTubeId(url) {
+      try {
+        const parsedUrl = new URL(url);
+        if (parsedUrl.hostname.includes("youtu.be")) {
+          return parsedUrl.pathname.replace("/", "");
+        }
+        if (parsedUrl.searchParams.has("v")) {
+          return parsedUrl.searchParams.get("v");
+        }
+      } catch (error) {
+        return null;
+      }
+      return null;
+    },
+    async submitVideo() {
+      if (!this.newVideoUrl.trim()) return;
+
+      try {
+        await this.createArtistVideo({ youtube_url: this.newVideoUrl });
+        await this.getArtistVideos();
+        this.$q.notify({
+          type: "positive",
+          message: "Video agregado correctamente",
+        });
+        this.newVideoUrl = "";
+        this.formVideo = false;
+      } catch (err) {
+        this.$q.notify({
+          type: "negative",
+          message: err?.response?.data?.message || "Error al agregar el video",
+        });
+      }
+    },
+    confirmDeleteVideo(id) {
+      this.$q.dialog({
+        title: "Confirmar",
+        message: "¿Eliminar este video?",
+        cancel: true,
+        persistent: true,
+      }).onOk(async () => {
+        try {
+          await this.deleteArtistVideo(id);
+          await this.getArtistVideos();
+          this.$q.notify({
+            type: "positive",
+            message: "Video eliminado",
+          });
+        } catch (err) {
+          this.$q.notify({
+            type: "negative",
+            message: "Error al eliminar el video",
+          });
+        }
+      });
+    },
     onRejected(rejectedEntries) {
       this.$q.notify({
         type: "negative",
@@ -296,6 +410,7 @@ export default {
   computed: {
     ...mapState({
       galleryArtist: (state) => state.galleryArtist.galleryArtist,
+      artistVideos: (state) => state.videoArtist.artistVideos,
     }),
     mode: function () {
       return this.$q.dark.isActive;
@@ -304,6 +419,7 @@ export default {
   mounted() {
     $q = useQuasar();
     this.gettGalleryArtist();
+    this.getArtistVideos();
   },
 };
 </script>
@@ -335,5 +451,43 @@ export default {
   font-family: "Josefin Sans", sans-serif;
   color: #e2e2e2;
   text-align: center;
+}
+
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
+.yt-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.video-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.video-thumb {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  opacity: 0.85;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
 }
 </style>

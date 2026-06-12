@@ -17,6 +17,7 @@ import shoppingCard from "./client/shoppingCard";
 import orderDetails from "./client/orderDetails";
 import favouriteArtists from "./client/favouriteArtists";
 import UsersSuscribe from "./general/UsersSuscribe";
+import videoArtist from "./artist/videoArtist";
 
 const Store = createStore({
   modules: {
@@ -37,6 +38,7 @@ const Store = createStore({
     favouriteArtists,
     UsersSuscribe,
     artistSales,
+    videoArtist,
   },
   strict: process.env.DEBUGGING,
 });
