@@ -189,7 +189,7 @@
                     @click="paymentMethod = 'card'; model = null" 
                   />
                 </div>
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6" v-if="shoppingCartTotal <= 29999">
                   <q-btn 
                     :unelevated="!paymentMethod || paymentMethod !== 'cash'"
                     :flat="paymentMethod === 'cash'" 
@@ -398,7 +398,7 @@
             <div class="row" v-if="paymentMethod === 'cash'">
               <div class="col-6 full-width">
                 <q-item>
-                  <q-select class="full-width" color="purple-12" v-model="model" :options="options"
+                  <q-select class="full-width" color="purple-12" v-model="model" :options="availableCashOptions"
                     label="Efectivo en puntos de pago" emit-value map-options>
                     <template v-slot:prepend>
                       <q-icon name="account_balance" />
@@ -1337,6 +1337,27 @@ export default defineComponent({
         return;
       }
 
+      const storeLimits = {
+        'BBVA': 29999,
+        'Santander': 29999,
+        'Hsbc': 29999,
+        'CityBanamex': 29999,
+        'Oxxo': 5000
+      };
+
+      const selectedStore = this.model;
+      const maxLimit = storeLimits[selectedStore] || 29999;
+
+      if (this.shoppingCartTotal > maxLimit) {
+        this.$q.notify({
+          type: 'warning',
+          message: `El límite máximo para pagos en efectivo en ${selectedStore} es de $${maxLimit.toLocaleString('en-US')} MXN. Por favor, utilice tarjeta.`,
+          position: 'top',
+          timeout: 6000
+        });
+        return;
+      }
+
       this.$q.loading.show({
         message: 'Generando referencia de pago...',
         spinnerColor: 'primary'
@@ -1477,6 +1498,31 @@ export default defineComponent({
       }
       return this.stateListShopingCard?.[0]?.total || 0;
     },
+    availableCashOptions() {
+      const totalAmount = this.shoppingCartTotal;
+      const storeMaxLimits = {
+        'BBVA': 29999,
+        'Santander': 29999,
+        'Hsbc': 29999,
+        'CityBanamex': 29999,
+        'Oxxo': 5000
+      };
+
+      const defaultOptions = [
+        { label: 'BBVA', value: 'BBVA' },
+        { label: 'Santander', value: 'Santander' },
+        { label: 'Hsbc', value: 'Hsbc' },
+        { label: 'CityBanamex', value: 'CityBanamex' },
+        { label: 'Oxxo', value: 'Oxxo' },
+      ];
+
+      return defaultOptions
+        .filter(option => totalAmount <= storeMaxLimits[option.value])
+        .map(option => ({
+          ...option,
+          label: `${option.label} (Max $${storeMaxLimits[option.value].toLocaleString('en-US')})`
+        }));
+    }
   },
   async created() {
     await this.initializeCheckout();
