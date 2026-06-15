@@ -610,18 +610,56 @@
     </div>
 
     <q-dialog v-model="showCashDialog" persistent>
-      <q-card style="min-width: 350px">
-        <q-card-section class="bg-primary text-white text-center">
-          <div class="text-h6">¡Referencia generada!</div>
-        </q-card-section>
-        <q-card-section class="text-center q-pt-md">
-          <div class="text-subtitle1 q-mb-sm">Realiza tu pago en: <strong>{{ cashReference?.store }}</strong></div>
-          <div class="text-h5 text-primary q-mb-sm"><strong>{{ cashReference?.reference }}</strong></div>
-          <div class="text-caption text-grey">Vence: {{ cashReference?.due_date }}</div>
-          <q-img v-if="cashReference?.barcode" :src="cashReference.barcode" style="max-width: 250px" class="q-mt-md" />
-        </q-card-section>
-        <q-card-actions align="center">
-          <q-btn rounded color="primary" label="Entendido" @click="showCashDialog = false; $router.push('/client/shopping-cart/view-my-order-details')" />
+      <q-card style="width: 420px; border-radius: 20px" class="q-pa-md">
+        <div ref="paymentReceipt" class="receipt-card">
+          <q-card-section class="text-center q-pb-none q-pt-md">
+            <img src="/logovibeer-black.png" style="height: 55px" class="q-mb-sm" />
+            <div class="text-h6 text-primary text-weight-bold">Referencia de pago</div>
+          </q-card-section>
+          <q-card-section class="text-center q-pt-md">
+            <div class="row items-center justify-center q-mb-sm">
+              <q-icon name="store" color="primary" size="sm" class="q-mr-xs" />
+              <span class="text-subtitle1">Pagar en <strong>{{ cashReference?.store }}</strong></span>
+            </div>
+            <q-card flat bordered class="q-pa-md q-my-md bg-grey-1" style="border-radius: 12px">
+              <div class="text-caption text-grey q-mb-xs">Referencia</div>
+              <div class="text-h5 text-primary text-weight-bold" style="letter-spacing: 3px">{{ cashReference?.reference }}</div>
+            </q-card>
+            <img v-if="cashReference?.barcode" :src="cashReference.barcode" style="max-width: 260px; height: 80px; object-fit: contain" class="q-mx-auto q-my-md" />
+            <div class="row q-col-gutter-md q-mt-sm">
+              <div class="col-6">
+                <div class="text-caption text-grey">Monto</div>
+                <div class="text-subtitle1 text-weight-bold">${{ (parseFloat(cashReference?.amount) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} MXN</div>
+              </div>
+              <div class="col-6">
+                <div class="text-caption text-grey">Vence</div>
+                <div class="text-subtitle1 text-weight-bold">{{ formatDueDate(cashReference?.due_date) }}</div>
+              </div>
+            </div>
+          </q-card-section>
+        </div>
+        <q-card-actions align="center" class="q-pt-md">
+          <q-btn-dropdown rounded color="primary" label="Descargar" icon="download">
+            <q-list>
+              <q-item clickable v-close-popup @click="downloadReceiptPDF">
+                <q-item-section avatar>
+                  <q-icon name="picture_as_pdf" color="red" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>PDF</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="downloadReceiptImage">
+                <q-item-section avatar>
+                  <q-icon name="image" color="green" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Imagen</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+          <q-btn rounded flat color="grey" label="Entendido" @click="showCashDialog = false; $router.push('/client/shopping-cart/view-my-order-details')" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -634,6 +672,8 @@ import { useQuasar } from "quasar";
 import { mapActions, mapState, mapGetters } from "vuex";
 import { ref } from "vue";
 import { api } from "boot/axios";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 let $q;
 
@@ -704,6 +744,15 @@ export default defineComponent({
     };
   },
   methods: {
+    formatDueDate(dateStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const time = date.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+      return `${day}/${month}/${year} ${time}`;
+    },
     castCard(card) {
       return card;
     },
@@ -1355,6 +1404,53 @@ export default defineComponent({
             number_card: "",
             expiration_date: "",
           });
+    },
+
+    async captureReceipt() {
+      return await html2canvas(this.$refs.paymentReceipt, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        allowTaint: false,
+      });
+    },
+
+    async downloadReceiptImage() {
+      this.$q.loading.show({ message: 'Descargando imagen...', spinnerColor: 'primary' });
+      try {
+        const canvas = await this.captureReceipt();
+        const ref = this.cashReference?.reference || 'referencia';
+        const link = document.createElement('a');
+        link.download = `${ref}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        this.$q.notify({ type: 'positive', message: 'Imagen descargada', position: 'top' });
+      } catch (err) {
+        console.error(err);
+        this.$q.notify({ type: 'negative', message: 'Error al descargar la imagen', position: 'top' });
+      } finally {
+        this.$q.loading.hide();
+      }
+    },
+
+    async downloadReceiptPDF() {
+      this.$q.loading.show({ message: 'Descargando PDF...', spinnerColor: 'primary' });
+      try {
+        const canvas = await this.captureReceipt();
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const ref = this.cashReference?.reference || 'referencia';
+        pdf.save(`${ref}.pdf`);
+        this.$q.notify({ type: 'positive', message: 'PDF descargado', position: 'top' });
+      } catch (err) {
+        console.error(err);
+        this.$q.notify({ type: 'negative', message: 'Error al descargar el PDF', position: 'top' });
+      } finally {
+        this.$q.loading.hide();
+      }
     }
   },
   computed: {
