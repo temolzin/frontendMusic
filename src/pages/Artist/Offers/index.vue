@@ -162,11 +162,10 @@ export default {
 
     async submitForm() {
       try {
-        if (this.editingOffer) {
-          await this.updateOffer({ id: this.editingOffer.id, data: this.form });
-        } else {
-          await this.createOffer(this.form);
-        }
+         const action = this.editingOffer
+            ? this.updateOffer({ id: this.editingOffer.id, data: this.form })
+            : this.createOffer(this.form);
+        await action;
         this.$q.notify({ type: "positive", message: "Oferta guardada correctamente" });
         this.formDialog = false;
       } catch (err) {
