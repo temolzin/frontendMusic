@@ -210,6 +210,17 @@ const routes = [
           permissions: ["view-profile-artist"],
         },
       },
+      {
+        name: "artist.offers",
+        path: "/artist/offers",
+        component: () => import("pages/Artist/Offers/index.vue"),
+        meta: {
+          title: "Mis Ofertas",
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-profile-artist"],
+        },
+      },
       // Fin de rutas del artista
 
       // Rutas del cliente

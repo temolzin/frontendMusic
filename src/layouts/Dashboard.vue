@@ -172,6 +172,13 @@
             <q-item-section>Mi Calendario</q-item-section>
           </q-item>
 
+          <q-item clickable v-ripple to="/artist/offers" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold">
+            <q-item-section avatar>
+              <q-icon name="local_offer" />
+            </q-item-section>
+            <q-item-section>Mis Ofertas</q-item-section>
+          </q-item>
+
           <q-item
             v-show="false"
             clickable
