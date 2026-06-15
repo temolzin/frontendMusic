@@ -189,7 +189,7 @@
                     @click="paymentMethod = 'card'; model = null" 
                   />
                 </div>
-                <div class="col-12 col-md-6" v-if="shoppingCartTotal <= 19000">
+                <div class="col-12 col-md-6" v-if="shoppingCartTotal <= 29999">
                   <q-btn 
                     :unelevated="!paymentMethod || paymentMethod !== 'cash'"
                     :flat="paymentMethod === 'cash'" 
@@ -1289,15 +1289,15 @@ export default defineComponent({
       }
 
       const storeLimits = {
-        'BBVA': 19000,
-        'Santander': 10000,
-        'Hsbc': 10000,
-        'CityBanamex': 18000,
+        'BBVA': 29999,
+        'Santander': 29999,
+        'Hsbc': 29999,
+        'CityBanamex': 29999,
         'Oxxo': 5000
       };
 
       const selectedStore = this.model;
-      const maxLimit = storeLimits[selectedStore] || 19000;
+      const maxLimit = storeLimits[selectedStore] || 29999;
 
       if (this.shoppingCartTotal > maxLimit) {
         this.$q.notify({
@@ -1405,10 +1405,10 @@ export default defineComponent({
     availableCashOptions() {
       const totalAmount = this.shoppingCartTotal;
       const storeMaxLimits = {
-        'BBVA': 19000,
-        'Santander': 10000,
-        'Hsbc': 10000,
-        'CityBanamex': 18000,
+        'BBVA': 29999,
+        'Santander': 29999,
+        'Hsbc': 29999,
+        'CityBanamex': 29999,
         'Oxxo': 5000
       };
 
