@@ -13,8 +13,6 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.4",
     "core-js": "^3.6.5",
-    "html2canvas": "^1.4.1",
-    "jspdf": "^4.2.1",
     "openpay": "^1.0.5",
     "quasar": "^2.0.0",
     "vue-i18n": "^9.0.0",
