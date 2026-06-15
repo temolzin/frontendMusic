@@ -162,7 +162,7 @@ export default {
 
     async submitForm() {
       try {
-         const action = this.editingOffer
+        const action = this.editingOffer
             ? this.updateOffer({ id: this.editingOffer.id, data: this.form })
             : this.createOffer(this.form);
         await action;
