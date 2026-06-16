@@ -50,8 +50,20 @@
                 </div>
                 <div class="col-12">
                   <q-item>
+                    <q-toggle
+                      v-model="googleMapsEnabled"
+                      label="¿Deseas ubicar tu evento en el mapa?"
+                      color="primary"
+                      @update:model-value="onToggleMap"
+                    />
+                  </q-item>
+                </div>
+                <div class="col-12">
+                  <q-item>
                     <q-input dense outlined type="text" v-model="formClient.adress_line2" class="full-width"
-                      label="Domicilio *" :rules="[
+                      label="Domicilio *"
+                      :disable="googleMapsEnabled"
+                      :rules="googleMapsEnabled ? [] : [
                         (val) => !!val || 'El domicilio es requerido',
                         (val) => val.trim().length >= 5 || 'El domicilio debe tener al menos 5 caracteres'
                       ]" required />
@@ -60,7 +72,8 @@
                 <div class="col-6">
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.city" label="Cuidad *"
-                      :rules="[
+                      :disable="googleMapsEnabled"
+                      :rules="googleMapsEnabled ? [] : [
                         (val) => !!val || 'La ciudad es requerida',
                         (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'La ciudad solo puede contener letras'
                       ]" required />
@@ -69,7 +82,9 @@
                 <div class="col-6">
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.state_city"
-                      label="Municipio" :rules="[
+                      label="Municipio"
+                      :disable="googleMapsEnabled"
+                      :rules="googleMapsEnabled ? [] : [
                         (val) => !!val || 'El estado es requerido',
                         (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El estado solo puede contener letras'
                       ]" required />
@@ -79,7 +94,8 @@
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.zip_code"
                       label="Codigo Postal" maxlength="5" @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
-                      :rules="[
+                      :disable="googleMapsEnabled"
+                      :rules="googleMapsEnabled ? [] : [
                         (val) => /^[0-9]+$/.test(val) || 'Solo se permiten números',
                         (val) => val.toString().length === 5 || 'El código postal debe tener exactamente 5 dígitos'
                       ]" required />
@@ -88,10 +104,23 @@
                 <div class="col-6">
                   <q-item>
                     <q-input dense outlined type="text" v-model="formClient.country" label="Pais *" class="full-width"
-                      :rules="[
+                      :disable="googleMapsEnabled"
+                      :rules="googleMapsEnabled ? [] : [
                         (val) => !!val || 'El país es requerido',
                         (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El país solo puede contener letras'
                       ]" required />
+                  </q-item>
+                </div>
+                <div v-if="googleMapsEnabled" class="col-12">
+                  <q-item>
+                    <q-card flat bordered class="full-width">
+                      <q-card-section class="q-pa-sm text-center text-grey-7">
+                        <small>Arrastra el marcador para ajustar la ubicación</small>
+                      </q-card-section>
+                      <q-card-section class="q-pa-sm">
+                        <div ref="mapContainer" style="width: 100%; height: 320px; border-radius: 4px;"></div>
+                      </q-card-section>
+                    </q-card>
                   </q-item>
                 </div>
                 <div class="col-6">
@@ -741,6 +770,13 @@ export default defineComponent({
       occupiedDates: ref([]),
       cashReference: ref(null),
       showCashDialog: ref(false),
+      googleMapsEnabled: ref(false),
+      latitude: ref(null),
+      longitude: ref(null),
+      googlePlaceId: ref(null),
+      googleMapsLoaded: ref(false),
+      userPosition: ref(null),
+      googleMapsApiKey: ref(null),
     };
   },
   methods: {
@@ -1219,7 +1255,13 @@ export default defineComponent({
                   country: "MX",
                   event_date: this.formClient.event_date,
                   event_hour: this.formClient.event_hour,
+                  latitude: this.latitude,
+                  longitude: this.longitude,
+                  google_place_id: this.googlePlaceId,
                 },
+                latitude: this.latitude,
+                longitude: this.longitude,
+                google_place_id: this.googlePlaceId,
                 event_date: this.formClient.event_date,
                 event_hour: this.formClient.event_hour,
                 artistList: artistList,
@@ -1361,7 +1403,13 @@ export default defineComponent({
             zip_code: this.formClient.zip_code,
             event_date: this.formClient.event_date,
             event_hour: this.formClient.event_hour,
+            latitude: this.latitude,
+            longitude: this.longitude,
+            google_place_id: this.googlePlaceId,
           },
+          latitude: this.latitude,
+          longitude: this.longitude,
+          google_place_id: this.googlePlaceId,
           artistList,
         };
 
@@ -1451,7 +1499,146 @@ export default defineComponent({
       } finally {
         this.$q.loading.hide();
       }
-    }
+    },
+
+    onToggleMap(val) {
+      val
+        ? this.loadGoogleMapsApi().then(() => {
+            this.getCurrentPosition()
+              .then((pos) => {
+                this.userPosition = pos;
+                this.$nextTick(() => this.initMap());
+              })
+              .catch(() => {
+                this.$nextTick(() => this.initMap());
+              });
+          }).catch((err) => {
+            console.error('Error loading Google Maps API:', err);
+            this.$q.notify({ type: 'negative', message: 'Error al cargar Google Maps', position: 'top' });
+            this.googleMapsEnabled = false;
+          })
+        : (this.latitude = null,
+           this.longitude = null,
+           this.googlePlaceId = null);
+    },
+
+    getCurrentPosition() {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error('Geolocation no soportada'));
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          }),
+          () => reject(new Error('No se pudo obtener la ubicación')),
+          { timeout: 5000, enableHighAccuracy: true }
+        );
+      });
+    },
+
+    async loadGoogleMapsApi() {
+      if (window.google && window.google.maps) {
+        this.googleMapsLoaded = true;
+        return window.google.maps;
+      }
+
+      let apiKey = this.googleMapsApiKey;
+      if (!apiKey) {
+        const resp = await api.get('/api/google-maps-key');
+        apiKey = resp.data?.data?.google_maps_api_key;
+        this.googleMapsApiKey = apiKey;
+      }
+
+      if (!apiKey) {
+        throw new Error('GOOGLE_MAPS_API_KEY no configurada');
+      }
+
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          this.googleMapsLoaded = true;
+          resolve(window.google.maps);
+        };
+        script.onerror = () => reject(new Error('Error al cargar Google Maps API'));
+        document.head.appendChild(script);
+      });
+    },
+
+    fillAddressFromGeocodeResult(result) {
+      this.googlePlaceId = result.place_id || null;
+      this.formClient.adress_line2 = result.formatted_address || '';
+
+      const componentMap = {};
+      for (const comp of result.address_components) {
+        componentMap[comp.types[0]] = comp.long_name;
+      }
+
+      this.formClient.city = componentMap['locality'] || componentMap['sublocality'] || componentMap['postal_town'] || '';
+      this.formClient.state_city = componentMap['administrative_area_level_1'] || componentMap['administrative_area_level_2'] || '';
+      this.formClient.zip_code = componentMap['postal_code'] || '';
+      this.formClient.country = componentMap['country'] || 'México';
+    },
+
+    initMap() {
+      if (!this.$refs.mapContainer) return;
+
+      const defaultPos = this.userPosition || { lat: 19.4326, lng: -99.1332 };
+
+      this.initMapAtPosition(defaultPos);
+    },
+
+    initMapAtPosition(position) {
+      if (!this.$refs.mapContainer || !window.google) return;
+
+      this.mapInstance = new google.maps.Map(this.$refs.mapContainer, {
+        center: position,
+        zoom: 15,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        clickableIcons: false,
+      });
+
+      this.markerInstance = new google.maps.Marker({
+        map: this.mapInstance,
+        position: position,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+      });
+
+      const onMarkerMoved = (latLng) => {
+        this.latitude = latLng.lat();
+        this.longitude = latLng.lng();
+
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: { lat: this.latitude, lng: this.longitude } }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            this.fillAddressFromGeocodeResult(results[0]);
+          }
+        });
+      };
+
+      this.markerInstance.addListener('dragend', () => {
+        onMarkerMoved(this.markerInstance.getPosition());
+      });
+
+      this.mapInstance.addListener('click', (e) => {
+        this.markerInstance.setPosition(e.latLng);
+        this.mapInstance.panTo(e.latLng);
+        onMarkerMoved(e.latLng);
+      });
+
+      if (!this.latitude) {
+        this.latitude = position.lat;
+        this.longitude = position.lng;
+      }
+    },
   },
   computed: {
     ...mapGetters("card", ["stateUserCards"]),
