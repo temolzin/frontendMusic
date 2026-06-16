@@ -218,7 +218,7 @@
                       @input="selectCard(cards)"></q-radio>
                     <div class="card-2 col-12 col-sm-3 col-md-4 q-ma-sm">
                       <div class="card__front card__part_modal">
-                        <img class="card__square" src="https://conta.nubank.com.br/images/nu-white.png" />
+                        <img class="card__square" src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png" />
                         <p class="card_numer">{{ castCard(cards).number_card }}</p>
                         <div class="card__space-75">
                           <span class="card__label">Nombre de la Tarjeta</span>
@@ -329,7 +329,7 @@
 
               <div class="card col-12 col-sm-3 col-md-4 q-ma-sm" @click="selectedCard.id ? basic = true : null" :style="selectedCard.id ? 'cursor: pointer;' : ''">
                 <div class="card__front card__part">
-                  <img class="card__square" src="https://conta.nubank.com.br/images/nu-white.png" />
+                  <img class="card__square" src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png" />
                   <p class="card_numer">{{ selectedCard.number_card || 'Selecciona una tarjeta' }}</p>
                   <div class="card__space-75">
                     <span class="card__label">Nombre de la Tarjeta</span>
