@@ -457,18 +457,29 @@
             <div class="row">
               <div class="col-12">
                 <q-item-label header class="text-h6">Detalles de la Orden</q-item-label>
-                <q-item class="full-width" v-for="(product, index) in shoppingCardDetail"
-                  :key="index">
-                  <q-item-section class="r">
-                    <q-item-label>{{ castProduct(product).artist.name }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section class="" middle>
-                    <q-item-label>Total de {{ castProduct(product).hours }} hora(s)</q-item-label>
-                  </q-item-section>
-                  <q-item-section class="text-right" side>
-                    {{ "$ " + castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                  </q-item-section>
-                </q-item>
+                <template v-for="(product, index) in shoppingCardDetail" :key="index">
+                  <q-item class="full-width">
+                    <q-item-section class="r">
+                      <q-item-label>{{ castProduct(product).artist.name }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section class="" middle>
+                      <q-item-label>Total de {{ castProduct(product).hours }} hora(s)</q-item-label>
+                    </q-item-section>
+                    <q-item-section class="text-right" side>
+                      {{ "$ " + castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                    </q-item-section>
+                  </q-item>
+                  <q-item v-if="getExtraKmForProduct(product)" class="full-width q-pl-lg text-caption text-grey">
+                    <q-item-section>
+                      <q-item-label>
+                        Km extra: {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km x ${{ (+getExtraKmForProduct(product).extra_kilometre || 0).toFixed(2) }}
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      + ${{ (+getExtraKmForProduct(product).extra_km_cost || 0).toFixed(2) }}
+                    </q-item-section>
+                  </q-item>
+                </template>
                 <q-separator></q-separator>
 
                 <q-item class="full-width">
@@ -485,7 +496,7 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    {{ "MXN " + shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}
+                    {{ "MXN " + (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}
                   </q-item-section>
                 </q-item>
               </div>
@@ -551,7 +562,7 @@
                     <q-icon name="paid" color="positive" size="xs" class="q-mr-sm" />
                     <span class="text-caption text-grey-7">Total a cobrar</span>
                     <span class="text-caption text-weight-bold text-positive q-ml-sm">
-                      ${{ shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} MXN
+                      ${{ (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} MXN
                     </span>
                   </div>
                 </div>
@@ -571,7 +582,7 @@
                     <q-icon name="paid" color="positive" size="xs" class="q-mr-sm" />
                     <span class="text-caption text-grey">Total a pagar</span>
                     <span class="text-caption text-weight-bold text-positive q-ml-sm">
-                      ${{ shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} MXN
+                      ${{ (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} MXN
                     </span>
                   </div>
                 </div>
@@ -630,7 +641,7 @@
               <div class="col-12 col-sm-3 col-md-4 text-center text-h6">
                 TOTAL:
                 <span class="text-right">{{ "$ " +
-                  shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}</span>
+                  (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}</span>
               </div>
             </div>
           </q-card-section>
@@ -777,6 +788,7 @@ export default defineComponent({
       googleMapsLoaded: ref(false),
       userPosition: ref(null),
       googleMapsApiKey: ref(null),
+      extraKmDataList: ref({}),
     };
   },
   methods: {
@@ -1604,6 +1616,7 @@ export default defineComponent({
       this.formClient.state_city = componentMap['administrative_area_level_1'] || componentMap['administrative_area_level_2'] || '';
       this.formClient.zip_code = componentMap['postal_code'] || '';
       this.formClient.country = componentMap['country'] || 'México';
+      this.$nextTick(() => this.fetchExtraKmPreview());
     },
 
     initMap() {
@@ -1660,6 +1673,44 @@ export default defineComponent({
         this.longitude = position.lng;
       }
     },
+
+    getExtraKmForProduct(product) {
+      const p = this.castProduct(product);
+      if (!p || !p.artist_id) return null;
+      return this.extraKmDataList[p.artist_id] || null;
+    },
+
+    async fetchExtraKmPreview() {
+      if (!this.latitude || !this.longitude) return;
+
+      this.extraKmDataList = {};
+
+      const items = this.isQuickBuy
+        ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours }]
+        : this.shoppingCardDetail.map((e) => ({ artist_id: e.artist_id, hours: e.hours }));
+
+      for (const item of items) {
+        try {
+          const resp = await api.get('/api/payment/preview-extra-km', {
+            params: {
+              artist_id: item.artist_id,
+              hours: item.hours,
+              latitude: this.latitude,
+              longitude: this.longitude,
+            },
+          });
+
+          if (resp.data?.success) {
+            this.extraKmDataList = {
+              ...this.extraKmDataList,
+              [item.artist_id]: resp.data.data,
+            };
+          }
+        } catch (err) {
+          console.error('Error fetching extra km preview:', err);
+        }
+      }
+    },
   },
   computed: {
     ...mapGetters("card", ["stateUserCards"]),
@@ -1681,9 +1732,12 @@ export default defineComponent({
     },
     shoppingCartTotal() {
       if (this.isQuickBuy && this.quickBuyData) {
-        return this.quickBuyData.price;
+        return parseFloat(this.quickBuyData.price) || 0;
       }
-      return this.stateListShopingCard?.[0]?.total || 0;
+      return parseFloat(this.stateListShopingCard?.[0]?.total) || 0;
+    },
+    totalExtraKmCost() {
+      return Object.values(this.extraKmDataList).reduce((sum, item) => sum + (parseFloat(item.extra_km_cost) || 0), 0);
     },
     availableCashOptions() {
       const totalAmount = this.shoppingCartTotal;
