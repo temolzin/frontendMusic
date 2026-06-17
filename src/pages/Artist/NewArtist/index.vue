@@ -1256,8 +1256,13 @@ export default {
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ location: { lat: this.latitude, lng: this.longitude } }, (results, status) => {
           if (status === 'OK' && results[0]) {
-            const addr = results[0].formatted_address || '';
-            this.formCreate.zone = addr;
+            const components = {};
+            for (const comp of results[0].address_components) {
+              components[comp.types[0]] = comp.long_name;
+            }
+            const city = components['locality'] || components['sublocality'] || components['postal_town'] || '';
+            const state = components['administrative_area_level_1'] || '';
+            this.formCreate.zone = city ? `${city}, ${state}` : state || results[0].formatted_address;
           }
         });
       };
