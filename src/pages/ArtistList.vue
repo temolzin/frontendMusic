@@ -104,9 +104,22 @@
 
               <q-card-section class="q-pt-none">
                 <div class="text-subtitle1">
-                  <span class="text-h5 text-primary text-weight-bold">
-                    ${{ props.row.price_hour }}.00
-                  </span>
+                  <template v-if="props.row.offers && props.row.offers.length > 0">
+                    <q-badge color="orange" class="q-mb-xs">
+                      {{ formatDiscount(props.row.offers[0].discount_percentage) }}% de descuento
+                    </q-badge><br/>
+                    <span class="text-h5 text-positive text-weight-bold">
+                      ${{ Math.round(props.row.price_hour * (1 - props.row.offers[0].discount_percentage / 100)).toLocaleString('es-MX') }}.00
+                    </span>
+                    <small style="text-decoration: line-through" class="text-red q-ml-xs">
+                      ${{ props.row.price_hour }}.00
+                    </small>
+                  </template>
+                  <template v-else>
+                    <span class="text-h5 text-primary text-weight-bold">
+                      ${{ props.row.price_hour }}.00
+                    </span>
+                  </template>
                   <small> pesos por hora</small>
                 </div>
                 <div class="text-caption text-grey ellipsis">
@@ -170,8 +183,13 @@
         }),
       };
     },
-    created() {
-      this.getArtistss();
+    watch: {
+      '$route.query': {
+        immediate: true,
+        handler() {
+          this.getArtistss();
+        }
+      }
     },
     computed: {
       ...mapGetters("artistList", ["stateArtistList"]),
@@ -212,7 +230,11 @@
       filteredData() {
         let filtered = this.stateArtistList;
 
-        if (this.filterName ) {
+        if (this.$route.query.offers === 'true') {
+          filtered = filtered.filter(a => a.offers && a.offers.length > 0);
+        }
+
+        if (this.filterName) {
           filtered = filtered.filter(item =>
             item.name.toLowerCase().includes(this.filterName.toLowerCase())
           );
@@ -260,7 +282,10 @@
           }
         }
       },
-      
+      formatDiscount(value) {
+        const num = parseFloat(value);
+        return num % 1 === 0 ? parseInt(num) : num;
+      },
     },
     mounted() {
       $q = useQuasar();

@@ -99,13 +99,20 @@
                 </div>
               </div>
               <h4 class="q-ma-none text-center q-mt-sm text-primary">
-                $ {{ formatMoney(artist.price_hour) }}
-                <small
-                  style="font-size: 20px; text-decoration: line-through"
-                  class="text-red q-ml-sm"
-                >
-                  $ {{ formatMoney(parseFloat(artist.price_hour) + 200) }}
-                </small>
+                <template v-if="activeOffer">
+                  <q-badge color="orange" class="q-mb-sm" style="font-size:13px">
+                      {{ formatDiscount(activeOffer.discount_percentage) }}% de descuento
+                  </q-badge>
+                  <div class="text-caption text-grey-7 q-mt-xs">{{ activeOffer.description }}</div>
+                  <br />
+                  $ {{ formatMoney(discountedPrice) }}
+                  <small style="font-size: 20px; text-decoration: line-through" class="text-red q-ml-sm">
+                    $ {{ formatMoney(artist.price_hour) }}
+                  </small>
+                </template>
+                <template v-else>
+                  $ {{ formatMoney(artist.price_hour) }}
+                </template>
               </h4>
               <h6 class="q-mt-sm text-weight-bold q-mb-sm">
                 Detalles del grupo:
@@ -124,7 +131,15 @@
               <div class="q-mt-sm">
                 <q-icon name="money" class="q-mt-none" />
                 <span class="q-ml-sm q-mt-md">
-                  $ {{ formatMoney(artist.price_hour) }} por hora
+                  <template v-if="activeOffer">
+                    $ {{ formatMoney(discountedPrice) }} por hora
+                    <small style="text-decoration: line-through" class="text-red q-ml-xs">
+                      $ {{ formatMoney(artist.price_hour) }}
+                    </small>
+                  </template>
+                  <template v-else>
+                    $ {{ formatMoney(artist.price_hour) }} por hora
+                  </template>
                 </span>
               </div>
               <div class="q-mt-sm">
@@ -354,7 +369,10 @@ export default {
       const formData = new FormData();
       formData.append("service_id", artist.id);
       formData.append("name", artist.name);
-      formData.append("price", artist.price_hour);
+      const finalPrice = this.activeOffer 
+        ? this.discountedPrice 
+        : artist.price_hour;
+      formData.append("price", finalPrice);
       formData.append("hours", this.hours);
       formData.append("order_date_start", this.printDateStart());
       formData.append("order_date_finish", this.printDateFinish());
@@ -373,7 +391,7 @@ export default {
         id: artist.id,
         name: artist.name,
         image: artist.image,
-        price_hour: artist.price_hour,
+        price_hour: this.activeOffer ? this.discountedPrice : artist.price_hour,
         zone: artist.zone,
         members: artist.members,
         manager: artist.manager,
@@ -467,6 +485,10 @@ export default {
       const num = Number(value || 0);
       return num.toLocaleString('es-MX');
     },
+    formatDiscount(value) {
+      const num = parseFloat(value);
+      return num % 1 === 0 ? parseInt(num) : num;
+    },
   },
   created() {
     this.slug = this.$route.params.slugA;
@@ -483,6 +505,14 @@ export default {
     ...mapGetters("shoppingCard", ["stateListShopingCard"]),
     mode: function () {
       return this.$q.dark.isActive;
+    },
+    activeOffer() {
+      return this.artist?.offers?.[0] ?? null;
+    },
+    discountedPrice() {
+      if (!this.activeOffer) return null;
+      const discount = this.activeOffer.discount_percentage / 100;
+      return this.artist.price_hour * (1 - discount);
     },
   },
   mounted() {
