@@ -38,11 +38,15 @@ export const deleteItembyId= async ({ dispatch }, artist_id) => {
 
 export const createPayment = async ({ dispatch }, payload) => {
   try {
-    const response = await api.post("/api/process-payment", payload);
-    return response.data;
-  } catch (error) {
-    console.error("Error en createPayment:", error);
-    throw error;
+    const response = await api.post('/api/process-payment', payload);
+    return response;
+  } catch (err) {
+    if (err.response && err.response.data) {
+      const customError = new Error(err.response.data.error || err.response.data.message || "Error en el servidor");
+      customError.response = err.response; 
+      throw customError;
+    }
+    throw err;
   }
 };
 

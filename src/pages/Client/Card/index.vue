@@ -17,7 +17,7 @@
             <!-- Inicio de logo izquierdo -->
             <img
               class="card__square"
-              src="https://conta.nubank.com.br/images/nu-white.png"
+              src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png"
             />
             <!-- Fin de logo izquierdo -->
 

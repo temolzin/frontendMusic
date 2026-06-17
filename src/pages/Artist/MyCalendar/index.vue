@@ -137,6 +137,9 @@
                               <span class="detail-label">Código Postal:</span>
                               <span class="detail-value">{{ event.customerZipCode }}</span>
                             </div>
+                            <div class="q-mt-sm">
+                              <q-btn dense outline color="secondary" icon="map" label="Cómo llegar" size="sm" @click.stop="openGoogleMaps(event)" />
+                            </div>
                             <q-separator class="q-my-md" />
                             <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
                             <div class="detail-item q-mb-sm">
@@ -245,6 +248,9 @@
                             <div class="detail-item q-mb-sm">
                               <span class="detail-label">Código Postal:</span>
                               <span class="detail-value">{{ event.customerZipCode }}</span>
+                            </div>
+                            <div class="q-mt-sm">
+                              <q-btn dense outline color="secondary" icon="map" label="Cómo llegar" size="sm" @click.stop="openGoogleMaps(event)" />
                             </div>
                             <q-separator class="q-my-md" />
                             <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
@@ -441,6 +447,18 @@ export default defineComponent({
           position: 'top',
         });
       }
+    },
+
+    openGoogleMaps(event) {
+      const address = [
+        event.customerAddress,
+        event.customerCity,
+        event.customerState,
+        event.customerZipCode,
+        'México'
+      ].filter(Boolean).join(', ');
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+      window.open(url, '_blank');
     },
 
     statusColor(status) {

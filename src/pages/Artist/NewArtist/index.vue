@@ -68,16 +68,30 @@
                     'Excediste el número máximo de caracteres',
                 ]"
               />
-              <q-input
-                v-model="formCreate.zone"
-                class="col-12 col-sm-10 q-ma-sm"
-                label="Zona donde te ubicas"
-                hint="Ingresa la colonia, municipio, estado donde te ubicas"
-                lazy-rules
-                :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
-                ]"
-              />
+              <div class="col-12 col-sm-10 q-ma-sm">
+                <q-input
+                  v-model="formCreate.zone"
+                  class="col-12 q-mb-sm"
+                  label="Zona donde te ubicas"
+                  hint="Ingresa la colonia, municipio, estado donde te ubicas"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
+                  ]"
+                />
+                <q-toggle
+                  v-model="googleMapsEnabled"
+                  label="Usar mapa para ubicación"
+                  color="primary"
+                  @click="onGoogleMapsToggle"
+                />
+                <div
+                  v-show="googleMapsEnabled"
+                  ref="mapContainer"
+                  class="q-mt-sm"
+                  style="width: 100%; height: 300px; border-radius: 8px;"
+                ></div>
+              </div>
               <q-input
                 v-model="formCreate.price_hour"
                 class="col-12 col-sm-5 q-ma-sm"
@@ -103,6 +117,18 @@
                   (val) =>
                     (val && val.length > 0) ||
                     'Por favor, ingresa número válido',
+                ]"
+              />
+
+              <q-input
+                v-model="formCreate.coverage_radius"
+                class="col-12 col-sm-5 q-ma-sm"
+                label="Radio de cobertura (km)"
+                hint="Distancia en km que cubres sin costo extra"
+                type="number"
+                lazy-rules
+                :rules="[
+                  (val) => val >= 0 || 'El radio debe ser 0 o mayor',
                 ]"
               />
 
@@ -489,16 +515,30 @@
                     'Excediste el número máximo de caracteres',
                 ]"
               />
-              <q-input
-                v-model="formCreate.zone"
-                class="col-12 col-sm-10 q-ma-sm"
-                label="Zona donde te ubicas"
-                hint="Ingresa la colonia, municipio, estado donde te ubicas"
-                lazy-rules
-                :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
-                ]"
-              />
+              <div class="col-12 col-sm-10 q-ma-sm">
+                <q-input
+                  v-model="formCreate.zone"
+                  class="col-12 q-mb-sm"
+                  label="Zona donde te ubicas"
+                  hint="Ingresa la colonia, municipio, estado donde te ubicas"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
+                  ]"
+                />
+                <q-toggle
+                  v-model="googleMapsEnabled"
+                  label="Usar mapa para ubicación"
+                  color="primary"
+                  @click="onGoogleMapsToggle"
+                />
+                <div
+                  v-show="googleMapsEnabled"
+                  ref="mapContainer"
+                  class="q-mt-sm"
+                  style="width: 100%; height: 300px; border-radius: 8px;"
+                ></div>
+              </div>
               <q-input
                 v-model="formCreate.price_hour"
                 class="col-12 col-sm-5 q-ma-sm"
@@ -524,6 +564,18 @@
                   (val) =>
                     (val && val.length > 0) ||
                     'Por favor ingresa un número válido',
+                ]"
+              />
+
+              <q-input
+                v-model="formCreate.coverage_radius"
+                class="col-12 col-sm-5 q-ma-sm"
+                label="Radio de cobertura (km)"
+                hint="Distancia en km que cubres sin costo extra"
+                type="number"
+                lazy-rules
+                :rules="[
+                  (val) => val >= 0 || 'El radio debe ser 0 o mayor',
                 ]"
               />
               <div class="col-12 col-sm-12 col-md-12 q-pa-md">
@@ -743,6 +795,7 @@
 import { mapActions, mapState } from "vuex";
 import { useQuasar } from "quasar";
 import NoticeGallery from "src/components/Artist/NoticeGallery.vue";
+import { api } from "boot/axios";
 
 let $q = useQuasar();
 
@@ -765,6 +818,7 @@ export default {
         price_hour: "",
         image_artist: [],
         extra_kilometre: "",
+        coverage_radius: 0,
         name_manager: "",
         phone_manager: "",
         email_manager: "",
@@ -772,6 +826,10 @@ export default {
         selection: [],
         social_media: [{ name: "", url: "" }],
       },
+      googleMapsEnabled: false,
+      googleMapsLoaded: false,
+      latitude: null,
+      longitude: null,
       linkWhatsApp: "",
       linkCorreo: "",
       socialMediaOptions: [
@@ -876,6 +934,7 @@ export default {
               "extra_kilometre",
               this.formCreate.extra_kilometre
             );
+            InstFormData.append("coverage_radius", this.formCreate.coverage_radius);
             InstFormData.append("name_manager", this.formCreate.name_manager);
             InstFormData.append("phone_manager", this.formCreate.phone_manager);
             InstFormData.append("email_manager", this.formCreate.email_manager);
@@ -957,6 +1016,7 @@ export default {
       this.formCreate.price_hour = null;
       this.formCreate.image_manager = [];
       this.formCreate.extra_kilometre = null;
+      this.formCreate.coverage_radius = 0;
       this.formCreate.name_manager = null;
       this.formCreate.phone_manager = [];
       this.formCreate.email_manager = null;
@@ -981,6 +1041,7 @@ export default {
       this.formCreate.zone = this.artist.zone;
       this.formCreate.price_hour = this.artist.price_hour;
       this.formCreate.extra_kilometre = this.artist.extra_kilometre;
+      this.formCreate.coverage_radius = this.artist.coverage_radius || 0;
       this.formCreate.social_media = this.artist.social_media ? [...this.artist.social_media] : [];
 
       let selected = [this.artist];
@@ -1034,6 +1095,7 @@ export default {
             "extra_kilometre",
             this.formCreate.extra_kilometre
           );
+          InstFormData.append("coverage_radius", this.formCreate.coverage_radius);
           InstFormData.append("name_manager", this.formCreate.name_manager);
           InstFormData.append("phone_manager", this.formCreate.phone_manager);
           InstFormData.append("email_manager", this.formCreate.email_manager);
@@ -1132,6 +1194,88 @@ export default {
       this.showEdit = "false";
       this.showInfo = "false";
       this.onReset();
+    },
+
+    async loadGoogleMapsApi() {
+      if (window.google && window.google.maps) {
+        this.googleMapsLoaded = true;
+        return;
+      }
+      try {
+        const resp = await api.get('/api/google-maps-key');
+        const key = resp.data?.data?.google_maps_api_key;
+        if (!key) return;
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places&language=es&v=3`;
+          script.async = true;
+          script.defer = true;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+        this.googleMapsLoaded = true;
+      } catch (e) {
+        console.error('Error loading Google Maps:', e);
+      }
+    },
+
+    async onGoogleMapsToggle() {
+      if (!this.googleMapsEnabled) return;
+      await this.loadGoogleMapsApi();
+      if (!this.googleMapsLoaded) return;
+      setTimeout(() => this.initMap(), 500);
+    },
+
+    initMap() {
+      if (!this.$refs.mapContainer || !window.google) return;
+      const pos = { lat: 19.4326, lng: -99.1332 };
+      this.initMapAtPosition(pos);
+    },
+
+    initMapAtPosition(position) {
+      if (!this.$refs.mapContainer || !window.google) return;
+      this.mapInstance = new google.maps.Map(this.$refs.mapContainer, {
+        center: position,
+        zoom: 15,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        clickableIcons: false,
+      });
+      this.markerInstance = new google.maps.Marker({
+        map: this.mapInstance,
+        position: position,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+      });
+
+      const onMarkerMoved = (latLng) => {
+        this.latitude = latLng.lat();
+        this.longitude = latLng.lng();
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: { lat: this.latitude, lng: this.longitude } }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            const components = {};
+            for (const comp of results[0].address_components) {
+              components[comp.types[0]] = comp.long_name;
+            }
+            const city = components['locality'] || components['sublocality'] || components['postal_town'] || '';
+            const state = components['administrative_area_level_1'] || '';
+            this.formCreate.zone = city ? `${city}, ${state}` : state || results[0].formatted_address;
+          }
+        });
+      };
+
+      this.markerInstance.addListener('dragend', () => {
+        onMarkerMoved(this.markerInstance.getPosition());
+      });
+
+      this.mapInstance.addListener('click', (e) => {
+        this.markerInstance.setPosition(e.latLng);
+        this.mapInstance.panTo(e.latLng);
+        onMarkerMoved(e.latLng);
+      });
     },
   },
   computed: {

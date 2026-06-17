@@ -64,7 +64,8 @@
       <div class="col-lg-12 col-md-7 col-sm-12 col-xs-12">
         <q-table grid card-class="bg-primary text-white" :rows="filteredData()" :columns="columns" row-key="name"
           no-data-label="Sin registros" no-results-label="Ningún registro coincidente"
-          :rows-per-page-label="'Artistas por página:'" :rows-per-page-options="[6, 12, 18, 24, 30]">
+          :rows-per-page-label="'Artistas por página:'" :rows-per-page-options="[6, 12, 18, 24, 30]"
+          v-model:pagination="pagination">
           <template v-slot:item="props">
             <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
               <q-card class="my-card q-ma-sm" v-show="!skeleton">
@@ -184,6 +185,12 @@ export default {
         min: 100,
         max: 100000,
       }),
+      pagination: {
+        sortBy: null,
+        descending: false,
+        page: 1,
+        rowsPerPage: 6,
+      },
     };
   },
   methods: {
