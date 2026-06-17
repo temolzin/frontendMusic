@@ -133,8 +133,8 @@
           <q-item
             clickable
             v-ripple
-            to="/artist/index"
-            v-if="$can('view-profile-artist')"
+            to="/artist-list?offers=true"
+            v-if="$can('create-card')"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
@@ -222,7 +222,7 @@
             <q-item-section> Géneros Musicales</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/artist-list" v-if="$can('create-card')">
+          <q-item clickable v-ripple to="/artist-list?offers=true" v-if="$can('create-card')" active-class="text-accent text-weight-bold">
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-tags" />
             </q-item-section>

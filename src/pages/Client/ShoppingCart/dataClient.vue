@@ -466,7 +466,17 @@
                       <q-item-label>Total de {{ castProduct(product).hours }} hora(s)</q-item-label>
                     </q-item-section>
                     <q-item-section class="text-right" side>
-                      {{ "$ " + castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                      <span v-if="castProduct(product).price < castProduct(product).artist.price_hour * castProduct(product).hours">
+                        <span class="text-positive text-weight-bold">
+                          ${{ castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                        </span>
+                        <small style="text-decoration: line-through" class="text-red q-ml-xs">
+                          ${{ castProduct(product).artist.price_hour }}
+                        </small>
+                      </span>
+                      <span v-else>
+                        {{ "$ " + castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                      </span>
                     </q-item-section>
                   </q-item>
                   <q-item v-if="getExtraKmForProduct(product)" class="full-width q-pl-lg text-caption text-grey">
@@ -616,7 +626,18 @@
                 {{ castProduct(product).artist.name }}
               </div>
               <div class="text-subtitle2 q-mb-xs text-center">
-                {{ "$ " + castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                <span v-if="castProduct(product).price < castProduct(product).artist.price_hour">
+                  <q-badge color="orange" class="q-mb-xs">Descuento aplicado</q-badge><br/>
+                  <span class="text-positive text-weight-bold">
+                    ${{ castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                  </span>
+                  <small style="text-decoration: line-through" class="text-red q-ml-xs">
+                    ${{ castProduct(product).artist.price_hour }}
+                  </small>
+                </span>
+                <span v-else>
+                  ${{ castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                </span>
               </div>
               <div class="text-subtitle2 text-center">
                 <q-rating 
