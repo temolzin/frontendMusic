@@ -10,6 +10,7 @@
       no-data-label="Sin registros"
       no-results-label="No se encontraron registros"
       rows-per-page-label="Roles por página"
+      :grid="$q.screen.lt.md"
     >
       <template v-slot:top>
         <b class="text-h5">
@@ -68,6 +69,28 @@
             ></q-btn>
           </q-td>
         </q-tr>
+      </template>
+
+      <template v-slot:item="props">
+        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+          <q-card class="q-pa-sm">
+            <q-list dense>
+              <q-item v-for="col in props.cols" :key="col.name">
+                <q-item-section>
+                  <q-item-label caption>{{ col.label }}</q-item-label>
+                  <q-item-label v-if="col.name === 'options'">
+                    <q-btn dense round flat color="primary" @click="showRole(props)" icon="edit"></q-btn>
+                    <q-btn dense round flat color="red" @click="removeRole(props)" icon="delete"></q-btn>
+                  </q-item-label>
+                  <q-item-label v-else-if="col.name === 'created_at'">
+                    {{ formatDate(props.row.created_at) }}
+                  </q-item-label>
+                  <q-item-label v-else>{{ col.value }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
       </template>
 
       <template v-slot:loading>
