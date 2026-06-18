@@ -62,8 +62,8 @@
                   <q-item>
                     <q-input dense outlined type="text" v-model="formClient.adress_line2" class="full-width"
                       label="Domicilio *"
-                      :disable="googleMapsEnabled"
-                      :rules="googleMapsEnabled ? [] : [
+                      :disable="googleMapsEnabled && formClient.adress_line2"
+                      :rules="googleMapsEnabled && formClient.adress_line2 ? [] : [
                         (val) => !!val || 'El domicilio es requerido',
                         (val) => val.trim().length >= 5 || 'El domicilio debe tener al menos 5 caracteres'
                       ]" required />
@@ -72,8 +72,8 @@
                 <div class="col-6">
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.city" label="Cuidad *"
-                      :disable="googleMapsEnabled"
-                      :rules="googleMapsEnabled ? [] : [
+                      :disable="googleMapsEnabled && formClient.city"
+                      :rules="googleMapsEnabled && formClient.city ? [] : [
                         (val) => !!val || 'La ciudad es requerida',
                         (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'La ciudad solo puede contener letras'
                       ]" required />
@@ -83,8 +83,8 @@
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.state_city"
                       label="Municipio"
-                      :disable="googleMapsEnabled"
-                      :rules="googleMapsEnabled ? [] : [
+                      :disable="googleMapsEnabled && formClient.state_city"
+                      :rules="googleMapsEnabled && formClient.state_city ? [] : [
                         (val) => !!val || 'El estado es requerido',
                         (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El estado solo puede contener letras'
                       ]" required />
@@ -94,8 +94,8 @@
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.zip_code"
                       label="Codigo Postal" maxlength="5" @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
-                      :disable="googleMapsEnabled"
-                      :rules="googleMapsEnabled ? [] : [
+                      :disable="false"
+                      :rules="[
                         (val) => /^[0-9]+$/.test(val) || 'Solo se permiten números',
                         (val) => val.toString().length === 5 || 'El código postal debe tener exactamente 5 dígitos'
                       ]" required />
@@ -104,8 +104,8 @@
                 <div class="col-6">
                   <q-item>
                     <q-input dense outlined type="text" v-model="formClient.country" label="Pais *" class="full-width"
-                      :disable="googleMapsEnabled"
-                      :rules="googleMapsEnabled ? [] : [
+                      :disable="googleMapsEnabled && formClient.country"
+                      :rules="googleMapsEnabled && formClient.country ? [] : [
                         (val) => !!val || 'El país es requerido',
                         (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El país solo puede contener letras'
                       ]" required />
@@ -218,8 +218,9 @@
                     @click="paymentMethod = 'card'; model = null" 
                   />
                 </div>
-                <div class="col-12 col-md-6" v-if="shoppingCartTotal <= 29999">
+                <div class="col-12 col-md-6">
                   <q-btn 
+                    :disable="shoppingCartTotal + totalExtraKmCost > 29999"
                     :unelevated="!paymentMethod || paymentMethod !== 'cash'"
                     :flat="paymentMethod === 'cash'" 
                     rounded 
@@ -227,7 +228,7 @@
                     class="full-width"
                     style="padding: 16px; font-weight: bold; border: 2px solid;"
                     :style="paymentMethod === 'cash' ? 'border-color: #1976d2; background-color: #e3f2fd;' : 'border-color: #ccc; background-color: transparent;'"
-                    label="💰 Pagar en Efectivo" 
+                    :label="shoppingCartTotal + totalExtraKmCost > 29999 ? '💰 Excede límite de efectivo ($29,999)' : '💰 Pagar en Efectivo'" 
                     @click="paymentMethod = 'cash'; selectedCard = {id: '', name: '', number_card: '', expiration_date: ''}; cvv = ''" 
                   />
                 </div>
@@ -1423,7 +1424,7 @@ export default defineComponent({
       const selectedStore = this.model;
       const maxLimit = storeLimits[selectedStore] || 29999;
 
-      if (this.shoppingCartTotal > maxLimit) {
+      if (this.shoppingCartTotal + this.totalExtraKmCost > maxLimit) {
         this.$q.notify({
           type: 'warning',
           message: `El límite máximo para pagos en efectivo en ${selectedStore} es de $${maxLimit.toLocaleString('en-US')} MXN. Por favor, utilice tarjeta.`,
