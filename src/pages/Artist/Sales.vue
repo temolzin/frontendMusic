@@ -14,6 +14,7 @@
       flat
       bordered
       class="sales-table"
+      :grid="$q.screen.lt.md"
     >
       <template v-slot:top-left>
         <p class="text-h5 q-mb-none q-mt-sm">Mis Ventas</p>
@@ -78,6 +79,53 @@
         </q-td>
       </template>
 
+      <template v-slot:item="props">
+        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+          <q-card class="q-pa-sm">
+            <q-list dense>
+              <q-item v-for="col in props.cols" :key="col.name">
+                <q-item-section>
+                  <q-item-label caption>{{ col.label }}</q-item-label>
+                  <q-item-label v-if="col.name === 'cliente'">
+                    <div class="text-weight-bold">
+                      {{ props.row.customer_first_name }} {{ props.row.customer_last_name }}
+                    </div>
+                    <div class="text-caption text-grey">{{ props.row.customer_email }}</div>
+                  </q-item-label>
+                  <q-item-label v-if="col.name === 'lugar'">
+                    <div class="text-weight-medium">
+                      <q-icon name="location_on" size="14px" color="grey" class="q-mr-xs" />
+                      {{ props.row.customer_city }}
+                    </div>
+                    <div class="text-caption text-grey q-ml-md">{{ props.row.customer_state }}</div>
+                  </q-item-label>
+                  <q-item-label v-if="col.name === 'evento'">
+                    <div v-if="props.row.event_date">
+                      <q-icon name="event" size="14px" color="primary" class="q-mr-xs" />
+                      <span class="text-weight-medium">{{ formatDate(props.row.event_date) }}</span>
+                    </div>
+                    <div v-if="props.row.event_hour" class="text-caption text-grey q-ml-md">
+                      {{ props.row.event_hour }} hrs
+                    </div>
+                    <span v-if="!props.row.event_date" class="text-grey text-caption">Sin fecha</span>
+                  </q-item-label>
+                  <q-item-label v-if="col.name === 'amount'">
+                    <span class="text-weight-bold text-positive text-h6">
+                      ${{ Number(props.row.amount).toLocaleString('es-MX') }}
+                    </span>
+                  </q-item-label>
+                  <q-item-label v-if="col.name === 'acciones'">
+                    <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
+                  </q-item-label>
+                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'lugar' && col.name !== 'evento' && col.name !== 'amount' && col.name !== 'acciones'">
+                    {{ col.value }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
+      </template>
     </q-table>
 
     <notice-not-info v-if="artist == null" />
