@@ -1,6 +1,9 @@
 <template>
   <div class="q-pa-md q-gutter-sm q-mt-md" v-if="showGallery == false">
-    <q-banner inline-actions rounded class="bg-orange text-white">
+     <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
+      Galería de Fotos
+    </h3>
+    <q-banner inline-actions rounded class="bg-orange text-white q-mt-xl q-mb-lg">
       No has creado ninguna galería de imágenes. Recuerda que la galería ayudará
       a que los clientes puedan conocerte y confiar más en tu servicio.
       <template v-slot:action>
@@ -150,10 +153,17 @@
 
   <div class="q-mt-xl q-mb-lg">
     <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
-      Videos
-      <q-btn round color="primary" icon="add" @click="formVideo = true" />
+      Galería de Videos
     </h3>
-
+    <div class="q-pa-md q-gutter-sm q-mt-md" v-if="!artistVideos || artistVideos.length === 0">
+      <q-banner inline-actions rounded class="bg-orange text-white text-left">
+        No has agregado ningún video de YouTube. Recuerda que mostrar tu talento en video ayudará
+        a que los clientes puedan conocerte y contratar tu servicio musical.
+        <template v-slot:action>
+          <q-btn flat label="¡Vamos!" @click="formVideo = true" />
+        </template>
+      </q-banner>
+    </div>
     <div v-if="artistVideos && artistVideos.length > 0" class="row q-gutter-md q-mb-lg justify-center">
       <div
         v-for="video in artistVideos"
@@ -179,11 +189,6 @@
         />
       </div>
     </div>
-
-    <p v-else :class="mode ? 'text-grey-4' : 'text-grey-7'" class="text-center">
-      Aún no has agregado videos.
-    </p>
-
     <q-dialog v-model="formVideo" persistent>
       <q-card style="min-width: 350px">
         <q-card-section>
