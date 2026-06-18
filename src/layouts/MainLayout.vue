@@ -103,9 +103,7 @@
 
       <q-scroll-area style="height: calc(100% - 120px);">
         <q-list padding class="text-white text-weight-light">
-          
           <div v-if="isAuthenticated && getMe && getMe.role">
-            
             <q-item v-if="getMe.role[0] == 'administrador'">
               <q-item-section class="text-weight-bold">PANEL</q-item-section>
             </q-item>
@@ -115,7 +113,6 @@
             <q-item v-if="getMe.role[0] == 'artista'">
               <q-item-section class="text-weight-bold">DASHBOARD</q-item-section>
             </q-item>
-
             <q-item clickable v-ripple to="/admin/users" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
               <q-item-section avatar><q-icon name="fas fa-solid fa-users" /></q-item-section>
               <q-item-section> Usuarios </q-item-section>
@@ -148,7 +145,6 @@
               <q-item-section avatar><q-icon name="local_offer" /></q-item-section>
               <q-item-section> Mis ofertas </q-item-section>
             </q-item>
-
             <q-item clickable v-ripple to="/client/store" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
               <q-item-section avatar><q-icon name="fas fa-solid fa-store" /></q-item-section>
               <q-item-section> Tienda </q-item-section>
@@ -198,11 +194,9 @@
               <q-item-section>{{ link.text }}</q-item-section>
             </q-item>
           </div>
-
           <q-item>
             <q-item-section class="text-weight-bold">CONFIGURACIONES</q-item-section>
           </q-item>
-
           <q-item clickable v-ripple class="q-pa-none">
             <q-item-section avatar>
               <q-toggle
@@ -216,7 +210,6 @@
             </q-item-section>
             <q-item-section> Modo Oscuro </q-item-section>
           </q-item>
-
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -225,7 +218,6 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
     <q-footer>
       <q-toolbar class="row bg-primary text-white">
         <q-toolbar-title class="q-ml-md" style="font-size: 15px">
