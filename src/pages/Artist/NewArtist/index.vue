@@ -386,7 +386,7 @@
 
     <div class="row tipogra">
       <div
-        :class="mode ? 'title-group-white' : 'title-group'"
+        :class="mode ? 'title-group-white text-white' : 'title-group'"
         class="col-12 text-center"
       >
         <h3 class="q-mb-md">Información de Contratación</h3>
@@ -423,7 +423,7 @@
         </div>
       </div>
       <div
-        :class="mode ? 'title-group-white' : 'title-group'"
+        :class="mode ? 'title-group-white text-white' : 'title-group'"
         class="col-12 text-center"
       >
         <h3 class="q-mb-md">Información del manager</h3>
@@ -1558,7 +1558,7 @@ input:focus {
   font-size: 16px;
   line-height: 28px;
   font-weight: 300;
-  color: #727272;
+  color: var(--q-text-color);
   font-family: "Muli", sans-serif;
 }
 .barra {

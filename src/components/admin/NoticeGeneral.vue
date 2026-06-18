@@ -117,7 +117,7 @@
             <q-separator inset />
 
             <q-card-section>
-              <div class="text-caption text-grey-6 q-mb-sm">Desglose sutil del estado actual</div>
+              <div class="text-caption text-grey-5 q-mb-sm">Desglose sutil del estado actual</div>
               <div class="column q-gutter-sm">
                 <div
                   v-for="item in card.breakdown || []"
@@ -125,7 +125,7 @@
                   class="breakdown-row"
                 >
                   <div class="row items-center justify-between q-mb-xs">
-                    <div class="text-body2 text-grey-8">{{ item.label }}</div>
+                    <div class="text-body2 text-color">{{ item.label }}</div>
                     <div class="text-weight-medium">{{ formatNumber(item.value) }}</div>
                   </div>
                   <q-linear-progress
