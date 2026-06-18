@@ -86,88 +86,137 @@
     <!-- Fin del header -->
 
     <!-- Inicio del Menú lateral izquierdo -->
-    <q-drawer
+   <q-drawer
       v-model="leftDrawerOpen"
       bordered
       behavior="mobile"
+      :class="mode ? 'bg-modedark' : 'bg-primary'"
       @click="leftDrawerOpen = false"
     >
-      <q-scroll-area class="fit">
-        <q-toolbar class="GPL__toolbar">
-          <q-toolbar-title class="row items-center q-mt-md q-ml-md">
-            <q-icon
-              name="fas fa-solid fa-cloud-moon"
-              color="primary"
-              size="40px"
-            ></q-icon>
-            <span class="q-ml-sm">Vibeer</span>
-          </q-toolbar-title>
-        </q-toolbar>
+      <div style="height: 120px; position: relative;">
+        <q-img class="absolute-top bg-transparent" style="height: 120px;">
+          <div class="bg-transparent" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img src="/logovibeer.ico" style="height: 50px; transform: scale(2.4);">
+          </div>
+        </q-img>
+      </div>
 
-        <q-list padding>
-          <div v-if="isAuthenticated == true">
-            <q-separator class="q-my-md" />
+      <q-scroll-area style="height: calc(100% - 120px);">
+        <q-list padding class="text-white text-weight-light">
+          
+          <div v-if="isAuthenticated && getMe && getMe.role">
+            
+            <q-item v-if="getMe.role[0] == 'administrador'">
+              <q-item-section class="text-weight-bold">PANEL</q-item-section>
+            </q-item>
+            <q-item v-if="getMe.role[0] == 'cliente'">
+              <q-item-section class="text-weight-bold">INICIO</q-item-section>
+            </q-item>
+            <q-item v-if="getMe.role[0] == 'artista'">
+              <q-item-section class="text-weight-bold">DASHBOARD</q-item-section>
+            </q-item>
 
-            <q-item clickable class="q-ml-md" to="/dashboard/home">
+            <q-item clickable v-ripple to="/admin/users" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-users" /></q-item-section>
+              <q-item-section> Usuarios </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/admin/roles" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-street-view" /></q-item-section>
+              <q-item-section> Roles </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/admin/musical-genders/index" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-icons" /></q-item-section>
+              <q-item-section> Géneros Musicales </q-item-section>
+            </q-item>
+             <q-item clickable v-ripple to="/admin/newsletter/index" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-newspaper" /></q-item-section>
+              <q-item-section> Envío de Correos </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/artist/index" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-microphone" /></q-item-section>
+              <q-item-section> Perfil de Artista </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/artist/artistSales" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-cart-arrow-down" /></q-item-section>
+              <q-item-section> Mis ventas </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/artist/artistSales" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-calendar" /></q-item-section>
+              <q-item-section> Mi calendario </q-item-section>
+            </q-item>
+             <q-item clickable v-ripple to="/artist/artistSales" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="local_offer" /></q-item-section>
+              <q-item-section> Mis ofertas </q-item-section>
+            </q-item>
+
+            <q-item clickable v-ripple to="/client/store" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-store" /></q-item-section>
+              <q-item-section> Tienda </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/musical-genders" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-list-ul" /></q-item-section>
+              <q-item-section> Géneros musicales </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/artist-list" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-tags" /></q-item-section>
+              <q-item-section> Ofertas </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/favourite-artist" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-heart" /></q-item-section>
+              <q-item-section> Favoritos </q-item-section>
+            </q-item>
+            <q-item v-if="getMe.role[0] == 'cliente'">
+              <q-item-section class="text-weight-bold">
+                INFORMACIÓN
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/shopping-cart" v-if="getMe.role[0] == 'cliente'" active-class="text-accent   text-weight-bold">
               <q-item-section avatar>
-                <q-icon name="dashboard" />
+                <icon-cart compact :fetch-on-create="false"></icon-cart>
               </q-item-section>
-              <q-item-section>
-                <q-item-label>Panel</q-item-label>
-              </q-item-section>
+                <q-item-section> Mi carrito </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/shopping-cart/view-my-order-details" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-cart-arrow-down" /></q-item-section>
+              <q-item-section> Mis compras </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/card" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-credit-card" /></q-item-section>
+              <q-item-section> Mis tarjetas </q-item-section>
+            </q-item>
+          </div>
+          <div v-else>
+            <q-item>
+              <q-item-section class="text-weight-bold">MENÚ</q-item-section>
+            </q-item>
+            <q-item v-for="link in links2" :key="link.text" clickable :to="link.to" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon :name="link.icon" /></q-item-section>
+              <q-item-section>{{ link.text }}</q-item-section>
+            </q-item>
+            <q-item v-for="link in links3" :key="link.text" clickable :to="link.to" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon :name="link.icon" /></q-item-section>
+              <q-item-section>{{ link.text }}</q-item-section>
             </q-item>
           </div>
 
-          <q-separator class="q-my-md" />
-
-          <q-item
-            v-for="link in links2"
-            :key="link.text"
-            clickable
-            :to="link.to"
-            class="q-ml-md"
-          >
-            <q-item-section avatar>
-              <q-icon :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
+          <q-item>
+            <q-item-section class="text-weight-bold">CONFIGURACIONES</q-item-section>
           </q-item>
 
-          <q-separator class="q-my-md" />
-          <div v-if="isAuthenticated == false">
-            <q-item
-              class="q-ml-md"
-              v-for="link in links3"
-              :key="link.text"
-              clickable
-              :to="link.to"
-            >
-              <q-item-section avatar>
-                <q-icon :name="link.icon" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ link.text }}</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-separator class="q-my-md" />
-          </div>
-          <q-item>
-            <q-item-section avatar class="q-ml-md">
-              Modo Oscuro
-            </q-item-section>
-            <q-item-section>
+          <q-item clickable v-ripple class="q-pa-none">
+            <q-item-section avatar>
               <q-toggle
+                class="q-ma-none"
                 v-model="isActiveDarkMode"
                 checked-icon="nightlight"
-                color="primary"
+                color="accent"
                 unchecked-icon="nightlight"
                 @update:model-value="darkMode(isActiveDarkMode)"
               />
             </q-item-section>
+            <q-item-section> Modo Oscuro </q-item-section>
           </q-item>
+
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -283,10 +332,11 @@ import { ref } from "vue";
 import { mapGetters, mapActions } from "vuex";
 import SearchBar from "src/components/SearchBar/SearchBar.vue";
 import ProfilePhoto from "src/components/ProfilePhoto.vue";
+import iconCart from "src/components/ShoppingCart/iconCart.vue";
 
 export default {
   name: "GooglePhotosLayout",
-  components: { SearchBar, ProfilePhoto },
+  components: { SearchBar, ProfilePhoto , iconCart},
   setup() {
     const leftDrawerOpen = ref(false);
 
@@ -315,6 +365,7 @@ export default {
 
   methods: {
     ...mapActions("artistList", ["getArtists"]),
+    ...mapActions("shoppingCard", ["getCountListShoppingCard"]),
     async getArtistss() {
       try {
         await this.getArtists();
@@ -325,6 +376,19 @@ export default {
             message: err.response.data.message,
           });
         }
+      }
+    },
+    async fetchShoppingCartCount() {
+      try {
+        if (this.isAuthenticated) {
+          await this.getCountListShoppingCard();
+        }
+      } catch (err) {
+        const message = err?.response?.data?.message || "No se pudo cargar el carrito.";
+        this.$q.notify({
+          type: "negative",
+          message,
+        });
       }
     },
     darkMode(val) {
@@ -377,6 +441,7 @@ export default {
   },
   async created() {
     this.getArtistss();
+    this.fetchShoppingCartCount();
     const user = this.getMe;
     const saved = user?.id ? localStorage.getItem(`darkMode_${user.id}`) : null;
     const isDark = saved === 'true';
@@ -398,6 +463,7 @@ export default {
       const isDark = saved === 'true';
       this.$q.dark.set(isDark);
       this.isActiveDarkMode = isDark;
+      this.fetchShoppingCartCount();
     },
   },
 };
