@@ -417,7 +417,7 @@
               </div>
               <div class="col-6">
                 <q-item>
-                  <q-input dense outlined class="full-width" v-model="cvv" type="text" maxlength="4"
+                  <q-input dense outlined class="full-width" v-model="cvv" type="text" maxlength="4" ref="cvvInput"
                     label="CVV *" :rules="[
                       (val) => !!val || 'El CVV es requerido',
                       (val) => (val.toString().length >= 3 && val.toString().length <= 4) || 'El CVV debe tener 3 o 4 dígitos'
@@ -935,29 +935,20 @@ export default defineComponent({
     },
     
     validateStep2() {
-      !this.paymentMethod ? (this.$q.notify({
-        type: "negative",
-        message: "Debes seleccionar un método de pago",
-      }), this.$router.go(0))
-      : this.paymentMethod === 'card' ? (
-          (!this.selectedCard || !this.selectedCard.number_card) ? (this.$q.notify({
-            type: "negative",
-            message: "Debes seleccionar una tarjeta",
-          }), this.$router.go(0))
-          : (!this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4) ? (this.$q.notify({
-            type: "negative",
-            message: "El CVV debe tener 3 o 4 dígitos",
-          }), this.$router.go(0))
-          : (this.step = 3)
-        )
-      : this.paymentMethod === 'cash' ? (
-          !this.model ? (this.$q.notify({
-            type: "negative",
-            message: "Debes seleccionar un punto de pago en efectivo",
-          }), this.$router.go(0))
-          : (this.step = 3)
-        )
-      : null;
+      !this.paymentMethod
+        ? this.$q.notify({ type: "negative", message: "Debes seleccionar un método de pago" })
+        : this.paymentMethod === 'card'
+          ? !this.selectedCard || !this.selectedCard.number_card
+            ? this.$q.notify({ type: "negative", message: "Debes seleccionar una tarjeta" })
+            : !this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4
+              ? (this.$q.notify({ type: "negative", message: "El CVV debe tener 3 o 4 dígitos" }),
+                 this.$nextTick(() => this.$refs.cvvInput?.validate()))
+              : (this.step = 3)
+          : this.paymentMethod === 'cash'
+            ? !this.model
+              ? this.$q.notify({ type: "negative", message: "Debes seleccionar un punto de pago en efectivo" })
+              : (this.step = 3)
+            : null;
     },
     validateCardNumber() {
       const val = this.form.number_card;
