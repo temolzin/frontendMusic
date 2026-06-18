@@ -13,6 +13,7 @@
       no-data-label="No tienes ofertas registradas"
       rows-per-page-label="Registros por página"
       :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => `${firstRowIndex}-${endRowIndex} de ${totalRowsNumber}`"
+      :grid="$q.screen.lt.md"
     >
       <template v-slot:body-cell-is_active="props">
         <q-td :props="props">
@@ -46,10 +47,45 @@
           <q-btn flat round icon="delete" color="negative" @click="confirmDelete(props.row.id)" />
         </q-td>
       </template>
+
+      <template v-slot:item="props">
+        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+          <q-card class="q-pa-sm">
+            <q-list dense>
+              <q-item v-for="col in props.cols" :key="col.name">
+                <q-item-section>
+                  <q-item-label caption>{{ col.label }}</q-item-label>
+                  <q-item-label v-if="col.name === 'is_active'">
+                    <q-badge :color="props.row.is_active ? 'positive' : 'grey'">
+                      {{ props.row.is_active ? 'Activa' : 'Inactiva' }}
+                    </q-badge>
+                  </q-item-label>
+                  <q-item-label v-if="col.name === 'discount_percentage'">
+                    {{ props.row.discount_percentage }}%
+                  </q-item-label>
+                  <q-item-label v-if="col.name === 'start_date'">
+                    {{ formatDate(props.row.start_date) }}
+                  </q-item-label>
+                  <q-item-label v-if="col.name === 'end_date'">
+                    {{ formatDate(props.row.end_date) }}
+                  </q-item-label>
+                  <q-item-label v-if="col.name === 'actions'">
+                    <q-btn flat round icon="edit" color="primary" @click="openForm(props.row)" />
+                    <q-btn flat round icon="delete" color="negative" @click="confirmDelete(props.row.id)" />
+                  </q-item-label>
+                  <q-item-label v-if="col.name !== 'is_active' && col.name !== 'discount_percentage' && col.name !== 'start_date' && col.name !== 'end_date' && col.name !== 'actions'">
+                    {{ col.value }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
+      </template>
     </q-table>
 
     <q-dialog v-model="formDialog" persistent>
-      <q-card style="min-width: 400px">
+      <q-card style="width: 100%; max-width: 400px;">
         <q-card-section>
           <div class="text-h6">{{ editingOffer ? 'Editar Oferta' : 'Nueva Oferta' }}</div>
         </q-card-section>

@@ -11,7 +11,7 @@
     </div>
 
     <div v-else>
-      <q-splitter v-model="splitter" style="height: 700px" class="calendar-splitter">
+      <q-splitter v-model="splitter" style="height: 700px" class="calendar-splitter" :horizontal="$q.screen.lt.md">
         <template v-slot:before>
           <div class="left-panel q-pa-md">
             <h6 class="q-mt-none q-mb-md">Calendario</h6>
