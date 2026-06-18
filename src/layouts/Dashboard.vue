@@ -133,8 +133,8 @@
           <q-item
             clickable
             v-ripple
-            to="/artist-list?offers=true"
-            v-if="$can('create-card')"
+            to="/artist/index"
+            v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>

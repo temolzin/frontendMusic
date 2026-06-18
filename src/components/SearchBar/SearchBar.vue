@@ -14,7 +14,6 @@
         option-value="url"
         hide-dropdown-icon
         :loading="loading"
-        @virtual-scroll="onScroll"
     >
         <template v-slot:option="scope">
         <q-item v-bind="scope.itemProps" @click="redirectToRoute(scope.opt.url)">
