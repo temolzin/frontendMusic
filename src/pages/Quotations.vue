@@ -60,6 +60,7 @@
                   label="Artistas *"
                   v-model="newQuotation.artist_id"
                   :options="filteredData()"
+                  @update:model-value="loadOccupiedDates"
                 >
                 </q-select>
               </div>
@@ -85,6 +86,7 @@
                           <q-date
                             v-model="newQuotation.event_date"
                             :options="dateOption"
+                            :locale="spanishLocale()"
                             @input="showDate = false"
                           >
                             <div class="row items-center justify-end">
@@ -143,6 +145,22 @@
                   ]" required
                 >
                 </q-input>
+                <q-toggle
+                  v-model="googleMapsEnabled"
+                  label="¿Deseas ubicar tu evento en el mapa?"
+                  color="primary"
+                  @update:model-value="onToggleMap"
+                />
+                <div v-if="googleMapsEnabled" class="col-12 q-mt-md">
+                  <q-card flat bordered>
+                    <q-card-section class="q-pa-sm text-center text-grey-7">
+                      <small>Arrastra el marcador para ajustar la ubicación</small>
+                    </q-card-section>
+                    <q-card-section class="q-pa-sm">
+                      <div ref="mapContainer" style="width: 100%; height: 320px; border-radius: 4px;"></div>
+                    </q-card-section>
+                  </q-card>
+                </div>
               </div>
               <div class="row-5">
                 <p class="text-center q-mb-lg text-weight-regular text-h6">
@@ -222,6 +240,7 @@ import { useQuasar, QSelect } from "quasar";
 import { mapActions } from "vuex";
 import { ref } from "vue";
 import { mapGetters } from "vuex";
+import { api } from "boot/axios";
 
 let $q;
 
@@ -237,6 +256,16 @@ export default {
       showFilters: false,
       showDate: false,
       filterGender: "",
+      googleMapsEnabled: false,
+      latitude: null,
+      longitude: null,
+      googlePlaceId: null,
+      googleMapsLoaded: false,
+      userPosition: null,
+      googleMapsApiKey: null,
+      mapInstance: null,
+      markerInstance: null,
+      occupiedDates: [],
       newQuotation: {
         artist_id: "",
         event_date: "Selecciona la fecha",
@@ -249,7 +278,9 @@ export default {
       },
     };
   },
-  created() {},
+  created() {
+    this.getArtists();
+  },
   computed: {
     ...mapGetters("artistList", ["stateArtistList"]),
     ...mapGetters("quotations", ["stateQuotations"]),
@@ -260,12 +291,14 @@ export default {
     dateOption() {
       const today = new Date();
       const yyyy = today.getFullYear();
-      const mm = today.getMonth() + 1;
-      const dd = today.getDate();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${yyyy}/${mm}/${dd}`;
 
       return (date) => {
-        const [year, month, day] = date.split("/");
-        return new Date(year, month - 1, day) >= new Date(yyyy, mm - 1, dd);
+        const isValidDate = date >= todayStr;
+        const isOccupied = this.occupiedDates.includes(date);
+        return isValidDate && !isOccupied;
       };
     },
   },
@@ -290,7 +323,7 @@ export default {
       ) {
         try {
           this.newQuotation.event_hours = this.event_hours;
-          await this.newQuotations({ ...this.newQuotation, artist_id: artistIdReal });
+          await this.newQuotations({ ...this.newQuotation, artist_id: artistIdReal, latitude: this.latitude, longitude: this.longitude, google_place_id: this.googlePlaceId });
 
           $q.notify({
             type: "positive",
@@ -299,7 +332,12 @@ export default {
 
           this.$router.push(this.$route.query.to || "/");
         } catch (err) {
-          const msg = err.response?.data?.message || err.response?.data || "Error de conexión";
+          const errors = err.response?.data?.errors;
+          let msg = err.response?.data?.message || "Error de conexión";
+          if (errors) {
+            const firstField = Object.keys(errors)[0];
+            msg = errors[firstField][0];
+          }
 
           $q.notify({
             type: "negative",
@@ -345,15 +383,145 @@ export default {
       }
       return this.removeDuplicates(genders);
     },
+    async onToggleMap(val) {
+      if (val) {
+        await this.loadGoogleMapsApi();
+        const pos = await this.getCurrentPosition();
+        this.userPosition = pos;
+        this.$nextTick(() => this.initMap());
+      }
+      if (!val) {
+        this.latitude = null;
+        this.longitude = null;
+        this.googlePlaceId = null;
+      }
+    },
+    getCurrentPosition() {
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) {
+          resolve({ lat: 19.4326, lng: -99.1332 });
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          () => resolve({ lat: 19.4326, lng: -99.1332 }),
+          { timeout: 5000, enableHighAccuracy: false }
+        );
+      });
+    },
+    spanishLocale() {
+      return {
+        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        daysShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        firstDayOfWeek: 1
+      };
+    },
+    async loadGoogleMapsApi() {
+      if (window.google || this.googleMapsLoaded) return;
+      try {
+        const res = await this.$api.get('/api/google-maps-key');
+        this.googleMapsApiKey = res.data.data?.google_maps_api_key;
+      } catch {
+        this.googleMapsApiKey = null;
+        return;
+      }
+      if (!this.googleMapsApiKey) return;
+      this.googleMapsLoaded = true;
+      return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${this.googleMapsApiKey}&libraries=places&language=es`;
+        script.async = true;
+        script.defer = true;
+        script.onload = resolve;
+        document.head.appendChild(script);
+      });
+    },
+    initMap() {
+      if (!this.$refs.mapContainer) return;
+      const defaultPos = this.userPosition || { lat: 19.4326, lng: -99.1332 };
+      this.initMapAtPosition(defaultPos);
+    },
+    initMapAtPosition(position) {
+      if (!this.$refs.mapContainer || !window.google) return;
+      this.mapInstance = new google.maps.Map(this.$refs.mapContainer, {
+        center: position,
+        zoom: 15,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        clickableIcons: false,
+      });
+      this.markerInstance = new google.maps.Marker({
+        map: this.mapInstance,
+        position: position,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+      });
+      const onMarkerMoved = (latLng) => {
+        this.latitude = latLng.lat();
+        this.longitude = latLng.lng();
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: { lat: this.latitude, lng: this.longitude } }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            this.fillAddressFromGeocodeResult(results[0]);
+          }
+        });
+      };
+      this.markerInstance.addListener('dragend', () => {
+        onMarkerMoved(this.markerInstance.getPosition());
+      });
+      this.mapInstance.addListener('click', (e) => {
+        this.markerInstance.setPosition(e.latLng);
+        this.mapInstance.panTo(e.latLng);
+        onMarkerMoved(e.latLng);
+      });
+      if (!this.latitude) {
+        this.latitude = position.lat;
+        this.longitude = position.lng;
+      }
+    },
+    fillAddressFromGeocodeResult(result) {
+      this.googlePlaceId = result.place_id || null;
+      const componentMap = {};
+      for (const comp of result.address_components) {
+        componentMap[comp.types[0]] = comp.long_name;
+      }
+      this.newQuotation.city = componentMap['locality'] || componentMap['sublocality'] || componentMap['postal_town'] || '';
+      this.newQuotation.address = result.formatted_address || '';
+    },
+    async loadOccupiedDates() {
+      const artistId = this.newQuotation.artist_id?.value;
+      if (!artistId) return;
+      try {
+        const response = await api.get(`/api/artist-sales/public?artist_id=${artistId}`);
+        if (response.data?.sales && Array.isArray(response.data.sales)) {
+          this.occupiedDates = response.data.sales.map((sale) => {
+            const dateVal = sale.event_date;
+            if (!dateVal) return null;
+            const dateStr = dateVal.toString();
+            const datePart = dateStr.split('T')[0].split(' ')[0];
+            const [y, mRaw, dRaw] = datePart.split('-');
+            return `${y}/${String(mRaw).padStart(2, '0')}/${String(dRaw).padStart(2, '0')}`;
+          }).filter(d => d !== null);
+        }
+      } catch {
+        this.occupiedDates = [];
+      }
+    },
     filteredData() {
       let filtered = [];
 
       if (this.filterGender && this.filterGender !== "Todos") {
-        filtered = this.stateArtistList.filter((artist) => {
-          return artist.musical_genders.some(
+        filtered = this.stateArtistList.filter?.((artist) => {
+          return artist.musical_genders?.some?.(
             (gender) => gender.name === this.filterGender
           );
-        });
+        }) ?? [];
+      }
+      if (!this.filterGender || this.filterGender === "Todos") {
+        filtered = Array.isArray(this.stateArtistList) ? this.stateArtistList : [];
       }
       return filtered.length > 0
         ? filtered.map((artist) => {
