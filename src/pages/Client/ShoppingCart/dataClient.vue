@@ -1229,7 +1229,7 @@ export default defineComponent({
           console.warn('Device data setup fallido, continuando sin él:', e);
         }
 
-        const card_number = this.selectedCard.number_card.replace(/\s/g, "");
+        const card_number = this.selectedCard.number_card.replace(/[\s-]/g, "");
         const [month, year] = this.selectedCard.expiration_date.split('/');
 
         OpenPay.token.create(
@@ -1308,7 +1308,7 @@ export default defineComponent({
                 try {
                   const cardToSave = {
                     name: this.selectedCard.name,
-                    number_card: (this.selectedCard.number_card || '').replace(/\s/g, ''),
+                    number_card: (this.selectedCard.number_card || '').replace(/[\s-]/g, ''),
                     expiration_date: this.selectedCard.expiration_date,
                   };
                   await this.createCard(cardToSave);
