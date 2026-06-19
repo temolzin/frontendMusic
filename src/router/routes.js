@@ -174,6 +174,29 @@ const routes = [
           permissions: ["view-users"],
         },
       },
+
+      {
+        name: 'admin.support-tickets',
+        path: '/admin/support-tickets',
+        component: import('src/pages/Admin/SupportTickets/index.vue'),
+        meta: {
+          title: 'Tickets de Soporte',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'],
+        },
+      },
+      {
+        name: 'admin.support-tickets-show',
+        path: '/admin/support-tickets/:id',
+        component: import('src/pages/Admin/SupportTickets/show.vue'),
+        meta: {
+          title: 'Detalle Ticket',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'],
+        },
+      },
       // Fin de rutas del admin
 
       // Rutas del artista
@@ -326,6 +349,40 @@ const routes = [
           middleware: [Middlewares.checkPermissions],
           requireLogin: true,
           permissions: ["view-store"],
+        },
+      },
+
+      {
+        name: 'client.report-incident',
+        path: '/client/report-incident/:saleId',
+        component: import('src/pages/Client/ShoppingCart/ReportIncident.vue'),
+        meta: {
+          title: 'Reportar Incidente',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-my-order-details'],
+        },
+      },
+      {
+        name: 'client.report-incident',
+        path: '/client/report-incident/:saleId',
+        component: import('src/pages/Client/ShoppingCart/ReportIncident.vue'),
+        meta: {
+          title: 'Reportar Incidente',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-my-order-details', 'view-profile-artist'],
+        },
+      },
+      {
+        name: 'client.my-tickets',
+        path: '/client/my-tickets',
+        component: import('src/pages/Client/ShoppingCart/MyTickets.vue'),
+        meta: {
+          title: 'Mis Reportes',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-my-order-details', 'view-profile-artist'],
         },
       },
       // Fin de rutas del cliente

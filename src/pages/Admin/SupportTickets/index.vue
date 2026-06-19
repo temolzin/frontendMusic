@@ -1,0 +1,217 @@
+<template>
+  <div class="q-pa-md">
+
+    <div class="row items-center q-mb-md">
+      <div class="text-h5 text-weight-bold">Tickets de Soporte</div>
+      <q-space />
+      <q-select
+        v-model="filterStatus"
+        :options="statusOptions"
+        emit-value
+        map-options
+        outlined
+        dense
+        label="Estado"
+        clearable
+        style="min-width: 160px"
+        class="q-mr-sm"
+        @update:model-value="fetchTickets"
+      />
+      <q-select
+        v-model="filterCategory"
+        :options="categoryOptions"
+        emit-value
+        map-options
+        outlined
+        dense
+        label="Categoría"
+        clearable
+        style="min-width: 200px"
+        @update:model-value="fetchTickets"
+      />
+    </div>
+
+    <q-table
+      :rows="tickets"
+      :columns="columns"
+      row-key="id"
+      :loading="loading"
+      flat
+      bordered
+      no-data-label="Sin tickets registrados"
+      no-results-label="No hay tickets que coincidan"
+      rows-per-page-label="Tickets por página"
+      :rows-per-page-options="[10, 20, 50]"
+    >
+      <template v-slot:body-cell-event_date="props">
+        <q-td :props="props">
+          <div class="text-weight-bold">{{ formatDate(props.row.artist_sale?.event_date) }}</div>
+          <div class="text-caption text-grey">Orden #{{ props.row.artist_sale_id }}</div>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-artist="props">
+        <q-td :props="props">
+          <div class="text-weight-medium">{{ props.row.artist_sale?.artist?.name || 'N/A' }}</div>
+          <div class="text-caption text-grey">
+            Cliente: {{ props.row.artist_sale?.customer?.name || props.row.artist_sale?.customer_first_name || 'N/A' }}
+          </div>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-reporter="props">
+        <q-td :props="props">
+          <div class="text-weight-medium">{{ props.row.reporter?.name || 'N/A' }}</div>
+          <div class="text-caption text-grey">{{ props.row.reporter?.email || '' }}</div>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-category="props">
+        <q-td :props="props">
+          <q-badge :color="categoryColor(props.row.category)" class="q-px-sm q-py-xs">
+            {{ categoryLabel(props.row.category) }}
+          </q-badge>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-status="props">
+        <q-td :props="props">
+          <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
+            {{ statusLabel(props.row.status) }}
+          </q-badge>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props" class="text-center">
+          <q-btn
+            flat
+            rounded
+            color="primary"
+            icon="visibility"
+            label="Ver"
+            size="sm"
+            @click="goToDetail(props.row.id)"
+          />
+        </q-td>
+      </template>
+    </q-table>
+
+  </div>
+</template>
+
+<script>
+import { useSupportTickets } from 'src/composables/useSupportTickets';
+
+export default {
+  name: 'SupportTicketsIndex',
+
+  setup() {
+    const { getAdminTickets } = useSupportTickets();
+    return { getAdminTickets };
+  },
+
+  data() {
+    return {
+      loading: false,
+      tickets: [],
+      filterStatus: null,
+      filterCategory: null,
+      columns: [
+        { name: 'event_date', label: 'Fecha del Evento', field: (row) => row.artist_sale?.event_date, sortable: true, align: 'left' },
+        { name: 'artist', label: 'Evento', field: 'artist', align: 'left' },
+        { name: 'reporter', label: 'Reportado por', field: 'reporter', align: 'left' },
+        { name: 'category', label: 'Categoría', field: 'category', align: 'left' },
+        { name: 'status', label: 'Estado', field: 'status', align: 'left' },
+        { name: 'actions', label: 'Acciones', field: 'actions', align: 'center' },
+      ],
+      statusOptions: [
+        { label: 'Abierto', value: 'open' },
+        { label: 'En revisión', value: 'under_review' },
+        { label: 'Resuelto', value: 'resolved' },
+        { label: 'Rechazado', value: 'rejected' },
+      ],
+      categoryOptions: [
+        { label: 'No se presentó', value: 'no_show' },
+        { label: 'Retraso / Cancelación', value: 'delay' },
+        { label: 'Mal servicio', value: 'bad_service' },
+        { label: 'Cancelación', value: 'cancellation' },
+        { label: 'Otro', value: 'other' },
+      ],
+    };
+  },
+
+  async created() {
+    await this.fetchTickets();
+  },
+
+  methods: {
+    async fetchTickets() {
+      this.loading = true;
+      try {
+        const filters = {};
+        if (this.filterStatus) filters.status = this.filterStatus;
+        if (this.filterCategory) filters.category = this.filterCategory;
+        const result = await this.getAdminTickets(filters);
+        this.tickets = result.data ?? result;
+      } catch {
+        this.$q.notify({ type: 'negative', message: 'Error al cargar los tickets.', position: 'top' });
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    goToDetail(id) {
+      this.$router.push({ name: 'admin.support-tickets-show', params: { id } });
+    },
+
+    formatDate(raw) {
+      if (!raw) return 'N/A';
+      const d = new Date(raw);
+      return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
+    },
+
+    categoryLabel(cat) {
+      const map = {
+        no_show: 'No se presentó',
+        delay: 'Retraso / Cancelación',
+        bad_service: 'Mal servicio',
+        cancellation: 'Cancelación',
+        other: 'Otro',
+      };
+      return map[cat] || cat;
+    },
+
+    categoryColor(cat) {
+      const map = {
+        no_show: 'negative',
+        delay: 'orange',
+        bad_service: 'deep-orange',
+        cancellation: 'red',
+        other: 'grey',
+      };
+      return map[cat] || 'grey';
+    },
+
+    statusLabel(status) {
+      const map = {
+        open: 'Abierto',
+        under_review: 'En revisión',
+        resolved: 'Resuelto',
+        rejected: 'Rechazado',
+      };
+      return map[status] || status;
+    },
+
+    statusColor(status) {
+      const map = {
+        open: 'warning',
+        under_review: 'info',
+        resolved: 'positive',
+        rejected: 'negative',
+      };
+      return map[status] || 'grey';
+    },
+  },
+};
+</script>
