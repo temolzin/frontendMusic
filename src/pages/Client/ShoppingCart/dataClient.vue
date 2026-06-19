@@ -7,7 +7,7 @@
             <img class="openpay" src="https://assets.stickpng.com/images/62e3c66bd889babae63d750e.png" />
             <q-form @submit="nextStep" ref="formClient1">
               <div class="row">
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input dense outlined class="full-width" type="text" v-model="formClient.first_name"
                       label="Nombre *" :rules="[
@@ -17,7 +17,7 @@
                       ]" required />
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input dense outlined class="full-width" type="text" v-model="formClient.first_last"
                       label="Apellidos *" :rules="[
@@ -27,7 +27,7 @@
                       ]" required />
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input dense outlined type="email" v-model="formClient.email" class="full-width" label="Email*"
                       :rules="[
@@ -36,7 +36,7 @@
                       ]" required />
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input dense outlined type="tel" v-model="formClient.phone" class="full-width"
                       label="Teléfono *" maxlength="10"
@@ -69,7 +69,7 @@
                       ]" required />
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.city" label="Cuidad *"
                       :disable="googleMapsEnabled && formClient.city"
@@ -79,7 +79,7 @@
                       ]" required />
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.state_city"
                       label="Municipio"
@@ -90,7 +90,7 @@
                       ]" required />
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input dense outlined type="text" class="full-width" v-model="formClient.zip_code"
                       label="Codigo Postal" maxlength="5" @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
@@ -101,7 +101,7 @@
                       ]" required />
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input dense outlined type="text" v-model="formClient.country" label="Pais *" class="full-width"
                       :disable="googleMapsEnabled && formClient.country"
@@ -123,7 +123,7 @@
                     </q-card>
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input
                       dense
@@ -157,7 +157,7 @@
                     </q-input>
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input
                       dense
@@ -185,7 +185,7 @@
                     </q-input>
                   </q-item>
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <q-item>
                     <q-checkbox dense outlined class="full-width"
                       label="Deseas guardar los datos para la siguiente compra"
@@ -235,8 +235,15 @@
               </div>
             </div>
             <q-separator></q-separator>
-            <div class="q-gutter-md q-flex q-mt-lg" v-if="paymentMethod === 'card'">
-            <q-btn unelevated rounded color="primary" class="select-card" :label="selectedCard.id ? 'Cambiar Tarjeta' : 'Seleccionar Tarjeta'" @click="basic = true" />
+            <div class="q-mt-lg" v-if="paymentMethod === 'card'">
+              <div class="row justify-center justify-sm-between items-center q-mb-md q-gutter-y-sm">
+                <div class="col-12 col-sm-auto text-center">
+                  <q-btn unelevated rounded color="primary" class="select-card" :label="selectedCard.id ? 'Cambiar Tarjeta' : 'Seleccionar Tarjeta'" @click="basic = true" style="margin: 0;" />
+                </div>
+                <div class="col-12 col-sm-auto text-center">
+                  <q-btn outline class="add-card" style="color: goldenrod; float: none; margin: 0;" label="Agregar nueva tarjeta" icon-right="fas fa-plus" @click="formCreate = true" />
+                </div>
+              </div>
             <q-dialog v-model="basic" transition-show="rotate" transition-hide="rotate">
               <q-card>
                 <q-card-section>
@@ -246,8 +253,9 @@
                   <div v-for="(cards, index) in stateUserCards" :key="index">
                     <q-radio v-model="selectedCardIndex" :val="index" color="primary"
                       @input="selectCard(cards)"></q-radio>
-                    <div class="card-2 col-12 col-sm-3 col-md-4 q-ma-sm">
-                      <div class="card__front card__part_modal">
+                    <div class="row flex-center q-mb-md full-width">
+                      <div class="card-2" style="position: relative; max-width: 100%;">
+                        <div class="card__front card__part_modal" style="position: relative; left: auto; transform: none; width: 100%; max-width: 320px;">
                         <img class="card__square" src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png" />
                         <p class="card_numer">{{ castCard(cards).number_card }}</p>
                         <div class="card__space-75">
@@ -261,6 +269,7 @@
                       </div>
                     </div>
                   </div>
+                  </div>
                 </q-card-section>
                 <q-card-actions align="right">
                   <q-btn flat label="Aceptar" color="primary" @click="selectCard(stateUserCards[selectedCardIndex])"
@@ -269,10 +278,7 @@
               </q-card>
             </q-dialog>
 
-            <q-btn outline class="add-card" style="color: goldenrod" label="Agregar nueva tarjeta" icon-right="fas fa-plus"
-              @click="formCreate = true" />
-
-            <div v-if="paymentMethod === 'card'" class="q-pa-md q-gutter-sm">
+            <div class="q-pa-md q-gutter-sm">
               <q-dialog v-model="formCreate" persistent>
                 <q-card style="min-width: 350px">
                   <q-card-section>
@@ -355,10 +361,9 @@
               </q-dialog>
             </div>
           </div>
-            <div class="row" v-if="paymentMethod === 'card'">
-
-              <div class="card col-12 col-sm-3 col-md-4 q-ma-sm" @click="selectedCard.id ? basic = true : null" :style="selectedCard.id ? 'cursor: pointer;' : ''">
-                <div class="card__front card__part">
+            <div class="row full-width justify-center q-mb-md" v-if="paymentMethod === 'card'">
+              <div class="card" @click="selectedCard.id ? basic = true : null" :style="selectedCard.id ? 'cursor: pointer; position: relative; max-width: 100%; width: 320px; margin: 0 auto;' : 'position: relative; max-width: 100%; width: 320px; margin: 0 auto;'">
+                <div class="card__front card__part" style="position: relative; left: auto; transform: none; width: 100%; max-width: 320px;">
                   <img class="card__square" src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png" />
                   <p class="card_numer">{{ selectedCard.number_card || 'Selecciona una tarjeta' }}</p>
                   <div class="card__space-75">
@@ -371,8 +376,10 @@
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div class="col-6">
+            <div class="row" v-if="paymentMethod === 'card'">
+              <div class="col-12 col-sm-6">
                 <q-item>
                   <q-input dense outlined class="full-width" v-model="selectedCard.name" label="Nombre de la Tarjeta*" 
                     :rules="[
@@ -380,7 +387,7 @@
                     ]" />
                 </q-item>
               </div>
-              <div class="col-6">
+              <div class="col-12 col-sm-6">
                 <q-item>
                   <q-input dense outlined class="full-width" label="Número de la Tarjeta"
                     v-model="selectedCard.number_card" mask="#### #### #### ####" fill-mask :rules="[
@@ -393,7 +400,7 @@
                     ]"/>
                 </q-item>
               </div>
-              <div class="col-6">
+              <div class="col-12 col-sm-6">
                 <q-item>
                   <q-input dense outlined class="full-width" v-model="selectedCard.expiration_date"
                     label="Fecha de Expiración" mask="##/##" fill-mask :rules="[
@@ -415,7 +422,7 @@
                     ]" />
                 </q-item>
               </div>
-              <div class="col-6">
+              <div class="col-12 col-sm-6">
                 <q-item>
                   <q-input dense outlined class="full-width" v-model="cvv" type="text" maxlength="4"
                     label="CVV *" :rules="[
@@ -426,7 +433,7 @@
               </div>
             </div>
             <div class="row" v-if="paymentMethod === 'cash'">
-              <div class="col-6 full-width">
+              <div class="col-12">
                 <q-item>
                   <q-select class="full-width" color="purple-12" v-model="model" :options="availableCashOptions"
                     label="Efectivo en puntos de pago" emit-value map-options>
@@ -438,7 +445,7 @@
               </div>
             </div>
             <div class="row" v-if="paymentMethod === 'card'">
-              <div class="col-6 full-width">
+              <div class="col-12">
                 <q-item>
                   <q-checkbox dense outlined class="full-width"
                     label="Desea recordar los datos de la tarjeta de crédito para la próxima Compra"
@@ -448,9 +455,9 @@
             </div>
 
             <q-stepper-navigation>
-              <q-btn rounded @click="validateStep2" class="float-right q-mr-md q-mb-md" color="blue"
-                label="Siguiente" />
-              <q-btn flat @click="step = 1" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
+              <q-btn rounded @click="paymentMethod === 'cash' ? payCash() : pay()" class="float-right q-mr-md q-mb-md" color="blue"
+                label="Realizar Compra" />
+              <q-btn flat @click="step = 2" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
             </q-stepper-navigation>
           </q-step>
 
@@ -514,8 +521,8 @@
             </div>
 
             <q-card class="rounded-borders">
-              <q-card-section horizontal>
-                <q-card-section class="col-6 q-pt-xs">
+              <div class="row">
+                <q-card-section class="col-12 col-sm-6 q-pt-xs">
                   <div class="text-h6 text-center q-mb-md">Datos del Evento</div>
                   <div class="row items-center q-mb-sm">
                     <q-icon name="home" color="primary" size="xs" class="q-mr-sm" />
@@ -544,7 +551,7 @@
                     <span class="text-caption">{{ formClient.first_name }} {{ formClient.first_last }}</span>
                   </div>
                 </q-card-section>
-                <q-card-section class="col-6 q-pt-xs">
+                <q-card-section class="col-12 col-sm-6 q-pt-xs">
                 <div class="text-h6 text-center q-mb-md">Detalles del Pago</div>
                 <div v-if="paymentMethod === 'card'">
                   <div class="row items-center q-mb-sm">
@@ -598,7 +605,7 @@
                   </div>
                 </div>
               </q-card-section>
-              </q-card-section>
+              </div>
             </q-card>
 
             <q-stepper-navigation>
@@ -609,7 +616,7 @@
           </q-step>
         </q-stepper>
       </div>
-      <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12">
+      <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
         <q-card class=" no-shadow" bordered>
           <q-card-section class="text-center text-h6 text-white bg-primary">
             <q-icon name="shopping_cart" class="q-mr-sm" />

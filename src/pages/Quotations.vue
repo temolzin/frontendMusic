@@ -2,16 +2,17 @@
   <div
     class="col-12 col-md-6 flex content-center justify-center"
     :class="mode ? 'bg-modedark' : 'bg-primary'"
-    v-bind:style="{ height: '63em' }"
+    v-bind:style="{ minHeight: '100vh', padding: '1em 0' }"
   >
     <q-card
       class="my-card shadow-box shadow-2"
       :class="`shadow-10`"
       flat
-      v-bind:style="$q.screen.lt.sm ? { width: '100%' } : { width: '75%' }"
+      v-bind:style="$q.screen.lt.sm ? { width: '100%', margin: '0' } : { width: '75%' }"
     >
-      <q-card-section horizontal>
+      <q-card-section :horizontal="!$q.screen.lt.sm">
         <q-img
+          v-show="!$q.screen.lt.sm"
           class="col-5 col-sm-1 col-md-5"
           src="https://img.freepik.com/fotos-premium/fondo-escenario-concierto-musica-vivo_800563-6822.jpg"
           v-bind:style="$q.screen.lt.sm ? { width: '0%' } : { width: '40%' }"
@@ -68,8 +69,8 @@
                   Información específica del evento
                 </p>
 
-                <div class="row items-center space-between" style="justify-content: center">
-                  <q-input filled v-model="newQuotation.event_date">
+                <div class="row items-center justify-center">
+                  <q-input filled v-model="newQuotation.event_date" class="full-width q-mb-md">
                     <template v-slot:append>
                       <q-icon
                         name="event"
@@ -101,7 +102,7 @@
                     </template>
                   </q-input>
 
-                  <div class="space-between">
+                  <div class="row items-center justify-center no-wrap full-width q-mb-sm">
                     <q-btn
                       flat
                       round
@@ -109,11 +110,9 @@
                       icon="remove_circle_outline"
                       @click="event_hours = Math.max(1, event_hours - 1)"
                     />
-                  </div>
-                  <div class="col-3 text-center text-h6 q-px-md">
-                    {{ event_hours + " hora(s)" }}
-                  </div>
-                  <div class="row q-gutter-md" style="justify-content: center">
+                    <div class="text-center text-h6 q-px-md">
+                      {{ event_hours + " hora(s)" }}
+                    </div>
                     <q-btn
                       flat
                       round

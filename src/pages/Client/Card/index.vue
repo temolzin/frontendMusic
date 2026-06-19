@@ -10,9 +10,9 @@
         @click="formCreate = true"
       />
     </h6>
-    <div class="row q-ma-sm" v-if="cards != 0">
-      <div v-for="(card, index) in cards" :key="index">
-        <div class="card col-12 col-sm-3 col-md-4 q-ma-sm">
+    <div class="row justify-center q-gutter-lg q-ma-sm" v-if="cards != 0">
+      <div v-for="(card, index) in cards" :key="index" class="col-auto">
+        <div class="card">
           <div class="card__front card__part">
             <!-- Inicio de logo izquierdo -->
             <img
@@ -524,6 +524,8 @@ export default {
   -webkit-perspective: 600px;
   -moz-perspective: 600px;
   perspective: 600px;
+  position: relative;
+  max-width: 100%;
 }
 
 .card__part {
@@ -533,7 +535,7 @@ export default {
   z-index: 1000;
   left: 0;
   display: inline-block;
-  width: 320px;
+  width: 100%;
   height: 190px;
   background-image: url("https://cdn.pixabay.com/photo/2017/11/15/09/28/music-player-2951399_960_720.jpg");
   background-repeat: no-repeat;
@@ -590,21 +592,25 @@ export default {
   display: block;
   width: 100%;
   word-spacing: 0px;
-  font-size: 20px;
+  font-size: 19px;
   letter-spacing: 2px;
   color: #fff;
   text-align: center;
   margin-bottom: 15px;
   margin-top: 25px;
+  white-space: nowrap;
 }
 
 .card__space-75 {
-  width: 85%;
+  width: 75%;
   float: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card__space-25 {
-  width: 15%;
+  width: 25%;
   float: left;
 }
 
@@ -623,6 +629,7 @@ export default {
   color: #fff;
   letter-spacing: 1px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .card__back-content {
