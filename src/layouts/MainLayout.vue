@@ -370,19 +370,30 @@ export default {
         }
       }
     },
-    async fetchShoppingCartCount() {
-      try {
-        if (this.isAuthenticated) {
-          await this.getCountListShoppingCard();
-        }
-      } catch (err) {
-        const message = err?.response?.data?.message || "No se pudo cargar el carrito.";
-        this.$q.notify({
-          type: "negative",
-          message,
-        });
-      }
-    },
+async fetchShoppingCartCount() {
+  try {
+    if (this.isAuthenticated) {
+      await this.getCountListShoppingCard();
+    }
+  } catch (err) {
+    const message = err?.response?.data?.message || "No se pudo cargar el carrito.";
+    if (message === 'Unauthenticated.' || err?.response?.status === 401) {
+      this.$q.notify({
+        color: "primary",      
+        textColor: "white",    
+        icon: "sentiment_satisfied_alt", 
+        message: '¡Hasta luego!',
+        timeout: 2000,         
+        position: "bottom"        
+      });
+      return; 
+    }
+    this.$q.notify({
+      type: "negative",
+      message,
+    });
+  }
+},
     darkMode(val) {
       this.$q.dark.set(val);
       const user = this.getMe;
