@@ -105,12 +105,10 @@
               outlined
               type="number"
               min="1"
-              max="100"
-              :rules="[
+              max="90" :rules="[
                 val => !!val || 'El descuento es requerido',
                 val => val >= 1 || 'El descuento mínimo es 1%',
-                val => val <= 100 || 'El descuento no puede ser mayor al 100%'
-              ]"
+                val => val <= 90 || 'El descuento no puede ser mayor al 90%' ]"
             />
             <div>
               <div class="text-caption text-grey-7 q-mb-xs">Fecha inicio</div>
