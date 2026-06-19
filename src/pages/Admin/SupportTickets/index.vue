@@ -1,6 +1,5 @@
 <template>
   <div class="q-pa-md">
-
     <div class="row items-center q-mb-md">
       <div class="text-h5 text-weight-bold">Tickets de Soporte</div>
       <q-space />
@@ -30,7 +29,6 @@
         @update:model-value="fetchTickets"
       />
     </div>
-
     <q-table
       :rows="tickets"
       :columns="columns"
@@ -58,7 +56,6 @@
           </div>
         </q-td>
       </template>
-
       <template v-slot:body-cell-reporter="props">
         <q-td :props="props">
           <div class="text-weight-medium">{{ props.row.reporter?.name || 'N/A' }}</div>
@@ -73,7 +70,6 @@
           </q-badge>
         </q-td>
       </template>
-
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
           <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
@@ -81,7 +77,6 @@
           </q-badge>
         </q-td>
       </template>
-
       <template v-slot:body-cell-actions="props">
         <q-td :props="props" class="text-center">
           <q-btn
@@ -96,25 +91,18 @@
         </q-td>
       </template>
     </q-table>
-
   </div>
 </template>
 
 <script>
-import { useSupportTickets } from 'src/composables/useSupportTickets';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'SupportTicketsIndex',
 
-  setup() {
-    const { getAdminTickets } = useSupportTickets();
-    return { getAdminTickets };
-  },
-
   data() {
     return {
       loading: false,
-      tickets: [],
       filterStatus: null,
       filterCategory: null,
       columns: [
@@ -141,19 +129,24 @@ export default {
     };
   },
 
+  computed: {
+    ...mapGetters('supportTickets', { tickets: 'getAdminTickets' }),
+  },
+
   async created() {
     await this.fetchTickets();
   },
 
   methods: {
+    ...mapActions('supportTickets', ['fetchAdminTickets']),
+
     async fetchTickets() {
       this.loading = true;
       try {
         const filters = {};
         if (this.filterStatus) filters.status = this.filterStatus;
         if (this.filterCategory) filters.category = this.filterCategory;
-        const result = await this.getAdminTickets(filters);
-        this.tickets = result.data ?? result;
+        await this.fetchAdminTickets(filters);
       } catch {
         this.$q.notify({ type: 'negative', message: 'Error al cargar los tickets.', position: 'top' });
       } finally {

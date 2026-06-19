@@ -1,6 +1,5 @@
 <template>
   <div class="q-pa-md" style="max-width: 800px; margin: 0 auto">
-
     <q-btn
       flat
       rounded
@@ -10,13 +9,10 @@
       class="q-mb-md"
       @click="$router.push({ name: 'admin.support-tickets' })"
     />
-
     <div v-if="loading" class="text-center q-py-xl">
       <q-spinner color="primary" size="3em" />
     </div>
-
     <template v-else-if="ticket">
-
       <div class="row items-center q-mb-md">
         <div class="text-h5 text-weight-bold">Ticket #{{ ticket.id }}</div>
         <q-space />
@@ -24,7 +20,6 @@
           {{ statusLabel(ticket.status) }}
         </q-badge>
       </div>
-
       <q-card flat bordered class="q-mb-md">
         <q-card-section>
           <div class="text-subtitle1 text-weight-bold q-mb-sm">Información de la Orden</div>
@@ -58,7 +53,6 @@
           </div>
         </q-card-section>
       </q-card>
-
       <q-card flat bordered class="q-mb-md">
         <q-card-section>
           <div class="text-subtitle1 text-weight-bold q-mb-sm">Detalle del Reporte</div>
@@ -85,7 +79,6 @@
           </div>
         </q-card-section>
       </q-card>
-
       <q-card flat bordered class="q-mb-md" v-if="ticket.evidences && ticket.evidences.length > 0">
         <q-card-section>
           <div class="text-subtitle1 text-weight-bold q-mb-sm">
@@ -125,14 +118,12 @@
           </div>
         </q-card-section>
       </q-card>
-
       <q-card flat bordered class="q-mb-md" v-else>
         <q-card-section>
           <div class="text-subtitle1 text-weight-bold q-mb-xs">Evidencias</div>
           <div class="text-grey text-caption">No se adjuntaron evidencias.</div>
         </q-card-section>
       </q-card>
-
       <q-card
         flat
         bordered
@@ -180,7 +171,6 @@
           </div>
         </q-card-section>
       </q-card>
-
       <q-card flat bordered v-else>
         <q-card-section class="text-center">
           <q-icon
@@ -193,28 +183,25 @@
           </div>
         </q-card-section>
       </q-card>
-
     </template>
   </div>
 </template>
 
 <script>
-import { useSupportTickets } from 'src/composables/useSupportTickets';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'SupportTicketShow',
-
-  setup() {
-    const { getAdminTicketDetail, updateTicketStatus } = useSupportTickets();
-    return { getAdminTicketDetail, updateTicketStatus };
-  },
 
   data() {
     return {
       loading: false,
       resolving: false,
-      ticket: null,
     };
+  },
+
+  computed: {
+    ...mapGetters('supportTickets', { ticket: 'getCurrentTicket' }),
   },
 
   async created() {
@@ -222,10 +209,12 @@ export default {
   },
 
   methods: {
+    ...mapActions('supportTickets', ['fetchAdminTicketDetail', 'updateTicketStatus']),
+
     async fetchTicket() {
       this.loading = true;
       try {
-        this.ticket = await this.getAdminTicketDetail(this.$route.params.id);
+        await this.fetchAdminTicketDetail(this.$route.params.id);
       } catch {
         this.$q.notify({ type: 'negative', message: 'Error al cargar el ticket.', position: 'top' });
       } finally {
@@ -236,7 +225,8 @@ export default {
     async resolve(status, resolutionType) {
       this.resolving = true;
       try {
-        this.ticket = await this.updateTicketStatus(this.ticket.id, {
+        await this.updateTicketStatus({
+          ticketId: this.ticket.id,
           status,
           resolution_type: resolutionType,
         });

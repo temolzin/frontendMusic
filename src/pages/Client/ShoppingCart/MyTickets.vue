@@ -1,18 +1,14 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
-
       <div class="text-h5 text-primary text-weight-bold q-mb-lg">Mis Reportes</div>
-
       <div v-if="loading" class="text-center q-py-xl">
         <q-spinner color="primary" size="3em" />
       </div>
-
       <div v-else-if="tickets.length === 0" class="text-center q-py-xl">
         <q-icon name="inbox" size="4em" color="grey-4" />
         <p class="text-grey-6 q-mt-md">No tienes reportes registrados.</p>
       </div>
-
       <q-list v-else bordered separator class="rounded-borders">
         <q-item
           v-for="ticket in tickets"
@@ -22,7 +18,6 @@
           <q-item-section avatar>
             <q-avatar :color="categoryColor(ticket.category)" text-color="white" icon="report_problem" />
           </q-item-section>
-
           <q-item-section>
             <q-item-label class="text-weight-bold">
               {{ categoryLabel(ticket.category) }}
@@ -32,7 +27,6 @@
               Orden #{{ ticket.artist_sale_id }} — {{ formatDate(ticket.created_at) }}
             </q-item-label>
           </q-item-section>
-
           <q-item-section side>
             <q-badge :color="statusColor(ticket.status)" class="q-px-sm q-py-xs">
               {{ statusLabel(ticket.status) }}
@@ -40,27 +34,24 @@
           </q-item-section>
         </q-item>
       </q-list>
-
     </div>
   </q-page>
 </template>
 
 <script>
-import { useSupportTickets } from 'src/composables/useSupportTickets';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'MyTickets',
 
-  setup() {
-    const { getMyTickets } = useSupportTickets();
-    return { getMyTickets };
-  },
-
   data() {
     return {
       loading: false,
-      tickets: [],
     };
+  },
+
+  computed: {
+    ...mapGetters('supportTickets', { tickets: 'getMyTickets' }),
   },
 
   async created() {
@@ -68,10 +59,12 @@ export default {
   },
 
   methods: {
+    ...mapActions('supportTickets', ['fetchMyTickets']),
+
     async fetchTickets() {
       this.loading = true;
       try {
-        this.tickets = await this.getMyTickets();
+        await this.fetchMyTickets();
       } catch {
         this.$q.notify({ type: 'negative', message: 'Error al cargar tus reportes.', position: 'top' });
       } finally {
