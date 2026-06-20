@@ -156,6 +156,15 @@
               </q-item>
             </q-list>
             <q-btn v-if="selectedPurchase.payment_method === 'cash' && selectedPurchase.status === 'pending'" unelevated rounded color="primary" icon="refresh" label="Generar nueva referencia" class="full-width q-mt-md" @click="generateNewReference(selectedPurchase)" />
+            <q-btn
+              unelevated
+              rounded
+              color="negative"
+              icon="report_problem"
+              label="Reportar Incidente"
+              class="full-width q-mt-sm"
+              @click="goToReport(selectedPurchase)"
+            />
           </q-card-section>
           <q-card-actions align="right" class="q-pt-md">
             <q-btn flat label="Cerrar" color="primary" v-close-popup size="md" class="q-px-xl" />
@@ -552,7 +561,11 @@ export default {
       } finally {
         this.$q.loading.hide();
       }
-    }
+    },
+    goToReport(purchase) {
+      this.showModal = false;
+      this.$router.push({ name: 'client.report-incident', params: { saleId: purchase.id } });
+    },
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
