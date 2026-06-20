@@ -71,7 +71,7 @@
             v-if="getMe.role[0] == 'artista'"
           >
             <q-item-section class="text-weight-bold">
-              DASHBOARD
+              PANEL
             </q-item-section>
           </q-item>
 
