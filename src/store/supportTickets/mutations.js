@@ -1,0 +1,15 @@
+export const setMyTickets = (state, tickets) => {
+    state.myTickets = tickets;
+};
+
+export const setAdminTickets = (state, tickets) => {
+    state.adminTickets = tickets;
+};
+
+export const setCurrentTicket = (state, ticket) => {
+    state.currentTicket = ticket;
+};
+
+export const addMyTicket = (state, ticket) => {
+    state.myTickets.unshift(ticket);
+};

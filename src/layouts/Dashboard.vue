@@ -71,7 +71,7 @@
             v-if="getMe.role[0] == 'artista'"
           >
             <q-item-section class="text-weight-bold">
-              DASHBOARD
+              PANEL
             </q-item-section>
           </q-item>
 
@@ -133,6 +133,20 @@
           <q-item
             clickable
             v-ripple
+            to="/admin/support-tickets"
+            v-if="getMe.role[0] == 'administrador'"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="report_problem" />
+            </q-item-section>
+
+            <q-item-section> Tickets de Soporte </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
             to="/artist/index"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
@@ -189,6 +203,19 @@
             </q-item-section>
             <q-item-section> Datos de Cobro </q-item-section>
           </q-item>
+          <q-item
+            clickable
+            v-ripple
+            to="/client/my-tickets"
+            v-if="$can('view-profile-artist')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="report_problem" />
+            </q-item-section>
+            <q-item-section>Mis Reportes</q-item-section>
+          </q-item>
+
           <q-item
             v-show="false"
             clickable
@@ -281,6 +308,19 @@
 
             <q-item-section> Mis Compras </q-item-section>
           </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            to="/client/my-tickets"
+            v-if="$can('view-my-order-details')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="report_problem" />
+            </q-item-section>
+            <q-item-section>Mis Reportes</q-item-section>
+          </q-item>
           
           <q-item
             clickable
@@ -350,6 +390,7 @@ export default {
     return {
       isActiveDarkMode: ref(false),
       leftDrawerOpen,
+      ticketCount: ref(0),
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
@@ -386,6 +427,7 @@ export default {
     const isDark = saved === 'true';
     this.$q.dark.set(isDark);
     this.isActiveDarkMode = isDark;
+    this.fetchTicketCount();
   },
   methods: {
     ...mapActions("artistList", ["getArtists"]),
@@ -410,6 +452,14 @@ export default {
           type: "negative",
           message,
         });
+      }
+    },
+    async fetchTicketCount() {
+      try {
+        const { data } = await this.$api.get('/api/support-tickets/my');
+        this.ticketCount = (data.data || []).filter(t => t.status === 'open').length;
+      } catch {
+        this.ticketCount = 0;
       }
     },
     hasPermission(permission) {

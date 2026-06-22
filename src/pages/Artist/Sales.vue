@@ -79,6 +79,20 @@
         </q-td>
       </template>
 
+      <template v-slot:body-cell-report="props">
+        <q-td :props="props" class="text-center">
+          <q-btn
+            flat
+            rounded
+            color="negative"
+            icon="report_problem"
+            label="Reportar"
+            size="sm"
+            @click="goToReport(props.row)"
+          />
+        </q-td>
+      </template>
+
       <template v-slot:item="props">
         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
           <q-card class="q-pa-sm">
@@ -239,7 +253,14 @@ const columns = [
     align: "center",
     field: "acciones",
     sortable: false,
-  }
+  },
+  {
+    name: 'report',
+    label: 'Reportar',
+    align: 'center',
+    field: 'report',
+    sortable: false,
+  },
 ];
 
 export default {
@@ -342,7 +363,11 @@ export default {
           scrollTarget.scrollTop = scrollTarget.scrollHeight;
         }
       });
-    }
+    },
+
+    goToReport(sale) {
+      this.$router.push({ name: 'client.report-incident', params: { saleId: sale.id } });
+    },
   },
 
   watch: {
