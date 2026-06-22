@@ -244,6 +244,17 @@ const routes = [
           permissions: ["view-profile-artist"],
         },
       },
+      {
+        name: "artist.payout-info",
+        path: "/artist/payout-info",
+        component: () => import("pages/Artist/PayoutInfo/index.vue"),
+        meta: {
+          title: "Datos de Cobro",
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-profile-artist"], 
+        },
+      },
       // Fin de rutas del artista
 
       // Rutas del cliente

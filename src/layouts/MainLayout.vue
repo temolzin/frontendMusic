@@ -137,6 +137,10 @@
               <q-item-section avatar><q-icon name="fas fa-solid fa-cart-arrow-down" /></q-item-section>
               <q-item-section> Mis ventas </q-item-section>
             </q-item>
+            <q-item clickable v-ripple to="/artist/payout-info" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="account_balance" /></q-item-section>
+              <q-item-section> Datos de Cobro </q-item-section>
+            </q-item>
             <q-item clickable v-ripple to="/artist/artistSales" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
               <q-item-section avatar><q-icon name="fas fa-solid fa-calendar" /></q-item-section>
               <q-item-section> Mi calendario </q-item-section>
