@@ -19,6 +19,7 @@ import favouriteArtists from "./client/favouriteArtists";
 import UsersSuscribe from "./general/UsersSuscribe";
 import videoArtist from "./artist/videoArtist";
 import offers from "./artist/offers";
+import payoutMethod from './artist/payoutMethod'
 
 const Store = createStore({
   modules: {
@@ -41,6 +42,7 @@ const Store = createStore({
     artistSales,
     videoArtist,
     offers,
+    payoutMethod,
   },
   strict: process.env.DEBUGGING,
 });

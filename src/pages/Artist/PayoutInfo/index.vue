@@ -45,6 +45,7 @@
                     hint="Nombre completo del dueño de la cuenta o razón social"
                     lazy-rules
                     :rules="[ val => val && val.length > 0 || 'El nombre del titular es obligatorio' ]"
+                    :disable="!isEditing"
                 />
                 <q-select
                     outlined
@@ -55,6 +56,7 @@
                     label="Banco *"
                     lazy-rules
                     :rules="[ val => val && val.length > 0 || 'Debes seleccionar un banco' ]"
+                    :disable="!isEditing"
                 />
                 <q-input
                     outlined
@@ -70,6 +72,7 @@
                     val => val && val.length === 18 || 'La CLABE debe tener exactamente 18 dígitos',
                     val => /^\d+$/.test(val) || 'La CLABE solo debe contener números'
                     ]"
+                    :disable="!isEditing"
                 />
                 <q-input
                     outlined
@@ -80,13 +83,26 @@
                     mask="XXXX######XXX"
                     hint="RFC asociado a la cuenta (12 o 13 caracteres)"
                     style="text-transform: uppercase;"
+                    :disable="!isEditing"
                 />
-                <div class="row justify-end q-mt-lg">
+                
+                <div class="row justify-end q-mt-lg q-gutter-sm">
                     <q-btn 
-                    label="Guardar Información" 
-                    type="submit" 
-                    color="accent" 
-                    class="text-weight-bold"
+                      v-if="!isEditing"
+                      label="Editar Información" 
+                      color="warning" 
+                      icon="edit"
+                      class="text-weight-bold"
+                      @click="isEditing = true"
+                    />
+
+                    <q-btn 
+                      v-else
+                      label="Guardar Información" 
+                      type="submit" 
+                      color="accent" 
+                      icon="save"
+                      class="text-weight-bold"
                     />
                 </div>
             </q-form>
@@ -99,13 +115,17 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+useQuasar
 import { useQuasar } from "quasar";
+import { useStore } from "vuex";
 
 export default {
   name: "PayoutInfoPage",
   setup() {
     const $q = useQuasar();
+    const store = useStore();
+    const isEditing = ref(true);
 
     const payoutData = ref({
       account_holder: "",
@@ -119,22 +139,60 @@ export default {
       "Scotiabank", "Banco Azteca", "BanCoppel", "Inbursa", "STP"
     ];
 
-    function savePayoutInfo() {
-      $q.notify({
-        color: "primary",
-        textColor: "white",
-        icon: "cloud_done",
-        message: "¡Datos de cobro registrados localmente con éxito!",
-        position: "bottom"
-      });
+    onMounted(async () => {
+      $q.loading.show({ message: 'Cargando datos de cobro...' });
+      await store.dispatch("payoutMethod/fetchPayoutMethod");
       
-      console.log("Datos listos para enviar al backend en el futuro:", payoutData.value);
+      const savedData = store.getters["payoutMethod/getPayoutData"];
+      if (savedData && savedData.clabe) {
+        payoutData.value = {
+          account_holder: savedData.account_holder || "",
+          bank_name: savedData.bank_name || "",
+          clabe: savedData.clabe || "",
+          rfc: savedData.rfc || ""
+        };
+        isEditing.value = false;
+      }
+      
+      $q.loading.hide();
+    });
+
+    async function savePayoutInfo() {
+      $q.loading.show({ message: 'Guardando en el servidor...' });
+      
+      try {
+        await store.dispatch("payoutMethod/savePayoutMethod", payoutData.value);
+        
+        $q.notify({
+          color: "positive",
+          textColor: "white",
+          icon: "cloud_done",
+          message: "¡Datos de cobro guardados en el servidor con éxito!",
+          position: "bottom"
+        });
+
+        isEditing.value = false;
+      } catch (error) {
+        const errorMessage = error.errors && error.errors.clabe 
+          ? error.errors.clabe[0] 
+          : "Hubo un error al guardar los datos bancarios.";
+        $q.notify({
+          color: "negative",
+          textColor: "white",
+          icon: "error",
+          message: errorMessage,
+          position: "bottom"
+        });
+      } finally {
+        $q.loading.hide();
+      }
     }
 
     return {
       payoutData,
       bankOptions,
-      savePayoutInfo
+      savePayoutInfo,
+      isEditing
     };
   }
 };
