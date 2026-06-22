@@ -80,7 +80,7 @@
                     />
                   </td>
                   <td class="text-left">
-                    {{"$ " +product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}}
+                    {{"$ " + (+product.hours * +product.price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}}
                   </td>
                 </tr>
               </tbody>

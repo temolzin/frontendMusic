@@ -130,7 +130,7 @@
                   label="Cuidad *"
                   :rules="[
                     (val) => !!val || 'La ciudad es requerida',
-                    (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'La ciudad solo puede contener letras'
+                    (val) => /^[a-záéíóúñüA-ZÁÉÍÓÚÑÜ\s]+$/.test(val) || 'La ciudad solo puede contener letras'
                   ]" required
                 >
                 </q-input>
@@ -196,7 +196,7 @@
                   :rules="[
                     (val) => !!val || 'El nombre es requerido',
                     (val) => val.trim().length >= 3 || 'El nombre debe tener al menos 3 caracteres',
-                    (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El nombre solo puede contener letras'
+                    (val) => /^[a-záéíóúñüA-ZÁÉÍÓÚÑÜ\s]+$/.test(val) || 'El nombre solo puede contener letras'
                   ]" required
                 >
                 </q-input>
