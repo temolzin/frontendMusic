@@ -2,7 +2,6 @@
   <q-page padding class="q-pa-md">
     <div class="row q-col-gutter-md justify-center">
       <div class="col-12 col-md-8">
-        
         <q-banner 
           rounded 
           class="q-mb-md q-pa-md"
@@ -15,7 +14,6 @@
             ¡Registra la cuenta donde recibirás tus ganancias! Al completar tus eventos, utilizaremos esta información para transferirte tus fondos de manera segura a través de OpenPay. Asegúrate de verificar que todos tus datos sean correctos.
           </div>
         </q-banner>
-
         <q-card 
           class="q-pa-sm" 
           flat 
@@ -31,9 +29,7 @@
               Configura tu cuenta bancaria destino para transferencias electrónicas.
             </div>
           </q-card-section>
-
           <q-separator :dark="$q.dark.isActive" inset />
-
           <q-card-section>
             <q-form @submit="savePayoutInfo" class="q-gutter-md">
                 <q-input
@@ -85,7 +81,6 @@
                     style="text-transform: uppercase;"
                     :disable="!isEditing"
                 />
-                
                 <div class="row justify-end q-mt-lg q-gutter-sm">
                     <q-btn 
                       v-if="!isEditing"
@@ -95,7 +90,6 @@
                       class="text-weight-bold"
                       @click="isEditing = true"
                     />
-
                     <q-btn 
                       v-else
                       label="Guardar Información" 
@@ -108,7 +102,6 @@
             </q-form>
           </q-card-section>
         </q-card>
-
       </div>
     </div>
   </q-page>
