@@ -44,3 +44,8 @@ export const updateTicketStatus = async ({ commit }, payload) => {
     commit("setCurrentTicket", response.data.data);
     return response.data.data;
 };
+
+export const fetchTicketLogs = async (context, ticketId) => {
+    const response = await api.get(`/api/admin/support-tickets/${ticketId}/logs`);
+    return response.data.data;
+};
