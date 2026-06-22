@@ -512,7 +512,7 @@ export default {
     discountedPrice() {
       if (!this.activeOffer) return null;
       const discount = this.activeOffer.discount_percentage / 100;
-      return this.artist.price_hour * (1 - discount);
+      return Math.round(this.artist.price_hour * (1 - discount) * 100) / 100;
     },
   },
   mounted() {

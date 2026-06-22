@@ -474,16 +474,16 @@
                       <q-item-label>Total de {{ castProduct(product).hours }} hora(s)</q-item-label>
                     </q-item-section>
                     <q-item-section class="text-right" side>
-                      <span v-if="castProduct(product).price < castProduct(product).artist.price_hour * castProduct(product).hours">
+                      <span v-if="castProduct(product).price < castProduct(product).artist.price_hour">
                         <span class="text-positive text-weight-bold">
-                          ${{ castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                          ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                         </span>
                         <small style="text-decoration: line-through" class="text-red q-ml-xs">
-                          ${{ castProduct(product).artist.price_hour }}
+                          ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                         </small>
                       </span>
                       <span v-else>
-                        {{ "$ " + castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                        {{ "$ " + (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                       </span>
                     </q-item-section>
                   </q-item>
@@ -637,14 +637,14 @@
                 <span v-if="castProduct(product).price < castProduct(product).artist.price_hour">
                   <q-badge color="orange" class="q-mb-xs">Descuento aplicado</q-badge><br/>
                   <span class="text-positive text-weight-bold">
-                    ${{ castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                    ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                   </span>
                   <small style="text-decoration: line-through" class="text-red q-ml-xs">
-                    ${{ castProduct(product).artist.price_hour }}
+                    ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                   </small>
                 </span>
                 <span v-else>
-                  ${{ castProduct(product).price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                  ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                 </span>
               </div>
               <div class="text-subtitle2 text-center">
@@ -1007,7 +1007,7 @@ export default defineComponent({
         const artistData = JSON.parse(decodedArtistJson);
         const artistId = artistData.id;
         const hoursCount = parseInt(hours || 1);
-        const clientPrice = parseFloat(artistData.price_hour || 0) * hoursCount;
+        const clientPrice = Math.round(parseFloat(artistData.price_hour || 0) * hoursCount * 100) / 100;
 
         this.quickBuyData = {
           artist_id: artistId,

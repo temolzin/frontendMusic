@@ -199,7 +199,7 @@ export default {
       formData.append("service_id", artist.id);
       formData.append("name", artist.name);
       const offer = artist.offers && artist.offers.length > 0 ? artist.offers[0] : null;
-      const finalPrice = offer ? artist.price_hour * (1 - offer.discount_percentage / 100) : artist.price_hour;
+      const finalPrice = Math.round((offer ? artist.price_hour * (1 - offer.discount_percentage / 100) : artist.price_hour) * 100) / 100;
       formData.append("price", finalPrice);
       formData.append("order_date_start", this.printDateStart());
       formData.append("order_date_finish", this.printDateFinish());
