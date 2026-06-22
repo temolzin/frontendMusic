@@ -11,9 +11,12 @@ export const fetchPayoutMethod = async ({ commit }) => {
   }
 };
 
-export const savePayoutMethod = async ({ commit }, payload) => {
+export const savePayoutMethod = async ({ commit, state }, payload) => {
   try {
-    const response = await api.post("/api/artist/payout-method", payload);
+    const response = state.payoutData && state.payoutData.id
+      ? await api.put("/api/artist/payout-method", payload)
+      : await api.post("/api/artist/payout-method", payload);
+
     if (response.data && response.data.success) {
       commit("setPayoutData", response.data.data);
       return response.data;
