@@ -20,8 +20,8 @@ export const upDateGalleryArtist = async ({ dispatch }, payload) => {
   });
 };
 
-export const deleteGalleryArtist= async ( payload) => {
-  await api.delete('/api/artist-new/gallery-artist-delete',payload).then((response) => {
-   
+export const deleteGalleryArtist = async ({ dispatch }, payload) => {
+  await api.delete('/api/artist-new/gallery-artist-delete').then(() => {
+    dispatch("getGalleryArtist");
   });
 };

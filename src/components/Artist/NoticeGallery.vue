@@ -296,6 +296,8 @@ export default {
         type: "negative",
         message: "Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.",
       });
+      this.formGalleryEdit = false;
+      await this.gettGalleryArtist();
     }
   },
 
@@ -351,28 +353,25 @@ export default {
       this.$q
         .dialog({
           title: "Mensaje de confirmación",
-          message: `¿Estás seguro de que quieres actualizar tu galería de imágenes?`,
+          message: `¿Estás seguro de que quieres eliminar todas las imágenes?`,
           cancel: true,
           persistent: true,
         })
-        .onOk(async() => {
+        .onOk(async () => {
           try {
-            this.btnDelete = true;
-            this.formGalleryShow = false;
             let option = "Yes";
-            this.deleteGalleryArtist(option);
-            await this.gettGalleryArtist();
+            await this.deleteGalleryArtist(option);
+            this.showGallery = false;
+            this.formGalleryEdit = false;
             this.$q.notify({
               type: "positive",
               message: `Eliminado correctamente`,
             });
           } catch (err) {
-            if (err.response.data.message) {
-              $q.notify({
-                type: "negative",
-                message: err.response.data.message,
-              });
-            }
+            this.$q.notify({
+              type: "negative",
+              message: err?.response?.data?.message || "Error al eliminar",
+            });
           }
         });
     },
