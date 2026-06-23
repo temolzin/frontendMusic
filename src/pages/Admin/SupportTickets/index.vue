@@ -70,6 +70,7 @@
           </q-badge>
         </q-td>
       </template>
+
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
           <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
@@ -79,6 +80,17 @@
       </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props" class="text-center">
+          <q-btn
+            flat
+            round
+            color="grey"
+            icon="history"
+            size="sm"
+            class="q-mr-xs"
+            @click="openLogs(props.row)"
+          >
+            <q-tooltip>Historial</q-tooltip>
+          </q-btn>
           <q-btn
             flat
             rounded
@@ -91,20 +103,28 @@
         </q-td>
       </template>
     </q-table>
+    <ticket-logs-modal
+      v-model="showLogsModal"
+      :ticket-id="selectedTicketId"
+      :ticket="selectedTicket"
+    />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
 
 export default {
   name: 'SupportTicketsIndex',
-
+  components: { TicketLogsModal },
   data() {
     return {
       loading: false,
       filterStatus: null,
       filterCategory: null,
+      showLogsModal: false,
+      selectedTicketId: null,
       columns: [
         { name: 'event_date', label: 'Fecha del Evento', field: (row) => row.artist_sale?.event_date, sortable: true, align: 'left' },
         { name: 'artist', label: 'Evento', field: 'artist', align: 'left' },
@@ -204,6 +224,12 @@ export default {
         rejected: 'negative',
       };
       return map[status] || 'grey';
+    },
+
+    openLogs(row) {
+      this.selectedTicketId = row.id;
+      this.selectedTicket = row;
+      this.showLogsModal = true;
     },
   },
 };

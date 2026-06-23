@@ -24,7 +24,11 @@
           outlined
           dense
           rows="4"
-          placeholder="Explica con detalle qué ocurrió..."
+          placeholder="Explica con detalle qué ocurrió (mínimo 10 caracteres)..."
+          :rules="[
+            val => !!val || 'La descripción es requerida.',
+            val => val.length >= 10 || 'Mínimo 10 caracteres.',
+          ]"
           class="q-mb-md"
         />
         <div class="text-subtitle2 q-mb-xs">Evidencias (fotos o videos, opcional)</div>
@@ -34,14 +38,16 @@
           outlined
           dense
           accept=".jpg,.jpeg,.png,.mp4,.mov"
-          max-file-size="20971520"
-          label="Adjuntar archivos"
-          class="q-mb-lg"
+          :max-file-size="20971520"
+          label="Adjuntar archivos (máx. 20 MB c/u, JPG/PNG/MP4/MOV)"
+          class="q-mb-xs"
+          @rejected="onFileRejected"
         >
           <template v-slot:prepend>
             <q-icon name="attach_file" />
           </template>
         </q-file>
+        <div class="text-caption text-grey q-mb-lg">Formatos permitidos: JPG, JPEG, PNG, MP4, MOV. Máximo 20 MB por archivo.</div>
         <q-btn
           unelevated
           rounded
@@ -50,7 +56,7 @@
           label="Enviar Reporte"
           class="full-width"
           :loading="loading"
-          :disable="!form.category || !form.description"
+          :disable="!form.category || form.description.length < 10"
           @click="submitReport"
         />
       </q-card>
@@ -140,6 +146,20 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    onFileRejected(rejectedEntries) {
+      const messages = {
+        'max-file-size': 'Un archivo supera el límite de 20 MB.',
+        'accept': 'Tipo de archivo no permitido. Usa JPG, PNG, MP4 o MOV.',
+      };
+      rejectedEntries.forEach(({ failedPropValidation }) => {
+        this.$q.notify({
+          type: 'negative',
+          message: messages[failedPropValidation] ?? 'Archivo rechazado.',
+          position: 'top',
+        });
+      });
     },
   },
 };

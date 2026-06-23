@@ -118,8 +118,14 @@
             <q-list bordered separator class="rounded-borders">
               <q-item>
                 <q-item-section>
-                  <q-item-label caption>Fecha</q-item-label>
+                  <q-item-label caption>Fecha de compra</q-item-label>
                   <q-item-label>{{ formatDate(selectedPurchase.created_at) }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Fecha del evento</q-item-label>
+                  <q-item-label>{{ formatDate(selectedPurchase.event_date) }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
@@ -163,8 +169,13 @@
               icon="report_problem"
               label="Reportar Incidente"
               class="full-width q-mt-sm"
+              :disable="!isEventPast(selectedPurchase)"
               @click="goToReport(selectedPurchase)"
-            />
+            >
+              <q-tooltip v-if="!isEventPast(selectedPurchase)">
+                Solo puedes reportar después de la fecha del evento.
+              </q-tooltip>
+            </q-btn>
           </q-card-section>
           <q-card-actions align="right" class="q-pt-md">
             <q-btn flat label="Cerrar" color="primary" v-close-popup size="md" class="q-px-xl" />
@@ -412,6 +423,10 @@ export default {
     },
     isEventCompleted(purchase) {
       return purchase && purchase.event_status === 'completed';
+    },
+    isEventPast(purchase) {
+      if (!purchase?.event_date) return false;
+      return new Date() > new Date(purchase.event_date);
     },
     async openRatingModal(purchase) {
       this.transactionToRate = purchase;
