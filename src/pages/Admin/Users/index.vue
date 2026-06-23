@@ -172,7 +172,7 @@
               <!-- Fin Select -->
               <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Cancelar" v-close-popup color="red" />
-                <q-btn flat label="Enviar" type="submit" color="primary" />
+                <q-btn flat label="Crear" type="submit" color="primary" />
               </q-card-actions>
             </q-form>
           </q-card-section>
@@ -241,7 +241,7 @@
               <!-- Fin Select -->
               <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Cancelar" v-close-popup color="red" />
-                <q-btn flat label="Enviar" type="submit" color="primary" />
+                <q-btn flat label="Guardar" type="submit" color="primary" />
               </q-card-actions>
             </q-form>
           </q-card-section>

@@ -18,7 +18,7 @@
         label="Breve descripcion del rol *"
         hint="Se recomiendo una sola palabra"
         lazy-rules
-        :rules="[(val) => (val && val.length > 0) || 'Ingresa una descripción']"
+        :rules="[(val) => (val && val.length >= 10) || 'Ingresa una descripción (mín. 10 caracteres)']"
       />
 
       <div>
@@ -52,7 +52,7 @@
       </div>
 
       <div>
-        <q-btn label="Enviar" type="submit" color="primary" />
+        <q-btn label="Crear" type="submit" color="primary" />
         <q-btn
           label="Reiniciar"
           type="reset"
