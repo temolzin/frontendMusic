@@ -51,6 +51,19 @@
               Miembros:
               <span class="text-weight-regular">{{ artist.members }}</span>
             </p>
+            <div class="row items-center q-mb-sm q-mt-sm">
+              <q-rating
+                :model-value="parseFloat(artist.ratings_avg_rating || 0)"
+                :max="5"
+                size="24px"
+                color="yellow"
+                icon="star_border"
+                icon-selected="star"
+                icon-half="star_half"
+                no-dimming
+                readonly
+              />
+            </div>
             <div class="row">
               <div class="col-6">
                 <div class="q-mt-sm q-gutter-sm">
