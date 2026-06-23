@@ -129,7 +129,7 @@
                 hint="Se recomiendo una sola palabra"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Ingresa una descripción',
+                  (val) => (val && val.length >= 10) || 'Ingresa una descripción (mín. 10 caracteres)',
                 ]"
               />
 
@@ -211,7 +211,7 @@
                 lazy-rules
                 v-model="form.description"
                 label="Descripción del rol"
-                :rules="[(val) => !!val || 'El campo descripción es requerido']"
+                :rules="[(val) => (val && val.length >= 10) || 'Mín. 10 caracteres']"
               />
               <q-select
                 lazy-rules
@@ -247,7 +247,7 @@
               />
               <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Cancelar" v-close-popup @click="onReset" />
-                <q-btn flat label="Enviar" type="submit" />
+                <q-btn flat label="Guardar" type="submit" />
               </q-card-actions>
             </q-form>
           </q-card-section>

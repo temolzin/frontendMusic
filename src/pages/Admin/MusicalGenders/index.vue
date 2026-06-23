@@ -152,7 +152,7 @@
                   lazy-rules
                   :rules="[
                     (val) =>
-                      (val && val.length > 0) || 'Ingresa una descripción',
+                      (val && val.length >= 10) || 'Ingresa una descripción (mín. 10 caracteres)',
                   ]"
                 />
 
@@ -244,7 +244,7 @@
                   lazy-rules
                   :rules="[
                     (val) =>
-                      (val && val.length > 0) || 'Ingresa una descripción',
+                      (val && val.length >= 10) || 'Ingresa una descripción (mín. 10 caracteres)',
                   ]"
                 />
                 <q-select
@@ -294,7 +294,7 @@
                     v-close-popup
                     class="q-ml-sm"
                   />
-                  <q-btn label="Crear" type="submit" color="primary" />
+                  <q-btn label="Guardar" type="submit" color="primary" />
                 </q-card-actions>
               </q-form>
             </q-card-section>
