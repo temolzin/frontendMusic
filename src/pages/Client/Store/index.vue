@@ -410,9 +410,11 @@ export default {
           return artist.musical_genders.some(gender => gender.name === this.filterGender);
         });
       }
-      filtered = filtered.filter(item =>
-        item.price_hour >= this.filterPrice.min && item.price_hour <= this.filterPrice.max
-      );
+      filtered = filtered.filter(item => {
+        const offer = item.offers && item.offers.length > 0 ? item.offers[0] : null;
+        const effectivePrice = offer ? item.price_hour * (1 - offer.discount_percentage / 100) : item.price_hour;
+        return effectivePrice >= this.filterPrice.min && effectivePrice <= this.filterPrice.max;
+      });
       return filtered;
     },
     formatDiscount(value) {
