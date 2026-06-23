@@ -105,21 +105,18 @@
     <section>
       <div class="q-pa-md q-gutter-sm">
         <q-dialog v-model="formGalleryEdit" persistent>
-          <q-card style="min-width: 360px; max-width: 95vw">
+          <q-card style="min-width: 360px; max-width: 760px">
             <q-card-section class="row items-center q-pb-sm">
               <div class="text-h6">Editar galería de imágenes</div>
               <q-space />
               <q-btn icon="close" flat round dense v-close-popup />
             </q-card-section>
-
             <q-separator />
-
             <q-card-section>
               <div class="text-caption text-grey q-mb-md">
                 Puedes agregar imágenes nuevas o eliminar todas y empezar de nuevo.
                 Máximo 5 imágenes en total.
               </div>
-
               <q-uploader
                 ref="uploaderEdit"
                 label="Agregar imágenes (Max 5)"
@@ -134,7 +131,6 @@
                 max-total-size="104857600"
                 class="q-mb-md full-width"
               />
-
               <q-btn
                 outline
                 rounded
@@ -145,7 +141,6 @@
                 @click="formDelete"
               />
             </q-card-section>
-
             <q-separator />
             <q-card-actions align="right" class="q-pa-sm">
               <q-btn flat label="Cerrar" color="primary" v-close-popup />

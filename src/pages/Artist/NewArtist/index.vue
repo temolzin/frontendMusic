@@ -901,104 +901,103 @@ export default {
     async createNewArtist() {
       try {
         this.btnE = false;
-        if (this.formCreate.image_artist.length == 0) {
-          this.$q.notify({
-            type: "negative",
-            message: `Ingresa una foto de grupo o artista`,
-          });
-        } else if (this.formCreate.image_manager.length == 0) {
-          this.$q.notify({
-            type: "negative",
-            message: `Ingresa una foto del manager`,
-          });
-        } else {
-          if (this.formCreate.image_artist.size > 20971520) {
+
+        switch (true) {
+          case this.formCreate.image_artist.length == 0:
+            this.$q.notify({
+              type: "negative",
+              message: `Ingresa una foto de grupo o artista`,
+            });
+            return;
+          case this.formCreate.image_manager.length == 0:
+            this.$q.notify({
+              type: "negative",
+              message: `Ingresa una foto del manager`,
+            });
+            return;
+          case this.formCreate.image_artist.size > 20971520:
             this.$q.notify({
               type: "negative",
               message: `El tamaño de la imagen del grupo excede de lo permitido`,
             });
-          } else if (this.formCreate.image_manager.size > 20971520) {
+            return;
+          case this.formCreate.image_manager.size > 20971520:
             this.$q.notify({
               type: "negative",
               message: `El tamaño de la imagen del manager excede de lo permitido`,
             });
-          } else {
-            let InstFormData = new FormData();
-            InstFormData.append("name", this.formCreate.name);
-            InstFormData.append("members", this.formCreate.members);
-            InstFormData.append("history", this.formCreate.history);
-            InstFormData.append("zone", this.formCreate.zone);
-            InstFormData.append("price_hour", this.formCreate.price_hour);
-            InstFormData.append("image_artist", this.formCreate.image_artist);
-            InstFormData.append(
-              "extra_kilometre",
-              this.formCreate.extra_kilometre
-            );
-            InstFormData.append("coverage_radius", this.formCreate.coverage_radius);
-            InstFormData.append("name_manager", this.formCreate.name_manager);
-            InstFormData.append("phone_manager", this.formCreate.phone_manager);
-            InstFormData.append("email_manager", this.formCreate.email_manager);
-            InstFormData.append("image_manager", this.formCreate.image_manager);
-            const selection = JSON.stringify(this.formCreate.selection);
-            InstFormData.append("selection", selection);
+            return;
+        }
 
-            const socialDomainMap = {
-              Instagram: 'instagram.com',
-              'X (Twitter)': 'twitter.com',
-              YouTube: 'youtube.com',
-              Facebook: 'facebook.com',
-              TikTok: 'tiktok.com',
-              Spotify: 'spotify.com',
-              'Apple Music': 'music.apple.com',
-              SoundCloud: 'soundcloud.com',
-              Bandcamp: 'bandcamp.com',
-              LinkedIn: 'linkedin.com',
-            };
+        let InstFormData = new FormData();
+        InstFormData.append("name", this.formCreate.name);
+        InstFormData.append("members", this.formCreate.members);
+        InstFormData.append("history", this.formCreate.history);
+        InstFormData.append("zone", this.formCreate.zone);
+        InstFormData.append("price_hour", this.formCreate.price_hour);
+        InstFormData.append("image_artist", this.formCreate.image_artist);
+        InstFormData.append("extra_kilometre", this.formCreate.extra_kilometre);
+        InstFormData.append("coverage_radius", this.formCreate.coverage_radius);
+        InstFormData.append("name_manager", this.formCreate.name_manager);
+        InstFormData.append("phone_manager", this.formCreate.phone_manager);
+        InstFormData.append("email_manager", this.formCreate.email_manager);
+        InstFormData.append("image_manager", this.formCreate.image_manager);
+        const selection = JSON.stringify(this.formCreate.selection);
+        InstFormData.append("selection", selection);
 
-            for (const red of this.formCreate.social_media) {
-              if (!red.name || !red.url) {
-                this.$q.notify({
-                  type: 'negative',
-                  message: 'Cada red social debe tener nombre y URL.',
-                });
-                return;
-              }
+        const socialDomainMap = {
+          Instagram: 'instagram.com',
+          'X (Twitter)': 'twitter.com',
+          YouTube: 'youtube.com',
+          Facebook: 'facebook.com',
+          TikTok: 'tiktok.com',
+          Spotify: 'spotify.com',
+          'Apple Music': 'music.apple.com',
+          SoundCloud: 'soundcloud.com',
+          Bandcamp: 'bandcamp.com',
+          LinkedIn: 'linkedin.com',
+        };
 
-              try {
-                new URL(red.url);
-              } catch {
-                this.$q.notify({
-                  type: 'negative',
-                  message: `La URL de ${red.name} no es válida.`,
-                });
-                return;
-              }
-
-              const expectedDomain = socialDomainMap[red.name];
-              const actualHost = new URL(red.url).hostname.replace('www.', '');
-
-              if (expectedDomain && !actualHost.includes(expectedDomain)) {
-                this.$q.notify({
-                  type: 'negative',
-                  message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
-                });
-                return;
-              }
-            }
-
-            const social_media = JSON.stringify(this.formCreate.social_media);
-            InstFormData.append("social_media", social_media);
-
-            // console.log(InstFormData);
-            await this.createArtist(InstFormData);
-            this.gettArtist();
+        for (const red of this.formCreate.social_media) {
+          if (!red.name || !red.url) {
             this.$q.notify({
-              type: "positive",
-              message: `Infromación guardada correctamente`,
+              type: 'negative',
+              message: 'Cada red social debe tener nombre y URL.',
             });
-            //this.onReset();
+            return;
+          }
+
+          try {
+            new URL(red.url);
+          } catch {
+            this.$q.notify({
+              type: 'negative',
+              message: `La URL de ${red.name} no es válida.`,
+            });
+            return;
+          }
+
+          const expectedDomain = socialDomainMap[red.name];
+          const actualHost = new URL(red.url).hostname.replace('www.', '');
+
+          if (expectedDomain && !actualHost.includes(expectedDomain)) {
+            this.$q.notify({
+              type: 'negative',
+              message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
+            });
+            return;
           }
         }
+
+        const social_media = JSON.stringify(this.formCreate.social_media);
+        InstFormData.append("social_media", social_media);
+
+        await this.createArtist(InstFormData);
+        this.gettArtist();
+        this.$q.notify({
+          type: "positive",
+          message: `Infromación guardada correctamente`,
+        });
       } catch (err) {
         if (err.response.data.message) {
           $q.notify({
@@ -1065,106 +1064,104 @@ export default {
 
     async editArtist() {
       try {
-        if (this.formCreate.image_artist.size > 20971520) {
-          this.$q.notify({
-            type: "negative",
-            message: `El tamaño de la imagen del grupo excede de lo permitido`,
-          });
-        } else if (this.formCreate.image_manager.size > 20971520) {
-          this.$q.notify({
-            type: "negative",
-            message: `El tamaño de la imagen del manager excede de lo permitido`,
-          });
-        } else {
-          let InstFormData = new FormData();
-          InstFormData.append("id", this.formCreate.id);
-          InstFormData.append("name", this.formCreate.name);
-          InstFormData.append("members", this.formCreate.members);
-          InstFormData.append("history", this.formCreate.history);
-          InstFormData.append("zone", this.formCreate.zone);
-          InstFormData.append("price_hour", this.formCreate.price_hour);
-          if (this.formCreate.image_artist.size > 1) {
-            console.log("Entro 1");
-            InstFormData.append("image_artist", this.formCreate.image_artist);
-          }
-          if (this.formCreate.image_manager.size > 1) {
-            console.log("Entro 2");
-            InstFormData.append("image_manager", this.formCreate.image_manager);
-          }
-          InstFormData.append(
-            "extra_kilometre",
-            this.formCreate.extra_kilometre
-          );
-          InstFormData.append("coverage_radius", this.formCreate.coverage_radius);
-          InstFormData.append("name_manager", this.formCreate.name_manager);
-          InstFormData.append("phone_manager", this.formCreate.phone_manager);
-          InstFormData.append("email_manager", this.formCreate.email_manager);
-          const selection = JSON.stringify(this.formCreate.selection);
-          InstFormData.append("selection", selection);
-
-          const socialDomainMap = {
-            Instagram: 'instagram.com',
-            'X (Twitter)': 'twitter.com',
-            YouTube: 'youtube.com',
-            Facebook: 'facebook.com',
-            TikTok: 'tiktok.com',
-            Spotify: 'spotify.com',
-            'Apple Music': 'music.apple.com',
-            SoundCloud: 'soundcloud.com',
-            Bandcamp: 'bandcamp.com',
-            LinkedIn: 'linkedin.com',
-          };
-
-          for (const red of this.formCreate.social_media) {
-            if (!red.name || !red.url) {
-              this.$q.notify({
-                type: 'negative',
-                message: 'Cada red social debe tener nombre y URL.',
-              });
-              return;
-            }
-
-            try {
-              new URL(red.url);
-            } catch {
-              this.$q.notify({
-                type: 'negative',
-                message: `La URL de ${red.name} no es válida.`,
-              });
-              return;
-            }
-
-            const expectedDomain = socialDomainMap[red.name];
-            const actualHost = new URL(red.url).hostname.replace('www.', '');
-
-            if (expectedDomain && !actualHost.includes(expectedDomain)) {
-              this.$q.notify({
-                type: 'negative',
-                message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
-              });
-              return;
-            }
-          }
-
-          const social_media = JSON.stringify(this.formCreate.social_media);
-          InstFormData.append("social_media", social_media);
-
-          // console.log(InstFormData);
-
-          let formUpdate = {
-            id: this.formCreate.id,
-            form: InstFormData,
-          };
-          await this.updateArtist(formUpdate);
-          this.gettArtist();
-          this.showEdit = "false";
-          this.showInfo = "false";
-          this.$q.notify({
-            type: "positive",
-            message: `Infromación guardada correctamente`,
-          });
-          this.onReset();
+        switch (true) {
+          case this.formCreate.image_artist.size > 20971520:
+            this.$q.notify({
+              type: "negative",
+              message: `El tamaño de la imagen del grupo excede de lo permitido`,
+            });
+            return;
+          case this.formCreate.image_manager.size > 20971520:
+            this.$q.notify({
+              type: "negative",
+              message: `El tamaño de la imagen del manager excede de lo permitido`,
+            });
+            return;
         }
+
+        let InstFormData = new FormData();
+        InstFormData.append("id", this.formCreate.id);
+        InstFormData.append("name", this.formCreate.name);
+        InstFormData.append("members", this.formCreate.members);
+        InstFormData.append("history", this.formCreate.history);
+        InstFormData.append("zone", this.formCreate.zone);
+        InstFormData.append("price_hour", this.formCreate.price_hour);
+        if (this.formCreate.image_artist.size > 1) {
+          console.log("Entro 1");
+          InstFormData.append("image_artist", this.formCreate.image_artist);
+        }
+        if (this.formCreate.image_manager.size > 1) {
+          console.log("Entro 2");
+          InstFormData.append("image_manager", this.formCreate.image_manager);
+        }
+        InstFormData.append("extra_kilometre", this.formCreate.extra_kilometre);
+        InstFormData.append("coverage_radius", this.formCreate.coverage_radius);
+        InstFormData.append("name_manager", this.formCreate.name_manager);
+        InstFormData.append("phone_manager", this.formCreate.phone_manager);
+        InstFormData.append("email_manager", this.formCreate.email_manager);
+        const selection = JSON.stringify(this.formCreate.selection);
+        InstFormData.append("selection", selection);
+
+        const socialDomainMap = {
+          Instagram: 'instagram.com',
+          'X (Twitter)': 'twitter.com',
+          YouTube: 'youtube.com',
+          Facebook: 'facebook.com',
+          TikTok: 'tiktok.com',
+          Spotify: 'spotify.com',
+          'Apple Music': 'music.apple.com',
+          SoundCloud: 'soundcloud.com',
+          Bandcamp: 'bandcamp.com',
+          LinkedIn: 'linkedin.com',
+        };
+
+        for (const red of this.formCreate.social_media) {
+          if (!red.name || !red.url) {
+            this.$q.notify({
+              type: 'negative',
+              message: 'Cada red social debe tener nombre y URL.',
+            });
+            return;
+          }
+
+          try {
+            new URL(red.url);
+          } catch {
+            this.$q.notify({
+              type: 'negative',
+              message: `La URL de ${red.name} no es válida.`,
+            });
+            return;
+          }
+
+          const expectedDomain = socialDomainMap[red.name];
+          const actualHost = new URL(red.url).hostname.replace('www.', '');
+
+          if (expectedDomain && !actualHost.includes(expectedDomain)) {
+            this.$q.notify({
+              type: 'negative',
+              message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
+            });
+            return;
+          }
+        }
+
+        const social_media = JSON.stringify(this.formCreate.social_media);
+        InstFormData.append("social_media", social_media);
+
+        let formUpdate = {
+          id: this.formCreate.id,
+          form: InstFormData,
+        };
+        await this.updateArtist(formUpdate);
+        this.gettArtist();
+        this.showEdit = "false";
+        this.showInfo = "false";
+        this.$q.notify({
+          type: "positive",
+          message: `Infromación guardada correctamente`,
+        });
+        this.onReset();
       } catch (err) {
         if (err.response.data.message) {
           $q.notify({
