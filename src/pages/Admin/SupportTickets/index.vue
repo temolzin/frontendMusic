@@ -78,7 +78,7 @@
           </q-badge>
         </q-td>
       </template>
-            <template v-slot:body-cell-actions="props">
+      <template v-slot:body-cell-actions="props">
         <q-td :props="props" class="text-center">
           <q-btn
             flat
