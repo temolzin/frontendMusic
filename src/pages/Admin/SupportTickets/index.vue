@@ -64,19 +64,20 @@
       </template>
 
       <template v-slot:body-cell-category="props">
-              <q-td :props="props">
-                <q-badge :color="categoryColor(props.row.category)" class="q-px-sm q-py-xs">
-                  {{ categoryLabel(props.row.category) }}
-                </q-badge>
-              </q-td>
-            </template>
-            <template v-slot:body-cell-status="props">
-              <q-td :props="props">
-                <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
-                  {{ statusLabel(props.row.status) }}
-                </q-badge>
-              </q-td>
-            </template>
+        <q-td :props="props">
+          <q-badge :color="categoryColor(props.row.category)" class="q-px-sm q-py-xs">
+            {{ categoryLabel(props.row.category) }}
+          </q-badge>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-status="props">
+        <q-td :props="props">
+          <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
+            {{ statusLabel(props.row.status) }}
+          </q-badge>
+        </q-td>
+      </template>
             <template v-slot:body-cell-actions="props">
         <q-td :props="props" class="text-center">
           <q-btn
