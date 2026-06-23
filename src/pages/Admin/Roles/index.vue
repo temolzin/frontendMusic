@@ -408,6 +408,7 @@ export default {
     async editRole() {
       try {
         await this.updateRole(this.form);
+        this.formEdit = false;
         this.onReset();
         this.$q.notify({
           type: "positive",
