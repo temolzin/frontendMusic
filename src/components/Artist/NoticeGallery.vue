@@ -64,7 +64,8 @@
     </h3>
     <div>
       <q-carousel
-      class="q-mt-xl"
+        class="q-mt-xl"
+        :style="fullscreen ? 'height: 100vh' : 'height: 400px'"
         swipeable
         animated
         thumbnails
@@ -75,6 +76,7 @@
         arrows
         transition-prev="slide-right"
         transition-next="slide-left"
+        @keyup.esc="fullscreen = false"
       >
         <q-carousel-slide
           v-for="(gallery, index) in galleryArtist"
@@ -84,13 +86,14 @@
         />
 
         <template v-slot:control>
-          <q-carousel-control position="bottom-right" :offset="[18, 18]">
+          <q-carousel-control position="top-right" :offset="[18, 18]">
             <q-btn
               push
               round
               dense
               color="white"
               text-color="primary"
+              size="lg"
               :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
               @click="fullscreen = !fullscreen"
             />
@@ -102,27 +105,24 @@
     <section>
       <div class="q-pa-md q-gutter-sm">
         <q-dialog v-model="formGalleryEdit" persistent>
-          <q-card style="max-width: 360px">
-            <q-card-section>
+          <q-card style="min-width: 360px; max-width: 95vw">
+            <q-card-section class="row items-center q-pb-sm">
               <div class="text-h6">Editar galería de imágenes</div>
-              <p class="">
-                Todas las imágenes anteriores serán eliminadas y sustituidas por
-                las que selecciones.
-                ¿Estás seguro de eliminar las imágenes anteriores?
-              </p>
-              <q-btn
-                :disable="btnDelete"
-                label="Confirmar"
-                color="red"
-                @click="formDelete"
-              />
+              <q-space />
+              <q-btn icon="close" flat round dense v-close-popup />
             </q-card-section>
 
-            <q-card-section class="q-pt-none">
+            <q-separator />
+
+            <q-card-section>
+              <div class="text-caption text-grey q-mb-md">
+                Puedes agregar imágenes nuevas o eliminar todas y empezar de nuevo.
+                Máximo 5 imágenes en total.
+              </div>
+
               <q-uploader
                 ref="uploaderEdit"
-                :disable="formGalleryShow"
-                label="Selecciona las imagenes (Max 5)"
+                label="Agregar imágenes (Max 5)"
                 max-files="5"
                 multiple
                 accept=".jpg, .jpeg, .png, .jpe"
@@ -130,20 +130,26 @@
                 @added="(files) => validateAddedFiles(files, 'uploaderEdit')"
                 @rejected="onRejected"
                 color="accent"
-                max-file-size="1000000"
-                max-total-size="5000000"
+                max-file-size="20971520"
+                max-total-size="104857600"
+                class="q-mb-md full-width"
               />
-              <q-card-actions align="right" class="text-primary q-mt-md">
-                <q-btn
-                  label="Cancelar"
-                  type="reset"
-                  color="primary"
-                  flat
-                  v-close-popup
-                  class="q-ml-sm"
-                />
-              </q-card-actions>
+
+              <q-btn
+                outline
+                rounded
+                color="negative"
+                icon="delete_sweep"
+                label="Eliminar todas las imágenes"
+                class="full-width"
+                @click="formDelete"
+              />
             </q-card-section>
+
+            <q-separator />
+            <q-card-actions align="right" class="q-pa-sm">
+              <q-btn flat label="Cerrar" color="primary" v-close-popup />
+            </q-card-actions>
           </q-card>
         </q-dialog>
       </div>
@@ -349,12 +355,13 @@ export default {
           cancel: true,
           persistent: true,
         })
-        .onOk(() => {
+        .onOk(async() => {
           try {
             this.btnDelete = true;
             this.formGalleryShow = false;
             let option = "Yes";
             this.deleteGalleryArtist(option);
+            await this.gettGalleryArtist();
             this.$q.notify({
               type: "positive",
               message: `Eliminado correctamente`,

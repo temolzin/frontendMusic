@@ -147,7 +147,7 @@
                   filled
                   class="q-mt-sm"
                   style="max-width: 200px"
-                  max-file-size="1000000"
+                  max-file-size="20971520"
                   counter
                   @rejected="onRejected"
                   lazy-rules
@@ -155,7 +155,7 @@
                   <template v-slot:prepend>
                     <q-icon name="attach_file" />
                   </template>
-                  <template v-slot:hint>Máximo 1MG</template>
+                  <template v-slot:hint>Máximo 20 MB</template>
                 </q-file>
               </div>
 
@@ -262,7 +262,7 @@
                   filled
                   class="q-mt-sm"
                   style="max-width: 200px"
-                  max-file-size="1000000"
+                  max-file-size="20971520"
                   counter
                   @rejected="onRejected"
                   lazy-rules
@@ -270,7 +270,7 @@
                   <template v-slot:prepend>
                     <q-icon name="attach_file" />
                   </template>
-                  <template v-slot:hint>Máximo 1MG</template>
+                  <template v-slot:hint>Máximo 20MB</template>
                 </q-file>
               </div>
 
@@ -591,7 +591,7 @@
                   filled
                   class="q-mt-sm"
                   style="max-width: 200px"
-                  max-file-size="1000000"
+                  max-file-size="20971520"
                   counter
                   @rejected="onRejectedArtists"
                   lazy-rules
@@ -599,7 +599,7 @@
                   <template v-slot:prepend>
                     <q-icon name="attach_file" />
                   </template>
-                  <template v-slot:hint>Máximo 1MG</template>
+                  <template v-slot:hint>Máximo 20 MB</template>
                 </q-file>
               </div>
               <div class="col-11">
@@ -704,7 +704,7 @@
                   filled
                   class="q-mt-sm"
                   style="max-width: 200px"
-                  max-file-size="1000000"
+                  max-file-size="20971520"
                   counter
                   @rejected="onRejected"
                   lazy-rules
@@ -712,7 +712,7 @@
                   <template v-slot:prepend>
                     <q-icon name="attach_file" />
                   </template>
-                  <template v-slot:hint>Máximo 1MG</template>
+                  <template v-slot:hint>Máximo 20 MB</template>
                 </q-file>
               </div>
               <p></p>
@@ -912,12 +912,12 @@ export default {
             message: `Ingresa una foto del manager`,
           });
         } else {
-          if (this.formCreate.image_artist.size > 1000000) {
+          if (this.formCreate.image_artist.size > 20971520) {
             this.$q.notify({
               type: "negative",
               message: `El tamaño de la imagen del grupo excede de lo permitido`,
             });
-          } else if (this.formCreate.image_manager.size > 1000000) {
+          } else if (this.formCreate.image_manager.size > 20971520) {
             this.$q.notify({
               type: "negative",
               message: `El tamaño de la imagen del manager excede de lo permitido`,
@@ -1065,12 +1065,12 @@ export default {
 
     async editArtist() {
       try {
-        if (this.formCreate.image_artist.size > 1000000) {
+        if (this.formCreate.image_artist.size > 20971520) {
           this.$q.notify({
             type: "negative",
             message: `El tamaño de la imagen del grupo excede de lo permitido`,
           });
-        } else if (this.formCreate.image_manager.size > 1000000) {
+        } else if (this.formCreate.image_manager.size > 20971520) {
           this.$q.notify({
             type: "negative",
             message: `El tamaño de la imagen del manager excede de lo permitido`,
