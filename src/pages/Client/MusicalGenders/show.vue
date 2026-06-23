@@ -33,6 +33,7 @@
                 size="xs"
                 class="q-mr-sm q-mt-md outline"
                 :label="musicalGender.name"
+                @click="$router.push({ name: 'client.view-groups-by-genders-search', params: { slug: musicalGender.slug } })"
               />
             </div>
           </div>
