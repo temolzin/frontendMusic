@@ -45,7 +45,6 @@
         </q-tabs>
         <!-- Fin de Links para navegar entre paginas -->
 
-        <q-space />
 
         <div class="q-gutter-sm row items-center no-wrap">
           <!-- Inicio Botones de inicio de sesion y dashboard -->

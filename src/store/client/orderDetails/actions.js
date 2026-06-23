@@ -45,7 +45,7 @@ export const sendChatMessage = async ({ commit }, payload) => {
 
 export const fetchArtistRating = async ({ commit }, payload) => {
   try {
-    const response = await api.get(`/api/client/artists/${payload.artistId}/my-rating`);
+    const response = await api.get(`/api/client/sales/${payload.purchaseId}/my-rating`);
     if (response.data && response.data.rating) {
       commit("setArtistRating", { purchaseId: payload.purchaseId, rating: response.data.rating });
     }
@@ -58,7 +58,7 @@ export const fetchArtistRating = async ({ commit }, payload) => {
 
 export const submitArtistRating = async ({ commit }, payload) => {
   try {
-    const response = await api.post(`/api/client/artists/${payload.artistId}/rate`, {
+    const response = await api.post(`/api/client/sales/${payload.purchaseId}/rate`, {
       rating: payload.rating
     });
     commit("setArtistRating", { purchaseId: payload.purchaseId, rating: payload.rating });

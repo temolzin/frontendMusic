@@ -71,20 +71,21 @@
                       </p>
                     </td>
                     <td class="text-center">
-                      <q-badge :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs">
-                        {{ eventStatusLabel(purchase.event_status) }}
-                      </q-badge>
-                      <div v-if="isEventCompleted(purchase)">
-                        <q-btn
-                          size="sm"
-                          unelevated
-                          rounded
-                          color="amber"
-                          :text-color="$q.dark.isActive ? 'white' : 'dark'"
-                          icon="star"
-                          label="CALIFICAR"
-                          @click="openRatingModal(purchase)"
-                        />
+                      <div class="column items-center q-gutter-y-sm">
+                        <q-badge outline :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs text-weight-bold" style="font-size: 13px">
+                          {{ eventStatusLabel(purchase.event_status) }}
+                        </q-badge>
+                        <div v-if="isEventCompleted(purchase)">
+                          <q-btn
+                            size="sm"
+                            outline
+                            rounded
+                            color="amber"
+                            icon="star"
+                            label="CALIFICAR"
+                            @click="openRatingModal(purchase)"
+                          />
+                        </div>
                       </div>
                     </td>
                     <td class="text-left">
@@ -138,7 +139,7 @@
                 <q-item-section>
                   <q-item-label caption>Estado del evento</q-item-label>
                   <q-item-label>
-                    <q-badge :color="eventStatusColor(selectedPurchase.event_status)" class="q-px-sm q-py-xs">
+                    <q-badge outline :color="eventStatusColor(selectedPurchase.event_status)" class="q-px-sm q-py-xs text-weight-bold">
                       {{ eventStatusLabel(selectedPurchase.event_status) }}
                     </q-badge>
                   </q-item-label>
@@ -148,7 +149,7 @@
                 <q-item-section>
                   <q-item-label caption>Estado del pago</q-item-label>
                   <q-item-label>
-                    <q-badge :color="selectedPurchase.status === 'pending' ? 'orange' : 'green'" class="q-px-sm q-py-xs">
+                    <q-badge outline :color="selectedPurchase.status === 'pending' ? 'orange' : 'green'" class="q-px-sm q-py-xs text-weight-bold">
                       {{ selectedPurchase.status === 'pending' ? 'Pendiente' : 'Completado' }}
                     </q-badge>
                   </q-item-label>
