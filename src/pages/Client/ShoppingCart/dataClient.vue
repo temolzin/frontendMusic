@@ -1163,7 +1163,7 @@ export default defineComponent({
       return hiddenNumber + maskedNumber;
     },
     cardBrandInfo(card) {
-      const type = (card.card_type && card.card_type !== 'Desconocida') || this.detectCardType(card.number_card);
+      const type = (card.card_type && card.card_type !== 'Desconocida') ? card.card_type : this.detectCardType(card.number_card);
       const brands = {
         'Visa': { color: '#1A1F71', text: 'VISA', icon: 'fab fa-cc-visa' },
         'Mastercard': { color: '#EB001B', text: 'MC', icon: 'fab fa-cc-mastercard' },
