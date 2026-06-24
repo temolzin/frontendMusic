@@ -15,18 +15,11 @@
         <div class="card-wrapper">
           <div class="card">
             <div class="card__front card__part">
-              <!-- Inicio de logo izquierdo -->
               <img
                 class="card__square"
                 src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png"
               />
-              <!-- Fin de logo izquierdo -->
-
-              <!-- Inicio de logo del banco arriba derecha -->
               <i :class="cardBrandInfo(card).icon" class="card__brand-icon"></i>
-              <!-- Fin de logo del banco -->
-
-              <!-- Inicio de información de la tarjeta -->
               <p class="card_numer">{{ maskCardNumber(card.number_card) }}</p>
               <div class="card__space-75">
                 <span class="card__label">Nombre</span>
@@ -36,15 +29,12 @@
                 <span class="card__label">Expires</span>
                 <p class="card__info">{{ card.expiration_date }}</p>
               </div>
-              <!-- Fin de información de la tarjeta -->
             </div>
           </div>
-          <!-- Inicio de botones editar/eliminar debajo de la tarjeta -->
           <div class="card__actions">
             <q-btn size="sm" dense round outline color="green" icon="edit" @click="showFormEdit(card)" />
             <q-btn size="sm" dense round outline color="red" icon="delete" @click="removeCard(card)" />
           </div>
-          <!-- Fin de botones editar/eliminar -->
         </div>
       </div>
     </div>
