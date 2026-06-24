@@ -405,11 +405,13 @@ export default {
         id: artist.id,
         name: artist.name,
         image: artist.image,
-        price_hour: this.activeOffer ? this.discountedPrice : artist.price_hour,
+        price_hour: artist.price_hour,
         zone: artist.zone,
         members: artist.members,
         manager: artist.manager,
-        rating: averageRating
+        rating: averageRating,
+        discount_percentage: this.activeOffer ? this.activeOffer.discount_percentage : 0,
+        original_price_hour: artist.price_hour
       });
       let artistDataEncoded = '';
       try {

@@ -12,51 +12,39 @@
     </h6>
     <div class="row justify-center q-gutter-lg q-ma-sm" v-if="cards != 0">
       <div v-for="(card, index) in cards" :key="index" class="col-auto">
-        <div class="card">
-          <div class="card__front card__part">
-            <!-- Inicio de logo izquierdo -->
-            <img
-              class="card__square"
-              src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png"
-            />
-            <!-- Fin de logo izquierdo -->
+        <div class="card-wrapper">
+          <div class="card">
+            <div class="card__front card__part">
+              <!-- Inicio de logo izquierdo -->
+              <img
+                class="card__square"
+                src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png"
+              />
+              <!-- Fin de logo izquierdo -->
 
-            <!-- Inicio de boton editar -->
-            <q-btn
-              size="md"
-              dense
-              round
-              color="green"
-              icon="edit"
-              class="card__front-logo card__logo q-mr-sm"
-              @click="showFormEdit(card)"
-            ></q-btn>
-            <!-- Fin de boton editar -->
+              <!-- Inicio de logo del banco arriba derecha -->
+              <i :class="cardBrandInfo(card).icon" class="card__brand-icon"></i>
+              <!-- Fin de logo del banco -->
 
-            <!-- Inicio de boton eliminar -->
-            <q-btn
-              size="md"
-              dense
-              round
-              color="red"
-              icon="delete"
-              class="card__front-logo2 card__logo"
-              @click="removeCard(card)"
-            ></q-btn>
-            <!-- Fin de boton eliminar -->
-
-            <!-- Inicio de información de la tarjeta -->
-            <p class="card_numer">{{ card.number_card }}</p>
-            <div class="card__space-75">
-              <span class="card__label">Nombre</span>
-              <p class="card__info">{{ card.name }}</p>
+              <!-- Inicio de información de la tarjeta -->
+              <p class="card_numer">{{ maskCardNumber(card.number_card) }}</p>
+              <div class="card__space-75">
+                <span class="card__label">Nombre</span>
+                <p class="card__info">{{ card.name }}</p>
+              </div>
+              <div class="card__space-25">
+                <span class="card__label">Expires</span>
+                <p class="card__info">{{ card.expiration_date }}</p>
+              </div>
+              <!-- Fin de información de la tarjeta -->
             </div>
-            <div class="card__space-25">
-              <span class="card__label">Expires</span>
-              <p class="card__info">{{ card.expiration_date }}</p>
-            </div>
-            <!-- Fin de información de la tarjeta -->
           </div>
+          <!-- Inicio de botones editar/eliminar debajo de la tarjeta -->
+          <div class="card__actions">
+            <q-btn size="sm" dense round outline color="green" icon="edit" @click="showFormEdit(card)" />
+            <q-btn size="sm" dense round outline color="red" icon="delete" @click="removeCard(card)" />
+          </div>
+          <!-- Fin de botones editar/eliminar -->
         </div>
       </div>
     </div>
@@ -108,14 +96,12 @@
                 dense
                 v-model="form.number_card"
                 label="Numero de tarjeta"
-                fill-mask
-                mask="#### - #### - #### - ####"
                 :rules="[
                   (val) => !!val || 'El campo número de tarjeta es requerido',
                   (val) => {
                     if (!val) return true;
                     const digits = (val.match(/\d/g) || []).length;
-                    if (digits !== 16) return `Debe tener 16 dígitos. Actualmente tiene ${digits}`;
+                    const expLen = this.expectedCardLength(val); if (digits !== expLen) return `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
                     const clean = val.replace(/[\s-]/g, '');
                     if (!/^\d+$/.test(clean)) return false;
                     let sum = 0;
@@ -201,14 +187,13 @@
                 dense
                 v-model="form.number_card"
                 label="Numero de tarjeta"
-                fill-mask
-                mask="#### - #### - #### - ####"
                 :rules="[
                   (val) => !!val || 'El campo número de tarjeta es requerido',
                   (val) => {
                     if (!val) return true;
                     const clean = val.replace(/[\s-]/g, '');
-                    if (clean.length !== 16) return `Debe tener 16 dígitos. Actualmente tiene ${clean.length}`;
+                    const expLen = this.expectedCardLength(val);
+                    if (clean.length !== expLen) return `Debe tener ${expLen} dígitos. Actualmente tiene ${clean.length}`;
                     if (!/^\d+$/.test(clean)) return false;
                     let sum = 0;
                     let shouldDouble = false;
@@ -306,6 +291,29 @@ export default {
       if (/^62/.test(clean)) return 'UnionPay';
       return 'Desconocida';
     },
+    expectedCardLength(number) {
+      const type = this.detectCardType(number);
+      return type === 'American Express' ? 15 : 16;
+    },
+
+    maskCardNumber(cardNumber) {
+      let maskedNumber = cardNumber.slice(-4);
+      let hiddenNumber = cardNumber.slice(0, -4).replace(/\d/g, 'x');
+      return hiddenNumber + maskedNumber;
+    },
+
+    cardBrandInfo(card) {
+      const type = (card.card_type && card.card_type !== 'Desconocida') || this.detectCardType(card.number_card);
+      const brands = {
+        'Visa': { color: '#1A1F71', text: 'VISA', icon: 'fab fa-cc-visa' },
+        'Mastercard': { color: '#EB001B', text: 'MC', icon: 'fab fa-cc-mastercard' },
+        'American Express': { color: '#2E77BC', text: 'AMEX', icon: 'fab fa-cc-amex' },
+        'Discover': { color: '#FF6000', text: 'DISCOVER', icon: 'fab fa-cc-discover' },
+        'Diners Club': { color: '#0079BE', text: 'DINERS', icon: 'fab fa-cc-diners-club' },
+        'JCB': { color: '#0B7B4B', text: 'JCB', icon: 'fab fa-cc-jcb' },
+      };
+      return brands[type] || { color: '#6B7280', text: type, icon: 'fas fa-credit-card' };
+    },
 
     luhnCheck(number) {
       const clean = number.replace(/[\s-]/g, '');
@@ -346,10 +354,11 @@ export default {
       
       // Validación adicional del número de tarjeta
       const digits = (this.form.number_card.match(/\d/g) || []).length;
-      if (digits !== 16) {
+      const expLen = this.expectedCardLength(this.form.number_card);
+      if (digits !== expLen) {
         this.$q.notify({
           type: "negative",
-          message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}`,
+          message: `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`,
         });
         return;
       }
@@ -442,10 +451,11 @@ export default {
       }
       
       const digits = (this.form.number_card.match(/\d/g) || []).length;
-      if (digits !== 16) {
+      const expLen = this.expectedCardLength(this.form.number_card);
+      if (digits !== expLen) {
         this.$q.notify({
           type: "negative",
-          message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}`,
+          message: `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`,
         });
         return;
       }
@@ -569,18 +579,25 @@ export default {
   height: 16px;
 }
 
-.card__front-logo {
+.card__brand-icon {
   position: absolute;
   top: 18px;
-  font-size: 20px;
-  right: 50px;
+  right: 18px;
+  font-size: 32px;
+  color: #ffffff;
+  z-index: 10;
 }
 
-.card__front-logo2 {
-  position: absolute;
-  top: 18px;
-  font-size: 20px;
-  right: 18px;
+.card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .card__square {
