@@ -257,7 +257,10 @@
                       <div class="card-2" style="position: relative; max-width: 100%;">
                         <div class="card__front card__part_modal" style="position: relative; left: auto; transform: none; width: 100%; max-width: 320px;">
                         <img class="card__square" src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png" />
-                        <p class="card_numer">{{ castCard(cards).number_card }}</p>
+                        <div style="position: absolute; top: 12px; right: 12px;">
+                          <i :class="cardBrandInfo(castCard(cards)).icon" style="font-size: 32px; color: #ffffff;"></i>
+                        </div>
+                        <p class="card_numer">{{ maskCardNumber(castCard(cards).number_card) }}</p>
                         <div class="card__space-75">
                           <span class="card__label">Nombre de la Tarjeta</span>
                           <p class="card__info">{{ castCard(cards).name }}</p>
@@ -301,14 +304,12 @@
                         dense 
                         v-model="form.number_card" 
                         label="Número de tarjeta" 
-                        fill-mask
-                        mask="#### #### #### ####"
                         :rules="[
                           (val) => !!val || 'El campo número de tarjeta es requerido',
                           (val) => {
                             if (!val) return true;
                             const digits = (val.match(/\d/g) || []).length;
-                            if (digits !== 16) return `Debe tener 16 dígitos. Actualmente tiene ${digits}`;
+                            const expLen = this.expectedCardLength(val); if (digits !== expLen) return `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
                             const clean = val.replace(/[\s-]/g, '');
                             if (!/^\d+$/.test(clean)) return false;
                             let sum = 0;
@@ -365,7 +366,10 @@
               <div class="card" @click="selectedCard.id ? basic = true : null" :style="selectedCard.id ? 'cursor: pointer; position: relative; max-width: 100%; width: 320px; margin: 0 auto;' : 'position: relative; max-width: 100%; width: 320px; margin: 0 auto;'">
                 <div class="card__front card__part" style="position: relative; left: auto; transform: none; width: 100%; max-width: 320px;">
                   <img class="card__square" src="https://raw.githubusercontent.com/muhammed/interactive-card/refs/heads/main/src/assets/images/chip.png" />
-                  <p class="card_numer">{{ selectedCard.number_card || 'Selecciona una tarjeta' }}</p>
+                  <div style="position: absolute; top: 12px; right: 12px;">
+                    <i :class="cardBrandInfo(selectedCard).icon" style="font-size: 32px; color: #ffffff;"></i>
+                  </div>
+                  <p class="card_numer">{{ maskCardNumber(selectedCard.number_card) || 'Selecciona una tarjeta' }}</p>
                   <div class="card__space-75">
                     <span class="card__label">Nombre de la Tarjeta</span>
                     <p class="card__info">{{ selectedCard.name || '--' }}</p>
@@ -390,7 +394,7 @@
               <div class="col-12 col-sm-6">
                 <q-item>
                   <q-input dense outlined class="full-width" label="Número de la Tarjeta"
-                    v-model="selectedCard.number_card" mask="#### #### #### ####" fill-mask :rules="[
+                    v-model="selectedCard.number_card" :rules="[
                       (val) => !!val || 'Campo requerido',
                       (val) => {
                         if (!val) return true;
@@ -474,7 +478,7 @@
                       <q-item-label>Total de {{ castProduct(product).hours }} hora(s)</q-item-label>
                     </q-item-section>
                     <q-item-section class="text-right" side>
-                      <span v-if="castProduct(product).price < castProduct(product).artist.price_hour">
+                      <span v-if="+castProduct(product).price < +castProduct(product).artist.price_hour">
                         <span class="text-positive text-weight-bold">
                           ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                         </span>
@@ -557,7 +561,7 @@
                   <div class="row items-center q-mb-sm">
                     <q-icon name="credit_card" color="primary" size="xs" class="q-mr-sm" />
                     <span class="text-caption text-grey-7">Tipo</span>
-                    <span class="text-caption text-weight-medium q-ml-sm">{{ detectCardType(selectedCard.number_card) }}</span>
+                    <span class="text-caption text-weight-medium q-ml-sm">{{ selectedCard.card_type || detectCardType(selectedCard.number_card) }}</span>
                   </div>
                   <div class="row items-center q-mb-sm">
                     <q-icon name="person" color="primary" size="xs" class="q-mr-sm" />
@@ -622,47 +626,37 @@
             <q-icon name="shopping_cart" class="q-mr-sm" />
             Resumen del pedido
           </q-card-section>
-          <q-card-section horizontal v-for="(product, index) in shoppingCardDetail"
-            :key="index">
-            <q-card-section class="col-6 flex flex-center">
-              <q-img :src="castProduct(product).artist.image" loading="lazy" style="object-fit: cover" height="100px"
-                class="rounded-circle q-responsive" width="110px" />
-            </q-card-section>
-
-            <q-card-section>
-              <div class="text-subtitle2 q-mt-sm text-center">
+          <div class="resumen-scroll">
+          <template v-for="(product, index) in shoppingCardDetail" :key="index">
+            <q-card-section class="q-pa-md text-center">
+              <q-img :src="castProduct(product).artist.image" loading="lazy" style="object-fit: cover" height="70px"
+                class="rounded-circle q-mb-sm" width="70px" />
+              <div class="text-subtitle2 text-weight-bold text-primary">
                 {{ castProduct(product).artist.name }}
               </div>
-              <div class="text-subtitle2 q-mb-xs text-center">
-                <span v-if="castProduct(product).price < castProduct(product).artist.price_hour">
-                  <q-badge color="orange" class="q-mb-xs">Descuento aplicado</q-badge><br/>
-                  <span class="text-positive text-weight-bold">
-                    ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                  </span>
-                  <small style="text-decoration: line-through" class="text-red q-ml-xs">
-                    ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                  </small>
-                </span>
-                <span v-else>
-                  ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                </span>
+              <div class="text-caption text-grey-8">
+                {{ castProduct(product).hours }} hora(s) x ${{ (+castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
               </div>
-              <div class="text-subtitle2 text-center">
-                <q-rating 
-                  :model-value="parseFloat(castProduct(product).artist?.rating || castProduct(product).artist?.ratings_avg_rating || 0)"
-                  :max="5" 
-                  size="32px" 
-                  color="yellow"
-                  icon="star_border"
-                  icon-selected="star"
-                  icon-half="star_half"
-                  no-dimming 
-                  readonly 
-                />
+              <div v-if="+castProduct(product).price < +castProduct(product).artist.price_hour">
+                <div class="text-body2 text-grey text-strike q-mb-xs">
+                  ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                </div>
+                <q-badge color="orange" class="q-mb-xs" :label="Math.round((1 - castProduct(product).price / castProduct(product).artist.price_hour) * 100) + '% OFF'" />
+                <div class="text-weight-bold text-positive" style="font-size: 1.3rem">
+                  ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                </div>
+              </div>
+              <div v-else class="text-weight-bold text-positive" style="font-size: 1.3rem">
+                ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+              </div>
+              <div v-if="getExtraKmForProduct(product)" class="text-caption text-grey q-mt-xs">
+                <q-icon name="directions_car" size="14px" class="q-mr-xs" />
+                {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km extra: +${{ (+getExtraKmForProduct(product).extra_km_cost || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
               </div>
             </q-card-section>
-            <q-separator></q-separator>
-          </q-card-section>
+            <q-separator v-if="index < shoppingCardDetail.length - 1"></q-separator>
+          </template>
+          </div>
 
           <q-separator></q-separator>
           <q-card-section class="col-3 q-pt-xs  text-white bg-primary">
@@ -922,6 +916,10 @@ export default defineComponent({
       if (cardType === 'American Express') return 4;
       return 3;
     },
+    expectedCardLength(number) {
+      const type = this.detectCardType(number);
+      return type === 'American Express' ? 15 : 16;
+    },
 
     luhnCheck(number) {
       const clean = number.replace(/[\s-]/g, '');
@@ -964,8 +962,9 @@ export default defineComponent({
         return false;
       }
       const digits = (val.match(/\d/g) || []).length;
-      if (digits !== 16) {
-        this.$q.notify({ type: 'negative', message: `Debe tener 16 digitos, tiene ${digits}` });
+      const expLen = this.expectedCardLength(this.selectedCard.number_card || this.form.number_card);
+      if (digits !== expLen) {
+        this.$q.notify({ type: 'negative', message: `Debe tener ${expLen} digitos, tiene ${digits}` });
         return false;
       }
       return true;
@@ -1007,13 +1006,21 @@ export default defineComponent({
         const artistData = JSON.parse(decodedArtistJson);
         const artistId = artistData.id;
         const hoursCount = parseInt(hours || 1);
-        const clientPrice = Math.round(parseFloat(artistData.price_hour || 0) * hoursCount * 100) / 100;
+        const discountPercent = parseFloat(artistData.discount_percentage) || 0;
+        const effectivePricePerHour = discountPercent > 0
+          ? Math.round(artistData.price_hour * (1 - discountPercent / 100) * 100) / 100
+          : parseFloat(artistData.price_hour);
+        const clientTotal = Math.round(effectivePricePerHour * hoursCount * 100) / 100;
 
         this.quickBuyData = {
           artist_id: artistId,
-          artist: artistData,
+          artist: {
+            ...artistData,
+            discount_percentage: discountPercent
+          },
           hours: hoursCount,
-          price: clientPrice
+          price: effectivePricePerHour,
+          total: clientTotal
         };
         
         await this.loadOccupiedDates(artistId);
@@ -1110,8 +1117,9 @@ export default defineComponent({
       }
 
       const digits = (cardData.number_card.match(/\d/g) || []).length;
-      if (digits !== 16) {
-        this.$q.notify({ type: "negative", message: `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}` });
+      const expLen = this.expectedCardLength(cardData.number_card);
+      if (digits !== expLen) {
+        this.$q.notify({ type: "negative", message: `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}` });
         return;
       }
 
@@ -1154,6 +1162,18 @@ export default defineComponent({
       let hiddenNumber = cardNumber.slice(0, -4).replace(/\d/g, 'x');
       return hiddenNumber + maskedNumber;
     },
+    cardBrandInfo(card) {
+      const type = (card.card_type && card.card_type !== 'Desconocida') ? card.card_type : this.detectCardType(card.number_card);
+      const brands = {
+        'Visa': { color: '#1A1F71', text: 'VISA', icon: 'fab fa-cc-visa' },
+        'Mastercard': { color: '#EB001B', text: 'MC', icon: 'fab fa-cc-mastercard' },
+        'American Express': { color: '#2E77BC', text: 'AMEX', icon: 'fab fa-cc-amex' },
+        'Discover': { color: '#FF6000', text: 'DISCOVER', icon: 'fab fa-cc-discover' },
+        'Diners Club': { color: '#0079BE', text: 'DINERS', icon: 'fab fa-cc-diners-club' },
+        'JCB': { color: '#0B7B4B', text: 'JCB', icon: 'fab fa-cc-jcb' },
+      };
+      return brands[type] || { color: '#6B7280', text: type, icon: 'fas fa-credit-card' };
+    },
     selectCard(cards) {
       this.selectedCardIndex = this.stateUserCards.indexOf(cards);
       this.selectedCard = { ...this.stateUserCards[this.selectedCardIndex] };
@@ -1187,9 +1207,10 @@ export default defineComponent({
       };
 
       const digits = (this.selectedCard?.number_card?.match(/\d/g) || []).length;
+      const expLen = this.expectedCardLength(this.selectedCard?.number_card || '');
       
       validateAndNotify(!this.selectedCard?.number_card, "Debes seleccionar una tarjeta")
-      || validateAndNotify(digits !== 16, `El número de tarjeta debe tener 16 dígitos. Actualmente tiene ${digits}`)
+      || validateAndNotify(digits !== expLen, `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`)
       || validateAndNotify(!this.selectedCard?.expiration_date || this.selectedCard.expiration_date.length !== 5, "La fecha de expiración debe estar en formato mm/YY")
       || (() => {
         const [month] = this.selectedCard.expiration_date.split("/");
@@ -1752,7 +1773,7 @@ export default defineComponent({
     },
     shoppingCartTotal() {
       if (this.isQuickBuy && this.quickBuyData) {
-        return parseFloat(this.quickBuyData.price) || 0;
+        return parseFloat(this.quickBuyData.total) || 0;
       }
       return parseFloat(this.stateListShopingCard?.[0]?.total) || 0;
     },
@@ -1966,5 +1987,9 @@ export default defineComponent({
 }
 .q-btn.add-card {
   float: right;
+}
+.resumen-scroll {
+  max-height: 400px;
+  overflow-y: auto;
 }
 </style>
