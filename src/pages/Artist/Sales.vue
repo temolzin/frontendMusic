@@ -73,6 +73,13 @@
         </q-td>
       </template>
 
+      <template v-slot:body-cell-fecha_compra="props">
+        <q-td :props="props">
+          <q-icon name="shopping_cart" size="14px" color="grey" class="q-mr-xs" />
+          <span class="text-weight-medium">{{ formatDate(props.row.created_at) }}</span>
+        </q-td>
+      </template>
+
       <template v-slot:body-cell-acciones="props">
         <q-td :props="props" class="text-center">
           <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
@@ -128,10 +135,14 @@
                       ${{ Number(props.row.amount).toLocaleString('es-MX') }}
                     </span>
                   </q-item-label>
+                  <q-item-label v-if="col.name === 'fecha_compra'">
+                    <q-icon name="shopping_cart" size="14px" color="grey" class="q-mr-xs" />
+                    {{ formatDate(props.row.created_at) }}
+                  </q-item-label>
                   <q-item-label v-if="col.name === 'acciones'">
                     <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
                   </q-item-label>
-                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'lugar' && col.name !== 'evento' && col.name !== 'amount' && col.name !== 'acciones'">
+                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'lugar' && col.name !== 'evento' && col.name !== 'amount' && col.name !== 'acciones' && col.name !== 'fecha_compra'">
                     {{ col.value }}
                   </q-item-label>
                 </q-item-section>
@@ -245,6 +256,13 @@ const columns = [
     label: "Monto",
     align: "left",
     field: "amount",
+    sortable: true,
+  },
+  {
+    name: "fecha_compra",
+    label: "Fecha de compra",
+    align: "left",
+    field: "created_at",
     sortable: true,
   },
   {
