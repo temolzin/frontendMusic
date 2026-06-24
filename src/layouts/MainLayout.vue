@@ -128,6 +128,10 @@
               <q-item-section avatar><q-icon name="fas fa-newspaper" /></q-item-section>
               <q-item-section> Envío de Correos </q-item-section>
             </q-item>
+            <q-item clickable v-ripple to="/admin/payouts" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="payments" /></q-item-section>
+              <q-item-section> Liquidaciones </q-item-section>
+            </q-item>
             <q-item clickable v-ripple to="/artist/index" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
               <q-item-section avatar><q-icon name="fas fa-solid fa-microphone" /></q-item-section>
               <q-item-section> Perfil de Artista </q-item-section>

@@ -21,6 +21,7 @@ import videoArtist from "./artist/videoArtist";
 import offers from "./artist/offers";
 import payoutMethod from './artist/payoutMethod'
 import supportTickets from "./supportTickets";
+import payouts from "./admin/payouts";
 
 const Store = createStore({
   modules: {
@@ -45,6 +46,7 @@ const Store = createStore({
     offers,
     payoutMethod,
     supportTickets,
+    payouts,
   },
   strict: process.env.DEBUGGING,
 });

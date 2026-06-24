@@ -197,6 +197,17 @@ const routes = [
           permissions: ['view-users'],
         },
       },
+      {
+        name: 'admin.payouts-management',
+        path: '/admin/payouts',
+        component: import('pages/Admin/Payouts/index.vue'),
+        meta: {
+          title: 'Liquidaciones por Pagar',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'], 
+        },
+      },
       // Fin de rutas del admin
 
       // Rutas del artista

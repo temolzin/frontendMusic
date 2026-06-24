@@ -147,6 +147,20 @@
           <q-item
             clickable
             v-ripple
+            to="/admin/payouts"
+            v-if="getMe.role[0] == 'administrador' && $can('view-users')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="payments" />
+            </q-item-section>
+
+            <q-item-section> Liquidaciones </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
             to="/artist/index"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
