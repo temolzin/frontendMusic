@@ -7,7 +7,9 @@ export const getMusicalGenders = async ({ commit }) => {
 };
 
 export const createMusicalGender = async ({ dispatch }, payload) => {
-  await api.post("/api/admin/musical-genders", payload).then((response) => {
+  await api.post("/api/admin/musical-genders", payload, {
+    headers: { "content-type": "multipart/form-data" },
+  }).then((response) => {
     dispatch("getMusicalGenders");
   });
 };
@@ -18,10 +20,10 @@ export const deleteMusicalGender = async ({ dispatch }, id) => {
   });
 };
 
-export const updateMusicalGender = async ({ dispatch }, form) => {
-  await api
-    .put(`/api/admin/musical-genders/${form.id}`, form)
-    .then((response) => {
-      dispatch("getMusicalGenders");
-    });
+export const updateMusicalGender = async ({ dispatch }, { id, form }) => {
+  await api.post(`/api/admin/musical-genders/${id}`, form, {
+    headers: { "content-type": "multipart/form-data" },
+  }).then((response) => {
+    dispatch("getMusicalGenders");
+  });
 };

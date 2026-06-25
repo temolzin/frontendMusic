@@ -21,32 +21,34 @@
     </div>
     <div v-if="clientMusicalGenders[0]">
       <!-- Inicio de Parallax de nobre del grupo y descripción -->
-      <q-parallax :height="250" :speed="0.5" v-if="skeleton == false">
-        <template v-slot:media>
-          <img
-            src="https://cdn.pixabay.com/photo/2017/03/09/20/53/microphone-2130806_960_720.jpg"
-          />
-        </template>
+      <div class="parallax-wrapper">
+        <q-parallax :height="280" :speed="0.5" v-if="skeleton == false">
+          <template v-slot:media>
+            <img
+              :src="clientMusicalGenders[0].image || 'https://cdn.pixabay.com/photo/2017/03/09/20/53/microphone-2130806_960_720.jpg'"
+            />
+          </template>
 
-        <template v-slot:content="scope">
-          <div
-            class="absolute column items-center"
-            :style="{
-              opacity: 0.45 + (1 - scope.percentScrolled) * 0.75,
-              top: scope.percentScrolled * 50 + '%',
-              left: 0,
-              right: 0,
-            }"
-          >
-            <div class="text-h3 text-white text-center q-mb-sm uppercase">
-              {{ clientMusicalGenders[0].name }}
+          <template v-slot:content="scope">
+            <div
+              class="absolute column items-center parallax-content"
+              :style="{
+                opacity: 0.45 + (1 - scope.percentScrolled) * 0.75,
+                top: scope.percentScrolled * 50 + '%',
+                left: 0,
+                right: 0,
+              }"
+            >
+              <div class="parallax-title text-white text-center q-mb-sm">
+                {{ clientMusicalGenders[0].name }}
+              </div>
+              <div class="parallax-desc text-white text-center">
+                {{ clientMusicalGenders[0].description }}
+              </div>
             </div>
-            <div class="text-white text-center">
-              {{ clientMusicalGenders[0].description }}
-            </div>
-          </div>
-        </template>
-      </q-parallax>
+          </template>
+        </q-parallax>
+      </div>
       <!-- Fin de Parallax de nobre del grupo y descripción -->
       <!-- Inico de carga de Parallax -->
       <div class="q-gutter-y-md" v-if="skeleton == true">
@@ -405,5 +407,38 @@ export default {
 }
 .uppercase {
   text-transform: uppercase;
+}
+.parallax-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+  z-index: 1;
+}
+.parallax-wrapper {
+  position: relative;
+  height: 280px;
+}
+.parallax-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.65));
+  z-index: 1;
+  pointer-events: none;
+}
+.parallax-content {
+  z-index: 2;
+}
+.parallax-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 0 0 30px rgba(255,255,255,0.3), 0 4px 20px rgba(0,0,0,0.8);
+}
+.parallax-desc {
+  font-size: 1.1rem;
+  max-width: 600px;
+  text-shadow: 0 0 20px rgba(255,255,255,0.2), 0 2px 10px rgba(0,0,0,0.7);
 }
 </style>
