@@ -194,6 +194,20 @@
                   </template>
                 </q-select>
 
+                <q-file
+                  v-model="form.image"
+                  label="Imagen del género"
+                  accept=".jpg,.jpeg,.png,.gif,.webp,.bmp"
+                  max-file-size="20971520"
+                  filled
+                  clearable
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="image" />
+                  </template>
+                  <template v-slot:hint>Máximo 20 MB</template>
+                </q-file>
+
                 <q-card-actions align="right" class="text-primary">
                   <q-btn
                     label="Cancelar"
@@ -285,6 +299,27 @@
                   </template>
                 </q-select>
 
+                <q-img
+                  v-if="form.image_url"
+                  :src="form.image_url"
+                  style="max-width: 200px; max-height: 120px"
+                  class="q-mb-sm"
+                />
+
+                <q-file
+                  v-model="form.image"
+                  label="Cambiar imagen"
+                  accept=".jpg,.jpeg,.png,.gif,.webp,.bmp"
+                  max-file-size="20971520"
+                  filled
+                  clearable
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="image" />
+                  </template>
+                  <template v-slot:hint>Máximo 20 MB</template>
+                </q-file>
+
                 <q-card-actions align="right" class="text-primary">
                   <q-btn
                     label="Cancelar"
@@ -369,6 +404,7 @@ export default {
         name: "",
         description: "",
         color: "",
+        image: null,
       },
       options: [
         {
@@ -461,7 +497,12 @@ export default {
         return;
       }
       try {
-          await this.createMusicalGender(this.form);
+          const fd = new FormData();
+          fd.append('name', this.form.name);
+          fd.append('description', this.form.description);
+          fd.append('color', this.form.color);
+          if (this.form.image) fd.append('image', this.form.image);
+          await this.createMusicalGender(fd);
           this.formCreate = false;
           this.onReset();
           this.$q.notify({
@@ -484,6 +525,8 @@ export default {
         this.form.name = props.row.name;
         this.form.color = props.row.color;
         this.form.description = props.row.description;
+        this.form.image = null;
+        this.form.image_url = props.row.image;
       } catch (err) {
         if (err.response.data.message) {
           $q.notify({
@@ -495,7 +538,13 @@ export default {
     },
     async editMusicalGender() {
       try {
-        await this.updateMusicalGender(this.form);
+        const fd = new FormData();
+        fd.append('_method', 'PUT');
+        fd.append('name', this.form.name);
+        fd.append('description', this.form.description);
+        fd.append('color', this.form.color);
+        if (this.form.image) fd.append('image', this.form.image);
+        await this.updateMusicalGender({ id: this.form.id, form: fd });
         this.formEdit = false;
         this.onReset();
         this.$q.notify({
@@ -549,6 +598,8 @@ export default {
       this.form.name = null;
       this.form.description = null;
       this.form.color = null;
+      this.form.image = null;
+      this.form.image_url = null;
     },
   },
   created() {
