@@ -105,6 +105,7 @@
             icon="report_problem"
             label="Reportar"
             size="sm"
+            :disable="props.row.status !== 'completed'"
             @click="goToReport(props.row)"
           />
         </q-td>
@@ -155,7 +156,19 @@
                   <q-item-label v-if="col.name === 'acciones'">
                     <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
                   </q-item-label>
-                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'lugar' && col.name !== 'evento' && col.name !== 'acciones' && col.name !== 'fecha_compra' && col.name !== 'status' && col.name !== 'amount'">
+                  <q-item-label v-if="col.name === 'report'">
+                    <q-btn
+                      flat
+                      rounded
+                      color="negative"
+                      icon="report_problem"
+                      label="Reportar"
+                      size="sm"
+                      :disable="props.row.status !== 'completed'"
+                      @click="goToReport(props.row)"
+                    />
+                  </q-item-label>
+                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'lugar' && col.name !== 'evento' && col.name !== 'acciones' && col.name !== 'report' && col.name !== 'fecha_compra' && col.name !== 'status' && col.name !== 'amount'">
                     {{ col.value }}
                   </q-item-label>
                 </q-item-section>
