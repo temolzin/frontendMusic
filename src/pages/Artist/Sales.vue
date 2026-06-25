@@ -65,18 +65,28 @@
         </q-td>
       </template>
 
+      <template v-slot:body-cell-fecha_compra="props">
+        <q-td :props="props">
+          <q-icon name="shopping_cart" size="14px" color="grey" class="q-mr-xs" />
+          <span class="text-weight-medium">{{ formatDate(props.row.created_at) }}</span>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-status="props">
+        <q-td :props="props" class="text-center">
+          <q-badge
+            :color="props.row.status === 'completed' ? 'positive' : 'warning'"
+            :label="props.row.status === 'completed' ? 'Completada' : 'Pendiente'"
+            class="q-pa-sm"
+          />
+        </q-td>
+      </template>
+
       <template v-slot:body-cell-amount="props">
         <q-td :props="props">
           <span class="text-weight-bold text-positive text-h6">
             ${{ Number(props.row.amount).toLocaleString('es-MX') }}
           </span>
-        </q-td>
-      </template>
-
-      <template v-slot:body-cell-fecha_compra="props">
-        <q-td :props="props">
-          <q-icon name="shopping_cart" size="14px" color="grey" class="q-mr-xs" />
-          <span class="text-weight-medium">{{ formatDate(props.row.created_at) }}</span>
         </q-td>
       </template>
 
@@ -130,19 +140,22 @@
                     </div>
                     <span v-if="!props.row.event_date" class="text-grey text-caption">Sin fecha</span>
                   </q-item-label>
+                  <q-item-label v-if="col.name === 'status'">
+                    <q-badge
+                      :color="props.row.status === 'completed' ? 'positive' : 'warning'"
+                      :label="props.row.status === 'completed' ? 'Completada' : 'Pendiente'"
+                      class="q-pa-sm"
+                    />
+                  </q-item-label>
                   <q-item-label v-if="col.name === 'amount'">
                     <span class="text-weight-bold text-positive text-h6">
                       ${{ Number(props.row.amount).toLocaleString('es-MX') }}
                     </span>
                   </q-item-label>
-                  <q-item-label v-if="col.name === 'fecha_compra'">
-                    <q-icon name="shopping_cart" size="14px" color="grey" class="q-mr-xs" />
-                    {{ formatDate(props.row.created_at) }}
-                  </q-item-label>
                   <q-item-label v-if="col.name === 'acciones'">
                     <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
                   </q-item-label>
-                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'lugar' && col.name !== 'evento' && col.name !== 'amount' && col.name !== 'acciones' && col.name !== 'fecha_compra'">
+                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'lugar' && col.name !== 'evento' && col.name !== 'acciones' && col.name !== 'fecha_compra' && col.name !== 'status' && col.name !== 'amount'">
                     {{ col.value }}
                   </q-item-label>
                 </q-item-section>
@@ -252,6 +265,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "fecha_compra",
+    label: "Fecha de compra",
+    align: "left",
+    field: "created_at",
+    sortable: true,
+  },
+  {
     name: "amount",
     label: "Monto",
     align: "left",
@@ -259,10 +279,10 @@ const columns = [
     sortable: true,
   },
   {
-    name: "fecha_compra",
-    label: "Fecha de compra",
-    align: "left",
-    field: "created_at",
+    name: "status",
+    label: "Estado",
+    align: "center",
+    field: "status",
     sortable: true,
   },
   {
