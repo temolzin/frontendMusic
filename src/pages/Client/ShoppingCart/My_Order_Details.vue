@@ -43,15 +43,15 @@
               <q-markup-table dense flat bordered class="table-responsive">
                 <tbody v-for="(purchase, index) in filteredPurchases" :key="index">
                   <tr v-if="index === 0 || formatDate(purchase.created_at) !== formatDate(filteredPurchases[index - 1].created_at)" class="bg-primary text-white text-center">
-                    <th style="font-size: 15px">
+                    <th :colspan="$q.screen.lt.sm ? 5 : 1" style="font-size: 15px">
                       {{ formatDate(purchase.created_at) }}
                     </th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    <th class="text-left text-weight-bold gt-xs" style="font-size: 14px">Detalles</th>
+                    <th class="text-left text-weight-bold gt-xs" style="font-size: 14px">Contacto</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Estado</th>
+                    <th class="text-left text-weight-bold gt-xs" style="font-size: 14px">Acciones</th>
                   </tr>
-                  <tr>
+                  <tr class="gt-xs">
                     <td>
                       <div class="text-center">
                         <q-img :src="purchase.artist?.image" loading="lazy" width="100px" height="100px"
@@ -90,6 +90,45 @@
                     </td>
                     <td class="text-left">
                       <q-btn unelevated rounded color="primary" label="ver compra" @click="openOrderModal(purchase)" />
+                    </td>
+                  </tr>
+                  <tr class="lt-sm">
+                    <td colspan="5" class="q-pa-xs" style="white-space: normal; border-bottom: none;">
+                      <q-card class="q-pa-md shadow-1" bordered>
+                        <div class="row q-col-gutter-sm items-center q-mb-md">
+                          <div class="col-auto">
+                            <q-img :src="purchase.artist?.image" loading="lazy" width="60px" height="60px" style="object-fit: cover" class="rounded-circle" />
+                          </div>
+                          <div class="col">
+                            <div class="text-caption text-grey">Artista</div>
+                            <div class="text-body2 text-weight-bold">{{ purchase.artist?.name || 'N/A' }}</div>
+                            <div class="text-caption">{{ purchase.artist?.zone || 'N/A' }}</div>
+                          </div>
+                        </div>
+                        <div class="q-mb-sm">
+                          <div class="text-caption text-grey">Monto</div>
+                          <div class="text-body2 text-primary text-weight-bold">${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN</div>
+                        </div>
+                        <div class="q-mb-sm">
+                          <div class="text-caption text-grey">Contacto ({{ purchase.artist?.manager?.name || 'N/A' }})</div>
+                          <div>
+                            <q-btn flat rounded size="sm" color="primary" label="Enviar Mensaje" class="q-px-none" @click="openChat(purchase)" />
+                          </div>
+                        </div>
+                        <div class="q-mb-sm">
+                          <div class="text-caption text-grey">Estado</div>
+                          <div class="row items-center">
+                            <q-badge outline :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs text-weight-bold">
+                              {{ eventStatusLabel(purchase.event_status) }}
+                            </q-badge>
+                            <q-btn v-if="isEventCompleted(purchase)" size="sm" outline rounded color="amber" icon="star" label="CALIFICAR" class="q-ml-sm" @click="openRatingModal(purchase)" />
+                          </div>
+                        </div>
+                        <div class="q-mt-md" style="border-top: 1px solid #eee; padding-top: 12px;">
+                          <div class="text-caption text-grey q-mb-xs">Acciones</div>
+                          <q-btn unelevated rounded size="sm" color="primary" label="Ver compra" class="full-width" @click="openOrderModal(purchase)" />
+                        </div>
+                      </q-card>
                     </td>
                   </tr>
                 </tbody>
@@ -600,7 +639,7 @@ export default {
     },
     filteredPurchases() {
       return this.stateListShopingCard.filter((purchase) => {
-        const artistMatch = purchase.artist?.name?.includes(this.filterName) || false;
+        const artistMatch = purchase.artist?.name ? purchase.artist.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes((this.filterName || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()) : false;
         let dateMatch = true;
 
         if (this.filterDate && this.filterDate !== "Todas") {
