@@ -242,7 +242,9 @@
               <div class="row q-col-gutter-md q-mt-sm">
                 <div class="col-6">
                   <div class="text-caption text-grey">Monto</div>
-                  <div class="text-subtitle1 text-weight-bold" :class="{ 'text-black': isExporting }">${{ (parseFloat(regeneratedRef?.amount) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} MXN</div>
+                  <div class="text-subtitle1 text-weight-bold" :class="{ 'text-black': isExporting }">
+                    ${{ (parseFloat(regeneratedRef?.amount) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} MXN
+                  </div>
                 </div>
                 <div class="col-6">
                   <div class="text-caption text-grey">Vence</div>
