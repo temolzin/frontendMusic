@@ -1154,7 +1154,7 @@ export default {
           form: InstFormData,
         };
         await this.updateArtist(formUpdate);
-        this.gettArtist();
+        await this.gettArtist();
         this.showEdit = "false";
         this.showInfo = "false";
         this.$q.notify({
@@ -1163,12 +1163,11 @@ export default {
         });
         this.onReset();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data,
-          });
-        }
+        err.response?.data?.errors
+          ? $q.notify({ type: "negative", message: Object.values(err.response.data.errors).flat().join('<br>'), html: true })
+          : err.response?.data?.message
+            ? $q.notify({ type: "negative", message: err.response.data.message })
+            : null;
       }
     },
     onRejected() {
