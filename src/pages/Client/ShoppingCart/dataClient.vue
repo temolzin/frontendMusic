@@ -460,7 +460,7 @@
 
             <q-stepper-navigation>
               <q-btn rounded @click="validateStep2" class="float-right q-mr-md q-mb-md" color="blue"
-                label="Realizar Compra" />
+                label="Siguiente" />
               <q-btn flat @click="step = 2" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
             </q-stepper-navigation>
           </q-step>

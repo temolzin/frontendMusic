@@ -232,7 +232,7 @@
             <q-card-section class="text-center q-pt-md">
               <div class="row items-center justify-center q-mb-sm">
                 <q-icon name="store" color="primary" size="sm" class="q-mr-xs" />
-                <span class="text-subtitle1">Pagar en <strong>{{ regeneratedRef?.store }}</strong></span>
+                <span class="text-subtitle1" :class="{ 'text-black': isExporting }">Pagar en <strong>{{ regeneratedRef?.store }}</strong></span>
               </div>
               <q-card flat bordered class="q-pa-md q-my-md bg-grey-1" style="border-radius: 12px">
                 <div class="text-caption text-grey q-mb-xs">Referencia</div>
@@ -242,11 +242,13 @@
               <div class="row q-col-gutter-md q-mt-sm">
                 <div class="col-6">
                   <div class="text-caption text-grey">Monto</div>
-                  <div class="text-subtitle1 text-weight-bold">${{ (parseFloat(regeneratedRef?.amount) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} MXN</div>
+                  <div class="text-subtitle1 text-weight-bold" :class="{ 'text-black': isExporting }">
+                    ${{ (parseFloat(regeneratedRef?.amount) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} MXN
+                  </div>
                 </div>
                 <div class="col-6">
                   <div class="text-caption text-grey">Vence</div>
-                  <div class="text-subtitle1 text-weight-bold">{{ formatDueDate(regeneratedRef?.due_date) }}</div>
+                  <div class="text-subtitle1 text-weight-bold" :class="{ 'text-black': isExporting }">{{ formatDueDate(regeneratedRef?.due_date) }}</div>
                 </div>
               </div>
             </q-card-section>
@@ -393,6 +395,7 @@ export default {
       isLoadingRating: false,
       showRegeneratedRefDialog: false,
       regeneratedRef: null,
+      isExporting: false,
     };
   },
   methods: {
@@ -572,12 +575,18 @@ export default {
     },
 
     async captureRegeneratedReceipt() {
-      return await html2canvas(this.$refs.regeneratedReceipt, {
+      this.isExporting = true;
+      await this.$nextTick();
+
+      const canvas = await html2canvas(this.$refs.regeneratedReceipt, {
         scale: 2,
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: false,
       });
+
+      this.isExporting = false;
+      return canvas;
     },
 
     async downloadRefImage() {
