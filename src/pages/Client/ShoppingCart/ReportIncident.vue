@@ -139,10 +139,13 @@ export default {
         this.$router.push({ name: 'client.my-tickets' });
 
       } catch (err) {
-        const message =
-          err.response?.data?.message ||
-          'Ocurrió un error al enviar el reporte. Intenta de nuevo.';
-        this.$q.notify({ type: 'negative', message, position: 'top' });
+        const data = err.response?.data;
+        let message = data?.message || 'Ocurrió un error al enviar el reporte. Intenta de nuevo.';
+        if (data?.errors) {
+          const details = Object.values(data.errors).flat().join('<br>');
+          message += `<br><br>${details}`;
+        }
+        this.$q.notify({ type: 'negative', message, position: 'top', html: true, timeout: 5000 });
       } finally {
         this.loading = false;
       }
