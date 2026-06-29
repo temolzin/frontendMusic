@@ -71,12 +71,27 @@
               </template>
             </q-input>
 
+            <div class="row items-center q-pt-sm">
+              <q-checkbox v-model="acceptTerms" color="primary" />
+              <div class="text-body2 q-ml-sm" style="flex: 1;">
+                He leído y acepto los 
+                <router-link :to="{ name: 'legal.terms' }" class="text-primary text-weight-medium" target="_blank">
+                  Términos y condiciones de uso
+                </router-link> 
+                y la 
+                <router-link :to="{ name: 'legal.privacy' }" class="text-primary text-weight-medium" target="_blank">
+                  Política de privacidad
+                </router-link>.
+              </div>
+            </div>
+
             <div class="q-pt-sm">
               <q-btn
                 class="full-width"
                 color="primary"
                 label="Crear mi cuenta"
                 type="submit"
+                :disable="!acceptTerms"
                 v-if="loading"
               >
               </q-btn>
@@ -159,13 +174,6 @@
                   </q-btn>
                 </div>
               </div>
-
-              <p class="text-center q-mt-md">
-                Al continuar, estás aceptando los
-                <u>Términos y condiciones de uso</u>. Consulta nuestra
-                <u>Política de privacidad</u>.
-              </p>
-
               <div class="text-center">
                 ¿Ya tienes una cuenta?
                 <router-link class="text-primary" to="/login">
@@ -192,6 +200,7 @@ export default {
   data() {
     return {
       isPwd: ref(true),
+      acceptTerms: false,
       user: {
         name: "Miguel Angel Gómez Gómez",
         email: "angel@gmail.com",
@@ -207,6 +216,13 @@ export default {
     ...mapActions("auth", ["doLoginGmail"]),
     ...mapActions("auth", ["doLoginFacebook"]),
     async submitForm() {
+      if (!this.acceptTerms) {
+        $q.notify({
+          type: "warning",
+          message: "Debes aceptar los Términos y Condiciones para continuar.",
+        });
+        return;
+      }
       this.loading = false;
       if (!this.user.email || !this.user.password || !this.user.name) {
         $q.notify({

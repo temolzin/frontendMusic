@@ -80,6 +80,24 @@ const routes = [
           requireLogin: false,
         },
       },
+      {
+        name: "legal.terms",
+        path: "/terms-conditions",
+        component: () => import("src/pages/TermsPage.vue"),
+        meta: {
+          title: "Términos y Condiciones de Uso",
+          requireLogin: false,
+        },
+      },
+      {
+        name: "legal.privacy",
+        path: "/policy-privacity",
+        component: () => import("src/pages/PrivacyPage.vue"),
+        meta: {
+          title: "Política de Privacidad",
+          requireLogin: false,
+        },
+      },
     ],
   },
 
