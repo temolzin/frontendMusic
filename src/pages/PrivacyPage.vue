@@ -98,16 +98,16 @@
 </template>
 
 <script>
-export default {
-  name: 'PrivacyPage'
-}
+  export default {
+    name: 'PrivacyPage'
+  }
 </script>
 
 <style scoped>
-.line-height-relaxed {
-  line-height: 1.6;
-}
-.rounded-borders {
-  border-radius: 8px;
-}
+  .line-height-relaxed {
+    line-height: 1.6;
+  }
+  .rounded-borders {
+    border-radius: 8px;
+  }
 </style>
