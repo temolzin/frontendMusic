@@ -261,12 +261,12 @@
               <div class="col-12 col-xs-12 col-sm-3 col-md-3">
                 <p class="text-weight-bold">Legal</p>
                 <q-list class="text-white text-weight-light">
-                  <q-item clickable class="q-pa-none">
+                  <q-item clickable class="q-pa-none" to="/terminos-condiciones">
                     <q-item-section class="text-weight-regular text-grey-5">
                       Términos y condiciones
                     </q-item-section>
                   </q-item>
-                  <q-item clickable class="q-pa-none">
+                  <q-item clickable class="q-pa-none" to="/politica-privacidad">
                     <q-item-section class="text-weight-regular text-grey-5">
                       Política de privacidad
                     </q-item-section>
