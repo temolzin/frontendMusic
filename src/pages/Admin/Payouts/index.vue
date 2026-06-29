@@ -40,8 +40,8 @@
           <q-td key="event_date" :props="props">
             {{ props.row.event_date }} a las {{ props.row.event_hour.substring(0, 5) }} hrs
           </q-td>
-          <q-td key="net_artist_payout" :props="props" class="text-weight-bold text-positive">
-            ${{ formatCurrency(props.row.net_artist_payout) }} MXN
+          <q-td key="net_artist_payout" :props="props" class="text-weight-bold" :class="props.row.total_penalties > 0 ? 'text-orange' : 'text-positive'">
+            ${{ formatCurrency(props.row.adjusted_net_payout) }} MXN
           </q-td>
           <q-td key="status" :props="props">
             <q-badge 
@@ -76,8 +76,30 @@
                     </div>
                     <q-separator class="q-my-xs" />
                     <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold text-positive">
-                      <span>Monto Neto a Transferir:</span>
+                      <span>Subtotal a Transferir:</span>
                       <span>${{ formatCurrency(props.row.net_artist_payout) }} MXN</span>
+                    </div>
+
+                    <template v-if="props.row.penalties && props.row.penalties.length > 0">
+                      <q-separator class="q-my-xs" />
+                      <div class="text-subtitle2 text-negative q-mb-xs q-mt-sm">
+                        <q-icon name="gavel" size="sm" class="q-mr-xs" />
+                        Penalizaciones pendientes
+                      </div>
+                      <div v-for="penalty in props.row.penalties" :key="penalty.sale_id" class="row justify-between q-py-xs text-negative">
+                        <span>Cancelación venta #{{ penalty.sale_id }} ({{ penalty.penalty_percentage }}%)</span>
+                        <span>- ${{ formatCurrency(penalty.penalty_amount) }} MXN</span>
+                      </div>
+                      <q-separator class="q-my-xs" />
+                      <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold text-negative">
+                        <span>Total penalizaciones:</span>
+                        <span>- ${{ formatCurrency(props.row.total_penalties) }} MXN</span>
+                      </div>
+                    </template>
+                    <q-separator class="q-my-xs" />
+                    <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold" :class="props.row.total_penalties > 0 ? 'text-orange' : 'text-positive'">
+                      <span>Monto Neto Final a Transferir:</span>
+                      <span>${{ formatCurrency(props.row.adjusted_net_payout) }} MXN</span>
                     </div>
                   </q-card-section>
                 </q-card>
@@ -177,7 +199,7 @@ export default {
       { name: "sale_id", label: "ID Venta", field: "sale_id", align: "left", sortable: true },
       { name: "artist_name", label: "Artista", field: row => row.artist.name, align: "left", sortable: true },
       { name: "event_date", label: "Fecha Evento", field: "event_date", align: "left" },
-      { name: "net_artist_payout", label: "Pago Neto Artista", field: "net_artist_payout", align: "right", sortable: true },
+      { name: "net_artist_payout", label: "Pago Neto Artista", field: "adjusted_net_payout", align: "right", sortable: true },
       { name: "status", label: "Estatus", align: "center" }
     ];
 
@@ -217,7 +239,7 @@ export default {
     const confirmRelease = (payout) => {
       $q.dialog({
         title: "Confirmar Liquidación",
-        message: `¿Estás seguro de marcar la venta #${payout.sale_id} del artista "${payout.artist.name}" como pagada? Asegúrate de haber realizado primero la transferencia SPEI manual en tu banca por $${formatCurrency(payout.net_artist_payout)} MXN.`,
+        message: `¿Estás seguro de marcar la venta #${payout.sale_id} del artista "${payout.artist.name}" como pagada? Asegúrate de haber realizado primero la transferencia SPEI manual en tu banca por $${formatCurrency(payout.adjusted_net_payout)} MXN.${payout.total_penalties > 0 ? `\n\nNota: Se descontaron $${formatCurrency(payout.total_penalties)} MXN en penalizaciones por cancelaciones previas.` : ''}`,
         cancel: { label: "Cancelar", color: "grey", flat: true },
         ok: { label: "Sí, Marcar Pagado", color: "positive" },
         persistent: true

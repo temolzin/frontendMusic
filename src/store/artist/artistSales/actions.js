@@ -5,3 +5,8 @@ export const getArtistSales = async ({ commit }) => {
     commit("setArtistSales", response.data.sales || []);
   });
 };
+
+export const cancelArtistSale = async ({ dispatch }, { id, reason }) => {
+  await api.post(`/api/artist/sales/${id}/cancel`, { reason });
+  dispatch("getArtistSales");
+};
