@@ -1,23 +1,17 @@
 <template>
   <q-page padding class="q-pa-md q-pa-md-xl flex flex-center">
     <div style="max-width: 900px; width: 100%;">
-      <!-- Encabezado -->
       <div class="text-center q-mb-xl">
         <h1 class="text-h4 text-weight-bold q-ma-none text-primary q-mb-xs">TÉRMINOS Y CONDICIONES DE USO</h1>
         <div class="text-subtitle2 text-grey-7">Estatus: Versión Final de Cumplimiento Legal (México)</div>
         <div class="text-caption text-grey-6">Fecha de Publicación: 12 de junio de 2026</div>
       </div>
-
-      <!-- Introducción -->
       <q-card flat bordered class="q-pa-md q-mb-lg bg-grey-1 text-grey-9">
         <p class="q-ma-none text-body1 line-height-relaxed">
           Bienvenido a nuestra plataforma digital de contratación musical. Al registrarse, acceder o utilizar nuestros servicios como Cliente o como Artista, usted acepta quedar vinculado por los presentes Términos y Condiciones. Si no está de acuerdo con ellos, deberá abstenerse de utilizar el sistema.
         </p>
       </q-card>
-
-      <!-- Lista de Cláusulas Acordeón -->
       <q-list class="q-gutter-y-md">
-        
         <q-expansion-item
           group="terms"
           icon="gavel"
@@ -38,7 +32,6 @@
             </q-card-section>
           </q-card>
         </q-expansion-item>
-
         <q-expansion-item
           group="terms"
           icon="payment"
@@ -174,16 +167,16 @@
 </template>
 
 <script>
-export default {
-  name: 'TermsPage'
-}
+  export default {
+    name: 'TermsPage'
+  }
 </script>
 
 <style scoped>
-.line-height-relaxed {
-  line-height: 1.6;
-}
-.rounded-borders {
-  border-radius: 8px;
-}
+  .line-height-relaxed {
+    line-height: 1.6;
+  }
+  .rounded-borders {
+    border-radius: 8px;
+  }
 </style>
