@@ -146,17 +146,18 @@ export default {
   },
 
   methods: {
-    ...mapActions('supportTickets', ['fetchTicketLogs', 'fetchAdminTicketDetail']),
+    ...mapActions('supportTickets', ['fetchTicketLogs', 'fetchAdminTicketDetail', 'fetchMyTicketLogs']),
 
     async loadLogs() {
       this.loading = true;
       try {
-        const [logs, ticketDetail] = await Promise.all([
-          this.fetchTicketLogs(this.ticketId),
-          this.fetchAdminTicketDetail(this.ticketId),
-        ]);
+        const logs = await (this.ticket
+          ? this.fetchMyTicketLogs(this.ticketId)
+          : this.fetchTicketLogs(this.ticketId));
         this.logs = logs;
-        this.ticketWithEvidences = ticketDetail;
+        this.ticketWithEvidences = this.ticket
+          ? this.ticket
+          : await this.fetchAdminTicketDetail(this.ticketId);
       } catch {
         this.$q.notify({ type: 'negative', message: 'Error al cargar el historial.', position: 'top' });
       } finally {

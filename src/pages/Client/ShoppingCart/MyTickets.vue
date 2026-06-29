@@ -27,26 +27,47 @@
               Orden #{{ ticket.artist_sale_id }} — {{ formatDate(ticket.created_at) }}
             </q-item-label>
           </q-item-section>
-          <q-item-section side>
+          <q-item-section side class="items-end">
             <q-badge :color="statusColor(ticket.status)" class="q-px-sm q-py-xs">
               {{ statusLabel(ticket.status) }}
             </q-badge>
+            <q-btn
+              flat
+              round
+              color="grey"
+              icon="history"
+              size="sm"
+              class="q-mt-sm"
+              @click="openLogs(ticket)"
+            >
+              <q-tooltip>Historial</q-tooltip>
+            </q-btn>
           </q-item-section>
         </q-item>
       </q-list>
     </div>
+    <ticket-logs-modal
+      v-model="showLogsModal"
+      :ticket-id="selectedTicketId"
+      :ticket="selectedTicket"
+    />
   </q-page>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
 
 export default {
   name: 'MyTickets',
+  components: { TicketLogsModal },
 
   data() {
     return {
       loading: false,
+      showLogsModal: false,
+      selectedTicketId: null,
+      selectedTicket: null,
     };
   },
 
@@ -70,6 +91,12 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    openLogs(ticket) {
+      this.selectedTicketId = ticket.id;
+      this.selectedTicket = ticket;
+      this.showLogsModal = true;
     },
 
     formatDate(raw) {

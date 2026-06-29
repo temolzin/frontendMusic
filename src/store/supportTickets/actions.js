@@ -49,3 +49,8 @@ export const fetchTicketLogs = async (context, ticketId) => {
     const response = await api.get(`/api/admin/support-tickets/${ticketId}/logs`);
     return response.data.data;
 };
+
+export const fetchMyTicketLogs = async (context, ticketId) => {
+    const response = await api.get(`/api/support-tickets/${ticketId}/logs`);
+    return response.data.data;
+};
