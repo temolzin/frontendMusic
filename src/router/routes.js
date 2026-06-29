@@ -82,7 +82,7 @@ const routes = [
       },
       {
         name: "legal.terms",
-        path: "/terminos-condiciones",
+        path: "/terms-conditions",
         component: () => import("src/pages/TermsPage.vue"),
         meta: {
           title: "Términos y Condiciones de Uso",
@@ -91,7 +91,7 @@ const routes = [
       },
       {
         name: "legal.privacy",
-        path: "/politica-privacidad",
+        path: "/policy-privacity",
         component: () => import("src/pages/PrivacyPage.vue"),
         meta: {
           title: "Política de Privacidad",
