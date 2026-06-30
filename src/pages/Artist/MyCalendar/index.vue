@@ -22,7 +22,7 @@
               bordered
               color="primary"
               :events="eventDates"
-              event-color="warning"
+              :event-color="eventColor"
             />
 
             <div class="summary-section q-mt-lg">
@@ -43,6 +43,10 @@
                 <div class="summary-row q-mt-md">
                   <span class="label">Expirados</span>
                   <span class="value text-red">{{ expiredCount }}</span>
+                </div>
+                <div class="summary-row q-mt-md">
+                  <span class="label">Cancelados</span>
+                  <span class="value text-grey-6">{{ cancelledCount }}</span>
                 </div>
               </div>
             </div>
@@ -326,6 +330,9 @@ export default defineComponent({
     expiredCount() {
       return this.contracts.filter((c) => c.status === 'expired').length;
     },
+    cancelledCount() {
+      return this.contracts.filter((c) => c.status === 'cancelled').length;
+    },
     eventDates() {
       const eventsByDate = {};
       this.contracts.forEach((c) => {
@@ -335,6 +342,13 @@ export default defineComponent({
         eventsByDate[c.date].push(c);
       });
       return Object.keys(eventsByDate);
+    },
+    eventColor(date) {
+      const events = this.contracts.filter(c => c.date === date);
+      if (events.some(e => e.status === 'cancelled')) return 'grey-5';
+      if (events.some(e => e.status === 'expired')) return 'negative';
+      if (events.some(e => e.status === 'completed')) return 'positive';
+      return 'warning';
     },
     mode() {
       return this.$q.dark.isActive;
@@ -352,8 +366,18 @@ export default defineComponent({
     async loadContracts() {
       try {
         const response = await api.get('/api/artist/sales/details');
-        this.contracts = (response.data?.sales && Array.isArray(response.data.sales))
-          ? response.data.sales.map((sale) => ({
+        const allSales = (response.data?.sales && Array.isArray(response.data.sales))
+          ? response.data.sales
+          : [];
+        if (allSales.length === 0 && !response.data?.sales) {
+          this.$q.notify({
+            type: 'negative',
+            message: 'No se pudieron cargar los eventos. Intenta de nuevo más tarde.',
+            position: 'top',
+          });
+        }
+        this.contracts = allSales
+          .map((sale) => ({
               id: sale.id,
               title: `Evento ${sale.customer_first_name || 'Desconocido'}`,
               description: `Contrato para ${sale.customer_first_name || 'Desconocido'} ${sale.customer_last_name || 'Desconocido'}`,
@@ -373,12 +397,7 @@ export default defineComponent({
               customerCity: sale.customer_city || '',
               customerState: sale.customer_state || '',
               customerZipCode: sale.customer_zip_code || '',
-            }))
-          : (this.$q.notify({
-              type: 'negative',
-              message: 'No se pudieron cargar los eventos. Intenta de nuevo más tarde.',
-              position: 'top',
-            }), []);
+            }));
       } catch (error) {
         console.error('Error loading artist-sales:', error);
         this.$q.notify({
@@ -464,12 +483,14 @@ export default defineComponent({
     statusColor(status) {
       if (status === 'completed') return 'positive';
       if (status === 'expired') return 'negative';
+      if (status === 'cancelled') return 'grey-5';
       return 'warning';
     },
 
     statusLabel(status) {
       if (status === 'completed') return 'Completado';
       if (status === 'expired') return 'Expirado';
+      if (status === 'cancelled') return 'Cancelado';
       return 'Pendiente';
     },
 

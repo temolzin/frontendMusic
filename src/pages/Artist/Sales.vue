@@ -93,6 +93,17 @@
       <template v-slot:body-cell-acciones="props">
         <q-td :props="props" class="text-center">
           <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
+          <q-btn
+            flat
+            rounded
+            color="negative"
+            icon="cancel"
+            label="Cancelar"
+            size="sm"
+            class="q-ml-xs"
+            :disable="!canCancel(props.row)"
+            @click="openCancelDialog(props.row)"
+          />
         </q-td>
       </template>
 
@@ -155,6 +166,17 @@
                   </q-item-label>
                   <q-item-label v-if="col.name === 'acciones'">
                     <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
+                    <q-btn
+                      flat
+                      rounded
+                      color="negative"
+                      icon="cancel"
+                      label="Cancelar"
+                      size="sm"
+                      class="q-ml-xs"
+                      :disable="!canCancel(props.row)"
+                      @click="openCancelDialog(props.row)"
+                    />
                   </q-item-label>
                   <q-item-label v-if="col.name === 'report'">
                     <q-btn
@@ -243,7 +265,94 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
+    <q-dialog v-model="isCancelDialogOpen" persistent>
+      <q-card style="width: 500px; max-width: 95vw">
+        <q-card-section class="row items-center bg-negative text-white q-pb-sm">
+          <div class="text-h6">Cancelar Evento</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="q-pt-md">
+          <div class="text-weight-bold q-mb-sm">¿Estás seguro de cancelar este evento?</div>
+          <q-list dense>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Cliente</q-item-label>
+                <q-item-label class="text-weight-medium">
+                  {{ cancelSale?.customer_first_name }} {{ cancelSale?.customer_last_name }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Fecha del evento</q-item-label>
+                <q-item-label class="text-weight-medium">{{ formatDate(cancelSale?.event_date) }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Días restantes</q-item-label>
+                <q-item-label class="text-weight-medium">{{ cancelDaysUntil }} días</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Monto del evento</q-item-label>
+                <q-item-label class="text-weight-medium text-positive">
+                  ${{ Number(cancelSale?.amount || 0).toLocaleString('es-MX') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-if="cancelPenaltyPercentage > 0">
+              <q-item-section>
+                <q-item-label caption>Penalización</q-item-label>
+                <q-item-label class="text-weight-medium text-negative">
+                  {{ cancelPenaltyPercentage }}% (${{ Number(cancelPenaltyAmount).toLocaleString('es-MX') }})
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-else>
+              <q-item-section>
+                <q-item-label caption>Penalización</q-item-label>
+                <q-item-label class="text-weight-medium text-positive">0% (Sin penalización)</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Reembolso al cliente</q-item-label>
+                <q-item-label class="text-weight-medium text-primary">
+                  100% (${{ Number(cancelSale?.amount || 0).toLocaleString('es-MX') }})
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <q-input
+            v-model="cancelReason"
+            type="textarea"
+            outlined
+            dense
+            rows="3"
+            label="Motivo de la cancelación *"
+            placeholder="Explica por qué cancelas el evento..."
+            :rules="[val => !!val || 'El motivo es requerido']"
+            class="q-mt-md"
+          />
+        </q-card-section>
+        <q-separator />
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn flat label="Volver" color="grey" v-close-popup />
+          <q-btn
+            unelevated
+            label="Sí, cancelar evento"
+            color="negative"
+            icon="cancel"
+            :loading="cancelLoading"
+            :disable="!cancelReason"
+            @click="confirmCancel"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -256,14 +365,62 @@ import NoticeNotInfo from 'src/components/Artist/NoticeNotInfo.vue';
 let $q;
 
 const columns = [
-  { name: 'cliente', label: 'Cliente', align: 'left', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
-  { name: 'lugar', label: 'Lugar del evento', align: 'left', field: 'customer_city', sortable: true },
-  { name: 'evento', label: 'Fecha del evento', align: 'left', field: 'event_date', sortable: true },
-  { name: 'fecha_compra', label: 'Fecha de compra', align: 'left', field: 'created_at', sortable: true },
-  { name: 'amount', label: 'Monto', align: 'left', field: 'amount', sortable: true },
-  { name: 'status', label: 'Estado', align: 'center', field: 'status', sortable: true },
-  { name: 'acciones', label: 'Chat', align: 'center', field: 'acciones', sortable: false },
-  { name: 'report', label: 'Reportar', align: 'center', field: 'report', sortable: false },
+  {
+    name: "cliente",
+    label: "Cliente",
+    align: "left",
+    field: (row) => `${row.customer_first_name} ${row.customer_last_name}`,
+    sortable: true,
+  },
+  {
+    name: "lugar",
+    label: "Lugar del evento",
+    align: "left",
+    field: "customer_city",
+    sortable: true,
+  },
+  {
+    name: "evento",
+    label: "Fecha del evento",
+    align: "left",
+    field: "event_date",
+    sortable: true,
+  },
+  {
+    name: "fecha_compra",
+    label: "Fecha de compra",
+    align: "left",
+    field: "created_at",
+    sortable: true,
+  },
+  {
+    name: "amount",
+    label: "Monto",
+    align: "left",
+    field: "amount",
+    sortable: true,
+  },
+  {
+    name: "status",
+    label: "Estado",
+    align: "center",
+    field: "status",
+    sortable: true,
+  },
+  {
+    name: "acciones",
+    label: "Acciones",
+    align: "center",
+    field: "acciones",
+    sortable: false,
+  },
+  {
+    name: 'report',
+    label: 'Reportar',
+    align: 'center',
+    field: 'report',
+    sortable: false,
+  },
 ];
 
 export default {
@@ -278,20 +435,48 @@ export default {
       newMessage: '',
       activeChatPurchase: null,
       chatPolling: null,
+      isCancelDialogOpen: false,
+      cancelSale: null,
+      cancelReason: "",
+      cancelLoading: false,
     };
   },
 
   computed: {
     ...mapGetters('artistSales', ['stateArtistSales']),
     ...mapState({ artist: (state) => state.artist.artist }),
-    ...mapGetters('auth', ['getMe']),
-    ...mapGetters('orderDetails', ['getChatMessages']),
+    ...mapGetters("auth", ["getMe"]),
+    ...mapGetters("orderDetails", ["getChatMessages"]),
+
+    cancelDaysUntil() {
+      if (!this.cancelSale?.event_date) return 0;
+      const now = new Date();
+      const event = new Date(this.cancelSale.event_date);
+      const diff = Math.ceil((event - now) / (1000 * 60 * 60 * 24));
+      return Math.max(0, diff);
+    },
+
+    cancelPenaltyPercentage() {
+      const days = this.cancelDaysUntil;
+      if (days >= 7) return 0;
+      if (days >= 3) return 25;
+      if (days >= 1) return 50;
+      return 0;
+    },
+
+    cancelPenaltyAmount() {
+      const amount = Number(this.cancelSale?.amount || 0);
+      return amount * (this.cancelPenaltyPercentage / 100);
+    },
   },
 
   methods: {
-    ...mapActions('artistSales', ['getArtistSales']),
-    ...mapActions('artist', ['getArtist']),
-    ...mapActions('orderDetails', ['fetchChatMessages', 'sendChatMessage']),
+    ...mapActions("artistSales", ["getArtistSales", "cancelArtistSale"]),
+    ...mapActions("artist", ["getArtist"]),
+    ...mapActions("orderDetails", [
+      "fetchChatMessages",
+      "sendChatMessage"
+    ]),
 
     async getArtistSaless() {
       try {
@@ -379,6 +564,38 @@ export default {
 
     goToReport(sale) {
       this.$router.push({ name: 'client.report-incident', params: { saleId: sale.id } });
+    },
+
+    canCancel(sale) {
+      if (!sale?.event_date) return false;
+      if (sale.event_status === 'completed' || sale.event_status === 'expired' || sale.event_status === 'cancelled') return false;
+      if (sale.status !== 'completed' && sale.status !== 'pending') return false;
+      const now = new Date();
+      const event = new Date(sale.event_date);
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const eventDay = new Date(event.getFullYear(), event.getMonth(), event.getDate());
+      return eventDay > today;
+    },
+
+    openCancelDialog(sale) {
+      this.cancelSale = sale;
+      this.cancelReason = "";
+      this.isCancelDialogOpen = true;
+    },
+
+    async confirmCancel() {
+      if (!this.cancelReason.trim()) return;
+      this.cancelLoading = true;
+      try {
+        await this.cancelArtistSale({ id: this.cancelSale.id, reason: this.cancelReason });
+        this.$q.notify({ type: 'positive', icon: 'check_circle', message: 'Evento cancelado exitosamente. Se reembolsará al cliente.', position: 'top' });
+        this.isCancelDialogOpen = false;
+      } catch (err) {
+        const msg = err?.response?.data?.message || 'Error al cancelar el evento';
+        this.$q.notify({ type: 'negative', icon: 'error', message: msg, position: 'top' });
+      } finally {
+        this.cancelLoading = false;
+      }
     },
   },
 
