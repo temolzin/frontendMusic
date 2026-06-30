@@ -234,6 +234,17 @@ const routes = [
         },
       },
       {
+        name: 'artist.pending-approvals',
+        path: '/artist/pending-approvals',
+        component: import('src/pages/Artist/PendingApprovals.vue'),
+        meta: {
+          title: 'Solicitudes Pendientes',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-profile-artist'],
+        },
+      },
+      {
         name: "artist.my-calendar",
         path: "/artist/my-calendar",
         component: () => import("pages/Artist/MyCalendar/index.vue"),

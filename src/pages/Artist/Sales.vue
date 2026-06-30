@@ -75,8 +75,8 @@
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="text-center">
           <q-badge
-            :color="props.row.status === 'completed' ? 'positive' : 'warning'"
-            :label="props.row.status === 'completed' ? 'Completada' : 'Pendiente'"
+            :color="statusColor(props.row)"
+            :label="statusLabel(props.row)"
             class="q-pa-sm"
           />
         </q-td>
@@ -105,7 +105,7 @@
             icon="report_problem"
             label="Reportar"
             size="sm"
-            :disable="props.row.status !== 'completed'"
+            :disable="!canReport(props.row)"
             @click="goToReport(props.row)"
           />
         </q-td>
@@ -143,8 +143,8 @@
                   </q-item-label>
                   <q-item-label v-if="col.name === 'status'">
                     <q-badge
-                      :color="props.row.status === 'completed' ? 'positive' : 'warning'"
-                      :label="props.row.status === 'completed' ? 'Completada' : 'Pendiente'"
+                      :color="statusColor(props.row)"
+                      :label="statusLabel(props.row)"
                       class="q-pa-sm"
                     />
                   </q-item-label>
@@ -164,7 +164,7 @@
                       icon="report_problem"
                       label="Reportar"
                       size="sm"
-                      :disable="props.row.status !== 'completed'"
+                      :disable="!canReport(props.row)"
                       @click="goToReport(props.row)"
                     />
                   </q-item-label>
@@ -248,101 +248,50 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from "vuex";
-import { useQuasar } from "quasar";
-import NoticeNoSales from "src/components/Artist/NoticeNoSales.vue";
-import NoticeNotInfo from "src/components/Artist/NoticeNotInfo.vue";
+import { mapActions, mapGetters, mapState } from 'vuex';
+import { useQuasar } from 'quasar';
+import NoticeNoSales from 'src/components/Artist/NoticeNoSales.vue';
+import NoticeNotInfo from 'src/components/Artist/NoticeNotInfo.vue';
 
 let $q;
 
 const columns = [
-  {
-    name: "cliente",
-    label: "Cliente",
-    align: "left",
-    field: (row) => `${row.customer_first_name} ${row.customer_last_name}`,
-    sortable: true,
-  },
-  {
-    name: "lugar",
-    label: "Lugar del evento",
-    align: "left",
-    field: "customer_city",
-    sortable: true,
-  },
-  {
-    name: "evento",
-    label: "Fecha del evento",
-    align: "left",
-    field: "event_date",
-    sortable: true,
-  },
-  {
-    name: "fecha_compra",
-    label: "Fecha de compra",
-    align: "left",
-    field: "created_at",
-    sortable: true,
-  },
-  {
-    name: "amount",
-    label: "Monto",
-    align: "left",
-    field: "amount",
-    sortable: true,
-  },
-  {
-    name: "status",
-    label: "Estado",
-    align: "center",
-    field: "status",
-    sortable: true,
-  },
-  {
-    name: "acciones",
-    label: "Chat",
-    align: "center",
-    field: "acciones",
-    sortable: false,
-  },
-  {
-    name: 'report',
-    label: 'Reportar',
-    align: 'center',
-    field: 'report',
-    sortable: false,
-  },
+  { name: 'cliente', label: 'Cliente', align: 'left', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
+  { name: 'lugar', label: 'Lugar del evento', align: 'left', field: 'customer_city', sortable: true },
+  { name: 'evento', label: 'Fecha del evento', align: 'left', field: 'event_date', sortable: true },
+  { name: 'fecha_compra', label: 'Fecha de compra', align: 'left', field: 'created_at', sortable: true },
+  { name: 'amount', label: 'Monto', align: 'left', field: 'amount', sortable: true },
+  { name: 'status', label: 'Estado', align: 'center', field: 'status', sortable: true },
+  { name: 'acciones', label: 'Chat', align: 'center', field: 'acciones', sortable: false },
+  { name: 'report', label: 'Reportar', align: 'center', field: 'report', sortable: false },
 ];
 
 export default {
-  name: "ArtistSales",
+  name: 'ArtistSales',
   components: { NoticeNoSales, NoticeNotInfo },
 
   data() {
     return {
       columns,
-      filter: "",
+      filter: '',
       isChatDialogOpen: false,
-      newMessage: "",
+      newMessage: '',
       activeChatPurchase: null,
       chatPolling: null,
     };
   },
 
   computed: {
-    ...mapGetters("artistSales", ["stateArtistSales"]),
+    ...mapGetters('artistSales', ['stateArtistSales']),
     ...mapState({ artist: (state) => state.artist.artist }),
-    ...mapGetters("auth", ["getMe"]),
-    ...mapGetters("orderDetails", ["getChatMessages"]),
+    ...mapGetters('auth', ['getMe']),
+    ...mapGetters('orderDetails', ['getChatMessages']),
   },
 
   methods: {
-    ...mapActions("artistSales", ["getArtistSales"]),
-    ...mapActions("artist", ["getArtist"]),
-    ...mapActions("orderDetails", [
-      "fetchChatMessages",
-      "sendChatMessage"
-    ]),
+    ...mapActions('artistSales', ['getArtistSales']),
+    ...mapActions('artist', ['getArtist']),
+    ...mapActions('orderDetails', ['fetchChatMessages', 'sendChatMessage']),
 
     async getArtistSaless() {
       try {
@@ -352,19 +301,35 @@ export default {
         }
       } catch (err) {
         if (err?.response?.data?.message) {
-          $q.notify({ type: "negative", message: err.response.data.message });
+          $q.notify({ type: 'negative', message: err.response.data.message });
         }
       }
     },
 
+    statusLabel(row) {
+      if (row.approval_status === 'pending_approval') return 'Por confirmar';
+      if (row.approval_status === 'rejected') return 'Rechazada';
+      if (row.approval_status === 'expired') return 'Expirada';
+      return row.status === 'completed' ? 'Completada' : 'Pendiente';
+    },
+
+    statusColor(row) {
+      if (row.approval_status === 'pending_approval') return 'info';
+      if (row.approval_status === 'rejected') return 'negative';
+      if (row.approval_status === 'expired') return 'grey';
+      return row.status === 'completed' ? 'positive' : 'warning';
+    },
+
+    canReport(row) {
+      const approvalOk = !row.approval_status || row.approval_status === 'accepted';
+      const eventPassed = row.event_date ? new Date(row.event_date) < new Date() : false;
+      return approvalOk && eventPassed;
+    },
+
     formatDate(date) {
-      if (!date) return "";
+      if (!date) return '';
       const d = new Date(date);
-      return d.toLocaleDateString("es-MX", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
+      return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
     },
 
     formatChatDate(rawDate) {
@@ -382,9 +347,9 @@ export default {
     },
 
     async openChat(sale) {
-      this.$store.commit("orderDetails/setChatMessages", []);
+      this.$store.commit('orderDetails/setChatMessages', []);
       this.activeChatPurchase = sale;
-      this.newMessage = "";
+      this.newMessage = '';
       this.isChatDialogOpen = true;
       await this.fetchChatMessages(sale.id);
       this.scrollToBottom();
@@ -393,11 +358,7 @@ export default {
     async sendMessage() {
       const messageText = this.newMessage.trim();
       if (messageText !== '') {
-        const payload = {
-          artist_sale_id: this.activeChatPurchase.id,
-          message: messageText,
-        };
-
+        const payload = { artist_sale_id: this.activeChatPurchase.id, message: messageText };
         const sentMessage = await this.sendChatMessage(payload);
         if (sentMessage) {
           this.newMessage = '';
@@ -430,7 +391,6 @@ export default {
         }
         return;
       }
-
       this.chatPolling = setInterval(() => {
         if (this.activeChatPurchase) {
           this.fetchChatMessages(this.activeChatPurchase.id);
@@ -441,15 +401,13 @@ export default {
       if (newVal && oldVal && newVal.length > oldVal.length) {
         this.scrollToBottom();
       }
-    }
+    },
   },
 
   created() {
     $q = useQuasar();
     this.getArtistSaless();
   },
-
-  mounted() {},
 };
 </script>
 
