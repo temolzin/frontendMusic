@@ -189,6 +189,19 @@
           <q-item
             clickable
             v-ripple
+            to="/artist/pending-approvals"
+            v-if="$can('view-profile-artist')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="pending_actions" />
+            </q-item-section>
+            <q-item-section>Solicitudes</q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
             to="/artist/my-calendar"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
@@ -405,6 +418,7 @@ export default {
       isActiveDarkMode: ref(false),
       leftDrawerOpen,
       ticketCount: ref(0),
+      pendingApprovalsCount: ref(0),
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
@@ -442,6 +456,7 @@ export default {
     this.$q.dark.set(isDark);
     this.isActiveDarkMode = isDark;
     this.fetchTicketCount();
+    this.fetchApprovalCount();
   },
   methods: {
     ...mapActions("artistList", ["getArtists"]),
@@ -474,6 +489,14 @@ export default {
         this.ticketCount = (data.data || []).filter(t => t.status === 'open').length;
       } catch {
         this.ticketCount = 0;
+      }
+    },
+    async fetchApprovalCount() {
+      try {
+        const { data } = await this.$api.get('/api/artist/approval/pending');
+        this.pendingApprovalsCount = (data.sales || []).length;
+      } catch {
+        this.pendingApprovalsCount = 0;
       }
     },
     hasPermission(permission) {
