@@ -91,7 +91,9 @@
                   (val) => {
                     if (!val) return true;
                     const digits = (val.match(/\d/g) || []).length;
-                    const expLen = this.expectedCardLength(val); if (digits !== expLen) return `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
+                    const expLen = this.expectedCardLength(val);
+                    if (digits < 15) return 'Debe tener al menos 15 dígitos';
+                    if (digits !== expLen) return `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
                     const clean = val.replace(/[\s-]/g, '');
                     if (!/^\d+$/.test(clean)) return false;
                     let sum = 0;
@@ -106,10 +108,6 @@
                   }
                 ]"
               />
-              <div v-if="form.number_card" class="q-mt-xs text-caption text-grey-7">
-                Tipo: <strong>{{ detectCardType(form.number_card) }}</strong>
-              </div>
-
               <q-input
                 dense
                 lazy-rules
@@ -181,9 +179,11 @@
                   (val) => !!val || 'El campo número de tarjeta es requerido',
                   (val) => {
                     if (!val) return true;
-                    const clean = val.replace(/[\s-]/g, '');
+                    const digits = (val.match(/\d/g) || []).length;
                     const expLen = this.expectedCardLength(val);
-                    if (clean.length !== expLen) return `Debe tener ${expLen} dígitos. Actualmente tiene ${clean.length}`;
+                    if (digits < 15) return 'Debe tener al menos 15 dígitos';
+                    if (digits !== expLen) return `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
+                    const clean = val.replace(/[\s-]/g, '');
                     if (!/^\d+$/.test(clean)) return false;
                     let sum = 0;
                     let shouldDouble = false;
@@ -282,14 +282,20 @@ export default {
       return 'Desconocida';
     },
     expectedCardLength(number) {
-      const type = this.detectCardType(number);
-      return type === 'American Express' ? 15 : 16;
+      const clean = number.replace(/[\s-]/g, '');
+      return /^3[47]/.test(clean) ? 15 : 16;
     },
 
     maskCardNumber(cardNumber) {
-      let maskedNumber = cardNumber.slice(-4);
-      let hiddenNumber = cardNumber.slice(0, -4).replace(/\d/g, 'x');
-      return hiddenNumber + maskedNumber;
+      const clean = cardNumber.replace(/\D/g, '');
+      const last4 = clean.slice(-4);
+      const masked = clean.slice(0, -4).replace(/\d/g, 'x');
+      const formatted = [];
+      for (let i = 0; i < masked.length; i += 4) {
+        formatted.push(masked.slice(i, i + 4));
+      }
+      formatted.push(last4);
+      return formatted.join('-');
     },
 
     cardBrandInfo(card) {
@@ -491,6 +497,25 @@ export default {
       this.form.name = "";
       this.form.number_card = "";
       this.form.expiration_date = "";
+    },
+  },
+  watch: {
+    'form.number_card': {
+      handler(val) {
+        let digits = val.replace(/[\s-]/g, '').replace(/\D/g, '');
+        if (digits.length === 0) {
+          if (val !== '') this.form.number_card = '';
+          return;
+        }
+        const maxLen = /^3[47]/.test(digits) ? 15 : 16;
+        digits = digits.slice(0, maxLen);
+        const groups = [];
+        for (let i = 0; i < digits.length; i += 4) {
+          groups.push(digits.slice(i, i + 4));
+        }
+        const formatted = groups.join('-');
+        if (val !== formatted) this.form.number_card = formatted;
+      },
     },
   },
   created() {

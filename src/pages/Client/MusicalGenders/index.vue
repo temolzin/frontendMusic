@@ -14,7 +14,7 @@
 
     <div class="row q-col-gutter-md">
       <div
-        class="col-6 col-sm-4 col-md-3 col-lg-2"
+        class="col-12 col-sm-6 col-md-4"
         v-for="(gender, index) in clientMusicalGenders"
         :key="index"
       >
@@ -180,8 +180,8 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 32px 20px 24px;
-  min-height: 220px;
+  padding: 40px 24px 32px;
+  min-height: 280px;
   overflow: hidden;
 }
 
@@ -193,15 +193,15 @@ export default {
 
 .gender-card__image {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   background-size: cover;
   background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   z-index: 1;
 }
 

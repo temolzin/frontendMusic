@@ -1,7 +1,7 @@
 import can from "../helpers/can";
 import { Store } from "../store/index.js";
 
-export default async function checkPermissions({ next, to, from, Router }) {
+export default async function checkPermissions({ next, to }) {
   const requiredPermissions = to.meta.permissions;
   const allowedRolesForArtistDetail = ["cliente"];
 
@@ -10,12 +10,12 @@ export default async function checkPermissions({ next, to, from, Router }) {
       await Store.dispatch("auth/getMeUser");
     } catch (err) {
       window.localStorage.removeItem("token");
-      return Router.push({ path: "/session-expired" });
+      return next({ path: "/session-expired" });
     }
   }
 
   if (!localStorage.getItem("token")) {
-    return Router.push({ name: "LoginIn" });
+    return next({ name: "LoginIn" });
   }
 
   const userRole = Store.getters["auth/getMe"]?.role?.[0]
@@ -32,5 +32,5 @@ export default async function checkPermissions({ next, to, from, Router }) {
     return next();
   }
 
-  return Router.push({ path: "/forbidden" });
+  return next({ path: "/forbidden" });
 }
