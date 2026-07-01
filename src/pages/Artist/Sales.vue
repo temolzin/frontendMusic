@@ -81,9 +81,15 @@
             class="q-pa-sm"
           />
           <q-badge
+            v-else-if="props.row.event_status === 'expired'"
+            color="grey-7"
+            label="Expirado"
+            class="q-pa-sm"
+          />
+          <q-badge
             v-else
-            :color="props.row.status === 'completed' ? 'positive' : 'warning'"
-            :label="props.row.status === 'completed' ? 'Completada' : 'Pendiente'"
+            :color="props.row.event_status === 'completed' ? 'positive' : 'warning'"
+            :label="props.row.event_status === 'completed' ? 'Completada' : 'Pendiente'"
             class="q-pa-sm"
           />
         </q-td>
@@ -167,9 +173,15 @@
                       class="q-pa-sm"
                     />
                     <q-badge
+                      v-else-if="props.row.event_status === 'expired'"
+                      color="grey-7"
+                      label="Expirado"
+                      class="q-pa-sm"
+                    />
+                    <q-badge
                       v-else
-                      :color="props.row.status === 'completed' ? 'positive' : 'warning'"
-                      :label="props.row.status === 'completed' ? 'Completada' : 'Pendiente'"
+                      :color="props.row.event_status === 'completed' ? 'positive' : 'warning'"
+                      :label="props.row.event_status === 'completed' ? 'Completada' : 'Pendiente'"
                       class="q-pa-sm"
                     />
                   </q-item-label>
@@ -335,7 +347,7 @@
               <q-item-section>
                 <q-item-label caption>Reembolso al cliente</q-item-label>
                 <q-item-label class="text-weight-medium text-primary">
-                  100% (${{ Number(cancelSale?.amount || 0).toLocaleString('es-MX') }})
+                  100% ${{ Number(cancelSale?.amount || 0).toLocaleString('es-MX') }}
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -418,7 +430,7 @@ const columns = [
     name: "status",
     label: "Estado",
     align: "center",
-    field: "status",
+    field: "event_status",
     sortable: true,
   },
   {
