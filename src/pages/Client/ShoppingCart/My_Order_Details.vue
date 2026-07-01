@@ -194,8 +194,8 @@
                 <q-item-section>
                   <q-item-label caption>Estado del pago</q-item-label>
                   <q-item-label>
-                    <q-badge outline :color="selectedPurchase.status === 'pending' ? 'orange' : 'green'" class="q-px-sm q-py-xs text-weight-bold">
-                      {{ selectedPurchase.status === 'pending' ? 'Pendiente' : 'Completado' }}
+                    <q-badge outline :color="paymentStatusColor(selectedPurchase)" class="q-px-sm q-py-xs text-weight-bold">
+                      {{ paymentStatusLabel(selectedPurchase) }}
                     </q-badge>
                   </q-item-label>
                 </q-item-section>
@@ -463,6 +463,17 @@ export default {
       if (status === 'completed') return 'Completado';
       if (status === 'expired') return 'Expirado';
       return 'Pendiente';
+    },
+    paymentStatusLabel(purchase) {
+      if (purchase.approval_status === 'pending_approval') return 'Esperando confirmación del artista';
+      if (purchase.approval_status === 'rejected') return 'Rechazada por el artista';
+      if (purchase.approval_status === 'expired') return 'Solicitud expirada';
+      return purchase.status === 'completed' ? 'Completado' : 'Pendiente';
+    },
+    paymentStatusColor(purchase) {
+      if (purchase.approval_status === 'pending_approval') return 'orange';
+      if (purchase.approval_status === 'rejected' || purchase.approval_status === 'expired') return 'negative';
+      return purchase.status === 'completed' ? 'green' : 'orange';
     },
     isEventCompleted(purchase) {
       return purchase && purchase.event_status === 'completed';

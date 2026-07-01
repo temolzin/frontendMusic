@@ -129,7 +129,7 @@
             icon="report_problem"
             label="Reportar"
             size="sm"
-            :disable="props.row.status !== 'completed'"
+            :disable="!canReport(props.row)"
             @click="goToReport(props.row)"
           />
         </q-td>
@@ -212,7 +212,7 @@
                       icon="report_problem"
                       label="Reportar"
                       size="sm"
-                      :disable="props.row.status !== 'completed'"
+                      :disable="!canReport(props.row)"
                       @click="goToReport(props.row)"
                     />
                   </q-item-label>
@@ -383,10 +383,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from "vuex";
-import { useQuasar } from "quasar";
-import NoticeNoSales from "src/components/Artist/NoticeNoSales.vue";
-import NoticeNotInfo from "src/components/Artist/NoticeNotInfo.vue";
+import { mapActions, mapGetters, mapState } from 'vuex';
+import { useQuasar } from 'quasar';
+import NoticeNoSales from 'src/components/Artist/NoticeNoSales.vue';
+import NoticeNotInfo from 'src/components/Artist/NoticeNotInfo.vue';
 
 let $q;
 
@@ -450,15 +450,15 @@ const columns = [
 ];
 
 export default {
-  name: "ArtistSales",
+  name: 'ArtistSales',
   components: { NoticeNoSales, NoticeNotInfo },
 
   data() {
     return {
       columns,
-      filter: "",
+      filter: '',
       isChatDialogOpen: false,
-      newMessage: "",
+      newMessage: '',
       activeChatPurchase: null,
       chatPolling: null,
       isCancelDialogOpen: false,
@@ -469,7 +469,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters("artistSales", ["stateArtistSales"]),
+    ...mapGetters('artistSales', ['stateArtistSales']),
     ...mapState({ artist: (state) => state.artist.artist }),
     ...mapGetters("auth", ["getMe"]),
     ...mapGetters("orderDetails", ["getChatMessages"]),
@@ -512,19 +512,35 @@ export default {
         }
       } catch (err) {
         if (err?.response?.data?.message) {
-          $q.notify({ type: "negative", message: err.response.data.message });
+          $q.notify({ type: 'negative', message: err.response.data.message });
         }
       }
     },
 
+    statusLabel(row) {
+      if (row.approval_status === 'pending_approval') return 'Por confirmar';
+      if (row.approval_status === 'rejected') return 'Rechazada';
+      if (row.approval_status === 'expired') return 'Expirada';
+      return row.status === 'completed' ? 'Completada' : 'Pendiente';
+    },
+
+    statusColor(row) {
+      if (row.approval_status === 'pending_approval') return 'info';
+      if (row.approval_status === 'rejected') return 'negative';
+      if (row.approval_status === 'expired') return 'grey';
+      return row.status === 'completed' ? 'positive' : 'warning';
+    },
+
+    canReport(row) {
+      const approvalOk = !row.approval_status || row.approval_status === 'accepted';
+      const eventPassed = row.event_date ? new Date(row.event_date) < new Date() : false;
+      return approvalOk && eventPassed;
+    },
+
     formatDate(date) {
-      if (!date) return "";
+      if (!date) return '';
       const d = new Date(date);
-      return d.toLocaleDateString("es-MX", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
+      return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
     },
 
     formatChatDate(rawDate) {
@@ -542,9 +558,9 @@ export default {
     },
 
     async openChat(sale) {
-      this.$store.commit("orderDetails/setChatMessages", []);
+      this.$store.commit('orderDetails/setChatMessages', []);
       this.activeChatPurchase = sale;
-      this.newMessage = "";
+      this.newMessage = '';
       this.isChatDialogOpen = true;
       await this.fetchChatMessages(sale.id);
       this.scrollToBottom();
@@ -553,11 +569,7 @@ export default {
     async sendMessage() {
       const messageText = this.newMessage.trim();
       if (messageText !== '') {
-        const payload = {
-          artist_sale_id: this.activeChatPurchase.id,
-          message: messageText,
-        };
-
+        const payload = { artist_sale_id: this.activeChatPurchase.id, message: messageText };
         const sentMessage = await this.sendChatMessage(payload);
         if (sentMessage) {
           this.newMessage = '';
@@ -622,7 +634,6 @@ export default {
         }
         return;
       }
-
       this.chatPolling = setInterval(() => {
         if (this.activeChatPurchase) {
           this.fetchChatMessages(this.activeChatPurchase.id);
@@ -633,15 +644,13 @@ export default {
       if (newVal && oldVal && newVal.length > oldVal.length) {
         this.scrollToBottom();
       }
-    }
+    },
   },
 
   created() {
     $q = useQuasar();
     this.getArtistSaless();
   },
-
-  mounted() {},
 };
 </script>
 
