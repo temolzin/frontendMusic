@@ -1,7 +1,7 @@
 <template>
     <q-card style="margin-top:-50px; width: 100%; padding: 10px;">
         <q-card-section>
-        <h3 class="q-mb-md" style="margin-bottom: 35px;">Envío de Correos</h3>
+        <div class="text-h5 q-mb-md q-mt-md">Envío de Correos</div>
             <q-select
             v-model="selectedRoles"
             :options="rolesOptions"
