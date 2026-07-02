@@ -12,7 +12,7 @@
     <div v-if="loading" class="text-center q-py-xl">
       <q-spinner color="primary" size="3em" />
     </div>
-    <template v-else-if="ticket">
+    <template v-if="!loading && ticket">
       <div class="row items-center q-mb-md">
         <div class="text-h5 text-weight-bold">Ticket #{{ ticket.id }}</div>
         <q-space />
@@ -79,20 +79,20 @@
           </div>
         </q-card-section>
       </q-card>
-      <q-card flat bordered class="q-mb-md" v-if="ticket.evidences && ticket.evidences.length > 0">
+      <q-card flat bordered class="q-mb-md" v-if="ticket.media && ticket.media.length > 0">
         <q-card-section>
           <div class="text-subtitle1 text-weight-bold q-mb-sm">
-            Evidencias ({{ ticket.evidences.length }})
+            Evidencias ({{ ticket.media.length }})
           </div>
           <div class="row q-col-gutter-sm">
             <div
-              v-for="evidence in ticket.evidences"
-              :key="evidence.id"
+              v-for="file in ticket.media"
+              :key="file.id"
               class="col-6 col-sm-4"
             >
               <q-img
-                v-if="isImage(evidence.file_path)"
-                :src="buildUrl(evidence.file_path)"
+                v-if="isImage(file.file_name)"
+                :src="buildUrl(file)"
                 style="border-radius: 8px; height: 140px"
                 fit="cover"
               >
@@ -102,23 +102,31 @@
                   </div>
                 </template>
               </q-img>
+              <video
+                v-if="isVideo(file.file_name)"
+                :src="buildUrl(file)"
+                controls
+                style="width: 100%; height: 140px; border-radius: 8px; background: #000; object-fit: cover;"
+              >
+              </video>
               <q-btn
-                v-else
+                v-if="!isImage(file.file_name) && !isVideo(file.file_name)"
                 flat
                 bordered
                 rounded
-                icon="videocam"
-                label="Ver video"
+                icon="download"
+                label="Descargar"
                 color="primary"
                 class="full-width"
-                :href="buildUrl(evidence.file_path)"
+                style="height: 140px;"
+                :href="buildUrl(file)"
                 target="_blank"
               />
             </div>
           </div>
         </q-card-section>
       </q-card>
-      <q-card flat bordered class="q-mb-md" v-else>
+      <q-card flat bordered class="q-mb-md" v-if="!ticket.media || ticket.media.length === 0">
         <q-card-section>
           <div class="text-subtitle1 text-weight-bold q-mb-xs">Evidencias</div>
           <div class="text-grey text-caption">No se adjuntaron evidencias.</div>
@@ -171,7 +179,7 @@
           </div>
         </q-card-section>
       </q-card>
-      <q-card flat bordered v-else>
+      <q-card flat bordered v-if="ticket.status === 'resolved' || ticket.status === 'rejected'">
         <q-card-section class="text-center">
           <q-icon
             name="task_alt"
@@ -189,6 +197,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { api } from 'boot/axios';
 
 export default {
   name: 'SupportTicketShow',
@@ -242,12 +251,20 @@ export default {
       }
     },
 
-    buildUrl(filePath) {
-      return `http://localhost:8000/storage/${filePath}`;
+    buildUrl(file) {
+      const baseUrl = api.defaults.baseURL || 'http://localhost:8000';
+      const cleanBaseUrl = baseUrl.replace(/\/api$/, '');
+      return `${cleanBaseUrl}/storage/${file.id}/${file.file_name}`;
     },
 
-    isImage(filePath) {
-      return /\.(jpg|jpeg|png)$/i.test(filePath);
+    isImage(fileName) {
+      if (!fileName) return false;
+      return /\.(jpg|jpeg|png|webp|gif)$/i.test(fileName);
+    },
+
+    isVideo(fileName) {
+      if (!fileName) return false;
+      return /\.(mp4|mov|webm)$/i.test(fileName);
     },
 
     formatDate(raw) {
