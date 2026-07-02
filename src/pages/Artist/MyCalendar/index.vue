@@ -151,14 +151,25 @@
                               <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
                             </div>
                             <q-separator class="q-my-md" />
-                            <div v-if="event.status === 'pending' && event.canComplete" class="action-section">
+                            <div v-if="event.status === 'pending'" class="action-section">
                               <q-btn
+                                v-if="event.canComplete"
                                 color="positive"
                                 label="Marcar como completado"
                                 outline
                                 size="sm"
                                 icon="check_circle"
                                 @click.stop="markAsCompleted(event)"
+                                class="full-width"
+                              />
+                              <q-btn
+                                v-if="canCancelEvent(event)"
+                                color="negative"
+                                label="Cancelar evento"
+                                outline
+                                size="sm"
+                                icon="event_busy"
+                                @click.stop="openCancelDialog(event)"
                                 class="full-width"
                               />
                             </div>
@@ -263,14 +274,25 @@
                               <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
                             </div>
                             <q-separator class="q-my-md" />
-                            <div v-if="event.status === 'pending' && event.canComplete" class="action-section">
+                            <div v-if="event.status === 'pending'" class="action-section">
                               <q-btn
+                                v-if="event.canComplete"
                                 color="positive"
                                 label="Marcar como completado"
                                 outline
                                 size="sm"
                                 icon="check_circle"
                                 @click.stop="markAsCompleted(event)"
+                                class="full-width"
+                              />
+                              <q-btn
+                                v-if="canCancelEvent(event)"
+                                color="negative"
+                                label="Cancelar evento"
+                                outline
+                                size="sm"
+                                icon="event_busy"
+                                @click.stop="openCancelDialog(event)"
                                 class="full-width"
                               />
                             </div>
@@ -290,6 +312,95 @@
         </template>
       </q-splitter>
     </div>
+
+    <q-dialog v-model="isCancelDialogOpen" persistent>
+      <q-card style="width: 500px; max-width: 95vw">
+        <q-card-section class="row items-center bg-negative text-white q-pb-sm">
+          <div class="text-h6">Cancelar Evento</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="q-pt-md">
+          <div class="text-weight-bold q-mb-sm">¿Estás seguro de cancelar este evento?</div>
+          <q-list dense>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Cliente</q-item-label>
+                <q-item-label class="text-weight-medium">
+                  {{ cancelTargetEvent?.customerFirstName }} {{ cancelTargetEvent?.customerLastName }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Fecha del evento</q-item-label>
+                <q-item-label class="text-weight-medium">{{ formatDateDisplay(cancelTargetEvent?.date) }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Días restantes</q-item-label>
+                <q-item-label class="text-weight-medium">{{ cancelDaysUntil }} días</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Monto del evento</q-item-label>
+                <q-item-label class="text-weight-medium text-positive">
+                  ${{ Number(cancelTargetEvent?.rate || 0).toLocaleString('es-MX') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-if="cancelPenaltyPercentage > 0">
+              <q-item-section>
+                <q-item-label caption>Penalización</q-item-label>
+                <q-item-label class="text-weight-medium text-negative">
+                  {{ cancelPenaltyPercentage }}% (${{ Number(cancelPenaltyAmount).toLocaleString('es-MX') }})
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-else>
+              <q-item-section>
+                <q-item-label caption>Penalización</q-item-label>
+                <q-item-label class="text-weight-medium text-positive">0% (Sin penalización)</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Reembolso al cliente</q-item-label>
+                <q-item-label class="text-weight-medium text-primary">
+                  100% (${{ Number(cancelTargetEvent?.rate || 0).toLocaleString('es-MX') }})
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <q-input
+            v-model="cancelReasonText"
+            type="textarea"
+            outlined
+            dense
+            rows="3"
+            label="Motivo de la cancelación *"
+            placeholder="Explica por qué cancelas el evento..."
+            :rules="[val => !!val || 'El motivo es requerido']"
+            class="q-mt-md"
+          />
+        </q-card-section>
+        <q-separator />
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn flat label="Volver" color="grey" v-close-popup />
+          <q-btn
+            unelevated
+            label="Sí, cancelar evento"
+            color="negative"
+            icon="cancel"
+            :loading="cancelLoading"
+            :disable="!cancelReasonText.trim()"
+            @click="confirmCancel"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -315,6 +426,10 @@ export default defineComponent({
       expanded: {},
       contracts: [],
       loading: true,
+      isCancelDialogOpen: false,
+      cancelTargetEvent: null,
+      cancelReasonText: '',
+      cancelLoading: false,
     };
   },
   computed: {
@@ -352,6 +467,26 @@ export default defineComponent({
     },
     mode() {
       return this.$q.dark.isActive;
+    },
+    cancelDaysUntil() {
+      if (!this.cancelTargetEvent?.date) return 0;
+      const [year, month, day] = this.cancelTargetEvent.date.split('/');
+      const eventDate = new Date(Number(year), Number(month) - 1, Number(day));
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const diff = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+      return Math.max(0, diff);
+    },
+    cancelPenaltyPercentage() {
+      const days = this.cancelDaysUntil;
+      if (days >= 7) return 0;
+      if (days >= 3) return 25;
+      if (days >= 1) return 50;
+      return 0;
+    },
+    cancelPenaltyAmount() {
+      const amount = Number(this.cancelTargetEvent?.rate || 0);
+      return amount * (this.cancelPenaltyPercentage / 100);
     },
   },
   methods: {
@@ -465,6 +600,44 @@ export default defineComponent({
           message: error.response?.data?.message || 'Error al marcar como completado',
           position: 'top',
         });
+      }
+    },
+
+    canCancelEvent(event) {
+      if (!event?.date) return false;
+      if (event.status !== 'pending') return false;
+      return event.date > this.getTodayString();
+    },
+
+    openCancelDialog(event) {
+      this.cancelTargetEvent = event;
+      this.cancelReasonText = '';
+      this.isCancelDialogOpen = true;
+    },
+
+    async confirmCancel() {
+      if (!this.cancelReasonText.trim()) return;
+      this.cancelLoading = true;
+      try {
+        await api.post(`/api/artist/sales/${this.cancelTargetEvent.id}/cancel`, { reason: this.cancelReasonText });
+        this.$q.notify({
+          type: 'positive',
+          icon: 'check_circle',
+          message: 'Evento cancelado exitosamente. Se reembolsará al cliente.',
+          position: 'top',
+        });
+        this.isCancelDialogOpen = false;
+        this.expanded = { ...this.expanded, [this.cancelTargetEvent.id]: false };
+        await this.loadContracts();
+      } catch (error) {
+        this.$q.notify({
+          type: 'negative',
+          icon: 'error',
+          message: error.response?.data?.message || 'Error al cancelar el evento',
+          position: 'top',
+        });
+      } finally {
+        this.cancelLoading = false;
       }
     },
 
@@ -815,15 +988,13 @@ export default defineComponent({
         }
 
         .action-section {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
           :deep(.q-btn) {
             font-weight: 600;
-            border: 2px solid #4caf50;
-            color: #4caf50;
             padding: 8px 16px;
-
-            &:hover {
-              background: rgba(76, 175, 80, 0.1);
-            }
           }
         }
       }

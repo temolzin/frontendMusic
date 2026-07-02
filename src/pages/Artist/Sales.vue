@@ -42,33 +42,15 @@
         </q-td>
       </template>
 
-      <template v-slot:body-cell-lugar="props">
-        <q-td :props="props">
-          <div class="text-weight-medium">
-            <q-icon name="location_on" size="14px" color="grey" class="q-mr-xs" />
-            {{ props.row.customer_city }}
-          </div>
-          <div class="text-caption text-grey q-ml-md">{{ props.row.customer_state }}</div>
-        </q-td>
-      </template>
-
       <template v-slot:body-cell-evento="props">
         <q-td :props="props">
           <div v-if="props.row.event_date">
-            <q-icon name="event" size="14px" color="primary" class="q-mr-xs" />
             <span class="text-weight-medium">{{ formatDate(props.row.event_date) }}</span>
           </div>
-          <div v-if="props.row.event_hour" class="text-caption text-grey q-ml-md">
+          <div v-if="props.row.event_hour" class="text-caption text-grey">
             {{ props.row.event_hour }} hrs
           </div>
           <span v-if="!props.row.event_date" class="text-grey text-caption">Sin fecha</span>
-        </q-td>
-      </template>
-
-      <template v-slot:body-cell-fecha_compra="props">
-        <q-td :props="props">
-          <q-icon name="shopping_cart" size="14px" color="grey" class="q-mr-xs" />
-          <span class="text-weight-medium">{{ formatDate(props.row.created_at) }}</span>
         </q-td>
       </template>
 
@@ -109,13 +91,11 @@
           <q-btn
             flat
             rounded
-            color="negative"
-            icon="cancel"
-            label="Cancelar"
+            color="secondary"
+            label="Ver detalles"
             size="sm"
             class="q-ml-xs"
-            :disable="!canCancel(props.row)"
-            @click="openCancelDialog(props.row)"
+            @click="openDetailsDialog(props.row)"
           />
         </q-td>
       </template>
@@ -126,12 +106,15 @@
             flat
             rounded
             color="negative"
-            icon="report_problem"
             label="Reportar"
             size="sm"
             :disable="!canReport(props.row)"
             @click="goToReport(props.row)"
-          />
+          >
+            <q-tooltip v-if="!canReport(props.row)" class="bg-negative text-body2" anchor="top middle" self="bottom middle">
+              {{ reportTooltip(props.row) }}
+            </q-tooltip>
+          </q-btn>
         </q-td>
       </template>
 
@@ -148,19 +131,11 @@
                     </div>
                     <div class="text-caption text-grey">{{ props.row.customer_email }}</div>
                   </q-item-label>
-                  <q-item-label v-if="col.name === 'lugar'">
-                    <div class="text-weight-medium">
-                      <q-icon name="location_on" size="14px" color="grey" class="q-mr-xs" />
-                      {{ props.row.customer_city }}
-                    </div>
-                    <div class="text-caption text-grey q-ml-md">{{ props.row.customer_state }}</div>
-                  </q-item-label>
                   <q-item-label v-if="col.name === 'evento'">
                     <div v-if="props.row.event_date">
-                      <q-icon name="event" size="14px" color="primary" class="q-mr-xs" />
                       <span class="text-weight-medium">{{ formatDate(props.row.event_date) }}</span>
                     </div>
-                    <div v-if="props.row.event_hour" class="text-caption text-grey q-ml-md">
+                    <div v-if="props.row.event_hour" class="text-caption text-grey">
                       {{ props.row.event_hour }} hrs
                     </div>
                     <span v-if="!props.row.event_date" class="text-grey text-caption">Sin fecha</span>
@@ -195,13 +170,11 @@
                     <q-btn
                       flat
                       rounded
-                      color="negative"
-                      icon="cancel"
-                      label="Cancelar"
+                      color="secondary"
+                      label="Ver detalles"
                       size="sm"
                       class="q-ml-xs"
-                      :disable="!canCancel(props.row)"
-                      @click="openCancelDialog(props.row)"
+                      @click="openDetailsDialog(props.row)"
                     />
                   </q-item-label>
                   <q-item-label v-if="col.name === 'report'">
@@ -209,14 +182,17 @@
                       flat
                       rounded
                       color="negative"
-                      icon="report_problem"
                       label="Reportar"
                       size="sm"
                       :disable="!canReport(props.row)"
                       @click="goToReport(props.row)"
-                    />
+                    >
+                      <q-tooltip v-if="!canReport(props.row)" class="bg-negative text-body2" anchor="top middle" self="bottom middle">
+                        {{ reportTooltip(props.row) }}
+                      </q-tooltip>
+                    </q-btn>
                   </q-item-label>
-                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'lugar' && col.name !== 'evento' && col.name !== 'acciones' && col.name !== 'report' && col.name !== 'fecha_compra' && col.name !== 'status' && col.name !== 'amount'">
+                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'evento' && col.name !== 'acciones' && col.name !== 'report' && col.name !== 'status' && col.name !== 'amount'">
                     {{ col.value }}
                   </q-item-label>
                 </q-item-section>
@@ -291,12 +267,60 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="isCancelDialogOpen" persistent>
-      <q-card style="width: 500px; max-width: 95vw">
-        <q-card-section class="row items-center bg-negative text-white q-pb-sm">
-          <div class="text-h6">Cancelar Evento</div>
+    <q-dialog v-model="isDetailsDialogOpen">
+      <q-card style="width: 480px; max-width: 95vw" class="details-dialog">
+        <q-card-section class="row items-center bg-primary text-white q-py-md">
+          <q-avatar color="white" text-color="primary" icon="receipt_long" />
+          <div class="q-ml-md">
+            <div class="text-h6">Detalles de la venta</div>
+            <div class="text-caption">
+              {{ detailsSale?.customer_first_name }} {{ detailsSale?.customer_last_name }}
+            </div>
+          </div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="q-pt-lg">
+          <div class="text-overline text-primary text-weight-bold">Evento</div>
+          <div class="detail-row">
+            <q-icon name="location_on" size="20px" color="grey-6" />
+            <div>
+              <div class="detail-label">Lugar del evento</div>
+              <div class="detail-value">{{ detailsSale?.customer_city }}, {{ detailsSale?.customer_state }}</div>
+            </div>
+          </div>
+          <div class="detail-row">
+            <q-icon name="schedule" size="20px" color="grey-6" />
+            <div>
+              <div class="detail-label">Horas contratadas</div>
+              <div class="detail-value">{{ detailsSale?.event_hours || 'N/A' }} hrs</div>
+            </div>
+          </div>
+          <q-separator class="q-my-md" />
+          <div class="text-overline text-primary text-weight-bold">Compra</div>
+          <div class="detail-row">
+            <q-icon name="shopping_cart" size="20px" color="grey-6" />
+            <div>
+              <div class="detail-label">Fecha de compra</div>
+              <div class="detail-value">{{ formatDate(detailsSale?.created_at) }}</div>
+            </div>
+          </div>
+          <div class="detail-row">
+            <q-icon
+              :name="detailsSale?.payment_method === 'card' ? 'credit_card' : 'payments'"
+              size="20px"
+              color="grey-6"
+            />
+            <div>
+              <div class="detail-label">Método de pago</div>
+              <q-badge
+                :color="detailsSale?.payment_method === 'card' ? 'primary' : 'positive'"
+                class="q-px-sm q-py-xs q-mt-xs"
+              >
+                {{ detailsSale?.payment_method === 'card' ? 'Tarjeta' : 'Efectivo' }}
+              </q-badge>
+            </div>
+          </div>
         </q-card-section>
         <q-card-section class="q-pt-md">
           <div class="text-weight-bold q-mb-sm">¿Estás seguro de cancelar este evento?</div>
@@ -364,19 +388,6 @@
             class="q-mt-md"
           />
         </q-card-section>
-        <q-separator />
-        <q-card-actions align="right" class="q-pa-md">
-          <q-btn flat label="Volver" color="grey" v-close-popup />
-          <q-btn
-            unelevated
-            label="Sí, cancelar evento"
-            color="negative"
-            icon="cancel"
-            :loading="cancelLoading"
-            :disable="!cancelReason"
-            @click="confirmCancel"
-          />
-        </q-card-actions>
       </q-card>
     </q-dialog>
   </q-page>
@@ -399,24 +410,10 @@ const columns = [
     sortable: true,
   },
   {
-    name: "lugar",
-    label: "Lugar del evento",
-    align: "left",
-    field: "customer_city",
-    sortable: true,
-  },
-  {
     name: "evento",
     label: "Fecha del evento",
     align: "left",
     field: "event_date",
-    sortable: true,
-  },
-  {
-    name: "fecha_compra",
-    label: "Fecha de compra",
-    align: "left",
-    field: "created_at",
     sortable: true,
   },
   {
@@ -461,10 +458,8 @@ export default {
       newMessage: '',
       activeChatPurchase: null,
       chatPolling: null,
-      isCancelDialogOpen: false,
-      cancelSale: null,
-      cancelReason: "",
-      cancelLoading: false,
+      isDetailsDialogOpen: false,
+      detailsSale: null,
     };
   },
 
@@ -473,31 +468,10 @@ export default {
     ...mapState({ artist: (state) => state.artist.artist }),
     ...mapGetters("auth", ["getMe"]),
     ...mapGetters("orderDetails", ["getChatMessages"]),
-
-    cancelDaysUntil() {
-      if (!this.cancelSale?.event_date) return 0;
-      const now = new Date();
-      const event = new Date(this.cancelSale.event_date);
-      const diff = Math.ceil((event - now) / (1000 * 60 * 60 * 24));
-      return Math.max(0, diff);
-    },
-
-    cancelPenaltyPercentage() {
-      const days = this.cancelDaysUntil;
-      if (days >= 7) return 0;
-      if (days >= 3) return 25;
-      if (days >= 1) return 50;
-      return 0;
-    },
-
-    cancelPenaltyAmount() {
-      const amount = Number(this.cancelSale?.amount || 0);
-      return amount * (this.cancelPenaltyPercentage / 100);
-    },
   },
 
   methods: {
-    ...mapActions("artistSales", ["getArtistSales", "cancelArtistSale"]),
+    ...mapActions("artistSales", ["getArtistSales"]),
     ...mapActions("artist", ["getArtist"]),
     ...mapActions("orderDetails", [
       "fetchChatMessages",
@@ -535,6 +509,14 @@ export default {
       const approvalOk = !row.approval_status || row.approval_status === 'accepted';
       const eventPassed = row.event_date ? new Date(row.event_date) < new Date() : false;
       return approvalOk && eventPassed;
+    },
+
+    reportTooltip(row) {
+      const approvalOk = !row.approval_status || row.approval_status === 'accepted';
+      if (!approvalOk) return 'No puedes reportar: la solicitud de este evento aún no ha sido aceptada.';
+      const eventPassed = row.event_date ? new Date(row.event_date) < new Date() : false;
+      if (!eventPassed) return 'Podrás reportar este evento hasta que la fecha programada haya pasado.';
+      return '';
     },
 
     formatDate(date) {
@@ -592,36 +574,9 @@ export default {
       this.$router.push({ name: 'client.report-incident', params: { saleId: sale.id } });
     },
 
-    canCancel(sale) {
-      if (!sale?.event_date) return false;
-      if (sale.event_status === 'completed' || sale.event_status === 'expired' || sale.event_status === 'cancelled') return false;
-      if (sale.status !== 'completed' && sale.status !== 'pending') return false;
-      const now = new Date();
-      const event = new Date(sale.event_date);
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const eventDay = new Date(event.getFullYear(), event.getMonth(), event.getDate());
-      return eventDay > today;
-    },
-
-    openCancelDialog(sale) {
-      this.cancelSale = sale;
-      this.cancelReason = "";
-      this.isCancelDialogOpen = true;
-    },
-
-    async confirmCancel() {
-      if (!this.cancelReason.trim()) return;
-      this.cancelLoading = true;
-      try {
-        await this.cancelArtistSale({ id: this.cancelSale.id, reason: this.cancelReason });
-        this.$q.notify({ type: 'positive', icon: 'check_circle', message: 'Evento cancelado exitosamente. Se reembolsará al cliente.', position: 'top' });
-        this.isCancelDialogOpen = false;
-      } catch (err) {
-        const msg = err?.response?.data?.message || 'Error al cancelar el evento';
-        this.$q.notify({ type: 'negative', icon: 'error', message: msg, position: 'top' });
-      } finally {
-        this.cancelLoading = false;
-      }
+    openDetailsDialog(sale) {
+      this.detailsSale = sale;
+      this.isDetailsDialogOpen = true;
     },
   },
 
@@ -663,5 +618,27 @@ export default {
   width: 32px !important;
   height: 32px !important;
   min-width: 32px !important;
+}
+
+.details-dialog .detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.details-dialog .detail-label {
+  font-size: 12px;
+  color: var(--q-color-grey-6, #8a8a8a);
+  margin-bottom: 2px;
+}
+
+.details-dialog .detail-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.body--dark .details-dialog .detail-label {
+  color: #94a3b8;
 }
 </style>
