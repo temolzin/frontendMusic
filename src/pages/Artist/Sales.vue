@@ -57,8 +57,21 @@
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="text-center">
           <q-badge
-            :color="statusColor(props.row)"
-            :label="statusLabel(props.row)"
+            v-if="props.row.event_status === 'cancelled'"
+            color="negative"
+            label="Cancelado"
+            class="q-pa-sm"
+          />
+          <q-badge
+            v-else-if="props.row.event_status === 'expired'"
+            color="grey-7"
+            label="Expirado"
+            class="q-pa-sm"
+          />
+          <q-badge
+            v-else
+            :color="props.row.event_status === 'completed' ? 'positive' : 'warning'"
+            :label="props.row.event_status === 'completed' ? 'Completada' : 'Pendiente'"
             class="q-pa-sm"
           />
         </q-td>
@@ -129,8 +142,21 @@
                   </q-item-label>
                   <q-item-label v-if="col.name === 'status'">
                     <q-badge
-                      :color="statusColor(props.row)"
-                      :label="statusLabel(props.row)"
+                      v-if="props.row.event_status === 'cancelled'"
+                      color="negative"
+                      label="Cancelado"
+                      class="q-pa-sm"
+                    />
+                    <q-badge
+                      v-else-if="props.row.event_status === 'expired'"
+                      color="grey-7"
+                      label="Expirado"
+                      class="q-pa-sm"
+                    />
+                    <q-badge
+                      v-else
+                      :color="props.row.event_status === 'completed' ? 'positive' : 'warning'"
+                      :label="props.row.event_status === 'completed' ? 'Completada' : 'Pendiente'"
                       class="q-pa-sm"
                     />
                   </q-item-label>
@@ -254,7 +280,6 @@
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
-
         <q-card-section class="q-pt-lg">
           <div class="text-overline text-primary text-weight-bold">Evento</div>
           <div class="detail-row">
@@ -271,9 +296,7 @@
               <div class="detail-value">{{ detailsSale?.event_hours || 'N/A' }} hrs</div>
             </div>
           </div>
-
           <q-separator class="q-my-md" />
-
           <div class="text-overline text-primary text-weight-bold">Compra</div>
           <div class="detail-row">
             <q-icon name="shopping_cart" size="20px" color="grey-6" />
@@ -298,6 +321,72 @@
               </q-badge>
             </div>
           </div>
+        </q-card-section>
+        <q-card-section class="q-pt-md">
+          <div class="text-weight-bold q-mb-sm">¿Estás seguro de cancelar este evento?</div>
+          <q-list dense>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Cliente</q-item-label>
+                <q-item-label class="text-weight-medium">
+                  {{ cancelSale?.customer_first_name }} {{ cancelSale?.customer_last_name }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Fecha del evento</q-item-label>
+                <q-item-label class="text-weight-medium">{{ formatDate(cancelSale?.event_date) }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Días restantes</q-item-label>
+                <q-item-label class="text-weight-medium">{{ cancelDaysUntil }} días</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Monto del evento</q-item-label>
+                <q-item-label class="text-weight-medium text-positive">
+                  ${{ Number(cancelSale?.amount || 0).toLocaleString('es-MX') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-if="cancelPenaltyPercentage > 0">
+              <q-item-section>
+                <q-item-label caption>Penalización</q-item-label>
+                <q-item-label class="text-weight-medium text-negative">
+                  {{ cancelPenaltyPercentage }}% (${{ Number(cancelPenaltyAmount).toLocaleString('es-MX') }})
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-else>
+              <q-item-section>
+                <q-item-label caption>Penalización</q-item-label>
+                <q-item-label class="text-weight-medium text-positive">0% (Sin penalización)</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section>
+                <q-item-label caption>Reembolso al cliente</q-item-label>
+                <q-item-label class="text-weight-medium text-primary">
+                  100% ${{ Number(cancelSale?.amount || 0).toLocaleString('es-MX') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <q-input
+            v-model="cancelReason"
+            type="textarea"
+            outlined
+            dense
+            rows="3"
+            label="Motivo de la cancelación *"
+            placeholder="Explica por qué cancelas el evento..."
+            :rules="[val => !!val || 'El motivo es requerido']"
+            class="q-mt-md"
+          />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -338,7 +427,7 @@ const columns = [
     name: "status",
     label: "Estado",
     align: "center",
-    field: "status",
+    field: "event_status",
     sortable: true,
   },
   {

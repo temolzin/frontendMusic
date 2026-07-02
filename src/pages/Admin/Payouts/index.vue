@@ -67,7 +67,7 @@
                       <span class="text-weight-medium">${{ formatCurrency(props.row.amount) }} MXN</span>
                     </div>
                     <div class="row justify-between q-py-xs text-negative">
-                      <span>Comisión OpenPay:</span>
+                      <span>{{ parseFloat(props.row.openpay_fee) === 0 ? 'Pago en efectivo:' : 'Comisión OpenPay:' }}</span>
                       <span>- ${{ formatCurrency(props.row.openpay_fee) }} MXN</span>
                     </div>
                     <div class="row justify-between q-py-xs text-negative">
