@@ -133,7 +133,12 @@ export default {
         },
     },
     created() {
-        this.getRoles();
+        this.getRoles().catch((err) => {
+            this.$q.notify({
+                type: "negative",
+                message: err.response?.data?.message ?? "No se pudieron cargar los roles",
+            });
+        });
     },
     mounted() {
         $q = useQuasar();

@@ -278,7 +278,12 @@ export default {
     };
   },
   created() {
-    this.getArtists();
+    this.getArtists().catch((err) => {
+      this.$q.notify({
+        type: "negative",
+        message: err.response?.data?.message ?? "No se pudo cargar la lista de artistas",
+      });
+    });
   },
   computed: {
     ...mapGetters("artistList", ["stateArtistList"]),

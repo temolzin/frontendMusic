@@ -227,8 +227,16 @@ export default {
         hours_artist: nextHours,
       };
 
-      await this.updateItemShoppingCart(item);
-    },
+      try {
+        await this.updateItemShoppingCart(item);
+      } catch (err) {
+        $q.notify({
+          type: "negative",
+          message: err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo actualizar la cantidad de horas",
+          timeout: 3000,
+        });
+      }
+    }
   },
   computed: {
     ...mapGetters("shoppingCard", ["stateListShopingCard"]),

@@ -397,6 +397,12 @@ export default {
           message: "Artista agregado",
           timeout: 1000,
         });
+      }).catch((err) => {
+        this.$q.notify({
+          type: "negative",
+          message: err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo agregar el artista al carrito",
+          timeout: 3000,
+        });
       });
     },
     handleHireNow(artist) {

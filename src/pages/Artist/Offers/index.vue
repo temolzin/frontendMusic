@@ -229,7 +229,12 @@ export default {
     },
   },
   mounted() {
-    this.getOffers();
+    this.getOffers().catch((err) => {
+      this.$q.notify({
+        type: "negative",
+        message: err?.response?.data?.message || "No se pudieron cargar las ofertas",
+      });
+    });
   },
 };
 </script>
