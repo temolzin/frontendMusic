@@ -2,10 +2,9 @@
   <q-page class="q-pa-md">
     <div class="row q-col-gutter-sm items-center q-mb-md">
       <div class="col-12">
-        <h1 class="text-h4 font-weight-bold q-my-none text-primary">
-          <q-icon name="payments" class="q-mr-sm" />
+        <div class="text-h5">
           Liquidaciones por Pagar
-        </h1>
+        </div>
         <p class="text-subtitle1 text-grey-7 q-mt-xs">
           Gestiona las transferencias de los eventos finalizados y desglosa las comisiones de forma justa.
         </p>
@@ -52,18 +51,18 @@
             </q-badge>
           </q-td>
         </q-tr>
-        <q-tr v-show="props.expand" :props="props" class="bg-grey-1">
+        <q-tr v-show="props.expand" :props="props" :class="$q.dark.isActive ? 'bg-dark' : 'bg-grey-1'">
           <q-td colspan="100%">
             <div class="q-pa-md row q-col-gutter-md">
               <div class="col-12 col-md-5">
-                <q-card flat bordered class="bg-white fill-height">
+                <q-card flat bordered class="fill-height">
                   <q-card-section class="bg-primary text-white q-py-xs">
                     <div class="text-subtitle2">Desglose de la Transacción</div>
                   </q-card-section>
                   <q-separator />
                   <q-card-section class="q-py-sm">
                     <div class="row justify-between q-py-xs">
-                      <span class="text-grey-8">Total pagado por cliente:</span>
+                      <span :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-8'">Total pagado por cliente:</span>
                       <span class="text-weight-medium">${{ formatCurrency(props.row.amount) }} MXN</span>
                     </div>
                     <div class="row justify-between q-py-xs text-negative">
@@ -79,7 +78,6 @@
                       <span>Subtotal a Transferir:</span>
                       <span>${{ formatCurrency(props.row.net_artist_payout) }} MXN</span>
                     </div>
-
                     <template v-if="props.row.penalties && props.row.penalties.length > 0">
                       <q-separator class="q-my-xs" />
                       <div class="text-subtitle2 text-negative q-mb-xs q-mt-sm">
@@ -105,33 +103,33 @@
                 </q-card>
               </div>
               <div class="col-12 col-md-7">
-                <q-card flat bordered class="bg-white fill-height" v-if="props.row.artist.payout_method">
-                  <q-card-section class="bg-grey-3 text-grey-9 q-py-xs text-center">
+                <q-card flat bordered class="fill-height" v-if="props.row.artist.payout_method">
+                  <q-card-section :class="[$q.dark.isActive ? 'bg-grey-9 text-grey-2' : 'bg-grey-3 text-grey-9', 'q-py-xs text-center']">
                     <div class="text-subtitle2 text-weight-bold">Datos Bancarios del Artista</div>
                   </q-card-section>
                   <q-separator />             
                   <q-card-section class="row q-col-gutter-sm justify-center">
                     <div class="col-12 text-center q-mb-xs">
-                      <div class="text-caption text-grey-6">Titular de la Cuenta</div>
+                      <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'" class="text-caption">Titular de la Cuenta</div>
                       <div class="text-body2 text-weight-medium text-uppercase">
                         {{ props.row.artist.payout_method.account_holder }}
                       </div>
                     </div>
                     <div class="col-12 text-center q-mb-xs">
-                      <div class="text-caption text-grey-6">Banco</div>
+                      <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'" class="text-caption">Banco</div>
                       <div class="text-body2 text-weight-medium text-uppercase">
                         {{ props.row.artist.payout_method.bank_name }}
                       </div>
                     </div>
                     <div class="col-12 text-center q-mb-xs">
-                      <div class="text-caption text-grey-6">RFC</div>
+                      <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'" class="text-caption">RFC</div>
                       <div class="text-body2 text-weight-medium text-uppercase">
                         {{ props.row.artist.payout_method.rfc || 'No Registrado' }}
                       </div>
                     </div>
                     <div class="col-12 text-center q-mt-md column items-center">
-                      <div class="text-caption text-grey-6 q-mb-xs">Cuenta CLABE (18 dígitos)</div>
-                      <div class="row items-center bg-grey-2 q-pa-xs rounded-borders q-mx-auto" style="width: 100%; max-width: 320px;">
+                      <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'" class="text-caption q-mb-xs">Cuenta CLABE (18 dígitos)</div>
+                      <div :class="['row items-center q-pa-xs rounded-borders q-mx-auto', $q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2']" style="width: 100%; max-width: 320px;">
                         <span class="text-body1 text-mono text-weight-bold q-px-sm">
                           {{ props.row.artist.payout_method.clabe }}
                         </span>
@@ -164,11 +162,11 @@
                     </q-btn>
                   </q-card-actions>
                 </q-card>
-                <q-card flat bordered class="bg-red-1 fill-height flex flex-center text-center q-pa-md" v-else>
+                <q-card flat bordered :class="[$q.dark.isActive ? 'bg-red-10 text-white' : 'bg-red-1', 'fill-height flex flex-center text-center q-pa-md']" v-else>
                   <div>
                     <q-icon name="warning" color="negative" size="md" />
-                    <div class="text-subtitle1 text-red-9 text-weight-bold q-mt-sm">Faltan Datos Bancarios</div>
-                    <div class="text-caption text-grey-8">
+                    <div :class="$q.dark.isActive ? 'text-white' : 'text-red-9'" class="text-subtitle1 text-weight-bold q-mt-sm">Faltan Datos Bancarios</div>
+                    <div :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-8'" class="text-caption">
                       El artista no ha registrado su cuenta CLABE en su perfil.<br>
                       No se puede proceder con la liquidación automática.
                     </div>

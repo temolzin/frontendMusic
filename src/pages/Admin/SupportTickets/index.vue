@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="row items-center q-mb-md">
-      <div class="text-h5 text-weight-bold">Tickets de Soporte</div>
+      <b class="text-h5">Tickets de Soporte</b>
       <q-space />
       <q-select
         v-model="filterStatus"
