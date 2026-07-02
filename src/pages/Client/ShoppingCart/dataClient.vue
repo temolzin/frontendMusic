@@ -236,13 +236,9 @@
             </div>
             <q-separator></q-separator>
             <div class="q-mt-lg" v-if="paymentMethod === 'card'">
-              <div class="row justify-center justify-sm-between items-center q-mb-md q-gutter-y-sm">
-                <div class="col-12 col-sm-auto text-center">
-                  <q-btn unelevated rounded color="primary" class="select-card" :label="selectedCard.id ? 'Cambiar Tarjeta' : 'Seleccionar Tarjeta'" @click="basic = true" style="margin: 0;" />
-                </div>
-                <div class="col-12 col-sm-auto text-center">
-                  <q-btn outline class="add-card" style="color: goldenrod; float: none; margin: 0;" label="Agregar nueva tarjeta" icon-right="fas fa-plus" @click="formCreate = true" />
-                </div>
+              <div class="row justify-center q-gutter-lg q-mb-md">
+                <q-btn unelevated rounded color="primary" :label="selectedCard.id ? 'Cambiar Tarjeta' : 'Seleccionar Tarjeta'" @click="basic = true" />
+                <q-btn outline rounded style="color: goldenrod;" label="Agregar nueva tarjeta" icon-right="fas fa-plus" @click="formCreate = true" />
               </div>
             <q-dialog v-model="basic" transition-show="rotate" transition-hide="rotate">
               <q-card>
@@ -1158,9 +1154,15 @@ export default defineComponent({
       }
     },
     maskCardNumber(cardNumber) {
-      let maskedNumber = cardNumber.slice(-4);
-      let hiddenNumber = cardNumber.slice(0, -4).replace(/\d/g, 'x');
-      return hiddenNumber + maskedNumber;
+      if (!cardNumber) return '';
+      const cleaned = cardNumber.replace(/[\s-]/g, '');
+      const last4 = cleaned.slice(-4);
+      const hidden = cleaned.slice(0, -4).replace(/\d/g, 'x');
+      const groups = [];
+      const hiddenWithDashes = hidden.match(/.{1,4}/g);
+      if (hiddenWithDashes) groups.push(...hiddenWithDashes);
+      groups.push(last4);
+      return groups.join('-');
     },
     cardBrandInfo(card) {
       const type = (card.card_type && card.card_type !== 'Desconocida') ? card.card_type : this.detectCardType(card.number_card);
@@ -1806,6 +1808,25 @@ export default defineComponent({
         }));
     }
   },
+  watch: {
+    'form.number_card': {
+      handler(val) {
+        let digits = val.replace(/[\s-]/g, '').replace(/\D/g, '');
+        if (digits.length === 0) {
+          if (val !== '') this.form.number_card = '';
+          return;
+        }
+        const maxLen = /^3[47]/.test(digits) ? 15 : 16;
+        digits = digits.slice(0, maxLen);
+        const groups = [];
+        for (let i = 0; i < digits.length; i += 4) {
+          groups.push(digits.slice(i, i + 4));
+        }
+        const formatted = groups.join('-');
+        if (val !== formatted) this.form.number_card = formatted;
+      },
+    },
+  },
   async created() {
     await this.initializeCheckout();
   },
@@ -1982,12 +2003,7 @@ export default defineComponent({
   width: 30px;
   height: 30px;
 }
-.q-btn.select-card {
-  display: inline-block;
-}
-.q-btn.add-card {
-  float: right;
-}
+
 .resumen-scroll {
   max-height: 400px;
   overflow-y: auto;
