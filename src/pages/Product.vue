@@ -203,12 +203,19 @@ export default {
     },
 
     async createPro() {
-      await this.createProduct(this.form);
-      this.clearForm();
-      this.$q.notify({
-        type: "positive",
-        message: `Producto creado correctamente`,
-      });
+      try {
+        await this.createProduct(this.form);
+        this.clearForm();
+        this.$q.notify({
+          type: "positive",
+          message: `Producto creado correctamente`,
+        });
+      } catch (err) {
+        this.$q.notify({
+          type: "negative",
+          message: err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo crear el producto",
+        });
+      }
     },
 
     async showProduct(id) {

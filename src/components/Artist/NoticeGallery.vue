@@ -444,7 +444,12 @@ export default {
   mounted() {
     $q = useQuasar();
     this.gettGalleryArtist();
-    this.getArtistVideos();
+    this.getArtistVideos().catch((err) => {
+      this.$q.notify({
+        type: "negative",
+        message: err.response?.data?.message ?? "No se pudieron cargar los videos",
+      });
+    });
   },
 };
 </script>

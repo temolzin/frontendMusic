@@ -230,13 +230,29 @@ export default {
     },
     async loginGmail() {
       this.loadingGmail = false;
-      await this.doLoginGmail();
-      this.loadingGmail = true;
+      try {
+        await this.doLoginGmail();
+      } catch (err) {
+        $q.notify({
+          type: "negative",
+          message: err.response?.data?.message ?? "No se pudo iniciar sesión con Google",
+        });
+      } finally {
+        this.loadingGmail = true;
+      }
     },
     async loginFacebook() {
       this.loadingFacebook = false;
-      await this.doLoginFacebook();
-      this.loadingFacebook = true;
+      try {
+        await this.doLoginFacebook();
+      } catch (err) {
+        $q.notify({
+          type: "negative",
+          message: err.response?.data?.message ?? "No se pudo iniciar sesión con Facebook",
+        });
+      } finally {
+        this.loadingFacebook = true;
+      }
     },
   },
   mounted() {
