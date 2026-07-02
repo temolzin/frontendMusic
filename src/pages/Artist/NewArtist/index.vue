@@ -999,12 +999,11 @@ export default {
           message: `Infromación guardada correctamente`,
         });
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data,
-          });
-        }
+        err.response?.data?.errors
+          ? $q.notify({ type: "negative", message: Object.values(err.response.data.errors).flat().join('<br>'), html: true })
+          : err.response?.data?.message
+            ? $q.notify({ type: "negative", message: err.response.data.message })
+            : $q.notify({ type: "negative", message: 'Error al guardar el artista' });
       }
     },
     onReset() {
