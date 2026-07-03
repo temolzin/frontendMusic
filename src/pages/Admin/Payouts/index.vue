@@ -60,7 +60,27 @@
                     <div class="text-subtitle2">Desglose de la Transacción</div>
                   </q-card-section>
                   <q-separator />
-                  <q-card-section class="q-py-sm">
+                  <q-card-section v-if="props.row.is_penalty_only" class="q-py-md text-center">
+                    <q-icon name="event_busy" color="grey-6" size="md" />
+                    <div class="text-body2 text-grey-8 q-mt-sm">
+                      Este evento fue cancelado — no genera pago, solo penalización.
+                    </div>
+                    <q-separator class="q-my-sm" />
+                    <div class="text-subtitle2 text-negative q-mb-xs">
+                      <q-icon name="gavel" size="sm" class="q-mr-xs" />
+                      Penalizaciones pendientes
+                    </div>
+                    <div v-for="penalty in props.row.penalties" :key="penalty.sale_id" class="row justify-between q-py-xs text-negative">
+                      <span>Cancelación venta #{{ penalty.sale_id }} ({{ penalty.penalty_percentage }}%)</span>
+                      <span>- ${{ formatCurrency(penalty.penalty_amount) }} MXN</span>
+                    </div>
+                    <q-separator class="q-my-xs" />
+                    <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold text-negative">
+                      <span>Total a descontar:</span>
+                      <span>- ${{ formatCurrency(props.row.total_penalties) }} MXN</span>
+                    </div>
+                  </q-card-section>
+                  <q-card-section v-else class="q-py-sm">
                     <div class="row justify-between q-py-xs">
                       <span :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-8'">Total pagado por cliente:</span>
                       <span class="text-weight-medium">${{ formatCurrency(props.row.amount) }} MXN</span>

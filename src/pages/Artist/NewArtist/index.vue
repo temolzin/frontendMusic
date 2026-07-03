@@ -1004,6 +1004,8 @@ export default {
           : err.response?.data?.message
             ? $q.notify({ type: "negative", message: err.response.data.message })
             : $q.notify({ type: "negative", message: 'Error al guardar el artista' });
+      } finally {
+        this.btnE = true;
       }
     },
     onReset() {
