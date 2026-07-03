@@ -457,7 +457,7 @@
             <q-stepper-navigation>
               <q-btn rounded @click="validateStep2" class="float-right q-mr-md q-mb-md" color="blue"
                 label="Siguiente" />
-              <q-btn flat @click="step = 2" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
+              <q-btn flat @click="step = 1" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
             </q-stepper-navigation>
           </q-step>
 
@@ -1655,8 +1655,8 @@ export default defineComponent({
         componentMap[comp.types[0]] = comp.long_name;
       }
 
-      this.formClient.city = componentMap['locality'] || componentMap['sublocality'] || componentMap['postal_town'] || '';
-      this.formClient.state_city = componentMap['administrative_area_level_1'] || componentMap['administrative_area_level_2'] || '';
+      this.formClient.city = componentMap['administrative_area_level_1'] || componentMap['administrative_area_level_2'] || '';
+      this.formClient.state_city = componentMap['locality'] || componentMap['sublocality'] || componentMap['postal_town'] || '';
       this.formClient.zip_code = componentMap['postal_code'] || '';
       this.formClient.country = componentMap['country'] || 'México';
       this.$nextTick(() => this.fetchExtraKmPreview());
