@@ -15,7 +15,10 @@ export default async function checkPermissions({ next, to }) {
   }
 
   if (!localStorage.getItem("token")) {
-    return next({ name: "LoginIn" });
+    const redirect = to.fullPath !== '/' ? to.fullPath : undefined;
+    return redirect
+      ? next({ name: "LoginIn", query: { to: redirect } })
+      : next({ name: "LoginIn" });
   }
 
   const userRole = Store.getters["auth/getMe"]?.role?.[0]
