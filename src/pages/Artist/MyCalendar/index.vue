@@ -41,8 +41,12 @@
                   <span class="value text-warning">{{ pendingCount }}</span>
                 </div>
                 <div class="summary-row q-mt-md">
+                  <span class="label">Rechazados</span>
+                  <span class="value text-red">{{ rejectedCount }}</span>
+                </div>
+                <div class="summary-row q-mt-md">
                   <span class="label">Expirados</span>
-                  <span class="value text-red">{{ expiredCount }}</span>
+                  <span class="value text-grey-6">{{ expiredCount }}</span>
                 </div>
                 <div class="summary-row q-mt-md">
                   <span class="label">Cancelados</span>
@@ -74,7 +78,7 @@
                       flat
                       bordered
                       class="event-card"
-                      :class="{ completed: event.status === 'completed', expired: event.status === 'expired' }"
+                      :class="{ completed: event.status === 'completed', expired: event.status === 'expired' || event.status === 'rejected' }"
                       @click="toggleExpanded(event.id)"
                     >
                       <q-card-section class="q-pa-md">
@@ -192,7 +196,7 @@
                       flat
                       bordered
                       class="event-card"
-                      :class="{ completed: event.status === 'completed', expired: event.status === 'expired' }"
+                      :class="{ completed: event.status === 'completed', expired: event.status === 'expired' || event.status === 'rejected' }"
                       role="button"
                       :tabindex="0"
                       :aria-expanded="expanded[event.id] ? 'true' : 'false'"
@@ -445,6 +449,9 @@ export default defineComponent({
     expiredCount() {
       return this.contracts.filter((c) => c.status === 'expired').length;
     },
+    rejectedCount() {
+      return this.contracts.filter((c) => c.status === 'rejected').length;
+    },
     cancelledCount() {
       return this.contracts.filter((c) => c.status === 'cancelled').length;
     },
@@ -461,7 +468,7 @@ export default defineComponent({
     eventColor(date) {
       const events = this.contracts.filter(c => c.date === date);
       if (events.some(e => e.status === 'cancelled')) return 'grey-5';
-      if (events.some(e => e.status === 'expired')) return 'negative';
+      if (events.some(e => e.status === 'rejected' || e.status === 'expired')) return 'negative';
       if (events.some(e => e.status === 'completed')) return 'positive';
       return 'warning';
     },
@@ -655,13 +662,15 @@ export default defineComponent({
 
     statusColor(status) {
       if (status === 'completed') return 'positive';
-      if (status === 'expired') return 'negative';
+      if (status === 'rejected') return 'negative';
+      if (status === 'expired') return 'grey-7';
       if (status === 'cancelled') return 'grey-5';
       return 'warning';
     },
 
     statusLabel(status) {
       if (status === 'completed') return 'Completado';
+      if (status === 'rejected') return 'Rechazado';
       if (status === 'expired') return 'Expirado';
       if (status === 'cancelled') return 'Cancelado';
       return 'Pendiente';

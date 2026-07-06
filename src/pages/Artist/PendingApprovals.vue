@@ -1,6 +1,20 @@
 <template>
   <q-page class="q-pa-md">
 
+    <q-tabs
+      v-model="activeTab"
+      dense
+      class="text-grey q-mb-md"
+      active-color="primary"
+      indicator-color="primary"
+      align="left"
+    >
+      <q-tab name="pending" label="Pendientes" />
+      <q-tab name="history" label="Historial" />
+    </q-tabs>
+    <q-separator class="q-mb-md" />
+
+    <div v-if="activeTab === 'pending'">
     <q-table
       v-if="pendingApprovals && pendingApprovals.length > 0"
       :rows="pendingApprovals"
@@ -160,6 +174,107 @@
     <div v-if="loading" class="text-center q-py-xl">
       <q-spinner color="primary" size="3em" />
     </div>
+    </div>
+
+    <div v-if="activeTab === 'history'">
+      <q-table
+        v-if="approvalHistory && approvalHistory.length > 0"
+        :rows="approvalHistory"
+        :columns="historyColumns"
+        row-key="id"
+        :pagination="{ rowsPerPage: 10 }"
+        no-data-label="Aún no tienes solicitudes resueltas"
+        rows-per-page-label="Registros por página"
+        :rows-per-page-options="[5, 10, 20]"
+        flat
+        bordered
+        :grid="$q.screen.lt.md"
+      >
+        <template v-slot:top-left>
+          <p class="text-h5 q-mb-none q-mt-sm">Historial de Solicitudes</p>
+        </template>
+
+        <template v-slot:body-cell-cliente="props">
+          <q-td :props="props">
+            <div class="text-weight-bold">
+              {{ props.row.customer_first_name }} {{ props.row.customer_last_name }}
+            </div>
+          </q-td>
+        </template>
+
+        <template v-slot:body-cell-evento="props">
+          <q-td :props="props">
+            <div class="text-weight-medium">{{ formatDate(props.row.event_date) }}</div>
+            <div class="text-caption text-grey">{{ props.row.event_hour }} hrs</div>
+          </q-td>
+        </template>
+
+        <template v-slot:body-cell-amount="props">
+          <q-td :props="props">
+            <span class="text-weight-bold">
+              ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
+            </span>
+          </q-td>
+        </template>
+
+        <template v-slot:body-cell-resultado="props">
+          <q-td :props="props">
+            <q-badge :color="historyStatusColor(props.row.approval_status)" class="q-px-sm q-py-xs">
+              {{ historyStatusLabel(props.row.approval_status) }}
+            </q-badge>
+          </q-td>
+        </template>
+
+        <template v-slot:body-cell-fecha_respuesta="props">
+          <q-td :props="props">
+            <span class="text-caption">{{ formatDate(props.row.approval_responded_at) }}</span>
+          </q-td>
+        </template>
+
+        <template v-slot:item="props">
+          <div class="q-pa-xs col-xs-12 col-sm-6">
+            <q-card class="q-pa-sm">
+              <q-card-section>
+                <div class="row items-center q-mb-sm">
+                  <div class="text-subtitle1 text-weight-bold">
+                    {{ props.row.customer_first_name }} {{ props.row.customer_last_name }}
+                  </div>
+                  <q-space />
+                  <q-badge :color="historyStatusColor(props.row.approval_status)" class="q-px-sm q-py-xs">
+                    {{ historyStatusLabel(props.row.approval_status) }}
+                  </q-badge>
+                </div>
+                <div class="row q-col-gutter-sm text-caption">
+                  <div class="col-6">
+                    <div class="text-grey">Fecha del evento</div>
+                    <div class="text-weight-medium">{{ formatDate(props.row.event_date) }}</div>
+                  </div>
+                  <div class="col-6">
+                    <div class="text-grey">Monto</div>
+                    <div class="text-weight-bold">
+                      ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="text-grey">Resuelto el</div>
+                    <div class="text-weight-medium">{{ formatDate(props.row.approval_responded_at) }}</div>
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </template>
+      </q-table>
+
+      <div v-else-if="!loadingHistory" class="text-center q-py-xl">
+        <q-icon name="history" size="4em" color="grey-5" />
+        <p class="text-grey-6 q-mt-md">Aún no tienes solicitudes resueltas.</p>
+      </div>
+
+      <div v-if="loadingHistory" class="text-center q-py-xl">
+        <q-spinner color="primary" size="3em" />
+      </div>
+    </div>
 
   </q-page>
 </template>
@@ -178,20 +293,39 @@ const columns = [
   { name: 'acciones', label: 'Acciones', align: 'center', field: 'acciones', sortable: false },
 ];
 
+const historyColumns = [
+  { name: 'cliente', label: 'Cliente', align: 'left', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
+  { name: 'evento', label: 'Fecha del evento', align: 'left', field: 'event_date', sortable: true },
+  { name: 'amount', label: 'Monto', align: 'left', field: 'amount', sortable: true },
+  { name: 'resultado', label: 'Resultado', align: 'center', field: 'approval_status', sortable: true },
+  { name: 'fecha_respuesta', label: 'Resuelto el', align: 'left', field: 'approval_responded_at', sortable: true },
+];
+
 export default {
   name: 'PendingApprovals',
 
   data() {
     return {
       columns,
+      historyColumns,
+      activeTab: 'pending',
       loading: false,
+      loadingHistory: false,
       loadingId: null,
       countdownInterval: null,
     };
   },
 
   computed: {
-    ...mapGetters('approvals', { pendingApprovals: 'getPendingApprovals' }),
+    ...mapGetters('approvals', { pendingApprovals: 'getPendingApprovals', approvalHistory: 'getApprovalHistory' }),
+  },
+
+  watch: {
+    activeTab(tab) {
+      if (tab === 'history' && this.approvalHistory.length === 0) {
+        this.loadHistory();
+      }
+    },
   },
 
   async created() {
@@ -204,7 +338,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('approvals', ['fetchPendingApprovals', 'acceptApproval', 'rejectApproval']),
+    ...mapActions('approvals', ['fetchPendingApprovals', 'fetchApprovalHistory', 'acceptApproval', 'rejectApproval']),
 
     async loadPending() {
       this.loading = true;
@@ -215,6 +349,31 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    async loadHistory() {
+      this.loadingHistory = true;
+      try {
+        await this.fetchApprovalHistory();
+      } catch {
+        this.$q.notify({ type: 'negative', message: 'Error al cargar el historial.', position: 'top' });
+      } finally {
+        this.loadingHistory = false;
+      }
+    },
+
+    historyStatusColor(status) {
+      if (status === 'accepted') return 'positive';
+      if (status === 'rejected') return 'negative';
+      if (status === 'expired') return 'grey-7';
+      return 'grey-5';
+    },
+
+    historyStatusLabel(status) {
+      if (status === 'accepted') return 'Aceptada';
+      if (status === 'rejected') return 'Rechazada';
+      if (status === 'expired') return 'Expirada';
+      return status;
     },
 
     startCountdown() {
@@ -228,6 +387,7 @@ export default {
       try {
         await this.acceptApproval(saleId);
         this.$q.notify({ type: 'positive', message: 'Solicitud aceptada. El cobro fue procesado.', position: 'top' });
+        this.loadHistory();
       } catch (err) {
         const message = err.response?.data?.message || 'Error al aceptar la solicitud.';
         this.$q.notify({ type: 'negative', message, position: 'top' });
@@ -241,6 +401,7 @@ export default {
       try {
         await this.rejectApproval(saleId);
         this.$q.notify({ type: 'warning', message: 'Solicitud rechazada. No se realizará ningún cobro al cliente.', position: 'top' });
+        this.loadHistory();
       } catch (err) {
         const message = err.response?.data?.message || 'Error al rechazar la solicitud.';
         this.$q.notify({ type: 'negative', message, position: 'top' });

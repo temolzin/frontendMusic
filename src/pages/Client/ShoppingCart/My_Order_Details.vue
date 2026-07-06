@@ -456,11 +456,12 @@ export default {
     },
     eventStatusColor(status) {
       if (status === 'completed') return 'positive';
-      if (status === 'expired') return 'negative';
+      if (status === 'expired' || status === 'rejected') return 'negative';
       return 'warning';
     },
     eventStatusLabel(status) {
       if (status === 'completed') return 'Completado';
+      if (status === 'rejected') return 'Rechazado';
       if (status === 'expired') return 'Expirado';
       return 'Pendiente';
     },

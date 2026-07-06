@@ -63,6 +63,12 @@
             class="q-pa-sm"
           />
           <q-badge
+            v-else-if="props.row.event_status === 'rejected'"
+            color="negative"
+            label="Rechazado"
+            class="q-pa-sm"
+          />
+          <q-badge
             v-else-if="props.row.event_status === 'expired'"
             color="grey-7"
             label="Expirado"
@@ -145,6 +151,12 @@
                       v-if="props.row.event_status === 'cancelled'"
                       color="negative"
                       label="Cancelado"
+                      class="q-pa-sm"
+                    />
+                    <q-badge
+                      v-else-if="props.row.event_status === 'rejected'"
+                      color="negative"
+                      label="Rechazado"
                       class="q-pa-sm"
                     />
                     <q-badge
