@@ -508,7 +508,6 @@ export default {
       try {
         await this.fetchPendingApprovals();
       } catch {
-        // El badge simplemente no se mostrará si falla la carga.
       }
     },
     hasPermission(permission) {
