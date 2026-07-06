@@ -208,7 +208,7 @@
         </div>
       </div>
       <!-- Gallery -->
-      <div v-if="artist.galery_artists[0] != null">
+      <div v-if="imageList.length > 0">
         <div class="q-pa-md">
           <h3
             class="text-center q-mb-md ellipsis"
@@ -230,10 +230,10 @@
             class="q-mt-lg"
           >
             <q-carousel-slide
-              v-for="(gallery, index) in artist.galery_artists"
+              v-for="(gallery, index) in imageList"
               :key="index"
               :name="index + 1"
-              :img-src="gallery.image"
+              :img-src="gallery.original_url"
             />
 
             <template v-slot:control>
@@ -536,6 +536,10 @@ export default {
       const discount = this.activeOffer.discount_percentage / 100;
       return Math.round(this.artist.price_hour * (1 - discount) * 100) / 100;
     },
+    imageList() {
+      const gallery = this.artist?.media || this.artist?.artistGallery || [];
+      return Array.isArray(gallery) ? gallery : [];
+    }
   },
   mounted() {
     $q = useQuasar();

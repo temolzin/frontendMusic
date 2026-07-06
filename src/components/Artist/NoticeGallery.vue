@@ -79,10 +79,10 @@
         @keyup.esc="fullscreen = false"
       >
         <q-carousel-slide
-          v-for="(gallery, index) in galleryArtist"
+          v-for="(gallery, index) in imageList"
           :key="index"
           :name="index + 1"
-          :img-src="gallery.image"
+          :img-src="gallery.original_url"
         />
 
         <template v-slot:control>
@@ -256,6 +256,7 @@ export default {
           message: "Imagen subida correctamente",
         });
         this.sub_files_paths = null;
+        await this.gettGalleryArtist();
       } catch (err) {
           if (this.$refs.uploaderCreate) {
             this.$refs.uploaderCreate.reset(); 
@@ -282,6 +283,7 @@ export default {
       this.btnDelete = false;
       this.formGalleryShow = true;
       this.formGalleryEdit = false;
+      await this.gettGalleryArtist();
     } catch (err) {
       if (this.$refs.uploaderEdit) {
         this.$refs.uploaderEdit.reset();
@@ -299,12 +301,13 @@ export default {
   async gettGalleryArtist() {
     try {
       await this.getGalleryArtist();
-      this.showGallery = (this.galleryArtist && this.galleryArtist[0] != null);
+      this.showGallery = this.imageList.length > 0;
     } catch (err) {
       this.$q.notify({
         type: "negative",
         message: err.message || "Error al obtener la galería",
       });
+      this.showGallery = false;
     }
   },
   validateAddedFiles(files, uploaderRef) {
@@ -362,6 +365,7 @@ export default {
               type: "positive",
               message: `Eliminado correctamente`,
             });
+            await this.gettGalleryArtist();
           } catch (err) {
             this.$q.notify({
               type: "negative",
@@ -440,6 +444,12 @@ export default {
     mode: function () {
       return this.$q.dark.isActive;
     },
+    imageList() {
+
+    const gallery = this.galleryArtist?.artistGallery || this.galleryArtist;
+
+    return Array.isArray(gallery) ? gallery : [];
+    }
   },
   mounted() {
     $q = useQuasar();
