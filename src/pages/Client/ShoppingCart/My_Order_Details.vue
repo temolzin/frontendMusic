@@ -206,6 +206,16 @@
               unelevated
               rounded
               color="negative"
+              icon="cancel"
+              label="Cancelar evento"
+              class="full-width q-mt-sm"
+              v-if="canCancel(selectedPurchase)"
+              @click="detailCancelEvent(selectedPurchase)"
+            />
+            <q-btn
+              unelevated
+              rounded
+              color="negative"
               icon="report_problem"
               label="Reportar Incidente"
               class="full-width q-mt-sm"
@@ -366,6 +376,84 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="cancelDialog" persistent>
+        <q-card style="width: 480px; border-radius: 16px" class="q-pa-md">
+          <q-card-section class="row items-center q-pb-none">
+            <div class="text-h6 text-negative text-weight-bold">Cancelar evento</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup color="grey" />
+          </q-card-section>
+          <q-separator class="q-my-md" />
+          <q-card-section v-if="cancelSale" class="q-pt-none">
+            <div class="text-weight-bold q-mb-sm">¿Estás seguro de cancelar este evento?</div>
+            <q-list dense>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Artista</q-item-label>
+                  <q-item-label class="text-weight-medium">{{ cancelSale.artist?.name }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Fecha del evento</q-item-label>
+                  <q-item-label class="text-weight-medium">{{ formatDate(cancelSale.event_date) }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Días restantes</q-item-label>
+                  <q-item-label class="text-weight-medium">{{ cancelDaysUntil }} días</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Monto del evento</q-item-label>
+                  <q-item-label class="text-weight-medium text-positive">
+                    ${{ Number(cancelSale.amount || 0).toLocaleString('es-MX') }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item v-if="cancelPenaltyPercentage > 0">
+                <q-item-section>
+                  <q-item-label caption>Penalización</q-item-label>
+                  <q-item-label class="text-weight-medium text-negative">
+                    {{ cancelPenaltyPercentage }}% (${{ Number(cancelPenaltyAmount).toLocaleString('es-MX') }})
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item v-else>
+                <q-item-section>
+                  <q-item-label caption>Penalización</q-item-label>
+                  <q-item-label class="text-weight-medium text-positive">0% (Sin penalización)</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label caption>Reembolso</q-item-label>
+                  <q-item-label class="text-weight-medium text-primary">
+                    ${{ Number(cancelRefundAmount).toLocaleString('es-MX') }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+            <q-input
+              v-model="cancelReason"
+              type="textarea"
+              outlined
+              dense
+              rows="3"
+              label="Motivo de la cancelación *"
+              placeholder="Explica por qué cancelas el evento..."
+              :rules="[val => !!val || 'El motivo es requerido']"
+              class="q-mt-md"
+            />
+          </q-card-section>
+          <q-card-actions align="right" class="q-pt-md">
+            <q-btn flat label="Cerrar" color="primary" v-close-popup />
+            <q-btn unelevated rounded color="negative" label="Sí, cancelar evento" :loading="cancelLoading" @click="confirmCancel" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-container>
   </q-page>
 </template>
@@ -396,6 +484,13 @@ export default {
       showRegeneratedRefDialog: false,
       regeneratedRef: null,
       isExporting: false,
+      cancelDialog: false,
+      cancelSale: null,
+      cancelReason: '',
+      cancelPenaltyPercentage: 0,
+      cancelPenaltyAmount: 0,
+      cancelRefundAmount: 0,
+      cancelLoading: false,
     };
   },
   methods: {
@@ -457,12 +552,14 @@ export default {
     eventStatusColor(status) {
       if (status === 'completed') return 'positive';
       if (status === 'expired' || status === 'rejected') return 'negative';
+      if (status === 'cancelled') return 'grey';
       return 'warning';
     },
     eventStatusLabel(status) {
       if (status === 'completed') return 'Completado';
       if (status === 'rejected') return 'Rechazado';
       if (status === 'expired') return 'Expirado';
+      if (status === 'cancelled') return 'Cancelado';
       return 'Pendiente';
     },
     paymentStatusLabel(purchase) {
@@ -642,6 +739,62 @@ export default {
       this.showModal = false;
       this.$router.push({ name: 'client.report-incident', params: { saleId: purchase.id } });
     },
+    canCancel(purchase) {
+      if (!purchase) return false;
+      if (purchase.event_status === 'completed' || purchase.event_status === 'cancelled') return false;
+      if (!purchase.event_date) return false;
+      const now = new Date();
+      const eventDate = new Date(purchase.event_date);
+      const diffTime = eventDate.getTime() - now.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays > 0;
+    },
+    detailCancelEvent(purchase) {
+      this.showModal = false;
+      this.$nextTick(() => this.openCancelDialog(purchase));
+    },
+    openCancelDialog(purchase) {
+      this.cancelSale = purchase;
+      this.cancelReason = '';
+      this.cancelPenaltyPercentage = 0;
+      this.cancelPenaltyAmount = 0;
+      this.cancelRefundAmount = 0;
+      if (purchase.event_date) {
+        const now = new Date();
+        const eventDate = new Date(purchase.event_date);
+        const diffTime = eventDate.getTime() - now.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const amount = parseFloat(purchase.amount) || 0;
+        let penalty = 0;
+        if (purchase.approval_status === 'accepted') {
+          if (diffDays >= 3 && diffDays < 7) penalty = 25;
+          if (diffDays >= 1 && diffDays < 3) penalty = 50;
+        }
+        this.cancelPenaltyPercentage = penalty;
+        this.cancelPenaltyAmount = Math.round(amount * (penalty / 100) * 100) / 100;
+        this.cancelRefundAmount = amount - this.cancelPenaltyAmount;
+      }
+      this.cancelDialog = true;
+    },
+    async confirmCancel() {
+      if (!this.cancelReason.trim()) {
+        this.$q.notify({ type: 'negative', message: 'Debes ingresar un motivo de cancelación' });
+        return;
+      }
+      this.cancelLoading = true;
+      try {
+        const response = await api.post(`/api/client/sales/${this.cancelSale.id}/cancel`, { reason: this.cancelReason });
+        this.$q.notify({ type: 'positive', message: response.data.message });
+        this.cancelDialog = false;
+        this.cancelSale = null;
+        this.cancelReason = '';
+        await this.viewPurchaseHistory();
+      } catch (err) {
+        this.$q.notify({ type: 'negative', message: err.response?.data?.message || 'Error al cancelar el evento' });
+      } finally {
+        this.cancelLoading = false;
+      }
+    },
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
@@ -687,6 +840,13 @@ export default {
 
         return artistMatch && dateMatch;
       });
+    },
+    cancelDaysUntil() {
+      if (!this.cancelSale?.event_date) return 0;
+      const now = new Date();
+      const eventDate = new Date(this.cancelSale.event_date);
+      const diffTime = eventDate.getTime() - now.getTime();
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     },
   },
   created() {
