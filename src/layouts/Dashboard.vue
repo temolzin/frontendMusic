@@ -28,9 +28,9 @@
           <!-- Card info profile -->
           <ProfilePhoto></ProfilePhoto>
           <!-- Card info profile -->
-        </div>
+          </div>
         <!-- Fin bottom dropdown  -->
-      </q-toolbar>
+        </q-toolbar>
     </q-header>
     <!-- fin de header -->
 
@@ -194,7 +194,19 @@
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <q-icon name="pending_actions" />
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="pending_actions" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="pendingApprovalsCount > 0" color="red" floating transparent>
+                    {{ pendingApprovalsCount }}
+                  </q-badge>
+                </transition>
+              </div>
             </q-item-section>
             <q-item-section>Solicitudes</q-item-section>
           </q-item>
@@ -387,13 +399,13 @@
       </q-scroll-area>
 
       <!-- Inicio Icono de la marca -->
-          <q-img class="absolute-top bg-transparent" style="height: 140px;">
+      <q-img class="absolute-top bg-transparent" style="height: 140px;">
             <div class="bg-transparent" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;" @click="redirect">
               <img src="/logovibeer.ico" style="height: 50px; transform: scale(2.4); cursor: pointer;">
             </div>
           </q-img>
       <!-- Fin Icono de la marca -->
-    </q-drawer>
+      </q-drawer>
     <!-- Fin Menu left -->
 
     <q-page-container>
@@ -418,7 +430,6 @@ export default {
       isActiveDarkMode: ref(false),
       leftDrawerOpen,
       ticketCount: ref(0),
-      pendingApprovalsCount: ref(0),
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
@@ -434,6 +445,7 @@ export default {
   computed: {
     ...mapGetters("auth", ["getMe"]),
     ...mapGetters("artistList", ["stateArtistList"]),
+    ...mapGetters("approvals", { pendingApprovalsCount: "getPendingApprovalsCount" }),
     mode: function () {
       return this.$q.dark.isActive;
     },
@@ -461,6 +473,7 @@ export default {
   methods: {
     ...mapActions("artistList", ["getArtists"]),
     ...mapActions("shoppingCard", ["getCountListShoppingCard"]),
+    ...mapActions("approvals", ["fetchPendingApprovals"]),
     async getArtistss() {
       try {
         await this.getArtists();
@@ -493,10 +506,8 @@ export default {
     },
     async fetchApprovalCount() {
       try {
-        const { data } = await this.$api.get('/api/artist/approval/pending');
-        this.pendingApprovalsCount = (data.sales || []).length;
+        await this.fetchPendingApprovals();
       } catch {
-        this.pendingApprovalsCount = 0;
       }
     },
     hasPermission(permission) {
@@ -564,3 +575,19 @@ export default {
   
 };
 </script>
+
+<style scoped>
+.approvals-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  width: 24px;   
+  height: 24px;  
+}
+
+.approvals-icon-wrap :deep(.q-badge) {
+  top: -4px;
+  right: -6px;
+  padding: 2px 4px;
+  font-size: 10px;
+}
+</style>

@@ -5,3 +5,7 @@ export function getPendingApprovals(state) {
 export function getPendingApprovalsCount(state) {
   return state.pendingApprovals.length;
 }
+
+export function getApprovalHistory(state) {
+  return state.approvalHistory;
+}
