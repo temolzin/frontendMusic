@@ -353,8 +353,8 @@
               </div>
             </div>
           </q-card-section>
-
           <q-card-actions
+            v-if="getIsChatActive && !chatBackendErrorMessage"
             class="q-pa-md"
             :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-white'"
             :style="$q.dark.isActive ? 'border-top: 1px solid #424242;' : 'border-top: 1px solid #e0e0e0;'"
@@ -373,6 +373,19 @@
                 <q-btn round dense flat icon="send" color="primary" @click="sendMessage" />
               </template>
             </q-input>
+          </q-card-actions>
+          <q-card-actions
+            v-else
+            class="q-pa-md justify-center items-center text-center animate__animated animate__fadeIn"
+            :class="$q.dark.isActive ? 'bg-grey-9 text-grey-4' : 'bg-grey-5 text-grey-1'"
+            style="border-top: 1px solid rgba(0, 0, 0, 0.1); min-height: 90px; flex-direction: column;"
+          >
+            <div class="row items-center justify-center q-gutter-xs q-mb-xs">
+              <span class="text-weight-bold text-subtitle1">Chat Deshabilitado</span>
+            </div>
+            <div class="text-body2 text-weight-medium">
+              {{ chatBackendErrorMessage || 'El chat ha sido deshabilitado debido a que el evento ha concluido. Gracias por usar nuestra plataforma, esperamos verte pronto en un nuevo evento.' }}
+            </div>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -491,6 +504,7 @@ export default {
       cancelPenaltyAmount: 0,
       cancelRefundAmount: 0,
       cancelLoading: false,
+      chatBackendErrorMessage: "",
     };
   },
   methods: {
@@ -629,25 +643,39 @@ export default {
     },
     async openChat(purchase) {
       this.$store.commit("orderDetails/setChatMessages", []);
+      this.$store.commit("orderDetails/setChatActive", true);
+      
       this.activeChatPurchase = purchase;
       this.newMessage = "";
+      this.chatBackendErrorMessage = ""; 
+      
+      try {
+        await this.fetchChatMessages(purchase.id);
+      } catch (error) {
+        console.error("Error al cargar mensajes iniciales:", error);
+        this.chatBackendErrorMessage = error.response?.data?.message || "Error al conectar con el chat";
+      }
       this.isChatDialogOpen = true;
-      await this.fetchChatMessages(purchase.id);
       this.scrollToBottom();
     },
     async sendMessage() {
       const messageText = this.newMessage.trim();
-      if (messageText !== '') {
+      if (messageText !== "") {
         const payload = {
           artist_sale_id: this.activeChatPurchase.id,
           message: messageText,
         };
 
-        const sentMessage = await this.sendChatMessage(payload);
-        if (sentMessage) {
-          this.newMessage = '';
-          await this.fetchChatMessages(this.activeChatPurchase.id);
-          this.scrollToBottom();
+        try {
+          const sentMessage = await this.sendChatMessage(payload);
+          if (sentMessage) {
+            this.newMessage = "";
+            await this.fetchChatMessages(this.activeChatPurchase.id);
+            this.scrollToBottom();
+          }
+        } catch (error) {
+          console.error("Error al enviar mensaje:", error);
+          this.chatBackendErrorMessage = error.response?.data?.message || "El chat ha sido deshabilitado.";
         }
       }
     },
@@ -798,7 +826,7 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
-    ...mapGetters("orderDetails", ["stateListShopingCard", "getChatMessages", "getArtistRatings"]),
+    ...mapGetters("orderDetails", ["stateListShopingCard", "getChatMessages", "getArtistRatings", "getIsChatActive"]),
     dateOptions() {
       const currentYear = new Date().getFullYear();
       return [
@@ -863,6 +891,10 @@ export default {
           clearInterval(this.chatPolling);
           this.chatPolling = null;
         }
+        return;
+      }
+
+      if (!this.getIsChatActive || this.chatBackendErrorMessage) {
         return;
       }
 

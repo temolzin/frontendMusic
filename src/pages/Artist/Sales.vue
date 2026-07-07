@@ -256,8 +256,8 @@
             </div>
           </div>
         </q-card-section>
-
         <q-card-actions
+          v-if="getIsChatActive && !chatBackendErrorMessage"
           class="q-pa-md"
           :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-white'"
           :style="$q.dark.isActive ? 'border-top: 1px solid #424242;' : 'border-top: 1px solid #e0e0e0;'"
@@ -273,9 +273,29 @@
             :label-color="$q.dark.isActive ? 'grey-4' : 'grey-8'"
           >
             <template v-slot:after>
-              <q-btn round dense flat icon="send" color="primary" @click="sendMessage" />
+              <q-btn 
+                round 
+                dense 
+                flat 
+                icon="send" 
+                color="primary" 
+                @click="sendMessage" 
+              />
             </template>
           </q-input>
+        </q-card-actions>
+        <q-card-actions
+          v-else
+          class="q-pa-md justify-center items-center text-center animate__animated animate__fadeIn"
+          :class="$q.dark.isActive ? 'bg-grey-9 text-grey-4' : 'bg-grey-5 text-grey-1'"
+          style="border-top: 1px solid rgba(0, 0, 0, 0.1); min-height: 90px; flex-direction: column;"
+        >
+          <div class="row items-center justify-center q-gutter-xs q-mb-xs">
+            <span class="text-weight-bold text-subtitle1">Chat Deshabilitado</span>
+          </div>
+          <div class="text-body2 text-weight-medium">
+            {{ chatBackendErrorMessage || 'El chat ha sido deshabilitado debido a que el evento ha concluido. Gracias por usar nuestra plataforma, esperamos verte pronto en un nuevo evento.' }}
+          </div>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -472,6 +492,7 @@ export default {
       chatPolling: null,
       isDetailsDialogOpen: false,
       detailsSale: null,
+      chatBackendErrorMessage: ''
     };
   },
 
@@ -479,7 +500,7 @@ export default {
     ...mapGetters('artistSales', ['stateArtistSales']),
     ...mapState({ artist: (state) => state.artist.artist }),
     ...mapGetters("auth", ["getMe"]),
-    ...mapGetters("orderDetails", ["getChatMessages"]),
+    ...mapGetters("orderDetails", ["getChatMessages",  "getIsChatActive"]),
   },
 
   methods: {
@@ -552,25 +573,53 @@ export default {
     },
 
     async openChat(sale) {
-      this.$store.commit('orderDetails/setChatMessages', []);
-      this.activeChatPurchase = sale;
-      this.newMessage = '';
-      this.isChatDialogOpen = true;
-      await this.fetchChatMessages(sale.id);
-      this.scrollToBottom();
+        this.$store.commit('orderDetails/setChatMessages', []);
+        this.$store.commit('orderDetails/setChatActive', true); 
+        this.activeChatPurchase = sale;
+        this.newMessage = '';
+        this.chatBackendErrorMessage = '';
+        await this.fetchChatMessages(sale.id);
+        this.isChatDialogOpen = true;
+        this.scrollToBottom();
     },
 
-    async sendMessage() {
+   async sendMessage() {
+      if (this.isChatExpired(this.activeChatPurchase)) {
+        return;
+      }
+
       const messageText = this.newMessage.trim();
       if (messageText !== '') {
         const payload = { artist_sale_id: this.activeChatPurchase.id, message: messageText };
-        const sentMessage = await this.sendChatMessage(payload);
-        if (sentMessage) {
-          this.newMessage = '';
-          await this.fetchChatMessages(this.activeChatPurchase.id);
-          this.scrollToBottom();
+        
+        try {
+          const sentMessage = await this.sendChatMessage(payload);
+          if (sentMessage) {
+            this.newMessage = '';
+            await this.fetchChatMessages(this.activeChatPurchase.id);
+            this.scrollToBottom();
+          }
+        } catch (err) {
+          this.chatBackendErrorMessage = err?.response?.data?.message || 'El chat se encuentra cerrado.';
         }
       }
+    },
+
+    isChatExpired(sale) {
+      if (!sale || !sale.event_date) return false;
+
+      let eventDateTimeStr = sale.event_date;
+      if (sale.event_hour) {
+        eventDateTimeStr += `T${sale.event_hour}`;
+      }
+
+      const eventStart = new Date(eventDateTimeStr);
+      const durationHours = Number(sale.event_hours) || 0;
+      const eventEnd = new Date(eventStart.getTime() + durationHours * 60 * 60 * 1000);
+
+      const expirationDate = new Date(eventEnd.getTime() + (24 * 60 * 60 * 1000));
+
+      return new Date() > expirationDate;
     },
 
     scrollToBottom() {
@@ -601,6 +650,11 @@ export default {
         }
         return;
       }
+
+      if (!this.getIsChatActive) {
+        return;
+      }
+      
       this.chatPolling = setInterval(() => {
         if (this.activeChatPurchase) {
           this.fetchChatMessages(this.activeChatPurchase.id);
@@ -652,5 +706,10 @@ export default {
 
 .body--dark .details-dialog .detail-label {
   color: #94a3b8;
+}
+
+.chat-overlay {
+  backdrop-filter: blur(4px);
+  z-index: 10;
 }
 </style>
