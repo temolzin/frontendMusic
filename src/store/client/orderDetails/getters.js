@@ -9,3 +9,5 @@ export function getChatMessages(state) {
 export function getArtistRatings(state) {
   return state.artistRatings;
 }
+
+export const getIsChatActive = (state) => state.isChatActive; 

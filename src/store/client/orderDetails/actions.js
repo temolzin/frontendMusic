@@ -21,6 +21,7 @@ export const fetchChatMessages = async ({ commit }, artistSaleId) => {
     const response = await api.get(`/api/chat/messages/${artistSaleId}`);
     const messages = Array.isArray(response.data?.messages) ? response.data.messages : [];
     commit("setChatMessages", messages);
+    commit("setChatActive", response.data?.is_chat_active ?? true); 
     return messages;
   } catch (error) {
     console.error("Error fetching messages:", error);
@@ -39,7 +40,7 @@ export const sendChatMessage = async ({ commit }, payload) => {
     return message;
   } catch (error) {
     console.error("Error sending message:", error);
-    return null;
+    throw error;
   }
 };
 
