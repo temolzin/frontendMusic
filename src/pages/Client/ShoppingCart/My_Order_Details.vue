@@ -676,6 +676,10 @@ export default {
         } catch (error) {
           console.error("Error al enviar mensaje:", error);
           this.chatBackendErrorMessage = error.response?.data?.message || "El chat ha sido deshabilitado.";
+          if (this.chatPolling) {
+            clearInterval(this.chatPolling);
+            this.chatPolling = null;
+          }
         }
       }
     },

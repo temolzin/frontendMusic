@@ -585,6 +585,7 @@ export default {
 
    async sendMessage() {
       if (this.isChatExpired(this.activeChatPurchase)) {
+        this.chatBackendErrorMessage = 'El chat ha sido deshabilitado debido a que el evento ha concluido.';
         return;
       }
 
@@ -601,6 +602,10 @@ export default {
           }
         } catch (err) {
           this.chatBackendErrorMessage = err?.response?.data?.message || 'El chat se encuentra cerrado.';
+          if (this.chatPolling) {
+            clearInterval(this.chatPolling);
+            this.chatPolling = null;
+          }
         }
       }
     },
