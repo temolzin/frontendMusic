@@ -10,7 +10,7 @@
         <!-- Bottom Serach -->
         <q-toolbar-title>
           <div class="row q-ma-md">
-            <SearchBar v-if="getMe.role[0] === 'cliente'"></SearchBar>
+            <SearchBar v-if="getMe?.role?.[0] == 'cliente'"></SearchBar>
           </div>
         </q-toolbar-title>
         <!-- Fin Bottom Serach -->
@@ -18,7 +18,7 @@
         <!-- bottom dropdown  -->
         <div class="text-right" style="color: gray">
           <!-- Icons bell and wrench -->
-          <small v-if="getMe.role[0] == 'cliente'">
+          <small v-if="getMe?.role?.[0] == 'cliente'">
             <router-link to="/client/shopping-cart">
               <icon-cart :fetch-on-create="false"></icon-cart>
             </router-link>
@@ -48,7 +48,7 @@
             to="/dashboard/home"
             clickable
             active-class="text-accent text-weight-bold"
-            v-if="getMe.role[0] == 'administrador'"
+            v-if="getMe?.role?.[0] == 'administrador'"
           >
             <q-item-section class="text-weight-bold">
               PANEL
@@ -59,7 +59,7 @@
             to="/dashboard/home"
             clickable
             active-class="text-accent text-weight-bold"
-            v-if="getMe.role[0] == 'cliente'"
+            v-if="getMe?.role?.[0] == 'cliente'"
           >
             <q-item-section class="text-weight-bold"> INICIO </q-item-section>
           </q-item>
@@ -68,7 +68,7 @@
             to="/dashboard/home"
             clickable
             active-class="text-accent text-weight-bold"
-            v-if="getMe.role[0] == 'artista'"
+            v-if="getMe?.role?.[0] == 'artista'"
           >
             <q-item-section class="text-weight-bold">
               PANEL
@@ -106,7 +106,7 @@
             clickable
             v-ripple
             to="/admin/musical-genders/index"
-            v-if="getMe.role[0] == 'administrador'"
+            v-if="getMe?.role?.[0] == 'administrador'"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
@@ -120,7 +120,7 @@
             clickable
             v-ripple
             to="/admin/newsletter/index"
-            v-if="getMe.role[0] == 'administrador'"
+            v-if="getMe?.role?.[0] == 'administrador'"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
@@ -134,7 +134,7 @@
             clickable
             v-ripple
             to="/admin/support-tickets"
-            v-if="getMe.role[0] == 'administrador'"
+            v-if="getMe?.role?.[0] == 'administrador'"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
@@ -148,7 +148,7 @@
             clickable
             v-ripple
             to="/admin/payouts"
-            v-if="getMe.role[0] == 'administrador' && $can('view-users')"
+            v-if="getMe?.role?.[0] == 'administrador' && $can('view-users')"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
@@ -235,7 +235,7 @@
             clickable
             v-ripple
             to="/artist/payout-info"
-            v-if="getMe.role[0] == 'artista'"
+            v-if="getMe?.role?.[0] == 'artista'"
             active-class="text-accent text-weight-bold">
             <q-item-section avatar>
               <q-icon name="account_balance" />
@@ -314,7 +314,7 @@
             <q-item-section> Favoritos </q-item-section>
           </q-item>
 
-          <q-item v-if="getMe.role[0] == 'cliente'">
+          <q-item v-if="getMe?.role?.[0] == 'cliente'">
             <q-item-section class="text-weight-bold">
               INFORMACIÓN
             </q-item-section>
@@ -468,7 +468,9 @@ export default {
     this.$q.dark.set(isDark);
     this.isActiveDarkMode = isDark;
     this.fetchTicketCount();
-    this.fetchApprovalCount();
+    if (this.$can('view-profile-artist')) {
+      this.fetchApprovalCount();
+    }
   },
   methods: {
     ...mapActions("artistList", ["getArtists"]),

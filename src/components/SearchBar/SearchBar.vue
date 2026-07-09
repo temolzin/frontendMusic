@@ -50,6 +50,7 @@ export default {
       options: ref(),
       allOptions: [],
       searchBar: ref(null),
+      loading: ref(false),
     };
   },
   computed: {
@@ -65,6 +66,7 @@ export default {
   methods: {
     ...mapActions("artistList", ["getArtists"]),
     async getArtistss() {
+      this.loading = true;
       try {
         await this.getArtists();
       } catch (err) {
@@ -74,6 +76,8 @@ export default {
             message: err.response.data.message,
           });
         }
+      } finally {
+          this.loading = false;
       }
     },
     redirectToRoute(value) {
@@ -101,7 +105,7 @@ export default {
 
       this.stateArtistList.forEach(artist => {
         if (artist.musical_genders && artist.musical_genders[0]) {
-          artists.push({ name: artist.name, url: `/client/musical-genders/search/${artist.slug}` });
+          artists.push({ name: artist.name, url: `/client/musical-genders/${artist.musical_genders[0].slug}/${artist.slug}` });
         }
       });
 
