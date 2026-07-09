@@ -793,9 +793,10 @@ export default {
       this.cancelRefundAmount = 0;
       if (purchase.event_date) {
         const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const eventDate = new Date(purchase.event_date);
-        const diffTime = eventDate.getTime() - now.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffTime = eventDate.getTime() - today.getTime();
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         const amount = parseFloat(purchase.amount) || 0;
         let penalty = 0;
         if (purchase.approval_status === 'accepted') {
