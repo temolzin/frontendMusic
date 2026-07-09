@@ -44,7 +44,18 @@
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn flat round icon="edit" color="primary" @click="openForm(props.row)" />
-          <q-btn flat round icon="delete" color="negative" @click="confirmDelete(props.row.id)" />
+          <q-btn
+            flat
+            round
+            icon="delete"
+            color="negative"
+            :disable="props.row.has_pending_sale"
+            @click="confirmDelete(props.row.id)"
+          >
+            <q-tooltip v-if="props.row.has_pending_sale" class="bg-negative text-body2">
+              No se puede eliminar: hay una venta esperando respuesta del artista que usó esta oferta.
+            </q-tooltip>
+          </q-btn>
         </q-td>
       </template>
 
@@ -71,7 +82,18 @@
                   </q-item-label>
                   <q-item-label v-if="col.name === 'actions'">
                     <q-btn flat round icon="edit" color="primary" @click="openForm(props.row)" />
-                    <q-btn flat round icon="delete" color="negative" @click="confirmDelete(props.row.id)" />
+                    <q-btn
+                      flat
+                      round
+                      icon="delete"
+                      color="negative"
+                      :disable="props.row.has_pending_sale"
+                      @click="confirmDelete(props.row.id)"
+                    >
+                      <q-tooltip v-if="props.row.has_pending_sale" class="bg-negative text-body2">
+                        No se puede eliminar: hay una venta esperando respuesta del artista que usó esta oferta.
+                      </q-tooltip>
+                    </q-btn>
                   </q-item-label>
                   <q-item-label v-if="col.name !== 'is_active' && col.name !== 'discount_percentage' && col.name !== 'start_date' && col.name !== 'end_date' && col.name !== 'actions'">
                     {{ col.value }}
@@ -218,7 +240,7 @@ export default {
           await this.deleteOffer(id);
           this.$q.notify({ type: "positive", message: "Oferta eliminada" });
         } catch (err) {
-          this.$q.notify({ type: "negative", message: "Error al eliminar la oferta" });
+          this.$q.notify({ type: "negative", message: err?.response?.data?.message || "Error al eliminar la oferta" });
         }
       });
     },
