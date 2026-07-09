@@ -395,7 +395,8 @@
                       (val) => {
                         if (!val) return true;
                         const digits = (val.match(/\d/g) || []).length;
-                        return digits === 16 || 'Debe tener 16 digitos';
+                        const expLen = this.expectedCardLength(val);
+                        return digits === expLen || `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
                       }
                     ]"/>
                 </q-item>
@@ -504,7 +505,12 @@
                   <q-item-section>
                     <q-item-label lines="1">Envio</q-item-label>
                   </q-item-section>
-                  <q-item-section side> --Gratis-- </q-item-section>
+                  <q-item-section side>
+                    <template v-if="totalExtraKmCost > 0">
+                      ${{ totalExtraKmCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                    </template>
+                    <template v-else>--Gratis--</template>
+                  </q-item-section>
                 </q-item>
                 <q-separator></q-separator>
                 <q-item class="full-width" style="border-top: 3px dotted blue">
@@ -557,7 +563,7 @@
                   <div class="row items-center q-mb-sm">
                     <q-icon name="credit_card" color="primary" size="xs" class="q-mr-sm" />
                     <span class="text-caption text-grey-7">Tipo</span>
-                    <span class="text-caption text-weight-medium q-ml-sm">{{ selectedCard.card_type || detectCardType(selectedCard.number_card) }}</span>
+                    <span class="text-caption text-weight-medium q-ml-sm">{{ selectedCard.card_type && selectedCard.card_type !== 'Desconocida' ? selectedCard.card_type : cardBrandInfo(selectedCard).text }}</span>
                   </div>
                   <div class="row items-center q-mb-sm">
                     <q-icon name="person" color="primary" size="xs" class="q-mr-sm" />
@@ -895,6 +901,7 @@ export default defineComponent({
     },
 
     detectCardType(number) {
+      if (!number) return 'Desconocida';
       const clean = number.replace(/[\s-]/g, '');
       if (/^4/.test(clean)) return 'Visa';
       if (/^5[1-5]/.test(clean) || /^2(2[2-9]|[3-6]\d|7[01])/.test(clean)) return 'Mastercard';
@@ -1078,6 +1085,9 @@ export default defineComponent({
           this.formClient.state_city = o.state || '';
           this.formClient.zip_code = o.zip_code || '';
           this.formClient.country = 'México';
+          this.latitude = o.latitude || null;
+          this.longitude = o.longitude || null;
+          this.latitude && this.longitude && this.$nextTick(() => this.fetchExtraKmPreview());
         })();
       } catch (err) {
       }
@@ -1192,6 +1202,8 @@ export default defineComponent({
           state: this.formClient.state_city,
           zip_code: this.formClient.zip_code,
           country: this.formClient.country,
+          latitude: this.latitude,
+          longitude: this.longitude,
         };
 
         const response = await api.post("/api/client/save-address", addressData);
