@@ -131,6 +131,7 @@
                       v-model="formClient.event_date"
                       class="full-width"
                       label="Fecha del evento *"
+                      readonly
                       :rules="[
                         (val) => !!val || 'La fecha del evento es requerida'
                       ]"
@@ -165,16 +166,16 @@
                       v-model="formClient.event_hour"
                       class="full-width"
                       label="Hora del evento *"
+                      readonly
                       :rules="[
                         (val) => !!val || 'La hora del evento es requerida'
                       ]"
-                      readonly
                       required
                     >
                       <template v-slot:append>
                         <q-icon name="schedule" class="cursor-pointer">
                           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-time v-model="formClient.event_hour" mask="HH:mm" format24h>
+                            <q-time v-model="formClient.event_hour" mask="HH:mm" format24h :options="timeOption">
                               <div class="row items-center justify-end q-gutter-sm q-pa-sm">
                                 <q-btn v-close-popup label="Cerrar" color="primary" flat />
                               </div>
@@ -832,14 +833,40 @@ export default defineComponent({
 
     dateOption(date) {
       const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const dd = String(today.getDate()).padStart(2, '0');
-      const todayStr = `${yyyy}/${mm}/${dd}`;
-      const isValidDate = date >= todayStr;
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const yyyy = tomorrow.getFullYear();
+      const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+      const dd = String(tomorrow.getDate()).padStart(2, '0');
+      const minDateStr = `${yyyy}/${mm}/${dd}`;
+
+      const isValidDate = minDateStr <= date;
       const isOccupied = this.occupiedDates.includes(date);
       
       return isValidDate && !isOccupied;
+    },
+
+    timeOption(hr, min, sec) {
+      if (!this.formClient.event_date) return false;
+
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const yyyy = tomorrow.getFullYear();
+      const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+      const dd = String(tomorrow.getDate()).padStart(2, '0');
+      const tomorrowStr = `${yyyy}/${mm}/${dd}`;
+
+      if (tomorrowStr === this.formClient.event_date) {
+
+        if (today.getHours() > hr) return false;
+
+        if (today.getHours() === hr && null !== min && today.getMinutes() > min) return false;
+      }
+
+      return true;
     },
 
     async loadOccupiedDates(artistId) {
