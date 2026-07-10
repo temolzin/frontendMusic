@@ -57,27 +57,8 @@
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="text-center">
           <q-badge
-            v-if="props.row.event_status === 'cancelled'"
-            color="negative"
-            label="Cancelado"
-            class="q-pa-sm"
-          />
-          <q-badge
-            v-else-if="props.row.event_status === 'rejected'"
-            color="negative"
-            label="Rechazado"
-            class="q-pa-sm"
-          />
-          <q-badge
-            v-else-if="props.row.event_status === 'expired'"
-            color="grey-7"
-            label="Expirado"
-            class="q-pa-sm"
-          />
-          <q-badge
-            v-else
-            :color="props.row.event_status === 'completed' ? 'positive' : 'warning'"
-            :label="props.row.event_status === 'completed' ? 'Completada' : 'Pendiente'"
+            :color="statusColor(props.row)"
+            :label="statusLabel(props.row)"
             class="q-pa-sm"
           />
         </q-td>
@@ -148,27 +129,8 @@
                   </q-item-label>
                   <q-item-label v-if="col.name === 'status'">
                     <q-badge
-                      v-if="props.row.event_status === 'cancelled'"
-                      color="negative"
-                      label="Cancelado"
-                      class="q-pa-sm"
-                    />
-                    <q-badge
-                      v-else-if="props.row.event_status === 'rejected'"
-                      color="negative"
-                      label="Rechazado"
-                      class="q-pa-sm"
-                    />
-                    <q-badge
-                      v-else-if="props.row.event_status === 'expired'"
-                      color="grey-7"
-                      label="Expirado"
-                      class="q-pa-sm"
-                    />
-                    <q-badge
-                      v-else
-                      :color="props.row.event_status === 'completed' ? 'positive' : 'warning'"
-                      :label="props.row.event_status === 'completed' ? 'Completada' : 'Pendiente'"
+                      :color="statusColor(props.row)"
+                      :label="statusLabel(props.row)"
                       class="q-pa-sm"
                     />
                   </q-item-label>
@@ -459,17 +421,21 @@ export default {
     },
 
     statusLabel(row) {
+      if (row.event_status === 'cancelled') return 'Cancelado';
+      if (row.event_status === 'rejected' || row.approval_status === 'rejected') return 'Rechazado';
+      if (row.event_status === 'expired' || row.approval_status === 'expired') return 'Expirado';
       if (row.approval_status === 'pending_approval') return 'Por confirmar';
-      if (row.approval_status === 'rejected') return 'Rechazada';
-      if (row.approval_status === 'expired') return 'Expirada';
-      return row.status === 'completed' ? 'Completada' : 'Pendiente';
+      if (row.status === 'completed') return 'Completada';
+      return row.payment_method === 'cash' ? 'Pendiente de pago' : 'Pendiente';
     },
 
     statusColor(row) {
+      if (row.event_status === 'cancelled') return 'negative';
+      if (row.event_status === 'rejected' || row.approval_status === 'rejected') return 'negative';
+      if (row.event_status === 'expired' || row.approval_status === 'expired') return 'grey-7';
       if (row.approval_status === 'pending_approval') return 'info';
-      if (row.approval_status === 'rejected') return 'negative';
-      if (row.approval_status === 'expired') return 'grey';
-      return row.status === 'completed' ? 'positive' : 'warning';
+      if (row.status === 'completed') return 'positive';
+      return row.payment_method === 'cash' ? 'orange' : 'warning';
     },
 
     canReport(row) {

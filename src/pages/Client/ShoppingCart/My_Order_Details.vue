@@ -201,7 +201,15 @@
                 </q-item-section>
               </q-item>
             </q-list>
-            <q-btn v-if="selectedPurchase.payment_method === 'cash' && selectedPurchase.status === 'pending'" unelevated rounded color="primary" icon="refresh" label="Generar nueva referencia" class="full-width q-mt-md" @click="generateNewReference(selectedPurchase)" />
+            <q-btn
+              v-if="selectedPurchase.payment_method === 'cash' && selectedPurchase.approval_status === 'accepted' && selectedPurchase.cash_reference"
+              unelevated rounded color="primary" icon="visibility"
+              label="Referencia de Pago"
+              class="full-width q-mt-md" @click="viewReference(selectedPurchase)"
+            />
+            <div v-else-if="selectedPurchase.payment_method === 'cash' && selectedPurchase.approval_status === 'pending_approval'" class="text-caption text-grey q-mt-md text-center">
+              La referencia de pago estará disponible cuando el artista acepte tu solicitud.
+            </div>
             <q-btn
               unelevated
               rounded
@@ -237,7 +245,7 @@
           <div ref="regeneratedReceipt" class="receipt-card">
             <q-card-section class="text-center q-pb-none q-pt-md">
               <img src="/logovibeer-black.png" style="height: 55px" class="q-mb-sm" />
-              <div class="text-h6 text-primary text-weight-bold">Nueva referencia generada</div>
+              <div class="text-h6 text-primary text-weight-bold">Referencia de pago</div>
             </q-card-section>
             <q-card-section class="text-center q-pt-md">
               <div class="row items-center justify-center q-mb-sm">
@@ -692,27 +700,15 @@ export default {
       });
     },
 
-    async generateNewReference(purchase) {
-      this.$q.loading.show({ message: 'Generando nueva referencia...', spinnerColor: 'primary' });
-      try {
-        const response = await api.post('/api/payment/cash/regenerate', {
-          artist_sale_id: purchase.id,
-        });
-        if (response.data && response.data.data) {
-          this.regeneratedRef = response.data.data;
-          this.showRegeneratedRefDialog = true;
-          this.$q.notify({ type: 'positive', message: 'Nueva referencia generada', position: 'top' });
-        }
-      } catch (err) {
-        console.error(err);
-        this.$q.notify({
-          type: 'negative',
-          message: err.response?.data?.error?.description || err.response?.data?.error || 'Error al generar la referencia',
-          position: 'top'
-        });
-      } finally {
-        this.$q.loading.hide();
-      }
+    viewReference(purchase) {
+      this.regeneratedRef = {
+        store: purchase.store,
+        reference: purchase.cash_reference,
+        barcode: purchase.cash_barcode_url,
+        amount: purchase.amount,
+        due_date: purchase.cash_due_date,
+      };
+      this.showRegeneratedRefDialog = true;
     },
 
     async captureRegeneratedReceipt() {
