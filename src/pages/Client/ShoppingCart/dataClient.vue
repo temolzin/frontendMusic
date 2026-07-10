@@ -1468,7 +1468,7 @@ export default defineComponent({
       }
 
       this.$q.loading.show({
-        message: 'Generando referencia de pago...',
+        message: 'Registrando tu reserva...',
         spinnerColor: 'primary'
       });
 
@@ -1503,17 +1503,14 @@ export default defineComponent({
 
         const response = await api.post('/api/payment/cash', payload);
 
-        if (response.data && response.data.data) {
-          this.cashReference = response.data.data;
+        this.$q.notify({
+          type: 'positive',
+          message: response.data?.message || 'Reserva registrada. Pendiente de aprobación del artista.',
+          position: 'top',
+          timeout: 6000
+        });
 
-          this.$q.notify({
-            type: 'positive',
-            message: 'Referencia de pago generada correctamente.',
-            position: 'top'
-          });
-
-          this.showCashDialog = true;
-        }
+        this.$router.push('/client/shopping-cart/view-my-order-details');
       } catch (err) {
         console.error('Error procesando pago:', err);
 
