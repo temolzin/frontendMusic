@@ -1505,7 +1505,7 @@ export default defineComponent({
 
         this.$q.notify({
           type: 'positive',
-          message: response.data?.message || 'Reserva registrada. Pendiente de aprobación del artista.',
+          message: response.data?.message || 'Reserva registrada. Recibirás tu referencia de pago cuando el artista acepte tu solicitud.',
           position: 'top',
           timeout: 6000
         });
