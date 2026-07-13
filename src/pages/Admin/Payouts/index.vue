@@ -39,7 +39,7 @@
           <q-td key="event_date" :props="props">
             {{ props.row.event_date }} a las {{ props.row.event_hour.substring(0, 5) }} hrs
           </q-td>
-          <q-td key="net_artist_payout" :props="props" class="text-weight-bold" :class="props.row.total_penalties > 0 ? 'text-orange' : 'text-positive'">
+          <q-td key="net_artist_payout" :props="props" class="text-weight-bold" :class="props.row.total_penalties > 0 ? 'text-primary' : 'text-positive'">
             ${{ formatCurrency(props.row.adjusted_net_payout) }} MXN
           </q-td>
           <q-td key="status" :props="props">
@@ -67,7 +67,6 @@
                     </div>
                     <q-separator class="q-my-sm" />
                     <div class="text-subtitle2 text-negative q-mb-xs">
-                      <q-icon name="gavel" size="sm" class="q-mr-xs" />
                       Penalizaciones pendientes
                     </div>
                     <div v-for="penalty in props.row.penalties" :key="penalty.sale_id" class="row justify-between q-py-xs text-negative">
@@ -101,7 +100,6 @@
                     <template v-if="props.row.penalties && props.row.penalties.length > 0">
                       <q-separator class="q-my-xs" />
                       <div class="text-subtitle2 text-negative q-mb-xs q-mt-sm">
-                        <q-icon name="gavel" size="sm" class="q-mr-xs" />
                         Penalizaciones pendientes
                       </div>
                       <div v-for="penalty in props.row.penalties" :key="penalty.sale_id" class="row justify-between q-py-xs text-negative">
@@ -115,7 +113,7 @@
                       </div>
                     </template>
                     <q-separator class="q-my-xs" />
-                    <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold" :class="props.row.total_penalties > 0 ? 'text-orange' : 'text-positive'">
+                    <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold" :class="props.row.total_penalties > 0 ? 'text-primary' : 'text-positive'">
                       <span>Monto Neto Final a Transferir:</span>
                       <span>${{ formatCurrency(props.row.adjusted_net_payout) }} MXN</span>
                     </div>
