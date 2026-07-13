@@ -146,11 +146,18 @@
                 </div>
               </div>
 
-              <p class="text-center q-mt-lg">
-                Al continuar, estás aceptando los
-                <u>Términos y condiciones de uso</u>. Consulta nuestra
-                <u>Política de privacidad</u>.
-              </p>
+              <div class="row items-center q-pt-sm">
+                <div class="text-body2 q-ml-sm" style="flex: 1;">
+                  Al continuar estas aceptando los 
+                  <router-link :to="{ name: 'legal.terms' }" class="text-primary text-weight-medium" target="_blank">
+                    Términos y condiciones de uso
+                  </router-link> 
+                  y la 
+                  <router-link :to="{ name: 'legal.privacy' }" class="text-primary text-weight-medium" target="_blank">
+                    Política de privacidad
+                  </router-link>.
+                </div>
+              </div>
               <div class="q-mt-md q-mb-lg q-gutter-md">
                 <div class="text-center">
                   ¿Olvidaste tu contraseña?
