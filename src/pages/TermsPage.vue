@@ -85,8 +85,39 @@
         >
           <q-card>
             <q-card-section class="text-body1 text-grey-9">
-              <p><strong>Inasistencia del Artista (No-Show):</strong> Si el Artista no se presenta al evento acordado, se reembolsará el 100% del dinero al Cliente. El Artista será acreedor a una penalización que incluye la suspensión temporal de su cuenta y la pérdida inmediata de su estatus de verificación en la plataforma.</p>
-              <p><strong>Cancelaciones del Cliente:</strong> Las cancelaciones por parte del cliente se sujetarán a políticas temporales. Si el Cliente cancela con menos de 24 horas de anticipación, se aplicará una penalización del 20% del valor total en favor del Artista por concepto de compensación por fecha bloqueada.</p>
+             <p><strong>Políticas de Cancelación (artistas y clientes):</strong> Para cancelaciones y reembolsos se aplican los siguientes supuestos y porcentajes para ambas partes.</p>
+              <div class="q-markup-table q-table__container q-table--horizontal-lines q-mt-md">
+                <table class="q-table text-left">
+                  <thead>
+                    <tr class="text-weight-bold bg-grey-2">
+                      <th class="text-left">Días antes del evento</th>
+                      <th class="text-left">Penalización</th>
+                      <th class="text-left">Reembolso</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>7+ días</td>
+                      <td>0%</td>
+                      <td>100% del monto</td>
+                    </tr>
+                    <tr>
+                      <td>3-6 días</td>
+                      <td>25% del monto</td>
+                      <td>75%</td>
+                    </tr>
+                    <tr>
+                      <td>1-2 días</td>
+                      <td>50% del monto</td>
+                      <td>50%</td>
+                    </tr>
+                    <tr>
+                      <td>Mismo día</td>
+                      <td colspan="2" class="text-weight-medium text-negative">No se puede cancelar</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </q-card-section>
           </q-card>
         </q-expansion-item>
