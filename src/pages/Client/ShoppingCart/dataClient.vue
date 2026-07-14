@@ -1280,7 +1280,7 @@ export default defineComponent({
         const openpayKeys = keysRes.data.data;
         OpenPay.setId(openpayKeys.openpay_id);
         OpenPay.setApiKey(openpayKeys.openpay_public_key);
-        OpenPay.setSandboxMode(true);
+        OpenPay.setSandboxMode(openpayKeys.openpay_sandbox_mode ?? true);
 
         let deviceDataId = null;
         try {
