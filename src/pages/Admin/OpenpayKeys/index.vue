@@ -35,6 +35,17 @@
           outlined
           class="q-mb-sm"
         />
+
+        <q-toggle
+          v-model="form.openpay_sandbox_mode"
+          label="Modo Sandbox (pruebas)"
+          color="primary"
+          class="q-mt-sm"
+        />
+        <div class="text-caption text-grey q-ml-xs">
+          <template v-if="form.openpay_sandbox_mode">Activado — las transacciones serán simuladas</template>
+          <template v-else>Desactivado — las transacciones serán reales (producción)</template>
+        </div>
       </q-card-section>
 
       <q-card-actions align="right" class="q-pa-sm">
@@ -66,6 +77,7 @@ export default defineComponent({
       openpay_id: '',
       openpay_secret: '',
       openpay_public_key: '',
+      openpay_sandbox_mode: true,
     })
 
     const load = async () => {
@@ -75,6 +87,7 @@ export default defineComponent({
           form.value.openpay_id = res.data.data.openpay_id
           form.value.openpay_secret = res.data.data.openpay_secret
           form.value.openpay_public_key = res.data.data.openpay_public_key
+          form.value.openpay_sandbox_mode = res.data.data.openpay_sandbox_mode ?? true
         }
       } catch (e) {
         console.error('Error cargando credenciales', e)
