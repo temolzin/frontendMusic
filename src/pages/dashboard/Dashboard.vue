@@ -106,17 +106,6 @@
           dense
           class="q-mb-sm"
         />
-
-        <q-toggle
-          v-model="openpayForm.openpay_sandbox_mode"
-          label="Modo Sandbox (pruebas)"
-          color="primary"
-          class="q-mt-sm"
-        />
-        <div class="text-caption text-grey q-ml-xs">
-          <template v-if="openpayForm.openpay_sandbox_mode">Activado — las transacciones serán simuladas</template>
-          <template v-else>Desactivado — las transacciones serán reales (producción)</template>
-        </div>
       </q-card-section>
 
       <q-card-actions align="right" class="q-pa-sm">
@@ -244,7 +233,6 @@ export default {
         openpay_id: "",
         openpay_secret: "",
         openpay_public_key: "",
-        openpay_sandbox_mode: true,
       },
       stats: {
         favorites: 0,
@@ -298,7 +286,6 @@ export default {
           this.openpayForm.openpay_id = res.data.data.openpay_id;
           this.openpayForm.openpay_secret = res.data.data.openpay_secret;
           this.openpayForm.openpay_public_key = res.data.data.openpay_public_key;
-          this.openpayForm.openpay_sandbox_mode = res.data.data.openpay_sandbox_mode ?? true;
         }
       } catch (e) {
         console.error("Error cargando keys OpenPay", e);
