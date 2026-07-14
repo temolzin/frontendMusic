@@ -79,10 +79,6 @@
                       @click="$router.push({ name: 'client.view-group-by-gender-slug', params: { slugMG: props.row.musical_genders[0].slug, slugA: props.row.slug } })">
                       {{ props.row.name }}
                     </div> 
-                    <div class="col-auto text-grey text-caption q-pt-md row no-wrap items-center">
-                      <q-icon name="map" />
-                      <small>{{ props.row.zone }}</small>
-                    </div>
                   </div>
 
                   <q-rating 
@@ -96,7 +92,6 @@
                     no-dimming 
                     readonly 
                   />
-
                 </q-card-section>
 
                 <q-card-section class="q-pt-none">
@@ -123,9 +118,12 @@
                     {{ props.row.history }}
                   </div>
                 </q-card-section>
-
                 <q-card-section class="q-pt-none">
-                  <div class="text-caption ellipsis, mode ? 'text-grey-5' : 'text-black']">
+                  <div class="row items-center q-gutter-xs text-grey-7 q-mb-xs">
+                    <q-icon name="map" size="14px" />
+                    <span class="text-caption text-weight-medium">{{ props.row.zone }}</span>
+                  </div>
+                  <div class="text-caption ellipsis" :class="mode ? 'text-grey-5' : 'text-black'">
                     {{ formatGenres(props.row.musical_genders) }}
                   </div>
                 </q-card-section>
