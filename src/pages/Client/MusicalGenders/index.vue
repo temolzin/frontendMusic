@@ -32,7 +32,7 @@
               class="gender-card__image"
               :style="{
                 backgroundImage: gender.image
-                  ? 'url(' + gender.image + ')'
+                  ? `url('${gender.image}')`
                   : 'none',
               }"
             >

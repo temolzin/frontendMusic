@@ -537,8 +537,11 @@ export default {
       return Math.round(this.artist.price_hour * (1 - discount) * 100) / 100;
     },
     imageList() {
-      const gallery = this.artist?.media || this.artist?.artistGallery || [];
-      return Array.isArray(gallery) ? gallery : [];
+
+      if (this.artist && this.artist.artistGallery) {
+        return this.artist.artistGallery;
+      }
+      return [];
     }
   },
   mounted() {
