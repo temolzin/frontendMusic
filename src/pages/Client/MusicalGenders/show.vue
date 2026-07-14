@@ -214,7 +214,7 @@
             class="text-center q-mb-md ellipsis"
             :class="mode ? 'title-group2-white' : 'title-group2'"
           >
-            <small>Galería de imágenes de </small> {{ artist.name }}
+            <small>Galería de imágenes de {{ artist.name }}</small> 
           </h3>
           <q-carousel
             swipeable
@@ -255,6 +255,87 @@
     </div>
 
     <!--Fin Gallery -->
+    <div v-if="artistVideos && artistVideos.length > 0">
+      <div class="q-pa-md">
+        <h3
+          class="text-center q-mb-md ellipsis"
+          :class="mode ? 'title-group2-white' : 'title-group2'"
+        >
+          <small>Galería de videos de {{ artist.name }}</small> 
+        </h3>
+        <q-carousel
+          swipeable
+          animated
+          thumbnails
+          infinite
+          v-model="slideVideo"
+          v-model:fullscreen="fullscreenVideo"
+          :autoplay="autoplay"
+          arrows
+          transition-prev="slide-right"
+          transition-next="slide-left"
+          class="q-mt-lg"
+          style="min-height: 400px; background: transparent;"
+        >
+          <q-carousel-slide
+            v-for="(video, index) in artistVideos"
+            :key="video.id"
+            :name="index + 1"
+            :img-src="`https://img.youtube.com/vi/${video.youtube_url}/hqdefault.jpg`"
+            class="column no-wrap flex-center q-pa-none"
+          >
+            <div class="video-card q-pa-md">
+              <a
+                class="video-link"
+                :href="`https://www.youtube.com/watch?v=${video.youtube_url}`"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class="video-thumb-wrapper">
+                  <q-img
+                    :src="`https://img.youtube.com/vi/${video.youtube_url}/hqdefault.jpg`"
+                    class="video-thumb"
+                    fit="cover"
+                  >
+                    <div class="video-overlay">
+                      <q-btn
+                        round
+                        color="red"
+                        text-color="white"
+                        icon="play_arrow"
+                        size="lg"
+                      />
+                    </div>
+                  </q-img>
+                </div>
+              </a>
+              <div 
+                class="text-subtitle1 text-center q-mt-sm text-weight-bold ellipsis"
+                :class="mode ? 'text-white' : 'text-dark'"
+              >
+                {{ video.title }}
+              </div>
+              <div class="text-caption text-center q-mt-xs" :class="mode ? 'text-grey-4' : 'text-grey-7'">
+                Haz clic para ver el video en YouTube
+              </div>
+            </div>
+          </q-carousel-slide>
+          <template v-slot:control>
+            <q-carousel-control position="bottom-right" :offset="[18, 18]">
+              <q-btn
+                push
+                round
+                dense
+                color="white"
+                text-color="primary"
+                :icon="fullscreenVideo ? 'fullscreen_exit' : 'fullscreen'"
+                @click="fullscreenVideo = !fullscreenVideo"
+              />
+            </q-carousel-control>
+          </template>
+        </q-carousel>
+      </div>
+    </div>
   </q-page>
 </template>
 
@@ -278,6 +359,8 @@ export default {
       slide: ref(1),
       autoplay: ref(true),
       fullscreen: ref(false),
+      slideVideo: ref(1),
+      fullscreenVideo: ref(false),
       showGallery: null,
       showInfo: null,
       listCart: [],
@@ -542,6 +625,11 @@ export default {
         return this.artist.artistGallery;
       }
       return [];
+    },
+    artistVideos() {
+      if (!this.artist) return [];
+      const videos = this.artist.artist_videos;     
+      return Array.isArray(videos) ? videos : [];
     }
   },
   mounted() {
@@ -644,6 +732,34 @@ export default {
     rgba(20, 19, 19, 0.932)
   );
 }
+.video-card {
+  width: 100%;
+  max-width: 700px;
+  box-sizing: border-box;
+}
+.video-link {
+  display: block;
+  text-decoration: none;
+}
+.video-thumb-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.video-thumb {
+  width: 100%;
+  height: 100%;
+}
+.video-overlay {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.18);
+}
 @media (max-width: 600px) {
   .text {
     margin-top: -115vh;
@@ -689,6 +805,9 @@ export default {
       rgba(28, 87, 248, 0) 100%,
       rgb(255, 255, 255)
     );
+  }
+  .video-card {
+    max-width: 100%;
   }
 }
 </style>
