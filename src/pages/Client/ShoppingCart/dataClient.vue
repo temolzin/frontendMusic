@@ -489,31 +489,22 @@
                       </span>
                     </q-item-section>
                   </q-item>
-                  <q-item v-if="getExtraKmForProduct(product)" class="full-width q-pl-lg text-caption text-grey">
-                    <q-item-section>
-                      <q-item-label>
-                        Km extra: {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km x ${{ (+getExtraKmForProduct(product).extra_kilometre || 0).toFixed(2) }}
-                      </q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      + ${{ (+getExtraKmForProduct(product).extra_km_cost || 0).toFixed(2) }}
-                    </q-item-section>
-                  </q-item>
                 </template>
                 <q-separator></q-separator>
-
-                <q-item class="full-width">
-                  <q-item-section>
-                    <q-item-label lines="1">Envio</q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <template v-if="totalExtraKmCost > 0">
-                      ${{ totalExtraKmCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                    </template>
-                    <template v-else>--Gratis--</template>
-                  </q-item-section>
-                </q-item>
-                <q-separator></q-separator>
+                <div v-if="totalExtraKmCost > 0" class="q-px-md q-py-sm">
+                  <div class="text-subtitle2">Costo por cobertura extra:</div>
+                  <template v-for="(product, index) in shoppingCardDetail" :key="index">
+                    <div v-if="getExtraKmForProduct(product)" class="row justify-between q-py-xs text-caption text-grey q-pl-md">
+                      <span>- {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km x ${{ (+getExtraKmForProduct(product).extra_kilometre || 0).toFixed(2) }}</span>
+                      <span>${{ (+getExtraKmForProduct(product).extra_km_cost || 0).toFixed(2) }}</span>
+                    </div>
+                  </template>
+                  <q-separator class="q-my-xs"></q-separator>
+                  <div class="row justify-between q-py-xs text-caption text-weight-medium">
+                    <span>Total</span>
+                    <span>${{ totalExtraKmCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
+                  </div>
+                </div>
                 <q-item class="full-width" style="border-top: 3px dotted blue">
                   <q-item-section>
                     <q-item-label lines="1">
