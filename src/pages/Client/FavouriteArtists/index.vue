@@ -40,18 +40,12 @@
                 />
 
                 <div class="row no-wrap items-center">
+                  <!-- Dejamos el nombre del artista ocupando toda la fila de la cabecera -->
                   <div
                     class="col text-h6 ellipsis search text-weight-regular"
                     @click="search(props.row.artist.slug)"
                   >
                     {{ props.row.artist.name }}
-                  </div>
-
-                  <div
-                    class="col-auto text-grey text-caption q-pt-md row no-wrap items-center"
-                  >
-                    <q-icon name="map" />
-                    <small>{{ props.row.artist.zone }}</small>
                   </div>
                 </div>
               </q-card-section>
@@ -78,6 +72,12 @@
                 </div>
                 <div class="text-caption text-grey ellipsis">
                   {{ props.row.artist.history }}
+                </div>
+              </q-card-section>
+              <q-card-section class="q-pt-none">
+                <div class="row items-center q-gutter-xs text-grey-7 q-mb-xs">
+                  <q-icon name="map" size="14px" />
+                  <span class="text-caption text-weight-medium">{{ props.row.artist.zone }}</span>
                 </div>
               </q-card-section>
 
