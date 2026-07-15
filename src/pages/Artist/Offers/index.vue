@@ -377,14 +377,7 @@ export default {
           end_time_only: endTime
         };
       } else {
-        this.form = {
-          description: "",
-          discount_percentage: "",
-          start_date_only: "",
-          start_time_only: "",
-          end_date_only: "",
-          end_time_only: ""
-        };
+        this.form = {description: "", discount_percentage: "", start_date_only: "", start_time_only: "", end_date_only: "", end_time_only: ""};
       }
       this.formDialog = true;
     },
@@ -407,13 +400,14 @@ export default {
 
       this.loading = true;
       try {
-        if (this.editingOffer) {
-          await this.updateOffer({ id: this.editingOffer.id, ...payload });
-          this.$q.notify({ type: 'positive', message: 'Oferta actualizada' });
-        } else {
-          await this.createOffer(payload);
-          this.$q.notify({ type: 'positive', message: 'Oferta creada' });
-        }
+        await (this.editingOffer 
+        ? this.updateOffer({ id: this.editingOffer.id, ...payload })
+        : this.createOffer(payload));
+
+      this.$q.notify({ 
+        type: 'positive', 
+        message: this.editingOffer ? 'Oferta actualizada' : 'Oferta creada' 
+      });
         this.formDialog = false;
         await this.getOffers();
       } catch (err) {
