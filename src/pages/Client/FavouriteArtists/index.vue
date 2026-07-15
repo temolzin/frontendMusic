@@ -40,7 +40,6 @@
                 />
 
                 <div class="row no-wrap items-center">
-                  <!-- Dejamos el nombre del artista ocupando toda la fila de la cabecera -->
                   <div
                     class="col text-h6 ellipsis search text-weight-regular"
                     @click="search(props.row.artist.slug)"
