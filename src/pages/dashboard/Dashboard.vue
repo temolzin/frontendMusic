@@ -122,7 +122,7 @@
   </q-dialog>
 
   <q-page padding>
-    <q-table v-if="getMe.role[0] === 'cliente' && skeleton == false"
+    <q-table v-if="getMe.role[0] === 'cliente' && skeleton == false && stateFavouriteArtists && stateFavouriteArtists.length > 0"
       grid
       card-class="bg-primary text-white"
       :rows="stateFavouriteArtists"
@@ -201,6 +201,25 @@
         </div>
       </template>
     </q-table>
+    <div v-if="getMe.role[0] === 'cliente' && skeleton == false && (!stateFavouriteArtists || stateFavouriteArtists.length === 0)">
+      <p class="q-mt-sm q-mb-sm text-h4" v-if="skeleton == false">
+        Tus Favoritos
+        <q-spinner-audio color="accent" class="q-pb-sm" />
+      </p>
+      <q-card flat bordered class="empty-cart-card text-center q-pa-xl q-mx-auto q-mt-lg">
+        <q-icon name="favorite_border" color="primary" size="56px" />
+        <h5 class="q-mt-md q-mb-sm">Aún no tienes artistas favoritos</h5>
+        <p class="text-grey-7 q-mb-lg">
+          Agrega tus artistas favoritos.
+        </p>
+        <q-btn
+          color="primary"
+          label="VER ARTISTAS"
+          icon="search"
+          @click="$router.push('/client/store')"
+        />
+      </q-card>
+    </div>
   </q-page>
 </template>
 
@@ -373,5 +392,8 @@ export default {
 }
 .search:hover {
   color: #ff78a5;
+}
+.empty-cart-card {
+  max-width: 560px;
 }
 </style>
