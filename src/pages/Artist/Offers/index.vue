@@ -132,26 +132,101 @@
                 val => val >= 1 || 'El descuento mínimo es 1%',
                 val => val <= 90 || 'El descuento no puede ser mayor al 90%' ]"
             />
-            <div>
-              <div class="text-caption text-grey-7 q-mb-xs">Fecha inicio</div>
-              <q-input
-                v-model="form.start_date"
-                outlined
-                type="datetime-local"
-                :rules="[val => !!val || 'La fecha de inicio es requerida']"
-              />
+            <div class="row q-gutter-md">
+              <div class="col">
+                <div class="text-caption text-grey-7 q-mb-xs">Fecha inicio</div>
+                <q-input
+                  v-model="form.start_date_only"
+                  outlined
+                  readonly
+                  :rules="[val => !!val || 'La fecha es requerida']"
+                >
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-date
+                          v-model="form.start_date_only"
+                          :options="optionsStartDate"
+                          :locale="spanishLocale()"
+                        >
+                          <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                            <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+              <div class="col">
+                <div class="text-caption text-grey-7 q-mb-xs">Hora inicio</div>
+                <q-input
+                  v-model="form.start_time_only"
+                  outlined
+                  readonly
+                  :rules="[val => !!val || 'La hora es requerida']"
+                >
+                  <template v-slot:append>
+                    <q-icon name="access_time" class="cursor-pointer">
+                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-time
+                          v-model="form.start_time_only"
+                          :options="optionsStartTime"
+                          format24h
+                        />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
             </div>
-            <div>
-              <div class="text-caption text-grey-7 q-mb-xs">Fecha fin</div>
-              <q-input
-                v-model="form.end_date"
-                outlined
-                type="datetime-local"
-                :rules="[
-                  val => !!val || 'La fecha de fin es requerida',
-                  val => !form.start_date || val > form.start_date || 'La fecha de fin debe ser posterior a la fecha de inicio'
-                ]"
-              />
+            <div class="row q-gutter-md">
+              <div class="col">
+                <div class="text-caption text-grey-7 q-mb-xs">Fecha fin</div>
+                <q-input
+                  v-model="form.end_date_only"
+                  outlined
+                  readonly
+                  :rules="[val => !!val || 'La fecha es requerida']"
+                >
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-date
+                          v-model="form.end_date_only"
+                          :options="optionsEndDate"
+                          :locale="spanishLocale()"
+                        >
+                          <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                            <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                          </div>
+                        </q-date>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
+              <div class="col">
+                <div class="text-caption text-grey-7 q-mb-xs">Hora fin</div>
+                <q-input
+                  v-model="form.end_time_only"
+                  outlined
+                  readonly
+                  :rules="[val => !!val || 'La hora es requerida']"
+                >
+                  <template v-slot:append>
+                    <q-icon name="access_time" class="cursor-pointer">
+                      <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                        <q-time
+                          v-model="form.end_time_only"
+                          :options="optionsEndTime"
+                          format24h
+                        />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+              </div>
             </div>
           </q-card-section>
           <q-card-actions align="right">
@@ -181,8 +256,10 @@ export default {
       form: {
         description: "",
         discount_percentage: "",
-        start_date: "",
-        end_date: "",
+        start_date_only: "",
+        start_time_only: "",
+        end_date_only: "",
+        end_time_only: ""
       },
       columns: [
         { name: "description", label: "Descripción", field: "description", align: "left" },
@@ -201,31 +278,148 @@ export default {
   methods: {
     ...mapActions("offers", ["getOffers", "createOffer", "updateOffer", "deleteOffer"]),
 
+    isValidFutureDateTime(dateTimeStr) {
+      if (!dateTimeStr) return true;
+
+      const selectedDateTime = new Date(dateTimeStr);
+      const now = new Date();
+
+      now.setSeconds(0, 0);
+      selectedDateTime.setSeconds(0, 0);
+
+      return selectedDateTime > now;
+    },
+
+    spanishLocale() {
+      return {
+        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        daysShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        firstDayOfWeek: 0,
+        format24h: true
+      };
+    },
+
+    optionsStartDate(date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const [year, month, day] = date.split('/');
+      const selectedDate = new Date(year, month - 1, day);
+      return selectedDate >= today;
+    },
+
+    optionsStartTime(hour, minute) {
+      const now = new Date();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const selectedDate = this.form.start_date_only;
+      if (!selectedDate) return true;
+
+      const [year, month, day] = selectedDate.split('/');
+      const selected = new Date(year, month - 1, day, hour, minute);
+
+      return selected > now;
+    },
+
+    optionsEndDate(date) {
+      const startDate = this.form.start_date_only;
+      if (!startDate) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const [year, month, day] = date.split('/');
+        const selectedDate = new Date(year, month - 1, day);
+        return selectedDate >= today;
+      }
+
+      const [sYear, sMonth, sDay] = startDate.split('/');
+      const start = new Date(sYear, sMonth - 1, sDay);
+
+      const [year, month, day] = date.split('/');
+      const selectedDate = new Date(year, month - 1, day);
+
+      return selectedDate >= start;
+    },
+
+    optionsEndTime(hour, minute) {
+      const startDate = this.form.start_date_only;
+      const startTime = this.form.start_time_only;
+      const endDate = this.form.end_date_only;
+
+      if (!startDate || !startTime || !endDate) return true;
+
+      const [sYear, sMonth, sDay] = startDate.split('/');
+      const [sHour, sMinute] = startTime.split(':');
+      const startDateTime = new Date(sYear, sMonth - 1, sDay, sHour, sMinute);
+
+      const [eYear, eMonth, eDay] = endDate.split('/');
+      const endDateTime = new Date(eYear, eMonth - 1, eDay, hour, minute);
+
+      return endDateTime > startDateTime;
+    },
+
     openForm(offer = null) {
       this.editingOffer = offer;
       if (offer) {
+        const startDateTime = offer.start_date?.slice(0, 16);
+        const endDateTime = offer.end_date?.slice(0, 16);
+
+        const [startDate, startTime] = startDateTime.split(' ');
+        const [endDate, endTime] = endDateTime.split(' ');
+
         this.form = {
           description: offer.description,
           discount_percentage: offer.discount_percentage,
-          start_date: offer.start_date?.slice(0, 16),
-          end_date: offer.end_date?.slice(0, 16),
+          start_date_only: startDate.replace(/-/g, '/'),
+          start_time_only: startTime,
+          end_date_only: endDate.replace(/-/g, '/'),
+          end_time_only: endTime
         };
       } else {
-        this.form = { description: "", discount_percentage: "", start_date: "", end_date: "" };
+        this.form = {
+          description: "",
+          discount_percentage: "",
+          start_date_only: "",
+          start_time_only: "",
+          end_date_only: "",
+          end_time_only: ""
+        };
       }
       this.formDialog = true;
     },
 
     async submitForm() {
+      const valid = await this.$refs.offerForm.validate();
+      if (!valid) return;
+
+      const convertDate = (dateStr) => dateStr.replace(/\//g, '-');
+
+      const start_date = `${convertDate(this.form.start_date_only)} ${this.form.start_time_only}:00`;
+      const end_date = `${convertDate(this.form.end_date_only)} ${this.form.end_time_only}:00`;
+
+      const payload = {
+        description: this.form.description,
+        discount_percentage: this.form.discount_percentage,
+        start_date: start_date,
+        end_date: end_date
+      };
+
+      this.loading = true;
       try {
-        const action = this.editingOffer
-            ? this.updateOffer({ id: this.editingOffer.id, data: this.form })
-            : this.createOffer(this.form);
-        await action;
-        this.$q.notify({ type: "positive", message: "Oferta guardada correctamente" });
+        if (this.editingOffer) {
+          await this.updateOffer({ id: this.editingOffer.id, ...payload });
+          this.$q.notify({ type: 'positive', message: 'Oferta actualizada' });
+        } else {
+          await this.createOffer(payload);
+          this.$q.notify({ type: 'positive', message: 'Oferta creada' });
+        }
         this.formDialog = false;
+        await this.getOffers();
       } catch (err) {
-        this.$q.notify({ type: "negative", message: err?.response?.data?.message || "Error al guardar la oferta" });
+        this.$q.notify({ type: 'negative', message: err.response?.data?.message || 'Error al guardar' });
+      } finally {
+        this.loading = false;
       }
     },
 
