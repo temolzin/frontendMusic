@@ -179,9 +179,9 @@
 
     <notice-not-info v-if="artist == null" />
 
-    <notice-no-sales
-      v-if="artist != null && (!stateArtistSales || stateArtistSales.length === 0)"
-    />
+    <div v-if="!stateArtistSales || stateArtistSales.length === 0" class="text-center q-pa-lg q-mt-xl">
+      <p class="text-h6 text-grey-7">No tienes ventas registradas</p>
+    </div>
 
     <q-dialog v-model="isChatDialogOpen" persistent>
       <q-card style="width: 90vw; max-width: 600px; display: flex; flex-direction: column;">

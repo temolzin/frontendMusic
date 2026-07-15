@@ -121,7 +121,7 @@
               />
 
               <q-input
-                v-model="formCreate.coverage_radius"
+                v-model.number="formCreate.coverage_radius"
                 class="col-12 col-sm-5 q-ma-sm"
                 label="Radio de cobertura (km)"
                 hint="Distancia en km que cubres sin costo extra"
@@ -568,7 +568,7 @@
               />
 
               <q-input
-                v-model="formCreate.coverage_radius"
+                v-model.number="formCreate.coverage_radius"
                 class="col-12 col-sm-5 q-ma-sm"
                 label="Radio de cobertura (km)"
                 hint="Distancia en km que cubres sin costo extra"
@@ -937,7 +937,7 @@ export default {
         InstFormData.append("price_hour", this.formCreate.price_hour);
         InstFormData.append("image_artist", this.formCreate.image_artist);
         InstFormData.append("extra_kilometre", this.formCreate.extra_kilometre);
-        InstFormData.append("coverage_radius", this.formCreate.coverage_radius);
+        InstFormData.append("coverage_radius", parseInt(this.formCreate.coverage_radius) || 0);
         InstFormData.append("name_manager", this.formCreate.name_manager);
         InstFormData.append("phone_manager", this.formCreate.phone_manager);
         InstFormData.append("email_manager", this.formCreate.email_manager);
@@ -1096,7 +1096,7 @@ export default {
           InstFormData.append("image_manager", this.formCreate.image_manager);
         }
         InstFormData.append("extra_kilometre", this.formCreate.extra_kilometre);
-        InstFormData.append("coverage_radius", this.formCreate.coverage_radius);
+        InstFormData.append("coverage_radius", parseInt(this.formCreate.coverage_radius) || 0);
         InstFormData.append("name_manager", this.formCreate.name_manager);
         InstFormData.append("phone_manager", this.formCreate.phone_manager);
         InstFormData.append("email_manager", this.formCreate.email_manager);
