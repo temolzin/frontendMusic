@@ -269,6 +269,15 @@
                   <div class="text-subtitle1 text-weight-bold" :class="{ 'text-black': isExporting }">{{ formatDueDate(regeneratedRef?.due_date) }}</div>
                 </div>
               </div>
+              <div class="col-12 q-mt-md q-pa-md" style="background-color: #fff3cd; border-radius: 8px; border-left: 4px solid #ff9800;">
+                <div class="row items-center">
+                  <q-icon name="warning" color="negative" size="sm" class="q-mr-md" />
+                  <div>
+                    <div class="text-caption text-weight-bold text-negative">Recordatorio importante</div>
+                    <div class="text-body2 text-negative q-mt-xs">Debes completar el pago antes del evento ({{ formatDate(selectedPurchase?.event_date) }})</div>
+                  </div>
+                </div>
+              </div>
             </q-card-section>
           </div>
           <q-card-actions align="center" class="q-pt-md">
@@ -716,10 +725,12 @@ export default {
       await this.$nextTick();
 
       const canvas = await html2canvas(this.$refs.regeneratedReceipt, {
-        scale: 2,
+        scale: 1,
         backgroundColor: '#ffffff',
         useCORS: true,
-        allowTaint: false,
+        allowTaint: true,
+        logging: false,
+        windowHeight: this.$refs.regeneratedReceipt.scrollHeight,
       });
 
       this.isExporting = false;
@@ -751,10 +762,19 @@ export default {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const ratio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+        const finalRatio = ratio * 0.85;
+        const imgWidth = canvas.width * finalRatio;
+        const imgHeight = canvas.height * finalRatio;
+        const marginX = (pdfWidth - imgWidth) / 2;
+        const marginY = 15;
+
+        pdf.addImage(imgData, 'PNG', marginX, marginY, imgWidth, imgHeight);
+
         const ref = this.regeneratedRef?.reference || 'referencia';
         pdf.save(`${ref}.pdf`);
+        
         this.$q.notify({ type: 'positive', message: 'PDF descargado', position: 'top' });
       } catch (err) {
         console.error(err);
@@ -763,6 +783,7 @@ export default {
         this.$q.loading.hide();
       }
     },
+    
     goToReport(purchase) {
       this.showModal = false;
       this.$router.push({ name: 'client.report-incident', params: { saleId: purchase.id } });
@@ -842,7 +863,7 @@ export default {
     },
     filteredPurchases() {
       return this.stateListShopingCard.filter((purchase) => {
-        const artistMatch = purchase.artist?.name ? purchase.artist.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes((this.filterName || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()) : false;
+        const artistMatch = purchase.artist?.name ? purchase.artist.name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().includes((this.filterName || '').normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()) : false;
         let dateMatch = true;
 
         if (this.filterDate && this.filterDate !== "Todas") {
