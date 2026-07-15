@@ -152,9 +152,13 @@
           <q-separator class="q-my-md" />
           <q-card-section v-if="selectedPurchase" class="q-pt-none">
             <div class="row items-center q-mb-md">
-              <q-avatar size="60px" class="q-mr-md">
-                <q-img :src="selectedPurchase.artist?.image" style="border-radius: 50%" />
-              </q-avatar>
+              <q-img 
+                :src="selectedPurchase.artist?.image" 
+                width="60px" 
+                height="60px" 
+                style="border-radius: 50%; object-fit: cover"
+                class="q-mr-md shadow-1"
+              />
               <div>
                 <div class="text-subtitle1 text-weight-bold">{{ selectedPurchase.artist?.name || 'N/A' }}</div>
                 <div class="text-caption text-grey">{{ selectedPurchase.artist?.zone || '' }}</div>
@@ -547,6 +551,8 @@ export default {
       return `${day}/${month}/${year} ${time}`;
     },
     formatDate(rawDate) {
+      if (!rawDate) return 'N/A';
+      
       const months = [
         "enero",
         "febrero",
@@ -561,7 +567,16 @@ export default {
         "noviembre",
         "diciembre",
       ];
-
+      const datePart = rawDate.split('T')[0];
+      const parts = datePart.split('-');
+      
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const monthIndex = parseInt(parts[1], 10) - 1; 
+        const day = parseInt(parts[2], 10);
+        
+        return `${day} de ${months[monthIndex]} del ${year}`;
+      }
       const parsedDate = new Date(rawDate);
       const day = parsedDate.getDate();
       const monthIndex = parsedDate.getMonth();
@@ -589,7 +604,7 @@ export default {
       if (status === 'completed') return 'positive';
       if (status === 'expired' || status === 'rejected') return 'negative';
       if (status === 'cancelled') return 'grey';
-      return 'warning';
+      return 'orange'; 
     },
     eventStatusLabel(status) {
       if (status === 'completed') return 'Completado';
@@ -614,6 +629,15 @@ export default {
     },
     isEventPast(purchase) {
       if (!purchase?.event_date) return false;
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      const datePart = purchase.event_date.split('T')[0];
+      const parts = datePart.split('-');
+      if (parts.length === 3) {
+        const eventDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+        return today > eventDate;
+      }
       return new Date() > new Date(purchase.event_date);
     },
     async openRatingModal(purchase) {
