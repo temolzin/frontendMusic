@@ -152,9 +152,16 @@
     <!-- Fin de Formulario para editar galeria de imagenes -->
   </div>
 
-  <div class="q-mt-xl q-mb-lg">
+ <div class="q-mt-xl q-mb-lg">
     <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
       Galería de Videos
+      <q-btn
+        v-if="artistVideos && artistVideos.length < 3"
+        round
+        color="primary"
+        icon="edit"
+        @click="formVideo = true"
+      />
     </h3>
     <div class="q-pa-md q-gutter-sm q-mt-md" v-if="!artistVideos || artistVideos.length === 0">
       <q-banner inline-actions rounded class="bg-orange text-white text-left">
@@ -165,29 +172,82 @@
         </template>
       </q-banner>
     </div>
-    <div v-if="artistVideos && artistVideos.length > 0" class="row q-gutter-md q-mb-lg justify-center">
-      <div
-        v-for="video in artistVideos"
-        :key="video.id"
-        class="col-12 col-md-5 relative-position"
-      >
-        <q-card class="video-card">
-          <a :href="`https://www.youtube.com/watch?v=${video.youtube_url}`" target="_blank">
-            <img :src="`https://img.youtube.com/vi/${video.youtube_url}/hqdefault.jpg`" class="video-thumb" />
-            <q-icon name="play_circle" class="play-icon" color="white" size="4rem" />
-          </a>
-          <q-card-section class="q-py-sm">
-            <div class="text-subtitle2 ellipsis">{{ video.title }}</div>
-          </q-card-section>
-        </q-card>
-        <q-btn
-          round
-          dense
-          color="negative"
-          icon="delete"
-          class="absolute-top-right q-ma-sm"
-          @click="confirmDeleteVideo(video.id)"
-        />
+    <div v-if="artistVideos && artistVideos.length >= 3" class="row justify-center q-mb-md">
+      <q-chip outline color="orange" text-color="orange" icon="info">
+        Has alcanzado el límite máximo de 3 videos. Elimina alguno y reemplazalo por uno nuevo.
+      </q-chip>
+    </div>
+    <div v-if="artistVideos && artistVideos.length > 0">
+      <div class="q-pa-md">
+        <q-carousel
+          swipeable
+          animated
+          thumbnails
+          infinite
+          v-model="slideVideo"
+          v-model:fullscreen="fullscreenVideo"
+          :autoplay="autoplay"
+          arrows
+          transition-prev="slide-right"
+          transition-next="slide-left"
+          class="q-mt-lg"
+          style="min-height: 400px; background: transparent;"
+        >
+          <q-carousel-slide
+            v-for="(video, index) in artistVideos"
+            :key="video.id"
+            :name="index + 1"
+            :img-src="`https://img.youtube.com/vi/${video.youtube_url}/hqdefault.jpg`"
+            class="column no-wrap flex-center q-pa-none"
+          >
+            <div class="video-card q-pa-md">
+              <a
+                class="video-link"
+                :href="`https://www.youtube.com/watch?v=${video.youtube_url}`"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class="video-thumb-wrapper">
+                  <q-img
+                    :src="`https://img.youtube.com/vi/${video.youtube_url}/hqdefault.jpg`"
+                    class="video-thumb"
+                    fit="cover"
+                  >
+                    <div class="video-overlay">
+                      <q-btn
+                        round
+                        color="red"
+                        text-color="white"
+                        icon="play_arrow"
+                        size="lg"
+                      />
+                    </div>
+                  </q-img>
+                </div>
+              </a>
+              <div
+                class="text-subtitle1 text-center q-mt-sm text-weight-bold ellipsis"
+                :class="mode ? 'text-white' : 'text-dark'"
+              >
+                {{ video.title }}
+              </div>
+            </div>
+          </q-carousel-slide>
+
+          <template v-slot:control>
+            <q-carousel-control position="bottom-right" :offset="[18, 18]">
+              <q-btn
+                push
+                round
+                dense
+                color="white"
+                text-color="primary"
+                :icon="fullscreenVideo ? 'fullscreen_exit' : 'fullscreen'"
+                @click="fullscreenVideo = !fullscreenVideo"
+              />
+            </q-carousel-control>
+          </template>
+        </q-carousel>
       </div>
     </div>
     <q-dialog v-model="formVideo" persistent>
@@ -232,6 +292,8 @@ export default {
       slide: ref(1),
       autoplay: ref(true),
       fullscreen: ref(false),
+      slideVideo: ref(1),
+      fullscreenVideo: ref(false),
       showGallery: null,
     };
   },
@@ -493,41 +555,42 @@ export default {
   text-align: center;
 }
 
-.video-wrapper {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-}
-
-.yt-iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-}
-
 .video-card {
-  position: relative;
+  width: 100%;
+  max-width: 700px;
+  box-sizing: border-box;
+}
+
+.video-link {
+  display: block;
+  text-decoration: none;
+}
+
+.video-thumb-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  cursor: pointer;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .video-thumb {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: block;
+  height: 100%;
 }
 
-.play-icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
-  opacity: 0.85;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+.video-overlay {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 600px) {
+  .video-card {
+    max-width: 100%;
+  }
 }
 </style>
