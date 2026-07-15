@@ -3,8 +3,8 @@
     <q-container>
       <div class="q-pa-md">
         <q-card-group>
-          <div class="bg-primary text-white text-left" colspan="6">
-            <div colspan="6" class="artist-name-2" style="font-size: 22px; border-radius: 5px">
+          <div class="bg-primary text-white q-px-md q-py-md q-mb-md" style="border-radius: 8px;">
+            <div class="artist-name-2 text-weight-bold" style="font-size: 24px; letter-spacing: 0.5px;">
               Mis Compras
             </div>
           </div>
@@ -43,30 +43,35 @@
               <q-markup-table dense flat bordered class="table-responsive">
                 <tbody v-for="(purchase, index) in filteredPurchases" :key="index">
                   <tr v-if="index === 0 || formatDate(purchase.created_at) !== formatDate(filteredPurchases[index - 1].created_at)" class="bg-primary text-white text-center">
-                    <th :colspan="$q.screen.lt.sm ? 5 : 1" style="font-size: 15px">
+                    <th :colspan="$q.screen.lt.sm ? 5 : 1" style="font-size: 15px" class="text-center">
                       {{ formatDate(purchase.created_at) }}
                     </th>
-                    <th class="text-left text-weight-bold gt-xs" style="font-size: 14px">Detalles</th>
-                    <th class="text-left text-weight-bold gt-xs" style="font-size: 14px">Contacto</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Detalles</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Contacto</th>
                     <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Estado</th>
-                    <th class="text-left text-weight-bold gt-xs" style="font-size: 14px">Acciones</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Acciones</th>
                   </tr>
-                  <tr class="gt-xs">
+               <tr class="gt-xs">
                     <td>
                       <div class="text-center">
                         <q-img :src="purchase.artist?.image" loading="lazy" width="100px" height="100px"
                           style="object-fit: cover" class="rounded-circle q-responsive" />
                       </div>
                     </td>
-                    <td class="text-left">
-                      <br class="detail-artist-name">{{ purchase.artist?.name || 'N/A' }}
-                      <br class="detail-artist-zone">{{ purchase.artist?.zone || 'N/A' }}
-                      <br class="detail-hours">Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
-                      <p></p>
+                    <td class="text-left q-py-md">
+                      <div class="text-subtitle1 text-weight-bold text-primary">
+                        {{ purchase.artist?.name || 'N/A' }}
+                      </div>
+                      <div class="text-caption text-grey-8 q-mb-xs">
+                        {{ purchase.artist?.zone || 'N/A' }}
+                      </div>
+                      <div class="text-subtitle2 text-weight-medium">
+                        Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
+                      </div>
                     </td>
-                    <td>
-                      <p class="artist-zone">{{ purchase.artist?.manager?.name || 'N/A' }}</p>
-                      <p>
+                    <td class="text-center">
+                      <p class="artist-zone text-weight-medium q-mb-sm">{{ purchase.artist?.manager?.name || 'N/A' }}</p>
+                      <p class="q-mb-none">
                         <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(purchase)" />
                       </p>
                     </td>
@@ -88,7 +93,7 @@
                         </div>
                       </div>
                     </td>
-                    <td class="text-left">
+                    <td class="text-center">
                       <q-btn unelevated rounded color="primary" label="ver compra" @click="openOrderModal(purchase)" />
                     </td>
                   </tr>
