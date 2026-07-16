@@ -315,6 +315,20 @@
               </q-badge>
             </div>
           </div>
+          <q-separator class="q-my-md" />
+          <div class="text-overline text-primary text-weight-bold">Estado</div>
+          <div class="detail-row">
+            <q-icon name="check_circle" size="20px" :color="paymentStatusColor(detailsSale?.status)" />
+            <div>
+              <div class="detail-label">Estado del pago</div>
+              <q-badge
+                :color="paymentStatusColor(detailsSale?.status)"
+                class="q-px-sm q-py-xs q-mt-xs"
+              >
+                {{ paymentStatusLabel(detailsSale?.status) }}
+              </q-badge>
+            </div>
+          </div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -353,7 +367,7 @@ const columns = [
   },
   {
     name: "status",
-    label: "Estado",
+    label: "Estado del evento",
     align: "center",
     field: "event_status",
     sortable: true,
@@ -422,20 +436,18 @@ export default {
 
     statusLabel(row) {
       if (row.event_status === 'cancelled') return 'Cancelado';
-      if (row.event_status === 'rejected' || row.approval_status === 'rejected') return 'Rechazado';
-      if (row.event_status === 'expired' || row.approval_status === 'expired') return 'Expirado';
-      if (row.approval_status === 'pending_approval') return 'Por confirmar';
-      if (row.status === 'completed') return 'Completada';
-      return row.payment_method === 'cash' ? 'Pendiente de pago' : 'Pendiente';
+      if (row.event_status === 'rejected') return 'Rechazado';
+      if (row.event_status === 'expired') return 'Expirado';
+      if (row.event_status === 'completed') return 'Completado';
+      return 'Pendiente';
     },
 
     statusColor(row) {
       if (row.event_status === 'cancelled') return 'negative';
-      if (row.event_status === 'rejected' || row.approval_status === 'rejected') return 'negative';
-      if (row.event_status === 'expired' || row.approval_status === 'expired') return 'grey-7';
-      if (row.approval_status === 'pending_approval') return 'info';
-      if (row.status === 'completed') return 'positive';
-      return row.payment_method === 'cash' ? 'orange' : 'warning';
+      if (row.event_status === 'rejected') return 'negative';
+      if (row.event_status === 'expired') return 'grey-7';
+      if (row.event_status === 'completed') return 'positive';
+      return 'warning';
     },
 
     canReport(row) {
@@ -456,6 +468,22 @@ export default {
       if (!date) return '';
       const d = new Date(date);
       return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+    },
+
+    paymentStatusLabel(status) {
+      if (!status) return 'Pendiente';
+      if (status === 'completed') return 'Completado';
+      if (status === 'pending') return 'Pendiente';
+      if (status === 'failed') return 'Fallido';
+      if (status === 'cancelled') return 'Cancelado';
+      if (status === 'expired') return 'Expirado';
+      return 'Pendiente';
+    },
+
+    paymentStatusColor(status) {
+      if (status === 'completed') return 'positive';
+      if (status === 'failed' || status === 'cancelled' || status === 'expired') return 'negative';
+      return 'warning';
     },
 
     formatChatDate(rawDate) {
