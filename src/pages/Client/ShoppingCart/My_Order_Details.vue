@@ -145,7 +145,7 @@
       <q-dialog v-model="showModal" transition-show="rotate" transition-hide="rotate">
         <q-card style="width: 480px; border-radius: 16px" class="q-pa-md">
           <q-card-section class="row items-center q-pb-none">
-            <div class="text-h6 text-primary text-weight-bold">Detalle de la compra</div>
+            <div class="text-h6 text-primary text-weight-bold">Detalles de la compra</div>
             <q-space />
             <q-btn icon="close" flat round dense v-close-popup color="grey" />
           </q-card-section>
@@ -253,7 +253,7 @@
         <q-card style="width: 420px; border-radius: 20px" class="q-pa-md">
           <div ref="regeneratedReceipt" class="receipt-card">
             <q-card-section class="text-center q-pb-none q-pt-md">
-              <img src="/logovibeer-black.png" style="height: 55px" class="q-mb-sm" />
+              <img src="/logovibeer-black.png" style="height: 80px" class="q-mb-sm" />
               <div class="text-h6 text-primary text-weight-bold">Referencia de pago</div>
             </q-card-section>
             <q-card-section class="text-center q-pt-md">
@@ -289,7 +289,7 @@
               </div>
             </q-card-section>
           </div>
-          <q-card-actions align="center" class="q-pt-md">
+          <q-card-actions align="between" class="q-pt-md">
             <q-btn-dropdown rounded color="primary" label="Descargar" icon="download">
               <q-list>
                 <q-item clickable v-close-popup @click="downloadRefPDF">
@@ -310,7 +310,7 @@
                 </q-item>
               </q-list>
             </q-btn-dropdown>
-            <q-btn rounded flat color="grey" label="Entendido" @click="showRegeneratedRefDialog = false" />
+            <q-btn rounded flat color="primary" label="Cerrar" @click="showRegeneratedRefDialog = false" />
           </q-card-actions>
         </q-card>
       </q-dialog>
