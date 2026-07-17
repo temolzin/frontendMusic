@@ -1,13 +1,11 @@
 <template>
   <q-page class="q-pa-lg">
     <div class="text-h5 text-weight-bold q-mb-md">Códigos de Verificación Webhook</div>
-
     <q-card class="shadow-4 q-mb-lg">
       <q-card-section>
         <div class="text-body2 text-grey q-mb-md">
           Cuando configures un webhook en OpenPay, el sistema enviará un código de verificación a esta URL. Los códigos capturados aparecerán aquí. Copia el código y pégalo en el panel de OpenPay para completar la verificación.
         </div>
-
         <div class="text-subtitle2 text-weight-medium q-mb-xs">URL del Webhook</div>
         <div class="row items-center q-gutter-sm">
           <q-input
@@ -28,7 +26,6 @@
         </div>
       </q-card-section>
     </q-card>
-
     <q-card class="shadow-4">
       <q-card-section class="q-pb-none">
         <div class="row items-center justify-between">
@@ -53,7 +50,6 @@
           </div>
         </div>
       </q-card-section>
-
       <q-card-section>
         <q-table
           :rows="codes"
@@ -83,13 +79,11 @@
               </div>
             </q-td>
           </template>
-
           <template v-slot:body-cell-event_date="props">
             <q-td :props="props">
               {{ formatDate(props.row.event_date) }}
             </q-td>
           </template>
-
           <template v-slot:body-cell-created_at="props">
             <q-td :props="props">
               <q-badge :color="getTimeBadgeColor(props.row.created_at)">
@@ -97,7 +91,6 @@
               </q-badge>
             </q-td>
           </template>
-
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <q-btn
@@ -118,7 +111,6 @@
     </q-card>
   </q-page>
 </template>
-
 <script>
 import { defineComponent, ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
