@@ -14,6 +14,8 @@
       rows-per-page-label="Registros por página"
       :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => `${firstRowIndex}-${endRowIndex} de ${totalRowsNumber}`"
       :grid="$q.screen.lt.md"
+      bordered
+      flat
     >
       <template v-slot:body-cell-is_active="props">
         <q-td :props="props">
@@ -43,18 +45,30 @@
 
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
-          <q-btn flat round icon="edit" color="primary" @click="openForm(props.row)" />
+          <q-btn 
+            round 
+            unelevated 
+            icon="edit" 
+            color="primary" 
+            size="sm"
+            @click="openForm(props.row)"
+            class="q-mr-sm"
+          >
+            <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+          </q-btn>
           <q-btn
-            flat
             round
+            unelevated
             icon="delete"
             color="negative"
+            size="sm"
             :disable="props.row.has_pending_sale"
             @click="confirmDelete(props.row.id)"
           >
             <q-tooltip v-if="props.row.has_pending_sale" class="bg-negative text-body2">
               No se puede eliminar: hay una venta esperando respuesta del artista que usó esta oferta.
             </q-tooltip>
+            <q-tooltip v-else class="bg-negative text-body2">Eliminar</q-tooltip>
           </q-btn>
         </q-td>
       </template>
@@ -81,18 +95,30 @@
                     {{ formatDate(props.row.end_date) }}
                   </q-item-label>
                   <q-item-label v-if="col.name === 'actions'">
-                    <q-btn flat round icon="edit" color="primary" @click="openForm(props.row)" />
+                    <q-btn 
+                      round 
+                      unelevated 
+                      icon="edit" 
+                      color="primary" 
+                      size="sm"
+                      @click="openForm(props.row)"
+                      class="q-mr-sm"
+                    >
+                      <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+                    </q-btn>
                     <q-btn
-                      flat
                       round
+                      unelevated
                       icon="delete"
                       color="negative"
+                      size="sm"
                       :disable="props.row.has_pending_sale"
                       @click="confirmDelete(props.row.id)"
                     >
                       <q-tooltip v-if="props.row.has_pending_sale" class="bg-negative text-body2">
                         No se puede eliminar: hay una venta esperando respuesta del artista que usó esta oferta.
                       </q-tooltip>
+                      <q-tooltip v-else class="bg-negative text-body2">Eliminar</q-tooltip>
                     </q-btn>
                   </q-item-label>
                   <q-item-label v-if="col.name !== 'is_active' && col.name !== 'discount_percentage' && col.name !== 'start_date' && col.name !== 'end_date' && col.name !== 'actions'">
@@ -262,7 +288,7 @@ export default {
         end_time_only: ""
       },
       columns: [
-        { name: "description", label: "Descripción", field: "description", align: "left" },
+        { name: "description", label: "Descripción", field: "description", align: "center" },
         { name: "discount_percentage", label: "Descuento", field: "discount_percentage", align: "center" },
         { name: "start_date", label: "Fecha inicio", field: "start_date", align: "center" },
         { name: "end_date", label: "Fecha fin", field: "end_date", align: "center" },

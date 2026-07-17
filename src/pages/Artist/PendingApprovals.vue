@@ -76,8 +76,8 @@
           <q-btn
             unelevated
             round
-            dense
             color="positive"
+            size="sm"
             icon="check_circle"
             class="q-mr-sm"
             :loading="loadingId === props.row.id + '_accept'"
@@ -88,8 +88,8 @@
           <q-btn
             unelevated
             round
-            dense
             color="negative"
+            size="sm"
             icon="cancel"
             :loading="loadingId === props.row.id + '_reject'"
             @click="onReject(props.row.id)"
@@ -141,6 +141,7 @@
                   unelevated
                   round
                   color="positive"
+                  size="sm"
                   icon="check_circle"
                   :loading="loadingId === props.row.id + '_accept'"
                   @click="onAccept(props.row.id)"
@@ -153,6 +154,7 @@
                   unelevated
                   round
                   color="negative"
+                  size="sm"
                   icon="cancel"
                   :loading="loadingId === props.row.id + '_reject'"
                   @click="onReject(props.row.id)"
@@ -283,10 +285,10 @@
 import { mapActions, mapGetters } from 'vuex';
 
 const columns = [
-  { name: 'cliente', label: 'Cliente', align: 'left', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
-  { name: 'evento', label: 'Fecha del evento', align: 'left', field: 'event_date', sortable: true },
-  { name: 'lugar', label: 'Lugar', align: 'left', field: 'customer_city', sortable: true },
-  { name: 'amount', label: 'Monto', align: 'left', field: 'amount', sortable: true },
+  { name: 'cliente', label: 'Cliente', align: 'center', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
+  { name: 'evento', label: 'Fecha del evento', align: 'center', field: 'event_date', sortable: true },
+  { name: 'lugar', label: 'Lugar', align: 'center', field: 'customer_city', sortable: true },
+  { name: 'amount', label: 'Monto', align: 'center', field: 'amount', sortable: true },
   { name: 'payment_method', label: 'Método de pago', align: 'center', field: (row) => row.payment_method === 'card' ? 'Tarjeta' : 'Efectivo', sortable: true },
   { name: 'event_hours', label: 'Horas', align: 'center', field: 'event_hours', sortable: true },
   { name: 'tiempo', label: 'Tiempo restante', align: 'center', field: 'time_remaining_seconds', sortable: true },
@@ -294,11 +296,11 @@ const columns = [
 ];
 
 const historyColumns = [
-  { name: 'cliente', label: 'Cliente', align: 'left', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
-  { name: 'evento', label: 'Fecha del evento', align: 'left', field: 'event_date', sortable: true },
-  { name: 'amount', label: 'Monto', align: 'left', field: 'amount', sortable: true },
+  { name: 'cliente', label: 'Cliente', align: 'center', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
+  { name: 'evento', label: 'Fecha del evento', align: 'center', field: 'event_date', sortable: true },
+  { name: 'amount', label: 'Monto', align: 'center', field: 'amount', sortable: true },
   { name: 'resultado', label: 'Resultado', align: 'center', field: 'approval_status', sortable: true },
-  { name: 'fecha_respuesta', label: 'Resuelto el', align: 'left', field: 'approval_responded_at', sortable: true },
+  { name: 'fecha_respuesta', label: 'Resuelto el', align: 'center', field: 'approval_responded_at', sortable: true },
 ];
 
 export default {

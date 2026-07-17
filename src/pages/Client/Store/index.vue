@@ -97,7 +97,7 @@
                 <q-card-section class="q-pt-none">
                   <div class="text-subtitle1">
                     <template v-if="props.row.offers && props.row.offers.length > 0">
-                      <q-badge color="orange" class="q-mb-xs">
+                      <q-badge color="warning" class="q-mb-xs">
                         {{ formatDiscount(props.row.offers[0].discount_percentage) }}% de descuento
                       </q-badge><br/>
                       <span class="text-h5 text-positive text-weight-bold">

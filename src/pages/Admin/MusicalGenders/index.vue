@@ -11,6 +11,8 @@
       no-results-label="No hay registros que coincidan"
       rows-per-page-label="Géneros por página"
       :grid="$q.screen.lt.md"
+      bordered
+      flat
     >
       <template v-slot:top>
         <b class="text-h5">
@@ -53,23 +55,28 @@
           </q-td>
           <q-td key="options" :props="props">
             <q-btn
-              dense
               round
-              flat
+              unelevated
               color="primary"
+              size="sm"
               @click="showMusicalGender(props)"
               icon="edit"
               v-if="auth.role[0] == 'administrador'"
-            ></q-btn>
+              class="q-mr-sm"
+            >
+              <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+            </q-btn>
             <q-btn
-              dense
               round
-              flat
-              color="red"
+              unelevated
+              color="negative"
+              size="sm"
               @click="removeMusicalGender(props)"
               icon="delete"
               v-if="auth.role[0] == 'administrador'"
-            ></q-btn>
+            >
+              <q-tooltip class="bg-negative text-body2">Eliminar</q-tooltip>
+            </q-btn>
           </q-td>
         </q-tr>
       </template>
@@ -83,23 +90,28 @@
                   <q-item-label caption>{{ col.label }}</q-item-label>
                   <q-item-label v-if="col.name === 'options'">
                     <q-btn
-                      dense
                       round
-                      flat
+                      unelevated
                       color="primary"
+                      size="sm"
                       @click="showMusicalGender(props)"
                       icon="edit"
                       v-if="auth.role[0] == 'administrador'"
-                    ></q-btn>
+                      class="q-mr-sm"
+                    >
+                      <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+                    </q-btn>
                     <q-btn
-                      dense
                       round
-                      flat
-                      color="red"
+                      unelevated
+                      color="negative"
+                      size="sm"
                       @click="removeMusicalGender(props)"
                       icon="delete"
                       v-if="auth.role[0] == 'administrador'"
-                    ></q-btn>
+                    >
+                      <q-tooltip class="bg-negative text-body2">Eliminar</q-tooltip>
+                    </q-btn>
                   </q-item-label>
                   <q-item-label v-else-if="col.name === 'created_at'">
                     {{ formatDate(props.row.created_at) }}
@@ -349,35 +361,35 @@ const columns = [
   {
     name: "id",
     label: "ID",
-    align: "left",
+    align: "center",
     field: "id",
     sortable: true,
   },
   {
     name: "name",
     label: "Nombre",
-    align: "left",
+    align: "center",
     field: "name",
     sortable: true,
   },
   {
     name: "description",
     label: "Descripción",
-    align: "left",
+    align: "center",
     field: "description",
     sortable: true,
   },
   {
     name: "created_at",
     label: "Creado desde",
-    align: "left",
+    align: "center",
     field: "created_at",
     sortable: true,
   },
   {
     name: "options",
     label: "Acciones",
-    align: "left",
+    align: "center",
     field: "options",
     sortable: true,
   },

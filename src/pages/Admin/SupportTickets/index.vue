@@ -81,25 +81,26 @@
       <template v-slot:body-cell-actions="props">
         <q-td :props="props" class="text-center">
           <q-btn
-            flat
             round
+            unelevated
             color="grey"
             icon="history"
             size="sm"
             class="q-mr-xs"
             @click="openLogs(props.row)"
           >
-            <q-tooltip>Historial</q-tooltip>
+            <q-tooltip class="bg-grey text-body2">Historial</q-tooltip>
           </q-btn>
           <q-btn
-            flat
-            rounded
+            round
+            unelevated
             color="primary"
             icon="visibility"
-            label="Ver"
             size="sm"
             @click="goToDetail(props.row.id)"
-          />
+          >
+            <q-tooltip class="bg-primary text-body2">Ver</q-tooltip>
+          </q-btn>
         </q-td>
       </template>
     </q-table>
@@ -126,11 +127,11 @@ export default {
       showLogsModal: false,
       selectedTicketId: null,
       columns: [
-        { name: 'event_date', label: 'Fecha del Evento', field: (row) => row.artist_sale?.event_date, sortable: true, align: 'left' },
-        { name: 'artist', label: 'Evento', field: 'artist', align: 'left' },
-        { name: 'reporter', label: 'Reportado por', field: 'reporter', align: 'left' },
-        { name: 'category', label: 'Categoría', field: 'category', align: 'left' },
-        { name: 'status', label: 'Estado', field: 'status', align: 'left' },
+        { name: 'event_date', label: 'Fecha del Evento', field: (row) => row.artist_sale?.event_date, sortable: true, align: 'center' },
+        { name: 'artist', label: 'Evento', field: 'artist', align: 'center' },
+        { name: 'reporter', label: 'Reportado por', field: 'reporter', align: 'center' },
+        { name: 'category', label: 'Categoría', field: 'category', align: 'center' },
+        { name: 'status', label: 'Estado', field: 'status', align: 'center' },
         { name: 'actions', label: 'Acciones', field: 'actions', align: 'center' },
       ],
       statusOptions: [
@@ -228,7 +229,7 @@ export default {
 
     openLogs(row) {
       this.selectedTicketId = row.id;
-      this.selectedTicket = row;
+      this.selectedTicket = null;
       this.showLogsModal = true;
     },
   },
