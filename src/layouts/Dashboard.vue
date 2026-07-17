@@ -161,6 +161,20 @@
           <q-item
             clickable
             v-ripple
+            to="/admin/webhook-verification"
+            v-if="getMe?.role?.[0] == 'administrador'"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="verified" />
+            </q-item-section>
+
+            <q-item-section> Verificación Webhook </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
             to="/artist/index"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"

@@ -226,6 +226,17 @@ const routes = [
           permissions: ['view-users'], 
         },
       },
+      {
+        name: 'admin.webhook-verification',
+        path: '/admin/webhook-verification',
+        component: import('pages/Admin/WebhookVerification/index.vue'),
+        meta: {
+          title: 'Verificación Webhook',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'],
+        },
+      },
       // Fin de rutas del admin
 
       // Rutas del artista
