@@ -8,6 +8,29 @@
         <p class="text-subtitle1 text-grey-7 q-mt-xs">
           Gestiona las transferencias de los eventos finalizados y desglosa las comisiones de forma justa.
         </p>
+        <q-banner 
+          dense 
+          inline-actions 
+          rounded 
+          :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-py-sm q-px-md']"
+        >
+          <template v-slot:avatar>
+            <q-icon name="info" color="blue" size="sm" />
+          </template>
+          <div class="text-body2">
+            <strong>Nota Sobre Comisiones OpenPay y Establecimientos:</strong> 
+            <ul>
+             <li class="q-mb-xs">
+              Los pagos realizados con tarjeta mediante <strong>OpenPay</strong> incluyen el desglose de su comisión transaccional digital.
+            </li>
+            </ul> 
+            <ul>
+              <li>
+                Los pagos en efectivo (como <strong>tiendas de autoservicio tipo Oxxo</strong>) muestran comisión en $0.00 debido a que la tarifa del establecimiento es cubierta directamente por el cliente al pagar en caja.
+              </li>
+            </ul>
+          </div>
+        </q-banner>
       </div>
     </div>
     <q-table
