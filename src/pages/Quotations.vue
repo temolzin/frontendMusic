@@ -216,12 +216,12 @@
                 <p class="text-center q-mt-md">
                   Al continuar, estás aceptando los
                   <router-link :to="{ name: 'legal.terms' }" class="text-primary text-weight-medium" target="_blank">
-                  Términos y condiciones de uso
-                </router-link> 
-                y la 
-                <router-link :to="{ name: 'legal.privacy' }" class="text-primary text-weight-medium" target="_blank">
-                  Política de privacidad
-                </router-link>.
+                    Términos y condiciones de uso
+                  </router-link> 
+                    <p>y la</p>
+                  <router-link :to="{ name: 'legal.privacy' }" class="text-primary text-weight-medium" target="_blank">
+                    Política de privacidad
+                  </router-link>.
                 </p>
 
                 <div class="text-center">
