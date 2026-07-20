@@ -65,7 +65,7 @@
           <q-td key="net_artist_payout" :props="props" class="text-weight-bold" :class="props.row.total_penalties > 0 ? 'text-primary' : 'text-positive'">
             ${{ formatCurrency(props.row.adjusted_net_payout) }} MXN
           </q-td>
-          <q-td key="status" :props="props">
+          <q-td key="event_status" :props="props">
             <q-badge 
               :color="props.row.event_status === 'completed' ? 'positive' : 'warning'"
               class="text-weight-bold"
@@ -73,6 +73,14 @@
               {{ props.row.event_status === 'completed' ? 'COMPLETADO' : 'PENDIENTE' }}
             </q-badge>
           </q-td>
+          <q-td key="payout_status" :props="props">
+            <q-badge 
+              :color="props.row.status === 'liquidated' ? 'positive' : 'orange'"
+              class="text-weight-bold"
+            >
+              {{ props.row.status === 'liquidated' ? 'LIQUIDADO' : 'PENDIENTE' }}
+            </q-badge>
+        </q-td>
         </q-tr>
         <q-tr v-show="props.expand" :props="props" :class="$q.dark.isActive ? 'bg-dark' : 'bg-grey-1'">
           <q-td colspan="100%">
@@ -194,10 +202,13 @@
                       color="positive"
                       icon="check_circle"
                       class="text-weight-bold"
-                      :disable="props.row.event_status !== 'completed'"
+                      :disable="props.row.event_status !== 'completed' || props.row.status === 'liquidated'"
                       @click.stop="confirmRelease(props.row)"
                     >
-                      <q-tooltip v-if="props.row.event_status !== 'completed'">
+                      <q-tooltip v-if="props.row.status === 'liquidated'">
+                        Esta liquidación ya fue transferida y pagada al artista.
+                      </q-tooltip>
+                      <q-tooltip v-else-if="props.row.event_status !== 'completed'">
                         No puedes liquidar este pago hasta que el artista marque el evento como COMPLETADO.
                       </q-tooltip>
                     </q-btn>
@@ -239,7 +250,8 @@ export default {
       { name: "artist_name", label: "Artista", field: row => row.artist.name, align: "left", sortable: true },
       { name: "event_date", label: "Fecha Evento", field: "event_date", align: "left" },
       { name: "net_artist_payout", label: "Pago Neto Artista", field: "adjusted_net_payout", align: "right", sortable: true },
-      { name: "status", label: "Estatus", align: "center" }
+      { name: "event_status", label: "Estado del Evento", field: "event_status", align: "center" },
+      { name: "payout_status", label: "Estado de la Liquidación", field: "status", align: "center" }
     ];
 
     const payouts = computed(() => $store.getters["payouts/statePendingPayouts"]);
