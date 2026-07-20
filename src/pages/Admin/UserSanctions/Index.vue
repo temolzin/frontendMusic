@@ -346,16 +346,16 @@
             align="justify"
             narrow-indicator
           >
-            <q-tab name="sanciones" icon="gavel" label="Sanciones" />
-            <q-tab name="quejas" icon="feedback" label="Quejas (Soporte)" />
-            <q-tab name="faltas" icon="event_busy" label="Faltas (Cancelaciones)" />
+            <q-tab name="sanctions" icon="gavel" label="Sanciones" />
+            <q-tab name="tickets" icon="feedback" label="Quejas (Soporte)" />
+            <q-tab name="faults" icon="event_busy" label="Faltas (Cancelaciones)" />
           </q-tabs>
 
           <q-separator />
 
           <q-tab-panels v-model="historyTab" animated :class="$q.dark.isActive ? 'bg-transparent' : 'bg-grey-1'">
             
-            <q-tab-panel name="sanciones">
+            <q-tab-panel name="sanctions">
               <div v-if="historyData.sanctions.length === 0" class="text-center text-grey q-pa-lg">
                 <q-icon name="thumb_up" size="3em" color="grey-4" class="q-mb-sm" />
                 <div>Excelente historial. No hay sanciones registradas.</div>
@@ -409,7 +409,7 @@
               </q-list>
             </q-tab-panel>
 
-            <q-tab-panel name="quejas">
+            <q-tab-panel name="tickets">
               <div v-if="historyData.tickets.length === 0" class="text-center text-grey q-pa-lg">
                 <q-icon name="sentiment_very_satisfied" size="3em" color="grey-4" class="q-mb-sm" />
                 <div>Nadie ha levantado quejas en contra de este usuario.</div>
@@ -460,26 +460,26 @@
               </q-list>
             </q-tab-panel>
 
-            <q-tab-panel name="faltas">
+            <q-tab-panel name="faults">
               <div v-if="combinedFaults.length === 0" class="text-center text-grey q-pa-lg">
                 <q-icon name="event_available" size="3em" color="grey-4" class="q-mb-sm" />
                 <div>Este usuario no tiene faltas registradas por cancelación.</div>
               </div>
               <q-list v-if="combinedFaults.length > 0" separator class="rounded-borders" :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-white'">
-                <q-item v-for="falta in combinedFaults" :key="falta.id" class="q-py-md">
+                <q-item v-for="fault in combinedFaults" :key="fault.id" class="q-py-md">
                   <q-item-section avatar top>
                     <q-avatar color="red-2" text-color="negative" icon="event_busy" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label class="text-weight-bold text-subtitle1 text-negative q-mb-sm">
-                      {{ falta.title }}
+                      {{ fault.title }}
                     </q-item-label>
                     
                     <div class="detail-row">
                       <q-icon name="gavel" size="20px" color="grey-6" />
                       <div>
                         <div class="detail-label">Motivo</div>
-                        <div class="detail-value">{{ falta.reason }}</div>
+                        <div class="detail-value">{{ fault.reason }}</div>
                       </div>
                     </div>
                     <div class="row q-col-gutter-md">
@@ -488,7 +488,7 @@
                           <q-icon name="event" size="20px" color="grey-6" />
                           <div>
                             <div class="detail-label">Fecha de la Falta</div>
-                            <div class="detail-value">{{ formatDate(falta.created_at) }}</div>
+                            <div class="detail-value">{{ formatDate(fault.created_at) }}</div>
                           </div>
                         </div>
                       </div>
@@ -497,7 +497,7 @@
                           <q-icon name="schedule" size="20px" color="grey-6" />
                           <div>
                             <div class="detail-label">Evento Afectado</div>
-                            <div class="detail-value">{{ falta.event_date }}</div>
+                            <div class="detail-value">{{ fault.event_date }}</div>
                           </div>
                         </div>
                       </div>
@@ -604,7 +604,7 @@ export default {
       },
       showHistoryModal: false,
       loadingHistory: false,
-      historyTab: 'sanciones',
+      historyTab: 'sanctions',
       selectedHistoryUser: null,
       historyData: {
         sanctions: [],
@@ -821,7 +821,7 @@ export default {
 
     async openHistoryModal(user) {
       this.selectedHistoryUser = user;
-      this.historyTab = 'sanciones';
+      this.historyTab = 'sanctions';
       this.showHistoryModal = true;
       this.loadingHistory = true;
 
