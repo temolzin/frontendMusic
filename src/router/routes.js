@@ -226,6 +226,17 @@ const routes = [
           permissions: ['view-users'], 
         },
       },
+      {
+        name: 'admin.user-sanctions',
+        path: '/admin/sanciones',
+        component: () => import('src/pages/Admin/UserSanctions/Index.vue'),
+        meta: {
+          title: 'Sanciones de Usuarios',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'],
+        },
+      },
       // Fin de rutas del admin
 
       // Rutas del artista

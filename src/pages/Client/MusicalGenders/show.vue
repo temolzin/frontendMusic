@@ -172,6 +172,10 @@
                   lazy-rules
                   :rules="nameRules"
                 />
+                <q-banner v-if="artist?.user?.account_status === 'restricted'" class="bg-warning text-dark rounded-borders q-mb-md" dense>
+                  <template v-slot:avatar><q-icon name="lock" /></template>
+                  El perfil de este artista se encuentra inhabilitado para nuevas contrataciones en este momento.
+                </q-banner>
                 <div class="row">
                   <div class="col-12 col-xs-6 col-sm-6 col-md-6">
                     <q-btn
@@ -180,16 +184,32 @@
                       icon-right="fas fa-cart-plus"
                       class="full-width q-mt-xs"
                       v-on:click="onSendOrder(artist)"
-                    />
+                      :disable="artist?.user?.account_status === 'restricted' || getMe?.account_status === 'restricted'"
+                    >
+                      <q-tooltip v-if="getMe?.account_status === 'restricted'" class="bg-negative text-body2">
+                        Acción no permitida (Tu cuenta está restringida)
+                      </q-tooltip>
+                      <q-tooltip v-else-if="artist?.user?.account_status === 'restricted'" class="bg-warning text-dark text-body2">
+                        Acción no permitida (El artista está inhabilitado)
+                      </q-tooltip>
+                    </q-btn>
                   </div>
                   <div class="col-12 col-xs-6 col-sm-6 col-md-6">
                     <q-btn
                       label="Contratar ahora"
                       color="amber"
                       icon-right="send"
-                      class="full-width q-mt-xs"
+                      class="full-width q-mt-xs text-dark"
                       @click="handleHireNow(artist)"
-                    />
+                      :disable="artist?.user?.account_status === 'restricted' || getMe?.account_status === 'restricted'"
+                    >
+                      <q-tooltip v-if="getMe?.account_status === 'restricted'" class="bg-negative text-body2">
+                        Acción no permitida (Tu cuenta está restringida)
+                      </q-tooltip>
+                      <q-tooltip v-else-if="artist?.user?.account_status === 'restricted'" class="bg-warning text-dark text-body2">
+                        Acción no permitida (El artista está inhabilitado)
+                      </q-tooltip>
+                    </q-btn>
                   </div>
                 </div>
               </form>
@@ -458,6 +478,14 @@ export default {
       }
     },
     onSendOrder(artist) {
+      if (this.getMe?.account_status === 'restricted' || this.artist?.user?.account_status === 'restricted') {
+        this.$q.notify({
+          type: 'negative',
+          message: 'No es posible realizar la acción. Cuenta restringida.'
+        });
+        return;
+      }
+
       this.$q.notify({
         spinner: QSpinnerGears,
         message: "Agregando al carrito...",
@@ -489,6 +517,14 @@ export default {
       });
     },
     handleHireNow(artist) {
+      if (this.getMe?.account_status === 'restricted' || this.artist?.user?.account_status === 'restricted') {
+        this.$q.notify({
+          type: 'negative',
+          message: 'No es posible realizar la acción. Cuenta restringida.'
+        });
+        return;
+      }
+
       const averageRating = Number(this.artist.ratings_avg_rating || artist.ratings_avg_rating || 0);
       const artistData = JSON.stringify({
         id: artist.id,
