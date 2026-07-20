@@ -11,6 +11,8 @@
       no-results-label="No hay registros que coincidan."
       rows-per-page-label="Usuarios por página"
       :grid="$q.screen.lt.md"
+      bordered
+      flat
     >
       <template v-slot:top>
         <b class="text-h5">
@@ -51,23 +53,28 @@
           <q-td key="created_at" :props="props">
             {{ formatDate(props.row.created_at) }}
           </q-td>
-          <q-td key="options" :props="props">
+          <q-td key="options" :props="props" class="text-center">
             <q-btn
-              dense
               round
-              flat
+              unelevated
               color="primary"
+              size="sm"
               @click="showUser(props)"
               icon="edit"
-            ></q-btn>
+              class="q-mr-sm"
+            >
+              <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+            </q-btn>
             <q-btn
-              dense
               round
-              flat
-              color="red"
+              unelevated
+              color="negative"
+              size="sm"
               @click="removeUser(props)"
               icon="delete"
-            ></q-btn>
+            >
+              <q-tooltip class="bg-negative text-body2">Eliminar</q-tooltip>
+            </q-btn>
           </q-td>
         </q-tr>
       </template>
@@ -80,8 +87,12 @@
                 <q-item-section>
                   <q-item-label caption>{{ col.label }}</q-item-label>
                   <q-item-label v-if="col.name === 'options'">
-                    <q-btn dense round flat color="primary" @click="showUser(props)" icon="edit"></q-btn>
-                    <q-btn dense round flat color="red" @click="removeUser(props)" icon="delete"></q-btn>
+                    <q-btn round unelevated color="primary" size="sm" @click="showUser(props)" icon="edit" class="q-mr-sm">
+                      <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+                    </q-btn>
+                    <q-btn round unelevated color="negative" size="sm" @click="removeUser(props)" icon="delete">
+                      <q-tooltip class="bg-negative text-body2">Eliminar</q-tooltip>
+                    </q-btn>
                   </q-item-label>
                   <q-item-label v-else-if="col.name === 'created_at'">
                     {{ formatDate(props.row.created_at) }}
@@ -261,35 +272,35 @@ const columns = [
   {
     name: "id",
     label: "ID",
-    align: "left",
+    align: "center",
     field: "id",
     sortable: true,
   },
   {
     name: "name",
     label: "Nombre",
-    align: "left",
+    align: "center",
     field: "name",
     sortable: true,
   },
   {
     name: "email",
     label: "Correo electrónico",
-    align: "left",
+    align: "center",
     field: "email",
     sortable: true,
   },
   {
     name: "role_name",
     label: "Rol",
-    align: "left",
+    align: "center",
     field: "role_name",
     sortable: true,
   },
   {
     name: "created_at",
     label: "Creado desde",
-    align: "left",
+    align: "center",
     field: "created_at",
     sortable: true,
   },
@@ -298,7 +309,7 @@ const columns = [
     align: "center",
     label: "Acciones",
     field: "options",
-    sortable: true,
+    sortable: false,
   },
 ];
 

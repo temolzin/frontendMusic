@@ -245,11 +245,11 @@ export default {
     const $q = useQuasar();
     const loading = ref(false);
     const columns = [
-      { name: "expand", label: "Detalles", align: "left" },
-      { name: "sale_id", label: "ID Venta", field: "sale_id", align: "left", sortable: true },
-      { name: "artist_name", label: "Artista", field: row => row.artist.name, align: "left", sortable: true },
-      { name: "event_date", label: "Fecha Evento", field: "event_date", align: "left" },
-      { name: "net_artist_payout", label: "Pago Neto Artista", field: "adjusted_net_payout", align: "right", sortable: true },
+      { name: "expand", label: "Detalles", align: "center" },
+      { name: "sale_id", label: "ID Venta", field: "sale_id", align: "center", sortable: true },
+      { name: "artist_name", label: "Artista", field: row => row.artist.name, align: "center", sortable: true },
+      { name: "event_date", label: "Fecha Evento", field: "event_date", align: "center" },
+      { name: "net_artist_payout", label: "Pago Neto Artista", field: "adjusted_net_payout", align: "center", sortable: true },
       { name: "event_status", label: "Estado del Evento", field: "event_status", align: "center" },
       { name: "payout_status", label: "Estado de la Liquidación", field: "status", align: "center" }
     ];
