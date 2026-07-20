@@ -74,33 +74,45 @@
 
       <template v-slot:body-cell-acciones="props">
         <q-td :props="props" class="text-center">
-          <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
           <q-btn
-            flat
-            rounded
-            color="secondary"
-            label="Ver detalles"
+            round
+            unelevated
+            color="primary"
             size="sm"
-            class="q-ml-xs"
+            @click="openChat(props.row)"
+            icon="mail"
+            class="q-mr-sm"
+          >
+            <q-tooltip class="bg-primary text-body2">Enviar Mensaje</q-tooltip>
+          </q-btn>
+          <q-btn
+            round
+            unelevated
+            color="secondary"
+            size="sm"
             @click="openDetailsDialog(props.row)"
-          />
+            icon="visibility"
+          >
+            <q-tooltip class="bg-secondary text-body2">Ver detalles</q-tooltip>
+          </q-btn>
         </q-td>
       </template>
 
       <template v-slot:body-cell-report="props">
         <q-td :props="props" class="text-center">
           <q-btn
-            flat
-            rounded
+            round
+            unelevated
             color="negative"
-            label="Reportar"
             size="sm"
             :disable="!canReport(props.row)"
             @click="goToReport(props.row)"
+            icon="priority_high"
           >
             <q-tooltip v-if="!canReport(props.row)" class="bg-negative text-body2" anchor="top middle" self="bottom middle">
               {{ reportTooltip(props.row) }}
             </q-tooltip>
+            <q-tooltip v-else class="bg-negative text-body2">Reportar</q-tooltip>
           </q-btn>
         </q-td>
       </template>
@@ -140,30 +152,42 @@
                     </span>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'acciones'">
-                    <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
                     <q-btn
-                      flat
-                      rounded
-                      color="secondary"
-                      label="Ver detalles"
+                      round
+                      unelevated
+                      color="primary"
                       size="sm"
-                      class="q-ml-xs"
+                      @click="openChat(props.row)"
+                      icon="mail"
+                      class="q-mr-sm"
+                    >
+                      <q-tooltip class="bg-primary text-body2">Enviar Mensaje</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      round
+                      unelevated
+                      color="secondary"
+                      size="sm"
                       @click="openDetailsDialog(props.row)"
-                    />
+                      icon="visibility"
+                    >
+                      <q-tooltip class="bg-secondary text-body2">Ver detalles</q-tooltip>
+                    </q-btn>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'report'">
                     <q-btn
-                      flat
-                      rounded
+                      round
+                      unelevated
                       color="negative"
-                      label="Reportar"
                       size="sm"
                       :disable="!canReport(props.row)"
                       @click="goToReport(props.row)"
+                      icon="priority_high"
                     >
                       <q-tooltip v-if="!canReport(props.row)" class="bg-negative text-body2" anchor="top middle" self="bottom middle">
                         {{ reportTooltip(props.row) }}
                       </q-tooltip>
+                      <q-tooltip v-else class="bg-negative text-body2">Reportar</q-tooltip>
                     </q-btn>
                   </q-item-label>
                   <q-item-label v-if="col.name !== 'cliente' && col.name !== 'evento' && col.name !== 'acciones' && col.name !== 'report' && col.name !== 'status' && col.name !== 'amount'">
@@ -347,21 +371,21 @@ const columns = [
   {
     name: "cliente",
     label: "Cliente",
-    align: "left",
+    align: "center",
     field: (row) => `${row.customer_first_name} ${row.customer_last_name}`,
     sortable: true,
   },
   {
     name: "evento",
     label: "Fecha del evento",
-    align: "left",
+    align: "center",
     field: "event_date",
     sortable: true,
   },
   {
     name: "amount",
     label: "Monto",
-    align: "left",
+    align: "center",
     field: "amount",
     sortable: true,
   },
