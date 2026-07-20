@@ -172,7 +172,19 @@
                   lazy-rules
                   :rules="nameRules"
                 />
-                <q-banner v-if="artist?.user?.account_status === 'restricted'" class="bg-warning text-dark rounded-borders q-mb-md" dense>
+                <q-banner
+                  v-if="getMe?.account_status === 'restricted'"
+                  class="bg-negative text-white rounded-borders q-mb-md"
+                  dense
+                >
+                  <template v-slot:avatar><q-icon name="warning" /></template>
+                  Tu cuenta está restringida temporalmente. No puedes realizar contrataciones.
+                </q-banner>
+                <q-banner
+                  v-else-if="artist?.user?.account_status === 'restricted'"
+                  class="bg-warning text-dark rounded-borders q-mb-md"
+                  dense
+                >
                   <template v-slot:avatar><q-icon name="lock" /></template>
                   El perfil de este artista se encuentra inhabilitado para nuevas contrataciones en este momento.
                 </q-banner>
