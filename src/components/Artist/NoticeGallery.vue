@@ -186,6 +186,8 @@
           v-model="slideVideo"
           v-model:fullscreen="fullscreenVideo"
           arrows
+          :autoplay="autoplay"
+          :disable="!!playingVideoId"
           transition-prev="slide-right"
           transition-next="slide-left"
           class="q-mt-lg"
@@ -330,6 +332,7 @@ export default {
   },
   methods: {
     playVideo(video) {
+      this.autoplay = false;
       this.playingVideoId = video.id;
       this.$nextTick(() => {
         this.initPlayer(video);
@@ -621,6 +624,7 @@ export default {
   watch: {
     slideVideo() {
       this.playingVideoId = null;
+      this.autoplay = true;
     },
   },
   mounted() {
