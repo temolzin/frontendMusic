@@ -182,11 +182,9 @@
         <q-carousel
           swipeable
           animated
-          thumbnails
           infinite
           v-model="slideVideo"
           v-model:fullscreen="fullscreenVideo"
-          :autoplay="autoplay"
           arrows
           transition-prev="slide-right"
           transition-next="slide-left"
@@ -197,34 +195,50 @@
             v-for="(video, index) in artistVideos"
             :key="video.id"
             :name="index + 1"
-            :img-src="`https://img.youtube.com/vi/${video.youtube_url}/hqdefault.jpg`"
             class="column no-wrap flex-center q-pa-none"
           >
             <div class="video-card q-pa-md">
-              <a
-                class="video-link"
-                :href="`https://www.youtube.com/watch?v=${video.youtube_url}`"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div class="video-thumb-wrapper">
-                  <q-img
-                    :src="`https://img.youtube.com/vi/${video.youtube_url}/hqdefault.jpg`"
-                    class="video-thumb"
-                    fit="cover"
+              <div v-if="playingVideoId === video.id" class="video-embed-wrapper">
+                <div :id="`yt-player-${video.id}`" class="yt-player"></div>
+                <div v-if="ytErrors[video.id]" class="text-center q-mt-sm">
+                  <a
+                    :href="`https://youtu.be/${getVideoId(video.youtube_url)}`"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-primary text-weight-bold"
                   >
-                    <div class="video-overlay">
-                      <q-btn
-                        round
-                        color="red"
-                        text-color="white"
-                        icon="play_arrow"
-                        size="lg"
-                      />
-                    </div>
-                  </q-img>
+                    Mirar en YouTube <q-icon name="open_in_new" size="sm" />
+                  </a>
                 </div>
-              </a>
+              </div>
+              <div v-else class="video-thumb-wrapper">
+                <q-img
+                  :src="`https://img.youtube.com/vi/${getVideoId(video.youtube_url)}/hqdefault.jpg`"
+                  class="video-thumb"
+                  fit="cover"
+                >
+                  <div class="video-overlay">
+                    <q-btn
+                      round
+                      color="red"
+                      text-color="white"
+                      icon="play_arrow"
+                      size="lg"
+                      @click="playVideo(video)"
+                    />
+                    <q-btn
+                      round
+                      dense
+                      color="negative"
+                      text-color="white"
+                      icon="delete"
+                      size="sm"
+                      class="delete-btn"
+                      @click="confirmDeleteVideo(video.id)"
+                    />
+                  </div>
+                </q-img>
+              </div>
               <div
                 class="text-subtitle1 text-center q-mt-sm text-weight-bold ellipsis"
                 :class="mode ? 'text-white' : 'text-dark'"
@@ -248,6 +262,20 @@
             </q-carousel-control>
           </template>
         </q-carousel>
+        <div class="row justify-center q-gutter-sm q-mt-md" v-if="artistVideos.length > 1">
+          <div
+            v-for="(video, index) in artistVideos"
+            :key="video.id"
+            class="thumbnail-nav-item cursor-pointer"
+            :class="{ 'thumbnail-nav-item--active': slideVideo === index + 1 }"
+            @click="slideVideo = index + 1"
+          >
+            <q-img
+              :src="`https://img.youtube.com/vi/${getVideoId(video.youtube_url)}/hqdefault.jpg`"
+              style="width: 120px; height: 68px; border-radius: 6px;"
+            />
+          </div>
+        </div>
       </div>
     </div>
     <q-dialog v-model="formVideo" persistent>
@@ -294,10 +322,76 @@ export default {
       fullscreen: ref(false),
       slideVideo: ref(1),
       fullscreenVideo: ref(false),
+      playingVideoId: null,
       showGallery: null,
+      ytPlayers: {},
+      ytErrors: {},
     };
   },
   methods: {
+    playVideo(video) {
+      this.playingVideoId = video.id;
+      this.$nextTick(() => {
+        this.initPlayer(video);
+      });
+    },
+    initPlayer(video) {
+      const videoId = this.getVideoId(video.youtube_url);
+      if (!videoId) return;
+      if (this.ytPlayers[video.id]) {
+        this.ytPlayers[video.id].loadVideoById(videoId);
+        return;
+      }
+      this.loadYTAPI(() => this.createPlayer(video.id, videoId));
+    },
+    loadYTAPI(callback) {
+      if (window.YT && window.YT.Player) {
+        callback();
+        return;
+      }
+      if (this._ytCallbacks) {
+        this._ytCallbacks.push(callback);
+        return;
+      }
+      this._ytCallbacks = [callback];
+      window.onYouTubePlayerAPIReady = () => {
+        this._ytCallbacks.forEach((cb) => cb());
+        this._ytCallbacks = [];
+      };
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/player_api";
+      const first = document.getElementsByTagName("script")[0];
+      first.parentNode.insertBefore(tag, first);
+      if (window.YT && window.YT.Player) {
+        window.onYouTubePlayerAPIReady();
+      }
+    },
+    createPlayer(videoId, youtubeId) {
+      try {
+        const player = new YT.Player(`yt-player-${videoId}`, {
+          videoId: youtubeId,
+          width: "100%",
+          height: 350,
+          playerVars: {
+            autoplay: 1,
+            rel: 0,
+            modestbranding: 1,
+            origin: window.location.origin,
+          },
+          events: {
+            onError: (event) => {
+              this.ytErrors = { ...this.ytErrors, [videoId]: event.data };
+            },
+            onReady: () => {
+              this.ytErrors = { ...this.ytErrors, [videoId]: false };
+            },
+          },
+        });
+        this.ytPlayers = { ...this.ytPlayers, [videoId]: player };
+      } catch (e) {
+        this.ytErrors = { ...this.ytErrors, [videoId]: true };
+      }
+    },
     ...mapActions("galleryArtist", ["getGalleryArtist"]),
     ...mapActions("galleryArtist", ["createGalleryArtist"]),
     ...mapActions("galleryArtist", ["upDateGalleryArtist"]),
@@ -436,6 +530,12 @@ export default {
           }
         });
     },
+    getVideoId(value) {
+      if (!value) return '';
+      if (/^[a-zA-Z0-9_-]{11}$/.test(value)) return value;
+      const match = value.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      return match ? match[1] : value;
+    },
     extractYouTubeId(url) {
       try {
         const parsedUrl = new URL(url);
@@ -479,14 +579,19 @@ export default {
         try {
           await this.deleteArtistVideo(id);
           await this.getArtistVideos();
+          if (this.slideVideo > this.artistVideos.length) {
+            this.slideVideo = this.artistVideos.length;
+          }
           this.$q.notify({
             type: "positive",
             message: "Video eliminado",
+            timeout: 2000,
           });
         } catch (err) {
           this.$q.notify({
             type: "negative",
             message: "Error al eliminar el video",
+            timeout: 3000,
           });
         }
       });
@@ -512,6 +617,11 @@ export default {
 
     return Array.isArray(gallery) ? gallery : [];
     }
+  },
+  watch: {
+    slideVideo() {
+      this.playingVideoId = null;
+    },
   },
   mounted() {
     $q = useQuasar();
@@ -566,6 +676,18 @@ export default {
   text-decoration: none;
 }
 
+.video-embed-wrapper {
+  width: 100%;
+  max-width: 700px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.yt-player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
 .video-thumb-wrapper {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -579,6 +701,23 @@ export default {
   height: 100%;
 }
 
+.thumbnail-nav-item {
+  border: 3px solid transparent;
+  border-radius: 9px;
+  transition: border-color 0.2s;
+  opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.thumbnail-nav-item:hover {
+  opacity: 0.9;
+}
+
+.thumbnail-nav-item--active {
+  border-color: var(--q-primary);
+  opacity: 1;
+}
+
 .video-overlay {
   width: 100%;
   height: 100%;
@@ -586,6 +725,12 @@ export default {
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.18);
+}
+
+.delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
 @media (max-width: 600px) {
