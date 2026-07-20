@@ -1,34 +1,5 @@
 <template>
   <div class="q-pa-md">
-    <div class="row items-center q-mb-md">
-      <b class="text-h5">Tickets de Soporte</b>
-      <q-space />
-      <q-select
-        v-model="filterStatus"
-        :options="statusOptions"
-        emit-value
-        map-options
-        outlined
-        dense
-        label="Estado"
-        clearable
-        style="min-width: 160px"
-        class="q-mr-sm"
-        @update:model-value="fetchTickets"
-      />
-      <q-select
-        v-model="filterCategory"
-        :options="categoryOptions"
-        emit-value
-        map-options
-        outlined
-        dense
-        label="Categoría"
-        clearable
-        style="min-width: 200px"
-        @update:model-value="fetchTickets"
-      />
-    </div>
     <q-table
       :rows="tickets"
       :columns="columns"
@@ -41,6 +12,35 @@
       rows-per-page-label="Tickets por página"
       :rows-per-page-options="[10, 20, 50]"
     >
+      <template v-slot:top>
+        <b class="text-h5">Tickets de Soporte</b>
+        <q-space />
+        <q-select
+          v-model="filterStatus"
+          :options="statusOptions"
+          emit-value
+          map-options
+          outlined
+          dense
+          label="Estado"
+          clearable
+          style="min-width: 160px"
+          class="q-mr-sm"
+          @update:model-value="fetchTickets"
+        />
+        <q-select
+          v-model="filterCategory"
+          :options="categoryOptions"
+          emit-value
+          map-options
+          outlined
+          dense
+          label="Categoría"
+          clearable
+          style="min-width: 200px"
+          @update:model-value="fetchTickets"
+        />
+      </template>
       <template v-slot:body-cell-event_date="props">
         <q-td :props="props">
           <div class="text-weight-bold">{{ formatDate(props.row.artist_sale?.event_date) }}</div>
@@ -126,6 +126,7 @@ export default {
       filterCategory: null,
       showLogsModal: false,
       selectedTicketId: null,
+      selectedTicket: null,
       columns: [
         { name: 'event_date', label: 'Fecha del Evento', field: (row) => row.artist_sale?.event_date, sortable: true, align: 'center' },
         { name: 'artist', label: 'Evento', field: 'artist', align: 'center' },

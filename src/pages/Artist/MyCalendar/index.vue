@@ -1,321 +1,326 @@
 <template>
   <div class="calendar-container" :class="{ 'calendar-dark': mode }">
-    <div class="page-header q-mb-md">
-      <h4 class="q-my-none">Mi Calendario</h4>
-      <p class="text-subtitle2 text-grey">Ver tus contratos programados</p>
-    </div>
 
-    <div v-if="loading" class="text-center q-py-lg">
-      <q-spinner size="50px" color="primary" />
-      <p class="text-grey q-mt-md">Cargando contratos...</p>
-    </div>
+    <q-card class="shadow-1">
+      <q-card-section class="page-header q-pb-none">
+        <b class="text-h5 q-my-none">Mi Calendario</b>
+        <p class="text-subtitle2 text-grey">Ver tus contratos programados</p>
+      </q-card-section>
 
-    <div v-else>
-      <q-splitter v-model="splitter" style="height: 700px" class="calendar-splitter" :horizontal="$q.screen.lt.md">
-        <template v-slot:before>
-          <div class="left-panel q-pa-md">
-            <h6 class="q-mt-none q-mb-md">Calendario</h6>
+      <q-card-section class="q-pt-sm">
+        <div v-if="loading" class="text-center q-py-lg">
+          <q-spinner size="50px" color="primary" />
+          <p class="text-grey q-mt-md">Cargando contratos...</p>
+        </div>
 
-            <q-date
-              v-model="selectedDate"
-              flat
-              bordered
-              color="primary"
-              :events="eventDates"
-              :event-color="eventColor"
-            />
+        <div v-else>
+          <q-splitter v-model="splitter" style="height: 700px; border: none;" class="calendar-splitter" :horizontal="$q.screen.lt.md">
+            <template v-slot:before>
+              <div class="left-panel q-pa-md">
+                <h6 class="q-mt-none q-mb-md">Calendario</h6>
 
-            <div class="summary-section q-mt-lg">
-              <h6 class="q-mb-md text-subtitle2">Resumen</h6>
-              <div class="summary-card q-pa-md bg-grey-2 rounded-borders">
-                <div class="summary-row q-mb-md">
-                  <span class="label">Total</span>
-                  <span class="value text-blue">{{ contracts.length }}</span>
-                </div>
-                <div class="summary-row q-mb-md">
-                  <span class="label">Completadas</span>
-                  <span class="value text-green">{{ completedCount }}</span>
-                </div>
-                <div class="summary-row">
-                  <span class="label">Pendientes</span>
-                  <span class="value text-warning">{{ pendingCount }}</span>
-                </div>
-                <div class="summary-row q-mt-md">
-                  <span class="label">Rechazados</span>
-                  <span class="value text-red">{{ rejectedCount }}</span>
-                </div>
-                <div class="summary-row q-mt-md">
-                  <span class="label">Expirados</span>
-                  <span class="value text-grey-6">{{ expiredCount }}</span>
-                </div>
-                <div class="summary-row q-mt-md">
-                  <span class="label">Cancelados</span>
-                  <span class="value text-grey-6">{{ cancelledCount }}</span>
+                <q-date
+                  v-model="selectedDate"
+                  flat
+                  bordered
+                  color="primary"
+                  :events="eventDates"
+                  :event-color="eventColor"
+                />
+
+                <div class="summary-section q-mt-lg">
+                  <h6 class="q-mb-md text-subtitle2">Resumen</h6>
+                  <div class="summary-card q-pa-md bg-grey-2 rounded-borders">
+                    <div class="summary-row q-mb-md">
+                      <span class="label">Total</span>
+                      <span class="value text-blue">{{ contracts.length }}</span>
+                    </div>
+                    <div class="summary-row q-mb-md">
+                      <span class="label">Completadas</span>
+                      <span class="value text-green">{{ completedCount }}</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="label">Pendientes</span>
+                      <span class="value text-warning">{{ pendingCount }}</span>
+                    </div>
+                    <div class="summary-row q-mt-md">
+                      <span class="label">Rechazados</span>
+                      <span class="value text-red">{{ rejectedCount }}</span>
+                    </div>
+                    <div class="summary-row q-mt-md">
+                      <span class="label">Expirados</span>
+                      <span class="value text-grey-6">{{ expiredCount }}</span>
+                    </div>
+                    <div class="summary-row q-mt-md">
+                      <span class="label">Cancelados</span>
+                      <span class="value text-grey-6">{{ cancelledCount }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </template>
+            </template>
 
-        <template v-slot:after>
-          <div class="right-panel">
-            <q-tabs
-              v-model="activeTab"
-              dense
-              class="text-primary"
-              active-color="primary"
-              indicator-color="primary"
-            >
-              <q-tab name="today" label="Hoy" />
-              <q-tab name="all" label="Todas" />
-            </q-tabs>
+            <template v-slot:after>
+              <div class="right-panel">
+                <q-tabs
+                  v-model="activeTab"
+                  dense
+                  class="text-primary"
+                  active-color="primary"
+                  indicator-color="primary"
+                >
+                  <q-tab name="today" label="Hoy" />
+                  <q-tab name="all" label="Todas" />
+                </q-tabs>
 
-            <q-tab-panels v-model="activeTab" animated class="tab-content">
-              <q-tab-panel name="today">
-                <div v-if="todayEvents.length > 0" class="events-list">
-                  <div v-for="event in todayEvents" :key="event.id" class="q-mb-md">
-                    <q-card
-                      flat
-                      bordered
-                      class="event-card"
-                      :class="{ completed: event.status === 'completed', expired: event.status === 'expired' || event.status === 'rejected' }"
-                      @click="toggleExpanded(event.id)"
-                    >
-                      <q-card-section class="q-pa-md">
-                        <div class="event-header">
-                          <div>
-                            <div class="text-h6 q-mb-xs">{{ event.title }}</div>
-                            <div class="text-caption text-grey">
-                              <q-icon name="access_time" size="xs" /> {{ event.time }}
+                <q-tab-panels v-model="activeTab" animated class="tab-content">
+                  <q-tab-panel name="today">
+                    <div v-if="todayEvents.length > 0" class="events-list">
+                      <div v-for="event in todayEvents" :key="event.id" class="q-mb-md">
+                        <q-card
+                          flat
+                          bordered
+                          class="event-card"
+                          :class="{ completed: event.status === 'completed', expired: event.status === 'expired' || event.status === 'rejected' }"
+                          @click="toggleExpanded(event.id)"
+                        >
+                          <q-card-section class="q-pa-md">
+                            <div class="event-header">
+                              <div>
+                                <div class="text-h6 q-mb-xs">{{ event.title }}</div>
+                                <div class="text-caption text-grey">
+                                  <q-icon name="access_time" size="xs" /> {{ event.time }}
+                                </div>
+                                <div class="text-caption text-grey q-mt-xs">
+                                  <q-icon name="location_on" size="xs" /> {{ event.location }}
+                                </div>
+                              </div>
+                              <div class="event-right">
+                                <q-badge
+                                  :color="statusColor(event.status)"
+                                  :label="statusLabel(event.status)"
+                                />
+                                <q-icon
+                                  :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
+                                  color="primary"
+                                  class="q-ml-md"
+                                />
+                              </div>
                             </div>
-                            <div class="text-caption text-grey q-mt-xs">
-                              <q-icon name="location_on" size="xs" /> {{ event.location }}
-                            </div>
-                          </div>
-                          <div class="event-right">
-                            <q-badge
-                              :color="statusColor(event.status)"
-                              :label="statusLabel(event.status)"
-                            />
-                            <q-icon
-                              :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
-                              color="primary"
-                              class="q-ml-md"
-                            />
-                          </div>
-                        </div>
 
-                        <q-slide-transition>
-                          <div v-show="expanded[event.id]" class="q-mt-md">
-                            <q-separator class="q-mb-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Evento</div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Descripción:</span>
-                              <span class="detail-value">{{ event.description }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Inicio:</span>
-                              <span class="detail-value">{{ formatEventTime(event.time) }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Duración:</span>
-                              <span class="detail-value">{{ event.eventHours ? event.eventHours + ' hrs' : 'N/A' }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Tarifa:</span>
-                              <span class="detail-value text-positive text-weight-bold">${{ event.rate }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Contacto:</span>
-                              <span class="detail-value">{{ event.contact }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Dirección:</span>
-                              <span class="detail-value">{{ event.customerAddress }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Ciudad:</span>
-                              <span class="detail-value">{{ event.customerCity }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Estado:</span>
-                              <span class="detail-value">{{ event.customerState }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Código Postal:</span>
-                              <span class="detail-value">{{ event.customerZipCode }}</span>
-                            </div>
-                            <div class="q-mt-sm">
-                              <q-btn dense outline color="secondary" icon="map" label="Cómo llegar" size="sm" @click.stop="openGoogleMaps(event)" />
-                            </div>
-                            <q-separator class="q-my-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Nombre:</span>
-                              <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
-                            </div>
-                            <q-separator class="q-my-md" />
-                            <div v-if="event.status === 'pending'" class="action-section">
-                              <q-btn
-                                v-if="event.canComplete"
-                                color="positive"
-                                label="Marcar como completado"
-                                outline
-                                size="sm"
-                                icon="check_circle"
-                                @click.stop="markAsCompleted(event)"
-                                class="full-width"
-                              />
-                              <q-btn
-                                v-if="canCancelEvent(event)"
-                                color="negative"
-                                label="Cancelar evento"
-                                outline
-                                size="sm"
-                                icon="event_busy"
-                                @click.stop="openCancelDialog(event)"
-                                class="full-width"
-                              />
-                            </div>
-                          </div>
-                        </q-slide-transition>
-                      </q-card-section>
-                    </q-card>
-                  </div>
-                </div>
-                <div v-else class="text-center q-py-lg text-grey">
-                  <q-icon name="calendar_today" size="lg" />
-                  <p>Sin contratos para hoy</p>
-                </div>
-              </q-tab-panel>
+                            <q-slide-transition>
+                              <div v-show="expanded[event.id]" class="q-mt-md">
+                                <q-separator class="q-mb-md" />
+                                <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Evento</div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Descripción:</span>
+                                  <span class="detail-value">{{ event.description }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Inicio:</span>
+                                  <span class="detail-value">{{ formatEventTime(event.time) }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Duración:</span>
+                                  <span class="detail-value">{{ event.eventHours ? event.eventHours + ' hrs' : 'N/A' }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Tarifa:</span>
+                                  <span class="detail-value text-positive text-weight-bold">${{ event.rate }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Contacto:</span>
+                                  <span class="detail-value">{{ event.contact }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Dirección:</span>
+                                  <span class="detail-value">{{ event.customerAddress }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Ciudad:</span>
+                                  <span class="detail-value">{{ event.customerCity }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Estado:</span>
+                                  <span class="detail-value">{{ event.customerState }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Código Postal:</span>
+                                  <span class="detail-value">{{ event.customerZipCode }}</span>
+                                </div>
+                                <div class="q-mt-sm">
+                                  <q-btn dense outline color="secondary" icon="map" label="Cómo llegar" size="sm" @click.stop="openGoogleMaps(event)" />
+                                </div>
+                                <q-separator class="q-my-md" />
+                                <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Nombre:</span>
+                                  <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
+                                </div>
+                                <q-separator class="q-my-md" />
+                                <div v-if="event.status === 'pending'" class="action-section">
+                                  <q-btn
+                                    v-if="event.canComplete"
+                                    color="positive"
+                                    label="Marcar como completado"
+                                    outline
+                                    size="sm"
+                                    icon="check_circle"
+                                    @click.stop="markAsCompleted(event)"
+                                    class="full-width"
+                                  />
+                                  <q-btn
+                                    v-if="canCancelEvent(event)"
+                                    color="negative"
+                                    label="Cancelar evento"
+                                    outline
+                                    size="sm"
+                                    icon="event_busy"
+                                    @click.stop="openCancelDialog(event)"
+                                    class="full-width"
+                                  />
+                                </div>
+                              </div>
+                            </q-slide-transition>
+                          </q-card-section>
+                        </q-card>
+                      </div>
+                    </div>
+                    <div v-else class="text-center q-py-lg text-grey">
+                      <q-icon name="calendar_today" size="lg" />
+                      <p>Sin contratos para hoy</p>
+                    </div>
+                  </q-tab-panel>
 
-              <q-tab-panel name="all">
-                <div v-if="contracts.length > 0" class="events-list">
-                  <div v-for="event in contracts" :key="event.id" class="q-mb-md">
-                    <q-card
-                      flat
-                      bordered
-                      class="event-card"
-                      :class="{ completed: event.status === 'completed', expired: event.status === 'expired' || event.status === 'rejected' }"
-                      role="button"
-                      :tabindex="0"
-                      :aria-expanded="expanded[event.id] ? 'true' : 'false'"
-                      @click="toggleExpanded(event.id)"
-                      @keydown.enter.prevent="toggleExpanded(event.id)"
-                      @keydown.space.prevent="toggleExpanded(event.id)"
-                    >
-                      <q-card-section class="q-pa-md">
-                        <div class="event-header">
-                          <div>
-                            <div class="text-h6 q-mb-xs">{{ event.title }}</div>
-                            <div class="text-caption text-grey">
-                              <q-icon name="event" size="xs" /> {{ formatDateDisplay(event.date) }}
+                  <q-tab-panel name="all">
+                    <div v-if="contracts.length > 0" class="events-list">
+                      <div v-for="event in contracts" :key="event.id" class="q-mb-md">
+                        <q-card
+                          flat
+                          bordered
+                          class="event-card"
+                          :class="{ completed: event.status === 'completed', expired: event.status === 'expired' || event.status === 'rejected' }"
+                          role="button"
+                          :tabindex="0"
+                          :aria-expanded="expanded[event.id] ? 'true' : 'false'"
+                          @click="toggleExpanded(event.id)"
+                          @keydown.enter.prevent="toggleExpanded(event.id)"
+                          @keydown.space.prevent="toggleExpanded(event.id)"
+                        >
+                          <q-card-section class="q-pa-md">
+                            <div class="event-header">
+                              <div>
+                                <div class="text-h6 q-mb-xs">{{ event.title }}</div>
+                                <div class="text-caption text-grey">
+                                  <q-icon name="event" size="xs" /> {{ formatDateDisplay(event.date) }}
+                                </div>
+                                <div class="text-caption text-grey q-mt-xs">
+                                  <q-icon name="location_on" size="xs" /> {{ event.location }}
+                                </div>
+                              </div>
+                              <div class="event-right">
+                                <q-badge
+                                  :color="statusColor(event.status)"
+                                  :label="statusLabel(event.status)"
+                                />
+                                <q-icon
+                                  :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
+                                  color="primary"
+                                  class="q-ml-md"
+                                />
+                              </div>
                             </div>
-                            <div class="text-caption text-grey q-mt-xs">
-                              <q-icon name="location_on" size="xs" /> {{ event.location }}
-                            </div>
-                          </div>
-                          <div class="event-right">
-                            <q-badge
-                              :color="statusColor(event.status)"
-                              :label="statusLabel(event.status)"
-                            />
-                            <q-icon
-                              :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
-                              color="primary"
-                              class="q-ml-md"
-                            />
-                          </div>
-                        </div>
 
-                        <q-slide-transition>
-                          <div v-show="expanded[event.id]" class="q-mt-md">
-                            <q-separator class="q-mb-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Evento</div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Descripción:</span>
-                              <span class="detail-value">{{ event.description }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Inicio:</span>
-                              <span class="detail-value">{{ formatEventTime(event.time) }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Duración:</span>
-                              <span class="detail-value">{{ event.eventHours ? event.eventHours + ' hrs' : 'N/A' }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Tarifa:</span>
-                              <span class="detail-value text-positive text-weight-bold">${{ event.rate }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Contacto:</span>
-                              <span class="detail-value">{{ event.contact }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Dirección:</span>
-                              <span class="detail-value">{{ event.customerAddress }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Ciudad:</span>
-                              <span class="detail-value">{{ event.customerCity }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Estado:</span>
-                              <span class="detail-value">{{ event.customerState }}</span>
-                            </div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Código Postal:</span>
-                              <span class="detail-value">{{ event.customerZipCode }}</span>
-                            </div>
-                            <div class="q-mt-sm">
-                              <q-btn dense outline color="secondary" icon="map" label="Cómo llegar" size="sm" @click.stop="openGoogleMaps(event)" />
-                            </div>
-                            <q-separator class="q-my-md" />
-                            <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
-                            <div class="detail-item q-mb-sm">
-                              <span class="detail-label">Nombre:</span>
-                              <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
-                            </div>
-                            <q-separator class="q-my-md" />
-                            <div v-if="event.status === 'pending'" class="action-section">
-                              <q-btn
-                                v-if="event.canComplete"
-                                color="positive"
-                                label="Marcar como completado"
-                                outline
-                                size="sm"
-                                icon="check_circle"
-                                @click.stop="markAsCompleted(event)"
-                                class="full-width"
-                              />
-                              <q-btn
-                                v-if="canCancelEvent(event)"
-                                color="negative"
-                                label="Cancelar evento"
-                                outline
-                                size="sm"
-                                icon="event_busy"
-                                @click.stop="openCancelDialog(event)"
-                                class="full-width"
-                              />
-                            </div>
-                          </div>
-                        </q-slide-transition>
-                      </q-card-section>
-                    </q-card>
-                  </div>
-                </div>
-                <div v-else class="text-center q-py-lg text-grey">
-                  <q-icon name="event" size="lg" />
-                  <p>Sin contratos registrados</p>
-                </div>
-              </q-tab-panel>
-            </q-tab-panels>
-          </div>
-        </template>
-      </q-splitter>
-    </div>
+                            <q-slide-transition>
+                              <div v-show="expanded[event.id]" class="q-mt-md">
+                                <q-separator class="q-mb-md" />
+                                <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Evento</div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Descripción:</span>
+                                  <span class="detail-value">{{ event.description }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Inicio:</span>
+                                  <span class="detail-value">{{ formatEventTime(event.time) }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Duración:</span>
+                                  <span class="detail-value">{{ event.eventHours ? event.eventHours + ' hrs' : 'N/A' }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Tarifa:</span>
+                                  <span class="detail-value text-positive text-weight-bold">${{ event.rate }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Contacto:</span>
+                                  <span class="detail-value">{{ event.contact }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Dirección:</span>
+                                  <span class="detail-value">{{ event.customerAddress }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Ciudad:</span>
+                                  <span class="detail-value">{{ event.customerCity }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Estado:</span>
+                                  <span class="detail-value">{{ event.customerState }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Código Postal:</span>
+                                  <span class="detail-value">{{ event.customerZipCode }}</span>
+                                </div>
+                                <div class="q-mt-sm">
+                                  <q-btn dense outline color="secondary" icon="map" label="Cómo llegar" size="sm" @click.stop="openGoogleMaps(event)" />
+                                </div>
+                                <q-separator class="q-my-md" />
+                                <div class="detail-section-title q-mb-sm text-weight-bold text-primary">Cliente</div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Nombre:</span>
+                                  <span class="detail-value">{{ event.customerFirstName }} {{ event.customerLastName }}</span>
+                                </div>
+                                <q-separator class="q-my-md" />
+                                <div v-if="event.status === 'pending'" class="action-section">
+                                  <q-btn
+                                    v-if="event.canComplete"
+                                    color="positive"
+                                    label="Marcar como completado"
+                                    outline
+                                    size="sm"
+                                    icon="check_circle"
+                                    @click.stop="markAsCompleted(event)"
+                                    class="full-width"
+                                  />
+                                  <q-btn
+                                    v-if="canCancelEvent(event)"
+                                    color="negative"
+                                    label="Cancelar evento"
+                                    outline
+                                    size="sm"
+                                    icon="event_busy"
+                                    @click.stop="openCancelDialog(event)"
+                                    class="full-width"
+                                  />
+                                </div>
+                              </div>
+                            </q-slide-transition>
+                          </q-card-section>
+                        </q-card>
+                      </div>
+                    </div>
+                    <div v-else class="text-center q-py-lg text-grey">
+                      <q-icon name="event" size="lg" />
+                      <p>Sin contratos registrados</p>
+                    </div>
+                  </q-tab-panel>
+                </q-tab-panels>
+              </div>
+            </template>
+          </q-splitter>
+        </div>
+      </q-card-section>
+    </q-card>
 
     <q-dialog v-model="isCancelDialogOpen" persistent>
       <q-card style="width: 500px; max-width: 95vw">

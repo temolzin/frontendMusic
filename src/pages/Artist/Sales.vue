@@ -107,7 +107,7 @@
             size="sm"
             :disable="!canReport(props.row)"
             @click="goToReport(props.row)"
-            icon="error"
+            icon="priority_high"
           >
             <q-tooltip v-if="!canReport(props.row)" class="bg-negative text-body2" anchor="top middle" self="bottom middle">
               {{ reportTooltip(props.row) }}
@@ -182,7 +182,7 @@
                       size="sm"
                       :disable="!canReport(props.row)"
                       @click="goToReport(props.row)"
-                      icon="error"
+                      icon="priority_high"
                     >
                       <q-tooltip v-if="!canReport(props.row)" class="bg-negative text-body2" anchor="top middle" self="bottom middle">
                         {{ reportTooltip(props.row) }}

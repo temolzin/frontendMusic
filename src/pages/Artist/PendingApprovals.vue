@@ -1,19 +1,6 @@
 <template>
   <q-page class="q-pa-md">
 
-    <q-tabs
-      v-model="activeTab"
-      dense
-      class="text-grey q-mb-md"
-      active-color="primary"
-      indicator-color="primary"
-      align="left"
-    >
-      <q-tab name="pending" label="Pendientes" />
-      <q-tab name="history" label="Historial" />
-    </q-tabs>
-    <q-separator class="q-mb-md" />
-
     <div v-if="activeTab === 'pending'">
     <q-table
       v-if="pendingApprovals && pendingApprovals.length > 0"
@@ -28,8 +15,21 @@
       bordered
       :grid="$q.screen.lt.md"
     >
-      <template v-slot:top-left>
-        <p class="text-h5 q-mb-none q-mt-sm">Solicitudes Pendientes</p>
+      <template v-slot:top>
+        <div class="full-width">
+          <b class="text-h5">Solicitudes Pendientes</b>
+          <q-tabs
+            v-model="activeTab"
+            dense
+            class="text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="left"
+          >
+            <q-tab name="pending" label="Pendientes" />
+            <q-tab name="history" label="Historial" />
+          </q-tabs>
+        </div>
       </template>
 
       <template v-slot:body-cell-cliente="props">
@@ -41,7 +41,7 @@
       </template>
 
       <template v-slot:body-cell-evento="props">
-        <q-td :props="props">
+        <q-td :props="props" class="text-center">
           <div class="text-weight-medium">{{ formatDate(props.row.event_date) }}</div>
           <div class="text-caption text-grey">{{ props.row.event_hour }} hrs</div>
         </q-td>
@@ -63,7 +63,7 @@
       </template>
 
       <template v-slot:body-cell-tiempo="props">
-        <q-td :props="props">
+        <q-td :props="props" class="text-center">
           <q-badge color="warning" class="q-px-sm q-py-xs">
             <q-icon name="schedule" size="12px" class="q-mr-xs" />
             {{ formatCountdown(props.row.time_remaining_seconds) }}
@@ -78,7 +78,7 @@
             round
             color="positive"
             size="sm"
-            icon="check_circle"
+            icon="check"
             class="q-mr-sm"
             :loading="loadingId === props.row.id + '_accept'"
             @click="onAccept(props.row.id)"
@@ -90,7 +90,7 @@
             round
             color="negative"
             size="sm"
-            icon="cancel"
+            icon="close"
             :loading="loadingId === props.row.id + '_reject'"
             @click="onReject(props.row.id)"
           >
@@ -142,7 +142,7 @@
                   round
                   color="positive"
                   size="sm"
-                  icon="check_circle"
+                  icon="check"
                   :loading="loadingId === props.row.id + '_accept'"
                   @click="onAccept(props.row.id)"
                 >
@@ -155,7 +155,7 @@
                   round
                   color="negative"
                   size="sm"
-                  icon="cancel"
+                  icon="close"
                   :loading="loadingId === props.row.id + '_reject'"
                   @click="onReject(props.row.id)"
                 >
@@ -181,7 +181,7 @@
     <div v-if="activeTab === 'history'">
       <q-table
         v-if="approvalHistory && approvalHistory.length > 0"
-        :rows="approvalHistory"
+        :rows="filteredHistory"
         :columns="historyColumns"
         row-key="id"
         :pagination="{ rowsPerPage: 10 }"
@@ -192,8 +192,29 @@
         bordered
         :grid="$q.screen.lt.md"
       >
-        <template v-slot:top-left>
-          <p class="text-h5 q-mb-none q-mt-sm">Historial de Solicitudes</p>
+        <template v-slot:top>
+          <div class="full-width">
+            <div class="row items-center q-mb-md">
+              <b class="text-h5">Historial de Solicitudes</b>
+              <q-space />
+              <q-input dense debounce="100" color="primary" v-model="searchFilter" style="width: 250px">
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
+            <q-tabs
+              v-model="activeTab"
+              dense
+              class="text-grey"
+              active-color="primary"
+              indicator-color="primary"
+              align="left"
+            >
+              <q-tab name="pending" label="Pendientes" />
+              <q-tab name="history" label="Historial" />
+            </q-tabs>
+          </div>
         </template>
 
         <template v-slot:body-cell-cliente="props">
@@ -315,11 +336,25 @@ export default {
       loadingHistory: false,
       loadingId: null,
       countdownInterval: null,
+      searchFilter: '',
     };
   },
 
   computed: {
     ...mapGetters('approvals', { pendingApprovals: 'getPendingApprovals', approvalHistory: 'getApprovalHistory' }),
+
+    filteredHistory() {
+      if (!this.approvalHistory || !this.searchFilter) return this.approvalHistory;
+      
+      const filter = this.searchFilter.toLowerCase();
+      return this.approvalHistory.filter(row => {
+        const fullName = `${row.customer_first_name} ${row.customer_last_name}`.toLowerCase();
+        const eventDate = this.formatDate(row.event_date).toLowerCase();
+        const amount = Number(row.amount).toLocaleString('es-MX');
+        
+        return fullName.includes(filter) || eventDate.includes(filter) || amount.includes(filter);
+      });
+    },
   },
 
   watch: {
@@ -428,3 +463,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.q-table tbody td {
+  height: 60px !important;
+  vertical-align: middle;
+}
+
+.q-table thead th {
+  vertical-align: middle;
+}
+</style>

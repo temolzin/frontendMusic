@@ -47,8 +47,11 @@
           <q-td key="name" :props="props">
             {{ props.row.name }}
           </q-td>
-          <q-td key="description" :props="props">
+          <q-td key="description" :props="props" class="ellipsis" style="max-width: 300px;">
             {{ props.row.description }}
+            <q-tooltip class="bg-dark text-body2" max-width="300px">
+              {{ props.row.description }}
+            </q-tooltip>
           </q-td>
           <q-td key="created_at" :props="props">
             {{ formatDate(props.row.created_at) }}
@@ -361,7 +364,7 @@ const columns = [
   {
     name: "id",
     label: "ID",
-    align: "center",
+    align: "left",
     field: "id",
     sortable: true,
   },
@@ -375,7 +378,7 @@ const columns = [
   {
     name: "description",
     label: "Descripción",
-    align: "center",
+    align: "left",
     field: "description",
     sortable: true,
   },

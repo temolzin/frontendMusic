@@ -1,15 +1,11 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="row items-center q-mb-lg">
-      <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="col">Mis Ofertas</h3>
-      <q-btn color="primary" icon="add" label="Nueva Oferta" @click="openForm()" />
-    </div>
-
     <q-table
       :rows="offers"
       :columns="columns"
       row-key="id"
       :loading="loading"
+      :filter="filter"
       no-data-label="No tienes ofertas registradas"
       rows-per-page-label="Registros por página"
       :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => `${firstRowIndex}-${endRowIndex} de ${totalRowsNumber}`"
@@ -17,6 +13,18 @@
       bordered
       flat
     >
+      <template v-slot:top>
+        <b class="text-h5">
+          Mis Ofertas
+          <q-btn color="primary" icon="add" label="Nueva Oferta" size="sm" @click="openForm()" />
+        </b>
+        <q-space />
+        <q-input dense debounce="100" color="primary" v-model="filter">
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
       <template v-slot:body-cell-is_active="props">
         <q-td :props="props">
           <q-badge :color="props.row.is_active ? 'positive' : 'grey'">
@@ -277,6 +285,7 @@ export default {
   data() {
     return {
       loading: false,
+      filter: "",
       formDialog: false,
       editingOffer: null,
       form: {
