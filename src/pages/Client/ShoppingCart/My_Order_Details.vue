@@ -3,8 +3,8 @@
     <q-container>
       <div class="q-pa-md">
         <q-card-group>
-          <div class="bg-primary text-white text-left" colspan="6">
-            <div colspan="6" class="artist-name-2" style="font-size: 22px; border-radius: 5px">
+          <div class="bg-primary text-white q-px-md q-py-md q-mb-md" style="border-radius: 8px;">
+            <div class="artist-name-2 text-weight-bold" style="font-size: 24px; letter-spacing: 0.5px;">
               Mis Compras
             </div>
           </div>
@@ -43,30 +43,35 @@
               <q-markup-table dense flat bordered class="table-responsive">
                 <tbody v-for="(purchase, index) in filteredPurchases" :key="index">
                   <tr v-if="index === 0 || formatDate(purchase.created_at) !== formatDate(filteredPurchases[index - 1].created_at)" class="bg-primary text-white text-center">
-                    <th :colspan="$q.screen.lt.sm ? 5 : 1" style="font-size: 15px">
+                    <th :colspan="$q.screen.lt.sm ? 5 : 1" style="font-size: 15px" class="text-center">
                       {{ formatDate(purchase.created_at) }}
                     </th>
-                    <th class="text-left text-weight-bold gt-xs" style="font-size: 14px">Detalles</th>
-                    <th class="text-left text-weight-bold gt-xs" style="font-size: 14px">Contacto</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Detalles</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Contacto</th>
                     <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Estado</th>
-                    <th class="text-left text-weight-bold gt-xs" style="font-size: 14px">Acciones</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Acciones</th>
                   </tr>
-                  <tr class="gt-xs">
+               <tr class="gt-xs">
                     <td>
                       <div class="text-center">
                         <q-img :src="purchase.artist?.image" loading="lazy" width="100px" height="100px"
                           style="object-fit: cover" class="rounded-circle q-responsive" />
                       </div>
                     </td>
-                    <td class="text-left">
-                      <br class="detail-artist-name">{{ purchase.artist?.name || 'N/A' }}
-                      <br class="detail-artist-zone">{{ purchase.artist?.zone || 'N/A' }}
-                      <br class="detail-hours">Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
-                      <p></p>
+                    <td class="text-left q-py-md">
+                      <div class="text-subtitle1 text-weight-bold text-primary">
+                        {{ purchase.artist?.name || 'N/A' }}
+                      </div>
+                      <div class="text-caption text-grey-8 q-mb-xs">
+                        {{ purchase.artist?.zone || 'N/A' }}
+                      </div>
+                      <div class="text-subtitle2 text-weight-medium">
+                        Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
+                      </div>
                     </td>
-                    <td>
-                      <p class="artist-zone">{{ purchase.artist?.manager?.name || 'N/A' }}</p>
-                      <p>
+                    <td class="text-center">
+                      <p class="artist-zone text-weight-medium q-mb-sm">{{ purchase.artist?.manager?.name || 'N/A' }}</p>
+                      <p class="q-mb-none">
                         <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(purchase)" />
                       </p>
                     </td>
@@ -88,7 +93,7 @@
                         </div>
                       </div>
                     </td>
-                    <td class="text-left">
+                    <td class="text-center">
                       <q-btn unelevated rounded color="primary" label="ver compra" @click="openOrderModal(purchase)" />
                     </td>
                   </tr>
@@ -140,16 +145,20 @@
       <q-dialog v-model="showModal" transition-show="rotate" transition-hide="rotate">
         <q-card style="width: 480px; border-radius: 16px" class="q-pa-md">
           <q-card-section class="row items-center q-pb-none">
-            <div class="text-h6 text-primary text-weight-bold">Detalle de la compra</div>
+            <div class="text-h6 text-primary text-weight-bold">Detalles de la compra</div>
             <q-space />
             <q-btn icon="close" flat round dense v-close-popup color="grey" />
           </q-card-section>
           <q-separator class="q-my-md" />
           <q-card-section v-if="selectedPurchase" class="q-pt-none">
             <div class="row items-center q-mb-md">
-              <q-avatar size="60px" class="q-mr-md">
-                <q-img :src="selectedPurchase.artist?.image" style="border-radius: 50%" />
-              </q-avatar>
+              <q-img 
+                :src="selectedPurchase.artist?.image" 
+                width="60px" 
+                height="60px" 
+                style="border-radius: 50%; object-fit: cover"
+                class="q-mr-md shadow-1"
+              />
               <div>
                 <div class="text-subtitle1 text-weight-bold">{{ selectedPurchase.artist?.name || 'N/A' }}</div>
                 <div class="text-caption text-grey">{{ selectedPurchase.artist?.zone || '' }}</div>
@@ -244,7 +253,7 @@
         <q-card style="width: 420px; border-radius: 20px" class="q-pa-md">
           <div ref="regeneratedReceipt" class="receipt-card">
             <q-card-section class="text-center q-pb-none q-pt-md">
-              <img src="/logovibeer-black.png" style="height: 55px" class="q-mb-sm" />
+              <img src="/logovibeer-black.png" style="height: 80px" class="q-mb-sm" />
               <div class="text-h6 text-primary text-weight-bold">Referencia de pago</div>
             </q-card-section>
             <q-card-section class="text-center q-pt-md">
@@ -280,7 +289,7 @@
               </div>
             </q-card-section>
           </div>
-          <q-card-actions align="center" class="q-pt-md">
+          <q-card-actions align="between" class="q-pt-md">
             <q-btn-dropdown rounded color="primary" label="Descargar" icon="download">
               <q-list>
                 <q-item clickable v-close-popup @click="downloadRefPDF">
@@ -301,7 +310,7 @@
                 </q-item>
               </q-list>
             </q-btn-dropdown>
-            <q-btn rounded flat color="grey" label="Entendido" @click="showRegeneratedRefDialog = false" />
+            <q-btn rounded flat color="primary" label="Cerrar" @click="showRegeneratedRefDialog = false" />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -542,6 +551,8 @@ export default {
       return `${day}/${month}/${year} ${time}`;
     },
     formatDate(rawDate) {
+      if (!rawDate) return 'N/A';
+      
       const months = [
         "enero",
         "febrero",
@@ -556,7 +567,16 @@ export default {
         "noviembre",
         "diciembre",
       ];
-
+      const datePart = rawDate.split('T')[0];
+      const parts = datePart.split('-');
+      
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const monthIndex = parseInt(parts[1], 10) - 1; 
+        const day = parseInt(parts[2], 10);
+        
+        return `${day} de ${months[monthIndex]} del ${year}`;
+      }
       const parsedDate = new Date(rawDate);
       const day = parsedDate.getDate();
       const monthIndex = parsedDate.getMonth();
@@ -584,7 +604,7 @@ export default {
       if (status === 'completed') return 'positive';
       if (status === 'expired' || status === 'rejected') return 'negative';
       if (status === 'cancelled') return 'grey';
-      return 'warning';
+      return 'orange'; 
     },
     eventStatusLabel(status) {
       if (status === 'completed') return 'Completado';
@@ -609,6 +629,15 @@ export default {
     },
     isEventPast(purchase) {
       if (!purchase?.event_date) return false;
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      const datePart = purchase.event_date.split('T')[0];
+      const parts = datePart.split('-');
+      if (parts.length === 3) {
+        const eventDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+        return today > eventDate;
+      }
       return new Date() > new Date(purchase.event_date);
     },
     async openRatingModal(purchase) {
