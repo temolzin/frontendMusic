@@ -16,7 +16,6 @@
       <template v-slot:top>
         <b class="text-h5">Solicitudes de Artistas</b>
       </template>
-
       <template v-slot:body-cell-artista="props">
         <q-td :props="props" class="text-center">
           <div class="cell-center">
@@ -25,7 +24,6 @@
           </div>
         </q-td>
       </template>
-
       <template v-slot:body-cell-tipo="props">
         <q-td :props="props" class="text-center">
           <div class="cell-center">
@@ -35,13 +33,11 @@
           </div>
         </q-td>
       </template>
-
       <template v-slot:body-cell-zona="props">
         <q-td :props="props" class="text-center">
           <div class="cell-center">{{ props.row.proposed_data.zone }}</div>
         </q-td>
       </template>
-
       <template v-slot:body-cell-precio="props">
         <q-td :props="props" class="text-center">
           <div class="cell-center">
@@ -51,13 +47,11 @@
           </div>
         </q-td>
       </template>
-
       <template v-slot:body-cell-enviado="props">
         <q-td :props="props" class="text-center">
           <div class="cell-center">{{ formatDate(props.row.created_at) }}</div>
         </q-td>
       </template>
-
       <template v-slot:body-cell-acciones="props">
         <q-td :props="props" class="text-center">
           <div class="cell-center">
@@ -103,16 +97,13 @@
         </q-td>
       </template>
     </q-table>
-
     <div v-else-if="!loading" class="text-center q-py-xl">
       <q-icon name="check_circle" size="4em" color="positive" />
       <p class="text-grey-6 q-mt-md">No tienes solicitudes de artistas pendientes por responder.</p>
     </div>
-
     <div v-if="loading" class="text-center q-py-xl">
       <q-spinner color="primary" size="3em" />
     </div>
-
     <q-dialog v-model="compareDialog">
       <q-card style="min-width: 700px; max-width: 90vw">
         <q-card-section>
@@ -121,7 +112,6 @@
             {{ compareRequest?.request_type === 'creation' ? 'Alta nueva — no hay perfil previo aprobado' : 'Edición de perfil existente' }}
           </div>
         </q-card-section>
-
         <q-card-section class="q-pt-none">
           <div class="row q-col-gutter-md q-mb-md">
             <div class="col-6 text-center">
@@ -139,7 +129,6 @@
               <div v-else class="text-caption text-grey">— Sin cambio —</div>
             </div>
           </div>
-
           <q-markup-table flat bordered dense>
             <thead>
               <tr>
@@ -157,13 +146,11 @@
             </tbody>
           </q-markup-table>
         </q-card-section>
-
         <q-card-actions align="right">
           <q-btn flat label="Cerrar" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
-
     <q-dialog v-model="rejectDialog">
       <q-card style="min-width: 350px">
         <q-card-section>

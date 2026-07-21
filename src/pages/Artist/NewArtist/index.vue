@@ -1205,7 +1205,7 @@ export default {
         this.showInfo = "false";
         this.$q.notify({
           type: "positive",
-          message: response?.message || "Tu solicitud fue enviada, Vibeer la revisará.",
+          message: response?.message || "Tu solicitud fue enviada, el soporte de Vibeer la revisará.",
         });
         this.onReset();
       } catch (err) {
