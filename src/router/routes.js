@@ -227,6 +227,17 @@ const routes = [
         },
       },
       {
+        name: 'admin.artist-approvals',
+        path: '/admin/artist-approvals',
+        component: import('pages/Admin/ArtistApprovals/index.vue'),
+        meta: {
+          title: 'Solicitudes de Artistas',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'],
+        },
+      },
+      {
         name: 'admin.webhook-verification',
         path: '/admin/webhook-verification',
         component: import('pages/Admin/WebhookVerification/index.vue'),

@@ -4,5 +4,6 @@ export default function () {
     artist: {
       social_media: [],
     },
+    latestRequest: null,
   };
 }

@@ -23,6 +23,7 @@ import payoutMethod from './artist/payoutMethod'
 import supportTickets from "./supportTickets";
 import payouts from "./admin/payouts";
 import approvals from './artist/approvals';
+import artistApprovals from './admin/artistApprovals';
 
 const Store = createStore({
   modules: {
@@ -49,6 +50,7 @@ const Store = createStore({
     supportTickets,
     payouts,
     approvals,
+    artistApprovals,
   },
   strict: process.env.DEBUGGING,
 });

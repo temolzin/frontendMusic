@@ -4,5 +4,6 @@ export function stateArtists(state) {
   export function stateArtist(state) {
     return state.artist;
   }
-  
-  
+  export function stateLatestRequest(state) {
+    return state.latestRequest;
+  }
