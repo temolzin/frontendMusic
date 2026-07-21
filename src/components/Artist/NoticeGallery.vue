@@ -338,6 +338,7 @@ export default {
         this.initPlayer(video);
       });
     },
+
     initPlayer(video) {
       const videoId = this.getVideoId(video.youtube_url);
       if (!videoId) return;
@@ -347,6 +348,7 @@ export default {
       }
       this.loadYTAPI(() => this.createPlayer(video.id, videoId));
     },
+
     loadYTAPI(callback) {
       if (window.YT && window.YT.Player) {
         callback();
@@ -369,6 +371,7 @@ export default {
         window.onYouTubePlayerAPIReady();
       }
     },
+
     createPlayer(videoId, youtubeId) {
       try {
         const player = new YT.Player(`yt-player-${videoId}`, {
@@ -400,7 +403,7 @@ export default {
     ...mapActions("galleryArtist", ["upDateGalleryArtist"]),
     ...mapActions("galleryArtist", ["deleteGalleryArtist"]),
     ...mapActions("videoArtist", ["getArtistVideos", "createArtistVideo", "deleteArtistVideo"]),
-    
+
     async uploadSubImages(files) {
       try {
         this.sub_files_paths = files[0];
@@ -426,6 +429,7 @@ export default {
           });
         }
     },
+
   async updateSubImages(files) {
     try {
       this.sub_files_paths = files[0];
@@ -469,6 +473,7 @@ export default {
       this.showGallery = false;
     }
   },
+
   validateAddedFiles(files, uploaderRef) {
     const uploader = this.$refs[uploaderRef];
     if (!uploader) return;
@@ -506,6 +511,7 @@ export default {
       img.src = url;
     });
   },
+
     formDelete() {
       this.$q
         .dialog({
@@ -533,12 +539,14 @@ export default {
           }
         });
     },
+    
     getVideoId(value) {
       if (!value) return '';
       if (/^[a-zA-Z0-9_-]{11}$/.test(value)) return value;
       const match = value.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
       return match ? match[1] : value;
     },
+    
     extractYouTubeId(url) {
       try {
         const parsedUrl = new URL(url);
@@ -553,6 +561,7 @@ export default {
       }
       return null;
     },
+
     async submitVideo() {
       if (!this.newVideoUrl.trim()) return;
 
@@ -572,6 +581,7 @@ export default {
         });
       }
     },
+
     confirmDeleteVideo(id) {
       this.$q.dialog({
         title: "Confirmar",
@@ -599,6 +609,7 @@ export default {
         }
       });
     },
+
     onRejected(rejectedEntries) {
       this.$q.notify({
         type: "negative",
