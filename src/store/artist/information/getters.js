@@ -7,4 +7,3 @@ export function stateArtists(state) {
   export function stateLatestRequest(state) {
     return state.latestRequest;
   }
-  

@@ -9,4 +9,3 @@ export const setArtists = (state, artists) => {
   export const setLatestRequest = (state, latestRequest) => {
     state.latestRequest = latestRequest;
   };
-  
