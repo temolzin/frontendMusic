@@ -514,7 +514,6 @@
 </template>
 
 <script>
-import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { api } from 'boot/axios';
 
@@ -530,7 +529,7 @@ const columns = [
     align: "center", 
     field: "account_status", 
     sortable: true,
-    sort: (a, b, rowA, rowB) => rowA.status_weight - rowB.status_weight
+    sort: (a, b, rowA, rowB) => (rowA.status_weight || 0) - (rowB.status_weight || 0)
   },
   { name: "actions", label: "Acciones", align: "center" },
 ];
@@ -935,11 +934,9 @@ export default {
     },
   },
   created() {
+    $q = this.$q;
     this.fetchUsers(true);
     this.startPolling();
-  },
-  mounted() {
-    $q = useQuasar();
   },
   beforeUnmount() {
     if (this.pollingTimeout) {

@@ -541,6 +541,10 @@ export default {
       "fetchArtistRating",
       "submitArtistRating"
     ]),
+    ...mapActions("userSanctions", [
+      "evaluateCancellationSanction"
+    ]),
+
     formatDueDate(dateStr) {
       if (!dateStr) return '';
       const date = new Date(dateStr);
@@ -863,6 +867,15 @@ export default {
       this.cancelLoading = true;
       try {
         const response = await api.post(`/api/client/sales/${this.cancelSale.id}/cancel`, { reason: this.cancelReason });
+        const saleId = this.cancelSale.id;
+
+        if (saleId) {
+          await this.evaluateCancellationSanction(saleId);
+        }
+        if (!saleId) {
+          console.warn("No se pudo obtener el ID de la venta para evaluar la sanción.");
+        }
+
         this.$q.notify({ type: 'positive', message: response.data.message });
         this.cancelDialog = false;
         this.cancelSale = null;

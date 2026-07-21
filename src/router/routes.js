@@ -232,6 +232,9 @@ const routes = [
         component: () => import('src/pages/Admin/UserSanctions/Index.vue'),
         meta: {
           title: 'Sanciones de Usuarios',
+        },
+      },
+      {
         name: 'admin.webhook-verification',
         path: '/admin/webhook-verification',
         component: import('pages/Admin/WebhookVerification/index.vue'),

@@ -35,3 +35,15 @@ export const getUserHistoryAction = async (_, userId) => {
     throw error;
   }
 };
+
+export const evaluateCancellationSanction = async (_, saleId) => {
+  try {
+    const response = await api.post("/api/user-sanctions/evaluate-cancellation", {
+      sale_id: saleId
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al evaluar la sanción por cancelación:", error);
+    throw error;
+  }
+};

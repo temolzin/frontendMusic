@@ -418,6 +418,7 @@ import { defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
 import langEs from 'quasar/lang/es';
 import { api } from 'boot/axios';
+import { mapActions } from 'vuex';
 
 export default defineComponent({
   name: 'MyCalendar',
@@ -502,6 +503,10 @@ export default defineComponent({
     },
   },
   methods: {
+    ...mapActions("userSanctions", [
+      "evaluateCancellationSanction"
+    ]),
+
     getTodayString() {
       const now = new Date();
       const y = now.getFullYear();
@@ -631,11 +636,18 @@ export default defineComponent({
       if (!this.cancelReasonText.trim()) return;
       this.cancelLoading = true;
       try {
-        await api.post(`/api/artist/sales/${this.cancelTargetEvent.id}/cancel`, { reason: this.cancelReasonText });
+        const response = await api.post(`/api/artist/sales/${this.cancelTargetEvent.id}/cancel`, { reason: this.cancelReasonText });
+        const saleId = this.cancelTargetEvent.id;
+        if (saleId) {
+          await this.evaluateCancellationSanction(saleId);
+        }
+        if (!saleId) {
+          console.warn("No se pudo obtener el ID de la venta para evaluar la sanción.");
+        }
         this.$q.notify({
           type: 'positive',
           icon: 'check_circle',
-          message: 'Evento cancelado exitosamente. Se reembolsará al cliente.',
+          message: response.data?.message || 'Evento cancelado exitosamente. Se reembolsará al cliente.',
           position: 'top',
         });
         this.isCancelDialogOpen = false;
