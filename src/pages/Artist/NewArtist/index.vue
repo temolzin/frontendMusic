@@ -1,6 +1,19 @@
 <template>
   <div
-    v-if="showInfo == 'true'"
+    v-if="showInfo == 'true' && isPendingReview"
+    class="col-12 flex flex-center q-pa-xl"
+  >
+    <q-card flat bordered class="q-pa-lg text-center" style="max-width: 480px">
+      <q-icon name="hourglass_top" size="3em" color="warning" />
+      <p class="text-h6 q-mt-md q-mb-sm">Tu solicitud está en revisión</p>
+      <p class="text-grey-7">
+        Vibeer está revisando tus datos. En cuanto sea aprobada, tu perfil será visible en la tienda.
+      </p>
+    </q-card>
+  </div>
+
+  <div
+    v-if="showInfo == 'true' && !isPendingReview"
     v-bind:class="{
       'justify-center': $q.screen.md || $q.screen.sm || $q.screen.xs,
     }"
@@ -21,6 +34,13 @@
             @reset="onReset"
             class="q-gutter-md q-px-sm q-py-sm"
           >
+            <q-banner
+              v-if="latestRequest && latestRequest.approval_status === 'rejected'"
+              class="bg-negative text-white q-mb-md"
+              rounded
+            >
+              Tu solicitud anterior fue rechazada{{ latestRequest.rejection_reason ? ': ' + latestRequest.rejection_reason : '.' }} Corrige tus datos y vuelve a enviarla.
+            </q-banner>
             <p class="text-center q-mb-lg text-weight-light text-h3">
               Registra a tu banda o a tí como solista
             </p>
@@ -338,6 +358,20 @@
     </div>
   </div>
   <div v-if="showInfo == 'false'">
+    <q-banner
+      v-if="latestRequest && latestRequest.approval_status === 'pending_approval'"
+      class="bg-warning text-white"
+      rounded
+    >
+      Tu perfil está en revisión. No puedes editarlo hasta que sea aprobado.
+    </q-banner>
+    <q-banner
+      v-else-if="latestRequest && latestRequest.approval_status === 'rejected'"
+      class="bg-negative text-white"
+      rounded
+    >
+      Tu última edición fue rechazada{{ latestRequest.rejection_reason ? ': ' + latestRequest.rejection_reason : '.' }} Puedes corregirla y volver a enviarla.
+    </q-banner>
     <q-parallax
       src="https://cdn.pixabay.com/photo/2017/04/10/16/55/live-music-2219036_960_720.jpg"
       :height="430"
@@ -442,7 +476,11 @@
           <a :href="linkCorreo"> {{ artist.manager.email }}</a>
         </p>
       </div>
-      <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-page-sticky
+        v-if="!isPendingReview"
+        position="bottom-right"
+        :offset="[18, 18]"
+      >
         <q-btn fab icon="edit" color="accent" @click="showInfoArtist" />
       </q-page-sticky>
     </div>
@@ -992,11 +1030,11 @@ export default {
         const social_media = JSON.stringify(this.formCreate.social_media);
         InstFormData.append("social_media", social_media);
 
-        await this.createArtist(InstFormData);
+        const response = await this.createArtist(InstFormData);
         this.gettArtist();
         this.$q.notify({
           type: "positive",
-          message: `Infromación guardada correctamente`,
+          message: response?.message || "Tu solicitud fue enviada, Vibeer la revisará.",
         });
       } catch (err) {
         err.response?.data?.errors
@@ -1032,6 +1070,13 @@ export default {
       }
     },
     showInfoArtist() {
+      if (this.isPendingReview) {
+        this.$q.notify({
+          type: "warning",
+          message: "Tu perfil está en revisión, no puedes editar hasta que sea aprobado.",
+        });
+        return;
+      }
       this.showInfo = "none";
       this.showEdit = "true";
       this.formCreate.id = this.artist.id;
@@ -1154,13 +1199,13 @@ export default {
           id: this.formCreate.id,
           form: InstFormData,
         };
-        await this.updateArtist(formUpdate);
+        const response = await this.updateArtist(formUpdate);
         await this.gettArtist();
         this.showEdit = "false";
         this.showInfo = "false";
         this.$q.notify({
           type: "positive",
-          message: `Infromación guardada correctamente`,
+          message: response?.message || "Tu solicitud fue enviada, Vibeer la revisará.",
         });
         this.onReset();
       } catch (err) {
@@ -1280,6 +1325,9 @@ export default {
       artist: (state) => state.artist.artist,
     }),
     ...mapState({
+      latestRequest: (state) => state.artist.latestRequest,
+    }),
+    ...mapState({
       getMe: (state) => state.auth.me,
     }),
     ...mapState({
@@ -1287,6 +1335,9 @@ export default {
     }),
     mode: function () {
       return this.$q.dark.isActive;
+    },
+    isPendingReview: function () {
+      return this.latestRequest?.approval_status === "pending_approval";
     },
   },
   mounted() {
