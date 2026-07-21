@@ -74,33 +74,45 @@
 
       <template v-slot:body-cell-acciones="props">
         <q-td :props="props" class="text-center">
-          <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
           <q-btn
-            flat
-            rounded
-            color="secondary"
-            label="Ver detalles"
+            round
+            unelevated
+            color="primary"
             size="sm"
-            class="q-ml-xs"
+            @click="openChat(props.row)"
+            icon="mail"
+            class="q-mr-sm"
+          >
+            <q-tooltip class="bg-primary text-body2">Enviar Mensaje</q-tooltip>
+          </q-btn>
+          <q-btn
+            round
+            unelevated
+            color="secondary"
+            size="sm"
             @click="openDetailsDialog(props.row)"
-          />
+            icon="visibility"
+          >
+            <q-tooltip class="bg-secondary text-body2">Ver detalles</q-tooltip>
+          </q-btn>
         </q-td>
       </template>
 
       <template v-slot:body-cell-report="props">
         <q-td :props="props" class="text-center">
           <q-btn
-            flat
-            rounded
+            round
+            unelevated
             color="negative"
-            label="Reportar"
             size="sm"
             :disable="!canReport(props.row)"
             @click="goToReport(props.row)"
+            icon="priority_high"
           >
             <q-tooltip v-if="!canReport(props.row)" class="bg-negative text-body2" anchor="top middle" self="bottom middle">
               {{ reportTooltip(props.row) }}
             </q-tooltip>
+            <q-tooltip v-else class="bg-negative text-body2">Reportar</q-tooltip>
           </q-btn>
         </q-td>
       </template>
@@ -140,30 +152,42 @@
                     </span>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'acciones'">
-                    <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(props.row)" />
                     <q-btn
-                      flat
-                      rounded
-                      color="secondary"
-                      label="Ver detalles"
+                      round
+                      unelevated
+                      color="primary"
                       size="sm"
-                      class="q-ml-xs"
+                      @click="openChat(props.row)"
+                      icon="mail"
+                      class="q-mr-sm"
+                    >
+                      <q-tooltip class="bg-primary text-body2">Enviar Mensaje</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      round
+                      unelevated
+                      color="secondary"
+                      size="sm"
                       @click="openDetailsDialog(props.row)"
-                    />
+                      icon="visibility"
+                    >
+                      <q-tooltip class="bg-secondary text-body2">Ver detalles</q-tooltip>
+                    </q-btn>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'report'">
                     <q-btn
-                      flat
-                      rounded
+                      round
+                      unelevated
                       color="negative"
-                      label="Reportar"
                       size="sm"
                       :disable="!canReport(props.row)"
                       @click="goToReport(props.row)"
+                      icon="priority_high"
                     >
                       <q-tooltip v-if="!canReport(props.row)" class="bg-negative text-body2" anchor="top middle" self="bottom middle">
                         {{ reportTooltip(props.row) }}
                       </q-tooltip>
+                      <q-tooltip v-else class="bg-negative text-body2">Reportar</q-tooltip>
                     </q-btn>
                   </q-item-label>
                   <q-item-label v-if="col.name !== 'cliente' && col.name !== 'evento' && col.name !== 'acciones' && col.name !== 'report' && col.name !== 'status' && col.name !== 'amount'">
@@ -315,6 +339,20 @@
               </q-badge>
             </div>
           </div>
+          <q-separator class="q-my-md" />
+          <div class="text-overline text-primary text-weight-bold">Estado</div>
+          <div class="detail-row">
+            <q-icon name="check_circle" size="20px" :color="paymentStatusColor(detailsSale?.status)" />
+            <div>
+              <div class="detail-label">Estado del pago</div>
+              <q-badge
+                :color="paymentStatusColor(detailsSale?.status)"
+                class="q-px-sm q-py-xs q-mt-xs"
+              >
+                {{ paymentStatusLabel(detailsSale?.status) }}
+              </q-badge>
+            </div>
+          </div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -333,27 +371,27 @@ const columns = [
   {
     name: "cliente",
     label: "Cliente",
-    align: "left",
+    align: "center",
     field: (row) => `${row.customer_first_name} ${row.customer_last_name}`,
     sortable: true,
   },
   {
     name: "evento",
     label: "Fecha del evento",
-    align: "left",
+    align: "center",
     field: "event_date",
     sortable: true,
   },
   {
     name: "amount",
     label: "Monto",
-    align: "left",
+    align: "center",
     field: "amount",
     sortable: true,
   },
   {
     name: "status",
-    label: "Estado",
+    label: "Estado del evento",
     align: "center",
     field: "event_status",
     sortable: true,
@@ -422,20 +460,18 @@ export default {
 
     statusLabel(row) {
       if (row.event_status === 'cancelled') return 'Cancelado';
-      if (row.event_status === 'rejected' || row.approval_status === 'rejected') return 'Rechazado';
-      if (row.event_status === 'expired' || row.approval_status === 'expired') return 'Expirado';
-      if (row.approval_status === 'pending_approval') return 'Por confirmar';
-      if (row.status === 'completed') return 'Completada';
-      return row.payment_method === 'cash' ? 'Pendiente de pago' : 'Pendiente';
+      if (row.event_status === 'rejected') return 'Rechazado';
+      if (row.event_status === 'expired') return 'Expirado';
+      if (row.event_status === 'completed') return 'Completado';
+      return 'Pendiente';
     },
 
     statusColor(row) {
       if (row.event_status === 'cancelled') return 'negative';
-      if (row.event_status === 'rejected' || row.approval_status === 'rejected') return 'negative';
-      if (row.event_status === 'expired' || row.approval_status === 'expired') return 'grey-7';
-      if (row.approval_status === 'pending_approval') return 'info';
-      if (row.status === 'completed') return 'positive';
-      return row.payment_method === 'cash' ? 'orange' : 'warning';
+      if (row.event_status === 'rejected') return 'negative';
+      if (row.event_status === 'expired') return 'grey-7';
+      if (row.event_status === 'completed') return 'positive';
+      return 'warning';
     },
 
     canReport(row) {
@@ -456,6 +492,22 @@ export default {
       if (!date) return '';
       const d = new Date(date);
       return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+    },
+
+    paymentStatusLabel(status) {
+      if (!status) return 'Pendiente';
+      if (status === 'completed') return 'Completado';
+      if (status === 'pending') return 'Pendiente';
+      if (status === 'failed') return 'Fallido';
+      if (status === 'cancelled') return 'Cancelado';
+      if (status === 'expired') return 'Expirado';
+      return 'Pendiente';
+    },
+
+    paymentStatusColor(status) {
+      if (status === 'completed') return 'positive';
+      if (status === 'failed' || status === 'cancelled' || status === 'expired') return 'negative';
+      return 'warning';
     },
 
     formatChatDate(rawDate) {

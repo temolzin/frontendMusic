@@ -1,50 +1,57 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
-      <div class="text-h5 text-primary text-weight-bold q-mb-lg">Mis Reportes</div>
-      <div v-if="loading" class="text-center q-py-xl">
-        <q-spinner color="primary" size="3em" />
-      </div>
-      <div v-else-if="tickets.length === 0" class="text-center q-py-xl">
-        <q-icon name="inbox" size="4em" color="grey-4" />
-        <p class="text-grey-6 q-mt-md">No tienes reportes registrados.</p>
-      </div>
-      <q-list v-else bordered separator class="rounded-borders">
-        <q-item
-          v-for="ticket in tickets"
-          :key="ticket.id"
-          class="q-py-md"
-        >
-          <q-item-section avatar>
-            <q-avatar :color="categoryColor(ticket.category)" text-color="white" icon="report_problem" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label class="text-weight-bold">
-              {{ categoryLabel(ticket.category) }}
-            </q-item-label>
-            <q-item-label caption lines="2">{{ ticket.description }}</q-item-label>
-            <q-item-label caption class="q-mt-xs text-grey">
-              Orden #{{ ticket.artist_sale_id }} — {{ formatDate(ticket.created_at) }}
-            </q-item-label>
-          </q-item-section>
-          <q-item-section side class="items-end">
-            <q-badge :color="statusColor(ticket.status)" class="q-px-sm q-py-xs">
-              {{ statusLabel(ticket.status) }}
-            </q-badge>
-            <q-btn
-              flat
-              round
-              color="grey"
-              icon="history"
-              size="sm"
-              class="q-mt-sm"
-              @click="openLogs(ticket)"
-            >
-              <q-tooltip>Historial</q-tooltip>
-            </q-btn>
-          </q-item-section>
-        </q-item>
-      </q-list>
+      <q-card class="shadow-1">
+        <q-card-section>
+          <b class="text-h5">Mis Reportes</b>
+        </q-card-section>
+
+        <div v-if="loading" class="text-center q-py-xl">
+          <q-spinner color="primary" size="3em" />
+        </div>
+        <div v-else-if="tickets.length === 0" class="text-center q-py-xl">
+          <q-icon name="inbox" size="4em" color="grey-4" />
+          <p class="text-grey-6 q-mt-md">No tienes reportes registrados.</p>
+        </div>
+        
+        <q-list v-else separator>
+          <q-item
+            v-for="ticket in tickets"
+            :key="ticket.id"
+            class="q-py-md"
+          >
+            <q-item-section avatar>
+              <q-avatar :color="categoryColor(ticket.category)" text-color="white" icon="report_problem" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold">
+                {{ categoryLabel(ticket.category) }}
+              </q-item-label>
+              <q-item-label caption lines="2">{{ ticket.description }}</q-item-label>
+              <q-item-label caption class="q-mt-xs text-grey">
+                Orden #{{ ticket.artist_sale_id }} — {{ formatDate(ticket.created_at) }}
+              </q-item-label>
+            </q-item-section>
+            <q-item-section side class="items-end">
+              <q-badge :color="statusColor(ticket.status)" class="q-px-sm q-py-xs">
+                {{ statusLabel(ticket.status) }}
+              </q-badge>
+              <q-btn
+                round
+                unelevated
+                color="grey-6"
+                text-color="white"
+                icon="history"
+                size="sm"
+                class="q-mt-sm"
+                @click="openLogs(ticket)"
+              >
+                <q-tooltip>Historial</q-tooltip>
+              </q-btn>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-card>
     </div>
     <ticket-logs-modal
       v-model="showLogsModal"
