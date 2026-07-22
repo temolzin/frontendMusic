@@ -773,6 +773,7 @@ export default {
         this.$q.notify({ type: 'negative', message: 'Error al descargar el recibo', position: 'top' });
       }
     },
+    
     viewReference(purchase) {
       this.regeneratedRef = {
         store: purchase.store,
