@@ -180,6 +180,20 @@
           <q-item
             clickable
             v-ripple
+            to="/admin/artist-approvals"
+            v-if="getMe?.role?.[0] == 'administrador' && $can('view-users')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="fas fa-solid fa-user-check" />
+            </q-item-section>
+
+            <q-item-section> Solicitudes de Artistas </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
             to="/admin/webhook-verification"
             v-if="getMe?.role?.[0] == 'administrador'"
             active-class="text-accent text-weight-bold"

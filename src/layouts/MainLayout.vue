@@ -132,6 +132,10 @@
               <q-item-section avatar><q-icon name="payments" /></q-item-section>
               <q-item-section> Liquidaciones </q-item-section>
             </q-item>
+            <q-item clickable v-ripple to="/admin/artist-approvals" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-user-check" /></q-item-section>
+              <q-item-section> Solicitudes de Artistas </q-item-section>
+            </q-item>
             <q-item clickable v-ripple to="/artist/index" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
               <q-item-section avatar><q-icon name="fas fa-solid fa-microphone" /></q-item-section>
               <q-item-section> Perfil de Artista </q-item-section>
