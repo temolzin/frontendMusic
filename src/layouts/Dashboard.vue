@@ -166,7 +166,19 @@
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <q-icon name="fas fa-solid fa-user-check" />
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="fas fa-solid fa-user-check" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="pendingArtistApprovalsCount > 0" color="red" floating transparent>
+                    {{ pendingArtistApprovalsCount }}
+                  </q-badge>
+                </transition>
+              </div>
             </q-item-section>
 
             <q-item-section> Solicitudes de Artistas </q-item-section>
@@ -474,6 +486,7 @@ export default {
     ...mapGetters("auth", ["getMe"]),
     ...mapGetters("artistList", ["stateArtistList"]),
     ...mapGetters("approvals", { pendingApprovalsCount: "getPendingApprovalsCount" }),
+    ...mapGetters("artistApprovals", { pendingArtistApprovalsCount: "getPendingRequestsCount" }),
     mode: function () {
       return this.$q.dark.isActive;
     },
@@ -499,11 +512,15 @@ export default {
     if (this.$can('view-profile-artist')) {
       this.fetchApprovalCount();
     }
+    if (this.getMe?.role?.[0] === 'administrador' && this.$can('view-users')) {
+      this.fetchArtistApprovalCount();
+    }
   },
   methods: {
     ...mapActions("artistList", ["getArtists"]),
     ...mapActions("shoppingCard", ["getCountListShoppingCard"]),
     ...mapActions("approvals", ["fetchPendingApprovals"]),
+    ...mapActions("artistApprovals", ["fetchPendingRequests"]),
     async getArtistss() {
       try {
         await this.getArtists();
@@ -537,6 +554,12 @@ export default {
     async fetchApprovalCount() {
       try {
         await this.fetchPendingApprovals();
+      } catch {
+      }
+    },
+    async fetchArtistApprovalCount() {
+      try {
+        await this.fetchPendingRequests();
       } catch {
       }
     },

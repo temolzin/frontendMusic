@@ -5,3 +5,7 @@ export function getPendingRequests(state) {
 export function getPendingRequestsCount(state) {
   return state.pendingRequests.length;
 }
+
+export function getHistory(state) {
+  return state.history;
+}
