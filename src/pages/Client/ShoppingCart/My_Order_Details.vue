@@ -214,11 +214,20 @@
               v-if="selectedPurchase.payment_method === 'cash' && selectedPurchase.approval_status === 'accepted' && selectedPurchase.cash_reference"
               unelevated rounded color="primary" icon="visibility"
               label="Referencia de Pago"
-              class="full-width q-mt-md" @click="viewReference(selectedPurchase)"
+              class="full-width q-mt-md"
+              :disable="selectedPurchase.status === 'completed'"
+              @click="viewReference(selectedPurchase)"
             />
             <div v-else-if="selectedPurchase.payment_method === 'cash' && selectedPurchase.approval_status === 'pending_approval'" class="text-caption text-grey q-mt-md text-center">
               La referencia de pago estará disponible cuando el artista acepte tu solicitud.
             </div>
+            <q-btn
+              v-if="selectedPurchase.approval_status === 'accepted' && !(selectedPurchase.payment_method === 'cash' && selectedPurchase.status !== 'completed')"
+              unelevated rounded color="positive" icon="file_download"
+              label="Descargar Recibo"
+              class="full-width q-mt-md"
+              @click="downloadReceipt(selectedPurchase)"
+            />
             <q-btn
               unelevated
               rounded
@@ -742,6 +751,33 @@ export default {
       });
     },
 
+    async downloadReceipt(purchase) {
+      const token = localStorage.getItem('token');
+      let accessToken = '';
+      try { accessToken = JSON.parse(token).access_token; } catch(e) {}
+      try {
+        const response = await fetch(`${api.defaults.baseURL}api/client/sales/${purchase.id}/receipt`, {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          this.$q.notify({ type: 'negative', message: err.message || 'Error al descargar', position: 'top' });
+          return;
+        }
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ticket-vibeer-${String(purchase.id).padStart(8, '0')}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (err) {
+        this.$q.notify({ type: 'negative', message: 'Error al descargar el recibo', position: 'top' });
+      }
+    },
+    
     viewReference(purchase) {
       this.regeneratedRef = {
         store: purchase.store,
