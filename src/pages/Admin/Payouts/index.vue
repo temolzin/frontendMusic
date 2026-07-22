@@ -447,7 +447,10 @@ export default {
       this.$q
         .dialog({
           title: "Confirmar Liquidación",
-          message: `¿Estás seguro de marcar la venta #${payout.sale_id} del artista "${payout.artist.name}" como pagada? Asegúrate de haber realizado primero la transferencia SPEI manual en tu banca por $${this.formatCurrency(payout.adjusted_net_payout)} MXN.${payout.total_penalties > 0 ? `\n\nNota: Se descontaron $${this.formatCurrency(payout.total_penalties)} MXN en penalizaciones por cancelaciones previas.` : ""}`,
+          message: `¿Estás seguro de marcar la venta #${payout.sale_id} del artista "${payout.artist.name}" como pagada? 
+          Asegúrate de haber realizado primero la transferencia SPEI manual en tu banca por 
+          $${this.formatCurrency(payout.adjusted_net_payout)} MXN.${payout.total_penalties > 0 ? `\n\nNota: 
+          Se descontaron $${this.formatCurrency(payout.total_penalties)} MXN en penalizaciones por cancelaciones previas.` : ""}`,
           cancel: { label: "Cancelar", color: "grey", flat: true },
           ok: { label: "Sí, Marcar Pagado", color: "positive" },
           persistent: true,
