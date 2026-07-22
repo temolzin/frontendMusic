@@ -11,8 +11,8 @@ export const acceptRequest = async ({ commit }, requestId) => {
   return data;
 };
 
-export const rejectRequest = async ({ commit }, { requestId, rejection_reason }) => {
-  const { data } = await api.put(`/api/admin/artist-approvals/${requestId}/reject`, { rejection_reason });
+export const rejectRequest = async ({ commit }, { requestId, rejectionReason }) => {
+  const { data } = await api.put(`/api/admin/artist-approvals/${requestId}/reject`, { rejection_reason: rejectionReason });
   commit("removeRequest", requestId);
   return data;
 };
