@@ -310,7 +310,9 @@
         <q-spinner color="primary" size="3em" />
       </div>
 
-      <div v-else-if="!loadingHistory" class="text-center q-py-xl">
+      <div 
+        v-else-if="!loadingHistory" 
+        class="text-center q-py-xl">
         <q-icon name="history" size="4em" color="grey-5" />
         <p class="text-grey-6 q-mt-md">Aún no hay registros en el historial de liquidaciones.</p>
       </div>
