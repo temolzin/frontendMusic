@@ -304,7 +304,9 @@
         </template>
       </q-table>
 
-      <div v-else-if="loadingHistory" class="text-center q-py-xl">
+      <div 
+        v-else-if="loadingHistory" 
+        class="text-center q-py-xl">
         <q-spinner color="primary" size="3em" />
       </div>
 
