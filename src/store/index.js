@@ -9,6 +9,7 @@ import artist from "./artist/information";
 import artistSales from "./artist/artistSales";
 import artistList from "./artistList";
 import quotations from "./quotations"
+import userSanctions from "./admin/userSanctions";
 import musicalGenders from "./admin/musicalGenders";
 import galleryArtist from "./artist/galleryArtist";
 import clientMusicalGenders from "./client/clientMusicalGenders";
@@ -35,6 +36,7 @@ const Store = createStore({
     artist,
     artistList,
     quotations,
+    userSanctions,
     musicalGenders,
     galleryArtist,
     clientMusicalGenders,

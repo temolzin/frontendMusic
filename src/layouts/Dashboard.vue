@@ -19,9 +19,16 @@
         <div class="text-right" style="color: gray">
           <!-- Icons bell and wrench -->
           <small v-if="getMe?.role?.[0] == 'cliente'">
-            <router-link to="/client/shopping-cart">
+            <router-link to="/client/shopping-cart"
+              v-if="getMe?.account_status !== 'restricted'"
+            >
               <icon-cart :fetch-on-create="false"></icon-cart>
             </router-link>
+            <icon-cart
+              v-else
+              :fetch-on-create="false"
+              style="opacity: 0.5; pointer-events: none;"
+            ></icon-cart>
           </small>
           <!-- FinIcons bell and wrench -->
 
@@ -157,6 +164,18 @@
 
             <q-item-section> Liquidaciones </q-item-section>
           </q-item>
+          <q-item
+            clickable
+            v-ripple
+            to="/admin/sanciones"
+            v-if="getMe?.role?.[0] == 'administrador' && $can('view-users')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="gavel" />
+            </q-item-section>
+            <q-item-section> Sanciones </q-item-section>
+          </q-item>
 
           <q-item
             clickable
@@ -220,6 +239,7 @@
             to="/artist/pending-approvals"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
+            :disable="getMe?.account_status === 'restricted'"
           >
             <q-item-section avatar>
               <div class="approvals-icon-wrap flex flex-center">
@@ -253,7 +273,9 @@
             <q-item-section>Mi Calendario</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/artist/offers" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold">
+          <q-item clickable v-ripple to="/artist/offers" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold"
+            :disable="getMe?.account_status === 'restricted'"
+          >
             <q-item-section avatar>
               <q-icon name="local_offer" />
             </q-item-section>
@@ -264,7 +286,8 @@
             v-ripple
             to="/artist/payout-info"
             v-if="getMe?.role?.[0] == 'artista'"
-            active-class="text-accent text-weight-bold">
+            active-class="text-accent text-weight-bold"
+          >
             <q-item-section avatar>
               <q-icon name="account_balance" />
             </q-item-section>
@@ -304,6 +327,7 @@
             to="/client/store"
             v-if="$can('view-store')"
             active-class="text-accent"
+            :disable="getMe?.account_status === 'restricted'"
           >
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-store" />
@@ -318,6 +342,7 @@
             to="/client/musical-genders"
             v-if="$can('view-all-musicals-genders')"
             active-class="text-accent"
+            :disable="getMe?.account_status === 'restricted'"
           >
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-list-ul" />
@@ -326,7 +351,8 @@
             <q-item-section> Géneros Musicales</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/artist-list?offers=true" v-if="$can('create-card')" active-class="text-accent text-weight-bold">
+          <q-item clickable v-ripple to="/artist-list?offers=true" v-if="$can('create-card')" active-class="text-accent text-weight-bold"
+            :disable="getMe?.account_status === 'restricted'">
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-tags" />
             </q-item-section>
@@ -354,6 +380,7 @@
             v-ripple
             v-if="$can('view-shopping-cart')"
             active-class="text-accent text-weight-bold"
+            :disable="getMe?.account_status === 'restricted'"
           >
             <q-item-section avatar>
               <icon-cart compact :fetch-on-create="false"></icon-cart>

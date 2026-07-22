@@ -227,6 +227,14 @@ const routes = [
         },
       },
       {
+        name: 'admin.user-sanctions',
+        path: '/admin/sanciones',
+        component: () => import('src/pages/Admin/UserSanctions/Index.vue'),
+        meta: {
+          title: 'Sanciones de Usuarios',
+        },
+      },
+      {
         name: 'admin.artist-approvals',
         path: '/admin/artist-approvals',
         component: import('pages/Admin/ArtistApprovals/index.vue'),
