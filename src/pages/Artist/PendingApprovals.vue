@@ -332,7 +332,7 @@ export default {
 
   watch: {
     activeTab(tab) {
-      if (tab === 'history' && this.approvalHistory.length === 0) {
+      if (tab === 'history') {
         this.loadHistory();
       }
     },
@@ -376,6 +376,7 @@ export default {
       if (status === 'accepted') return 'positive';
       if (status === 'rejected') return 'negative';
       if (status === 'expired') return 'grey-7';
+      if (status === 'cancelled') return 'grey-5';
       return 'grey-5';
     },
 
@@ -383,6 +384,7 @@ export default {
       if (status === 'accepted') return 'Aceptada';
       if (status === 'rejected') return 'Rechazada';
       if (status === 'expired') return 'Expirada';
+      if (status === 'cancelled') return 'Cancelada';
       return status;
     },
 

@@ -630,11 +630,12 @@ export default {
       if (purchase.approval_status === 'pending_approval') return 'Esperando confirmación del artista';
       if (purchase.approval_status === 'rejected') return 'Rechazada por el artista';
       if (purchase.approval_status === 'expired') return 'Solicitud expirada';
+      if (purchase.approval_status === 'cancelled') return 'Cancelada por el cliente';
       return purchase.status === 'completed' ? 'Completado' : 'Pendiente';
     },
     paymentStatusColor(purchase) {
       if (purchase.approval_status === 'pending_approval') return 'orange';
-      if (purchase.approval_status === 'rejected' || purchase.approval_status === 'expired') return 'negative';
+      if (purchase.approval_status === 'rejected' || purchase.approval_status === 'expired' || purchase.approval_status === 'cancelled') return 'negative';
       return purchase.status === 'completed' ? 'green' : 'orange';
     },
     isEventCompleted(purchase) {
