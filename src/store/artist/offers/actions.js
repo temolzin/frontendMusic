@@ -10,7 +10,7 @@ export const createOffer = async ({ dispatch }, payload) => {
     dispatch("getOffers");
 };
 
-export const updateOffer = async ({ dispatch }, { id, data }) => {
+export const updateOffer = async ({ dispatch }, { id, ...data }) => {
     await api.put(`/api/artist/offers/${id}`, data);
     dispatch("getOffers");
 };

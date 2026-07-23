@@ -397,19 +397,20 @@ export default {
     openForm(offer = null) {
       this.editingOffer = offer;
       if (offer) {
-        const startDateTime = offer.start_date?.slice(0, 16);
-        const endDateTime = offer.end_date?.slice(0, 16);
+        const pad = (n) => String(n).padStart(2, '0');
+        const toDateOnly = (d) => `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
+        const toTimeOnly = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 
-        const [startDate, startTime] = startDateTime.split(' ');
-        const [endDate, endTime] = endDateTime.split(' ');
+        const start = new Date(offer.start_date);
+        const end = new Date(offer.end_date);
 
         this.form = {
           description: offer.description,
           discount_percentage: offer.discount_percentage,
-          start_date_only: startDate.replace(/-/g, '/'),
-          start_time_only: startTime,
-          end_date_only: endDate.replace(/-/g, '/'),
-          end_time_only: endTime
+          start_date_only: toDateOnly(start),
+          start_time_only: toTimeOnly(start),
+          end_date_only: toDateOnly(end),
+          end_time_only: toTimeOnly(end)
         };
       } else {
         this.form = {description: "", discount_percentage: "", start_date_only: "", start_time_only: "", end_date_only: "", end_time_only: ""};
