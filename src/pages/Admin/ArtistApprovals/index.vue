@@ -1,109 +1,200 @@
 <template>
   <q-page class="q-pa-md">
-    <q-table
-      v-if="pendingRequests && pendingRequests.length > 0"
-      :rows="pendingRequests"
-      :columns="columns"
-      row-key="id"
-      :pagination="{ rowsPerPage: 10 }"
-      no-data-label="No tienes solicitudes pendientes por responder"
-      rows-per-page-label="Solicitudes por página"
-      :rows-per-page-options="[5, 10, 20]"
-      flat
-      bordered
-      :grid="$q.screen.lt.md"
-    >
-      <template v-slot:top>
-        <b class="text-h5">Solicitudes de Artistas</b>
-      </template>
-      <template v-slot:body-cell-artista="props">
-        <q-td :props="props" class="text-center">
-          <div class="cell-center">
-            <div class="text-weight-bold">{{ props.row.proposed_data.name }}</div>
-            <div class="text-caption text-grey">{{ props.row.user?.email }}</div>
-          </div>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-tipo="props">
-        <q-td :props="props" class="text-center">
-          <div class="cell-center">
-            <q-badge :color="props.row.request_type === 'creation' ? 'primary' : 'secondary'" class="q-px-sm q-py-xs">
-              {{ props.row.request_type === 'creation' ? 'Alta nueva' : 'Edición' }}
-            </q-badge>
-          </div>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-zona="props">
-        <q-td :props="props" class="text-center">
-          <div class="cell-center">{{ props.row.proposed_data.zone }}</div>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-precio="props">
-        <q-td :props="props" class="text-center">
-          <div class="cell-center">
-            <span class="text-weight-bold text-positive">
-              ${{ Number(props.row.proposed_data.price_hour).toLocaleString('es-MX') }} MXN
-            </span>
-          </div>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-enviado="props">
-        <q-td :props="props" class="text-center">
-          <div class="cell-center">{{ formatDate(props.row.created_at) }}</div>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-acciones="props">
-        <q-td :props="props" class="text-center">
-          <div class="cell-center">
-            <div class="row no-wrap items-center justify-center">
+    <div class="q-mb-md">
+      <b class="text-h5">Solicitudes de Artistas</b>
+      <q-tabs
+        v-model="activeTab"
+        dense
+        class="text-grey"
+        active-color="primary"
+        indicator-color="primary"
+        align="left"
+      >
+        <q-tab name="pending" label="Pendientes" />
+        <q-tab name="history" label="Historial" />
+      </q-tabs>
+    </div>
+
+    <div v-if="activeTab === 'pending'">
+      <q-table
+        v-if="pendingRequests && pendingRequests.length > 0"
+        :rows="pendingRequests"
+        :columns="columns"
+        row-key="id"
+        :pagination="{ rowsPerPage: 10 }"
+        no-data-label="No tienes solicitudes pendientes por responder"
+        rows-per-page-label="Solicitudes por página"
+        :rows-per-page-options="[5, 10, 20]"
+        flat
+        bordered
+        :grid="$q.screen.lt.md"
+      >
+        <template v-slot:body-cell-artista="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">
+              <div class="text-weight-bold">{{ props.row.proposed_data.name }}</div>
+              <div class="text-caption text-grey">{{ props.row.user?.email }}</div>
+            </div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-tipo="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">
+              <q-badge :color="props.row.request_type === 'creation' ? 'primary' : 'secondary'" class="q-px-sm q-py-xs">
+                {{ props.row.request_type === 'creation' ? 'Alta nueva' : 'Edición' }}
+              </q-badge>
+            </div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-zona="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">{{ props.row.proposed_data.zone }}</div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-precio="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">
+              <span class="text-weight-bold text-positive">
+                ${{ Number(props.row.proposed_data.price_hour).toLocaleString('es-MX') }} MXN
+              </span>
+            </div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-enviado="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">{{ formatDate(props.row.created_at) }}</div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-acciones="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">
+              <div class="row no-wrap items-center justify-center">
+                <q-btn
+                  unelevated
+                  round
+                  color="info"
+                  size="sm"
+                  icon="compare"
+                  class="q-mr-sm"
+                  @click="openCompareDialog(props.row)"
+                >
+                  <q-tooltip class="bg-info text-body2">Comparar</q-tooltip>
+                </q-btn>
+                <q-btn
+                  unelevated
+                  round
+                  color="positive"
+                  size="sm"
+                  icon="check"
+                  class="q-mr-sm"
+                  :loading="loadingId === props.row.id + '_accept'"
+                  :disable="!!loadingId"
+                  @click="onAccept(props.row.id)"
+                >
+                  <q-tooltip class="bg-positive text-body2">Aceptar</q-tooltip>
+                </q-btn>
+                <q-btn
+                  unelevated
+                  round
+                  color="negative"
+                  size="sm"
+                  icon="close"
+                  :loading="loadingId === props.row.id + '_reject'"
+                  :disable="!!loadingId"
+                  @click="openRejectDialog(props.row.id)"
+                >
+                  <q-tooltip class="bg-negative text-body2">Rechazar</q-tooltip>
+                </q-btn>
+              </div>
+            </div>
+          </q-td>
+        </template>
+      </q-table>
+      <div v-else-if="!loading" class="text-center q-py-xl">
+        <q-icon name="check_circle" size="4em" color="positive" />
+        <p class="text-grey-6 q-mt-md">No tienes solicitudes de artistas pendientes por responder.</p>
+      </div>
+      <div v-if="loading" class="text-center q-py-xl">
+        <q-spinner color="primary" size="3em" />
+      </div>
+    </div>
+
+    <div v-if="activeTab === 'history'">
+      <q-table
+        v-if="history && history.length > 0"
+        :rows="history"
+        :columns="historyColumns"
+        row-key="id"
+        :pagination="{ rowsPerPage: 10 }"
+        no-data-label="Aún no hay solicitudes resueltas"
+        rows-per-page-label="Registros por página"
+        :rows-per-page-options="[5, 10, 20]"
+        flat
+        bordered
+        :grid="$q.screen.lt.md"
+      >
+        <template v-slot:body-cell-artista="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">
+              <div class="text-weight-bold">{{ props.row.proposed_data.name }}</div>
+              <div class="text-caption text-grey">{{ props.row.user?.email }}</div>
+            </div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-tipo="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">
+              <q-badge :color="props.row.request_type === 'creation' ? 'primary' : 'secondary'" class="q-px-sm q-py-xs">
+                {{ props.row.request_type === 'creation' ? 'Alta nueva' : 'Edición' }}
+              </q-badge>
+            </div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-estatus="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">
+              <q-badge :color="props.row.approval_status === 'accepted' ? 'positive' : 'negative'" class="q-px-sm q-py-xs">
+                {{ props.row.approval_status === 'accepted' ? 'Aceptada' : 'Rechazada' }}
+              </q-badge>
+            </div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-resuelto_por="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">{{ props.row.authorized_by_user?.name || props.row.authorized_by_user?.email || '—' }}</div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-fecha="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">{{ formatDate(props.row.reviewed_at) }}</div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-acciones="props">
+          <q-td :props="props" class="text-center">
+            <div class="cell-center">
               <q-btn
                 unelevated
                 round
                 color="info"
                 size="sm"
                 icon="compare"
-                class="q-mr-sm"
                 @click="openCompareDialog(props.row)"
               >
                 <q-tooltip class="bg-info text-body2">Comparar</q-tooltip>
               </q-btn>
-              <q-btn
-                unelevated
-                round
-                color="positive"
-                size="sm"
-                icon="check"
-                class="q-mr-sm"
-                :loading="loadingId === props.row.id + '_accept'"
-                :disable="!!loadingId"
-                @click="onAccept(props.row.id)"
-              >
-                <q-tooltip class="bg-positive text-body2">Aceptar</q-tooltip>
-              </q-btn>
-              <q-btn
-                unelevated
-                round
-                color="negative"
-                size="sm"
-                icon="close"
-                :loading="loadingId === props.row.id + '_reject'"
-                :disable="!!loadingId"
-                @click="openRejectDialog(props.row.id)"
-              >
-                <q-tooltip class="bg-negative text-body2">Rechazar</q-tooltip>
-              </q-btn>
             </div>
-          </div>
-        </q-td>
-      </template>
-    </q-table>
-    <div v-else-if="!loading" class="text-center q-py-xl">
-      <q-icon name="check_circle" size="4em" color="positive" />
-      <p class="text-grey-6 q-mt-md">No tienes solicitudes de artistas pendientes por responder.</p>
+          </q-td>
+        </template>
+      </q-table>
+      <div v-else-if="!loadingHistory" class="text-center q-py-xl">
+        <q-icon name="history" size="4em" color="grey-5" />
+        <p class="text-grey-6 q-mt-md">Aún no hay solicitudes resueltas.</p>
+      </div>
+      <div v-if="loadingHistory" class="text-center q-py-xl">
+        <q-spinner color="primary" size="3em" />
+      </div>
     </div>
-    <div v-if="loading" class="text-center q-py-xl">
-      <q-spinner color="primary" size="3em" />
-    </div>
+
     <q-dialog v-model="compareDialog">
       <q-card style="min-width: 700px; max-width: 90vw">
         <q-card-section>
@@ -115,16 +206,32 @@
         <q-card-section class="q-pt-none">
           <div class="row q-col-gutter-md q-mb-md">
             <div class="col-6 text-center">
-              <div class="text-caption text-grey q-mb-xs">Foto actual</div>
+              <div class="text-caption text-grey q-mb-xs">Foto actual (artista)</div>
               <q-avatar size="80px" v-if="compareRequest?.artist?.image">
                 <img :src="compareRequest.artist.image">
               </q-avatar>
               <div v-else class="text-caption text-grey">— Sin foto —</div>
             </div>
             <div class="col-6 text-center">
-              <div class="text-caption text-grey q-mb-xs">Foto propuesta</div>
+              <div class="text-caption text-grey q-mb-xs">Foto propuesta (artista)</div>
               <q-avatar size="80px" v-if="compareRequest?.image_artist_url">
                 <img :src="compareRequest.image_artist_url">
+              </q-avatar>
+              <div v-else class="text-caption text-grey">— Sin cambio —</div>
+            </div>
+          </div>
+          <div class="row q-col-gutter-md q-mb-md">
+            <div class="col-6 text-center">
+              <div class="text-caption text-grey q-mb-xs">Foto actual (manager)</div>
+              <q-avatar size="80px" v-if="compareRequest?.artist?.manager?.image">
+                <img :src="compareRequest.artist.manager.image">
+              </q-avatar>
+              <div v-else class="text-caption text-grey">— Sin foto —</div>
+            </div>
+            <div class="col-6 text-center">
+              <div class="text-caption text-grey q-mb-xs">Foto propuesta (manager)</div>
+              <q-avatar size="80px" v-if="compareRequest?.image_manager_url">
+                <img :src="compareRequest.image_manager_url">
               </q-avatar>
               <div v-else class="text-caption text-grey">— Sin cambio —</div>
             </div>
@@ -151,6 +258,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
     <q-dialog v-model="rejectDialog">
       <q-card style="min-width: 350px">
         <q-card-section>
@@ -190,13 +298,25 @@ const columns = [
   { name: 'acciones', label: 'Acciones', align: 'center', field: 'acciones', sortable: false },
 ];
 
+const historyColumns = [
+  { name: 'artista', label: 'Artista', align: 'center', field: (row) => row.proposed_data?.name, sortable: true },
+  { name: 'tipo', label: 'Tipo', align: 'center', field: 'request_type', sortable: true },
+  { name: 'estatus', label: 'Estatus', align: 'center', field: 'approval_status', sortable: true },
+  { name: 'resuelto_por', label: 'Resuelto por', align: 'center', field: (row) => row.authorized_by_user?.name, sortable: true },
+  { name: 'fecha', label: 'Fecha', align: 'center', field: 'reviewed_at', sortable: true },
+  { name: 'acciones', label: 'Acciones', align: 'center', field: 'acciones', sortable: false },
+];
+
 export default {
   name: 'ArtistApprovals',
 
   data() {
     return {
       columns,
+      historyColumns,
+      activeTab: 'pending',
       loading: false,
+      loadingHistory: false,
       loadingId: null,
       rejectDialog: false,
       rejectionReason: '',
@@ -207,7 +327,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('artistApprovals', { pendingRequests: 'getPendingRequests' }),
+    ...mapGetters('artistApprovals', { pendingRequests: 'getPendingRequests', history: 'getHistory' }),
 
     compareFields() {
       if (!this.compareRequest) return [];
@@ -237,12 +357,20 @@ export default {
     },
   },
 
+  watch: {
+    activeTab(tab) {
+      if (tab === 'history' && this.history.length === 0) {
+        this.loadHistory();
+      }
+    },
+  },
+
   async created() {
     await this.loadPending();
   },
 
   methods: {
-    ...mapActions('artistApprovals', ['fetchPendingRequests', 'acceptRequest', 'rejectRequest']),
+    ...mapActions('artistApprovals', ['fetchPendingRequests', 'fetchHistory', 'acceptRequest', 'rejectRequest']),
 
     async loadPending() {
       this.loading = true;
@@ -252,6 +380,17 @@ export default {
         this.$q.notify({ type: 'negative', message: 'Error al cargar solicitudes.', position: 'top' });
       } finally {
         this.loading = false;
+      }
+    },
+
+    async loadHistory() {
+      this.loadingHistory = true;
+      try {
+        await this.fetchHistory();
+      } catch {
+        this.$q.notify({ type: 'negative', message: 'Error al cargar el historial.', position: 'top' });
+      } finally {
+        this.loadingHistory = false;
       }
     },
 

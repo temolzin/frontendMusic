@@ -5,14 +5,19 @@ export const fetchPendingRequests = async ({ commit }) => {
   commit("setPendingRequests", data.requests || []);
 };
 
+export const fetchHistory = async ({ commit }) => {
+  const { data } = await api.get("/api/admin/artist-approvals/history");
+  commit("setHistory", data.requests || []);
+};
+
 export const acceptRequest = async ({ commit }, requestId) => {
   const { data } = await api.put(`/api/admin/artist-approvals/${requestId}/accept`);
   commit("removeRequest", requestId);
   return data;
 };
 
-export const rejectRequest = async ({ commit }, { requestId, rejection_reason }) => {
-  const { data } = await api.put(`/api/admin/artist-approvals/${requestId}/reject`, { rejection_reason });
+export const rejectRequest = async ({ commit }, { requestId, rejectionReason }) => {
+  const { data } = await api.put(`/api/admin/artist-approvals/${requestId}/reject`, { rejection_reason: rejectionReason });
   commit("removeRequest", requestId);
   return data;
 };
