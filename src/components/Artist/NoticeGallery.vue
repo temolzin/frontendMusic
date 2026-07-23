@@ -1,16 +1,18 @@
 <template>
-  <div class="q-pa-md q-gutter-sm q-mt-md" v-if="showGallery == false">
-     <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
+  <div class="q-mt-xl q-mb-lg" v-if="showGallery == false">
+    <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
       Galería de Fotos
-    <q-btn round color="primary" icon="edit" size="md" @click="formGallery = true" class="q-ml-md" />
+      <q-btn round color="primary" icon="edit" size="md" @click="formGallery = true" class="q-ml-md" />
     </h3>
-    <q-banner inline-actions rounded class="bg-orange text-white q-mt-xl q-mb-lg">
-      No has creado ninguna galería de imágenes. Recuerda que la galería ayudará
-      a que los clientes puedan conocerte y confiar más en tu servicio.
-      <template v-slot:action>
-        <q-btn flat label="¡Vamos!" @click="formGallery = true" />
-      </template>
-    </q-banner>
+    <div class="q-pa-md q-gutter-sm">
+      <q-banner inline-actions rounded class="bg-orange text-white text-left">
+        No has creado ninguna galería de imágenes. Recuerda que la galería ayudará
+        a que los clientes puedan conocerte y confiar más en tu servicio.
+        <template v-slot:action>
+          <q-btn flat label="¡Vamos!" @click="formGallery = true" />
+        </template>
+      </q-banner>
+    </div>
 
     <!-- Inicio de Formulario galeria de imagenes -->
     <section>
@@ -53,19 +55,22 @@
     </section>
     <!-- Fin de Formulario galeria de imagenes -->
   </div>
-  <div v-if="showGallery == true" class="q-mt-lg q-mb-none">
-    <h3 :class="mode?'tipogra-white':'tipogra'" class="q-mb-lg">
-      GalerÍa de Fotos
+
+  <div v-if="showGallery == true" class="q-mt-xl q-mb-lg">
+    <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
+      Galería de Fotos
       <q-btn
         round
         color="primary"
         icon="edit"
+        size="md"
+        class="q-ml-md"
         @click="formGalleryEdit = true"
       />
     </h3>
     <div>
       <q-carousel
-        class="q-mt-xl"
+        class="q-mt-md"
         :style="fullscreen ? 'height: 100vh' : 'height: 400px'"
         swipeable
         animated
@@ -167,10 +172,12 @@
         round
         color="primary"
         icon="edit"
+        size="md"
+        class="q-ml-md"
         @click="openVideoModal"
       />
     </h3>
-    <div class="q-pa-md q-gutter-sm q-mt-md" v-if="!artistVideos || artistVideos.length === 0">
+    <div class="q-pa-md q-gutter-sm" v-if="!artistVideos || artistVideos.length === 0">
       <q-banner inline-actions rounded class="bg-orange text-white text-left">
         No has agregado ningún video de YouTube. Recuerda que mostrar tu talento en video ayudará
         a que los clientes puedan conocerte y contratar tu servicio musical.
@@ -197,7 +204,7 @@
           :disable="!!playingVideoId"
           transition-prev="slide-right"
           transition-next="slide-left"
-          class="q-mt-lg"
+          class="q-mt-md"
           style="min-height: 400px; background: transparent;"
         >
           <q-carousel-slide
