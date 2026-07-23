@@ -1,6 +1,5 @@
 <template>
   <q-page class="q-pa-md">
-
     <div class="q-mb-md">
       <div class="row items-center q-mb-sm">
         <b class="text-h5">
@@ -21,7 +20,6 @@
           </template>
         </q-input>
       </div>
-
       <q-tabs
         v-model="activeTab"
         dense
@@ -35,7 +33,6 @@
       </q-tabs>
       <q-separator />
     </div>
-
     <div v-if="activeTab === 'pending'">
       <q-table
         v-if="pendingApprovals && pendingApprovals.length > 0"
@@ -57,21 +54,18 @@
             </div>
           </q-td>
         </template>
-
         <template v-slot:body-cell-evento="props">
           <q-td :props="props" class="text-center">
             <div class="text-weight-medium">{{ formatDate(props.row.event_date) }}</div>
             <div class="text-caption text-grey">{{ props.row.event_hour }} hrs</div>
           </q-td>
         </template>
-
         <template v-slot:body-cell-lugar="props">
           <q-td :props="props">
             <div class="text-weight-medium">{{ props.row.customer_city }}</div>
             <div class="text-caption text-grey">{{ props.row.customer_state }}</div>
           </q-td>
         </template>
-
         <template v-slot:body-cell-amount="props">
           <q-td :props="props">
             <span class="text-weight-bold text-positive">
@@ -79,7 +73,6 @@
             </span>
           </q-td>
         </template>
-
         <template v-slot:body-cell-tiempo="props">
           <q-td :props="props" class="text-center">
             <q-badge color="warning" class="q-px-sm q-py-xs">
@@ -88,7 +81,6 @@
             </q-badge>
           </q-td>
         </template>
-
         <template v-slot:body-cell-acciones="props">
           <q-td :props="props" class="text-center">
             <q-btn
@@ -116,7 +108,6 @@
             </q-btn>
           </q-td>
         </template>
-
         <template v-slot:item="props">
           <div class="q-pa-xs col-xs-12 col-sm-6">
             <q-card class="q-pa-sm">
@@ -185,17 +176,14 @@
           </div>
         </template>
       </q-table>
-
       <div v-else-if="!loading" class="text-center q-py-xl">
         <q-icon name="check_circle" size="4em" color="positive" />
         <p class="text-grey-6 q-mt-md">No tienes solicitudes pendientes por responder.</p>
       </div>
-
       <div v-if="loading" class="text-center q-py-xl">
         <q-spinner color="primary" size="3em" />
       </div>
     </div>
-
     <div v-if="activeTab === 'history'">
       <q-table
         v-if="approvalHistory && approvalHistory.length > 0"
@@ -217,14 +205,12 @@
             </div>
           </q-td>
         </template>
-
         <template v-slot:body-cell-evento="props">
           <q-td :props="props">
             <div class="text-weight-medium">{{ formatDate(props.row.event_date) }}</div>
             <div class="text-caption text-grey">{{ props.row.event_hour }} hrs</div>
           </q-td>
         </template>
-
         <template v-slot:body-cell-amount="props">
           <q-td :props="props">
             <span class="text-weight-bold">
@@ -232,7 +218,6 @@
             </span>
           </q-td>
         </template>
-
         <template v-slot:body-cell-resultado="props">
           <q-td :props="props">
             <q-badge :color="historyStatusColor(props.row.approval_status)" class="q-px-sm q-py-xs">
@@ -240,13 +225,11 @@
             </q-badge>
           </q-td>
         </template>
-
         <template v-slot:body-cell-fecha_respuesta="props">
           <q-td :props="props">
             <span class="text-caption">{{ formatDate(props.row.approval_responded_at) }}</span>
           </q-td>
         </template>
-
         <template v-slot:item="props">
           <div class="q-pa-xs col-xs-12 col-sm-6">
             <q-card class="q-pa-sm">
@@ -281,17 +264,14 @@
           </div>
         </template>
       </q-table>
-
       <div v-else-if="!loadingHistory" class="text-center q-py-xl">
         <q-icon name="history" size="4em" color="grey-5" />
         <p class="text-grey-6 q-mt-md">Aún no tienes solicitudes resueltas.</p>
       </div>
-
       <div v-if="loadingHistory" class="text-center q-py-xl">
         <q-spinner color="primary" size="3em" />
       </div>
     </div>
-
   </q-page>
 </template>
 
