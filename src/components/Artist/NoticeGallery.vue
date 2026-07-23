@@ -509,12 +509,9 @@ export default {
     validateAddedFiles(files, uploaderRef) {
       const uploader = this.$refs[uploaderRef];
       if (!uploader) return;
-
-      const validExtensions = ['jpg', 'jpeg', 'png', 'jpe'];
-
-      files.forEach((file) => {
+        const validExtensions = ['jpg', 'jpeg', 'png', 'jpe'];
+        files.forEach((file) => {
         const fileExtension = file.name.split('.').pop().toLowerCase();
-
         if (!validExtensions.includes(fileExtension)) {
           uploader.removeFile(file);
           this.$q.notify({
@@ -592,6 +589,7 @@ export default {
       }
       return null;
     },
+
     openVideoModal() {
       const count = 3 - (this.artistVideos?.length || 0);
       this.newVideoUrls = Array.from({ length: count }, () => '');
@@ -660,10 +658,12 @@ export default {
     mode: function () {
       return this.$q.dark.isActive;
     },
+
     imageList() {
       const gallery = this.galleryArtist?.artistGallery || this.galleryArtist;
       return Array.isArray(gallery) ? gallery : [];
     },
+
     hasAtLeastOneVideo() {
       return this.newVideoUrls.some(url => url.trim() !== '');
     }
