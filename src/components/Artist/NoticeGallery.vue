@@ -1,15 +1,18 @@
 <template>
-  <div class="q-pa-md q-gutter-sm q-mt-md" v-if="showGallery == false">
-     <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
+  <div class="q-mt-xl q-mb-lg" v-if="showGallery == false">
+    <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
       Galería de Fotos
+      <q-btn round color="primary" icon="edit" size="md" @click="formGallery = true" class="q-ml-md" />
     </h3>
-    <q-banner inline-actions rounded class="bg-orange text-white q-mt-xl q-mb-lg">
-      No has creado ninguna galería de imágenes. Recuerda que la galería ayudará
-      a que los clientes puedan conocerte y confiar más en tu servicio.
-      <template v-slot:action>
-        <q-btn flat label="¡Vamos!" @click="formGallery = true" />
-      </template>
-    </q-banner>
+    <div class="q-pa-md q-gutter-sm">
+      <q-banner inline-actions rounded class="bg-orange text-white text-left">
+        No has creado ninguna galería de imágenes. Recuerda que la galería ayudará
+        a que los clientes puedan conocerte y confiar más en tu servicio.
+        <template v-slot:action>
+          <q-btn flat label="¡Vamos!" @click="formGallery = true" />
+        </template>
+      </q-banner>
+    </div>
 
     <!-- Inicio de Formulario galeria de imagenes -->
     <section>
@@ -52,19 +55,22 @@
     </section>
     <!-- Fin de Formulario galeria de imagenes -->
   </div>
-  <div v-if="showGallery == true" class="q-mt-lg q-mb-none">
-    <h3 :class="mode?'tipogra-white':'tipogra'" class="q-mb-lg">
-      Galeria de Imagenes
+
+  <div v-if="showGallery == true" class="q-mt-xl q-mb-lg">
+    <h3 :class="mode ? 'tipogra-white' : 'tipogra'" class="q-mb-md">
+      Galería de Fotos
       <q-btn
         round
         color="primary"
         icon="edit"
+        size="md"
+        class="q-ml-md"
         @click="formGalleryEdit = true"
       />
     </h3>
     <div>
       <q-carousel
-        class="q-mt-xl"
+        class="q-mt-md"
         :style="fullscreen ? 'height: 100vh' : 'height: 400px'"
         swipeable
         animated
@@ -114,13 +120,25 @@
             <q-separator />
             <q-card-section>
               <div class="text-caption text-grey q-mb-md">
-                Puedes agregar imágenes nuevas o eliminar todas y empezar de nuevo.
+                Puedes agregar imágenes nuevas o eliminar las existentes una por una.
                 Máximo 5 imágenes en total.
               </div>
+
+              <div class="row q-col-gutter-sm q-mb-md" v-if="imageList.length > 0">
+                <div v-for="img in imageList" :key="img.id" class="col-4 relative-position">
+                  <q-img :src="img.original_url" style="height: 100px; border-radius: 8px;" fit="cover" />
+                  <q-btn
+                    round dense color="negative" icon="delete" size="sm"
+                    class="absolute-top-right q-ma-xs" style="z-index: 1;"
+                    @click="confirmDeleteImage(img.id)"
+                  />
+                </div>
+              </div>
               <q-uploader
+                v-if="imageList.length < 5"
                 ref="uploaderEdit"
-                label="Agregar imágenes (Max 5)"
-                max-files="5"
+                :label="`Agregar imágenes (Max ${5 - imageList.length})`"
+                :max-files="5 - imageList.length"
                 multiple
                 accept=".jpg, .jpeg, .png, .jpe"
                 :factory="updateSubImages"
@@ -131,15 +149,9 @@
                 max-total-size="104857600"
                 class="q-mb-md full-width"
               />
-              <q-btn
-                outline
-                rounded
-                color="negative"
-                icon="delete_sweep"
-                label="Eliminar todas las imágenes"
-                class="full-width"
-                @click="formDelete"
-              />
+              <div v-else class="text-center text-orange q-pa-md" style="border: 1px dashed orange; border-radius: 8px;">
+                Has alcanzado el límite máximo de 5 imágenes.
+              </div>
             </q-card-section>
             <q-separator />
             <q-card-actions align="right" class="q-pa-sm">
@@ -160,21 +172,23 @@
         round
         color="primary"
         icon="edit"
-        @click="formVideo = true"
+        size="md"
+        class="q-ml-md"
+        @click="openVideoModal"
       />
     </h3>
-    <div class="q-pa-md q-gutter-sm q-mt-md" v-if="!artistVideos || artistVideos.length === 0">
+    <div class="q-pa-md q-gutter-sm" v-if="!artistVideos || artistVideos.length === 0">
       <q-banner inline-actions rounded class="bg-orange text-white text-left">
         No has agregado ningún video de YouTube. Recuerda que mostrar tu talento en video ayudará
         a que los clientes puedan conocerte y contratar tu servicio musical.
         <template v-slot:action>
-          <q-btn flat label="¡Vamos!" @click="formVideo = true" />
+          <q-btn flat label="¡Vamos!" @click="openVideoModal" />
         </template>
       </q-banner>
     </div>
     <div v-if="artistVideos && artistVideos.length >= 3" class="row justify-center q-mb-md">
       <q-chip outline color="orange" text-color="orange" icon="info">
-        Has alcanzado el límite máximo de 3 videos. Elimina alguno y reemplazalo por uno nuevo.
+        Has alcanzado el límite máximo de 3 videos. Elimina alguno y reemplázalo por uno nuevo.
       </q-chip>
     </div>
     <div v-if="artistVideos && artistVideos.length > 0">
@@ -190,7 +204,7 @@
           :disable="!!playingVideoId"
           transition-prev="slide-right"
           transition-next="slide-left"
-          class="q-mt-lg"
+          class="q-mt-md"
           style="min-height: 400px; background: transparent;"
         >
           <q-carousel-slide
@@ -281,21 +295,41 @@
       </div>
     </div>
     <q-dialog v-model="formVideo" persistent>
-      <q-card style="min-width: 350px">
+      <q-card style="min-width: 400px; max-width: 600px;">
         <q-card-section>
-          <div class="text-h6">Agregar video de YouTube</div>
+          <div class="text-h6">Agregar videos de YouTube</div>
+          <div class="text-caption text-grey">
+            Puedes subir hasta {{ 3 - (artistVideos?.length || 0) }} video(s) en total.
+          </div>
         </q-card-section>
-        <q-card-section class="q-pt-none">
-          <q-input
-            v-model="newVideoUrl"
-            label="URL del video (ej: https://youtu.be/xxxxx)"
-            outlined
-            dense
-          />
+        <q-card-section class="q-pt-none q-gutter-y-sm">
+          <div
+            v-for="(url, index) in newVideoUrls"
+            :key="index"
+            class="row items-center q-mb-sm"
+          >
+            <div class="col">
+              <q-input
+                v-model="newVideoUrls[index]"
+                label="URL del video (ej: https://youtu.be/xxxxx)"
+                outlined
+                dense
+              >
+                <template v-slot:append>
+                  <q-icon
+                    name="close"
+                    color="negative"
+                    class="cursor-pointer"
+                    @click="newVideoUrls[index] = ''"
+                  />
+                </template>
+              </q-input>
+            </div>
+          </div>
         </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="primary" v-close-popup @click="newVideoUrl = ''" />
-          <q-btn label="Agregar" color="primary" @click="submitVideo" />
+        <q-card-actions align="right" class="q-px-md q-pb-md">
+          <q-btn flat label="Cancelar" color="primary" v-close-popup />
+          <q-btn label="Agregar" color="primary" @click="submitVideo" :disable="!hasAtLeastOneVideo" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -317,7 +351,7 @@ export default {
       formGallery: false,
       formGalleryEdit: false,
       formVideo: false,
-      newVideoUrl: "",
+      newVideoUrls: [],
       sub_files_paths: null,
       slide: ref(1),
       autoplay: ref(true),
@@ -430,114 +464,108 @@ export default {
         }
     },
 
-  async updateSubImages(files) {
-    try {
-      this.sub_files_paths = files[0];
-      let InstFormData = new FormData();
-      InstFormData.append("sub_files_paths", files[0]);
-      
-      await this.upDateGalleryArtist(InstFormData);
-      
-      this.showGallery = true;
-      this.$q.notify({ 
-        type: "positive",
-        message: "Imagen subida correctamente",
-      });
-      this.btnDelete = false;
-      this.formGalleryShow = true;
-      this.formGalleryEdit = false;
-      await this.gettGalleryArtist();
-    } catch (err) {
-      if (this.$refs.uploaderEdit) {
-        this.$refs.uploaderEdit.reset();
-      }
+    async updateSubImages(files) {
+      try {
+        this.sub_files_paths = files[0];
+        let InstFormData = new FormData();
+        InstFormData.append("sub_files_paths", files[0]);
+        await this.upDateGalleryArtist(InstFormData);
+        this.showGallery = true;
+        this.$q.notify({
+          type: "positive",
+          message: "Imagen subida correctamente",
+        });
+        this.btnDelete = false;
+        this.formGalleryShow = true;
+        this.formGalleryEdit = false;
+        await this.gettGalleryArtist();
+      } catch (err) {
+        if (this.$refs.uploaderEdit) {
+          this.$refs.uploaderEdit.reset();
+        }
 
-      this.$q.notify({
-        type: "negative",
-        message: "Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.",
-      });
-      this.formGalleryEdit = false;
-      await this.gettGalleryArtist();
-    }
-  },
-
-  async gettGalleryArtist() {
-    try {
-      await this.getGalleryArtist();
-      this.showGallery = this.imageList.length > 0;
-    } catch (err) {
-      this.$q.notify({
-        type: "negative",
-        message: err.message || "Error al obtener la galería",
-      });
-      this.showGallery = false;
-    }
-  },
-
-  validateAddedFiles(files, uploaderRef) {
-    const uploader = this.$refs[uploaderRef];
-    if (!uploader) return;
-
-    const validExtensions = ['jpg', 'jpeg', 'png', 'jpe'];
-
-    files.forEach((file) => {
-      const fileExtension = file.name.split('.').pop().toLowerCase();
-
-      if (!validExtensions.includes(fileExtension)) {
-        uploader.removeFile(file);
         this.$q.notify({
           type: "negative",
-          message: `El archivo "${file.name}" no tiene un formato válido (Solo jpg, jpeg, png, jpe).`,
+          message: "Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.",
         });
-        return;
+        this.formGalleryEdit = false;
+        await this.gettGalleryArtist();
       }
+    },
 
-      const img = new Image();
-      const url = URL.createObjectURL(file);
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        if (img.width <= img.height) {
+    async gettGalleryArtist() {
+      try {
+        await this.getGalleryArtist();
+        this.showGallery = this.imageList.length > 0;
+      } catch (err) {
+        this.$q.notify({
+          type: "negative",
+          message: err.message || "Error al obtener la galería",
+        });
+        this.showGallery = false;
+      }
+    },
+
+    validateAddedFiles(files, uploaderRef) {
+      const uploader = this.$refs[uploaderRef];
+      if (!uploader) return;
+        const validExtensions = ['jpg', 'jpeg', 'png', 'jpe'];
+        files.forEach((file) => {
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!validExtensions.includes(fileExtension)) {
           uploader.removeFile(file);
           this.$q.notify({
             type: "negative",
-            message: `"${file.name}" debe ser horizontal (ancho mayor que alto).`,
+            message: `El archivo "${file.name}" no tiene un formato válido (Solo jpg, jpeg, png, jpe).`,
           });
+          return;
         }
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        uploader.removeFile(file);
-      };
-      img.src = url;
-    });
-  },
 
-    formDelete() {
-      this.$q
-        .dialog({
-          title: "Mensaje de confirmación",
-          message: `¿Estás seguro de que quieres eliminar todas las imágenes?`,
-          cancel: true,
-          persistent: true,
-        })
-        .onOk(async () => {
-          try {
-            let option = "Yes";
-            await this.deleteGalleryArtist(option);
-            this.showGallery = false;
-            this.formGalleryEdit = false;
-            this.$q.notify({
-              type: "positive",
-              message: `Eliminado correctamente`,
-            });
-            await this.gettGalleryArtist();
-          } catch (err) {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          if (img.width <= img.height) {
+            uploader.removeFile(file);
             this.$q.notify({
               type: "negative",
-              message: err?.response?.data?.message || "Error al eliminar",
+              message: `"${file.name}" debe ser horizontal (ancho mayor que alto).`,
             });
           }
-        });
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          uploader.removeFile(file);
+        };
+        img.src = url;
+      });
+    },
+
+    confirmDeleteImage(id) {
+      this.$q.dialog({
+        title: "Confirmar eliminación",
+        message: "¿Estás seguro de que quieres eliminar esta imagen?",
+        cancel: true,
+        persistent: true,
+      }).onOk(async () => {
+        try {
+          await this.deleteGalleryArtist({ media_id: id });
+          this.$q.notify({
+            type: "positive",
+            message: "Imagen eliminada",
+          });
+          await this.gettGalleryArtist();
+          if (this.imageList.length === 0) {
+            this.formGalleryEdit = false;
+            this.showGallery = false;
+          }
+        } catch (err) {
+          this.$q.notify({
+            type: "negative",
+            message: err?.response?.data?.message || "Error al eliminar la imagen",
+          });
+        }
+      });
     },
     
     getVideoId(value) {
@@ -562,17 +590,22 @@ export default {
       return null;
     },
 
-    async submitVideo() {
-      if (!this.newVideoUrl.trim()) return;
+    openVideoModal() {
+      const count = 3 - (this.artistVideos?.length || 0);
+      this.newVideoUrls = Array.from({ length: count }, () => '');
+      this.formVideo = true;
+    },
 
+    async submitVideo() {
+      const validUrls = this.newVideoUrls.filter(url => url.trim() !== '');
+      if (validUrls.length === 0) return;
       try {
-        await this.createArtistVideo({ youtube_url: this.newVideoUrl });
+        await this.createArtistVideo({ youtube_urls: validUrls });
         await this.getArtistVideos();
         this.$q.notify({
           type: "positive",
-          message: "Video agregado correctamente",
+          message: "Video(s) agregado(s) correctamente",
         });
-        this.newVideoUrl = "";
         this.formVideo = false;
       } catch (err) {
         this.$q.notify({
@@ -625,11 +658,14 @@ export default {
     mode: function () {
       return this.$q.dark.isActive;
     },
+
     imageList() {
+      const gallery = this.galleryArtist?.artistGallery || this.galleryArtist;
+      return Array.isArray(gallery) ? gallery : [];
+    },
 
-    const gallery = this.galleryArtist?.artistGallery || this.galleryArtist;
-
-    return Array.isArray(gallery) ? gallery : [];
+    hasAtLeastOneVideo() {
+      return this.newVideoUrls.some(url => url.trim() !== '');
     }
   },
   watch: {

@@ -8,30 +8,27 @@
               Mis Compras
             </div>
           </div>
-          
-          <div class="q-py-md">
-            <div class="row q-col-gutter-md items-center">
-              <div class="col-12 col-sm-6">
-                <q-input rounded outlined v-model="filterName" placeholder="Buscar por nombre...">
-                  <template v-slot:append>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
-              </div>
+          <div class="row justify-end q-col-gutter-sm q-mb-md">
+            <div class="col-12 col-sm-4 col-md-4">
+              <q-input dense outlined v-model="filterName" placeholder="Buscar por nombre...">
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
 
-              <div class="col-12 col-sm-6">
-                <q-select class="text-left" v-model="filterDate" :options="dateOptions" label="Todas">
-                  <img class="bf-ui-icon bf-ui-icon--filter"
-                    src="https://http2.mlstatic.com/frontend-assets/bf-ui-library/3.5.0/assets/icons/filter.svg" style="
-                      width: 30px;
-                      height: 24px;
-                      position: absolute;
-                      top: 55%;
-                      left: 90%;
-                      transform: translate(80%, -50%);
-                    " />
-                </q-select>
-              </div>
+            <div class="col-12 col-sm-4 col-md-3">
+              <q-select dense outlined class="text-left" v-model="filterDate" :options="dateOptions" label="Filtrar por fecha">
+                <img class="bf-ui-icon bf-ui-icon--filter"
+                  src="https://http2.mlstatic.com/frontend-assets/bf-ui-library/3.5.0/assets/icons/filter.svg" style="
+                    width: 30px;
+                    height: 24px;
+                    position: absolute;
+                    top: 55%;
+                    left: 90%;
+                    transform: translate(80%, -50%);
+                  " />
+              </q-select>
             </div>
           </div>
 
@@ -42,59 +39,54 @@
             <div v-if="filteredPurchases.length > 0">
               <q-markup-table dense flat bordered class="table-responsive">
                 <tbody v-for="(purchase, index) in filteredPurchases" :key="index">
-                  <tr v-if="index === 0 || formatDate(purchase.created_at) !== formatDate(filteredPurchases[index - 1].created_at)" class="bg-primary text-white text-center">
-                    <th :colspan="$q.screen.lt.sm ? 5 : 1" style="font-size: 15px" class="text-center">
+                  <tr v-if="index === 0 || formatDate(purchase.created_at) !== formatDate(filteredPurchases[index - 1].created_at)" class="bg-primary text-white">
+                    <th :colspan="$q.screen.lt.sm ? 5 : 1" style="font-size: 14px" class="text-left q-pl-xl text-weight-bold">
                       {{ formatDate(purchase.created_at) }}
                     </th>
-                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Detalles</th>
-                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Contacto</th>
-                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Estado</th>
-                    <th class="text-center text-weight-bold gt-xs" style="font-size: 14px">Acciones</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 13px">Detalles</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 13px">Contacto</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 13px">Estado</th>
+                    <th class="text-center text-weight-bold gt-xs" style="font-size: 13px">Acciones</th>
                   </tr>
-               <tr class="gt-xs">
-                    <td>
-                      <div class="text-center">
-                        <q-img :src="purchase.artist?.image" loading="lazy" width="100px" height="100px"
-                          style="object-fit: cover" class="rounded-circle q-responsive" />
+                  <tr class="gt-xs">
+                    <td class="text-center" style="width: 15%;">
+                      <div class="text-center q-py-sm">
+                        <q-img :src="purchase.artist?.image" loading="lazy" width="90px" height="90px"
+                          style="object-fit: cover" class="rounded-circle q-responsive shadow-1" />
                       </div>
                     </td>
-                    <td class="text-left q-py-md">
+                    <td class="text-left q-py-md" style="width: 25%;">
                       <div class="text-subtitle1 text-weight-bold text-primary">
                         {{ purchase.artist?.name || 'N/A' }}
                       </div>
                       <div class="text-caption text-grey-8 q-mb-xs">
                         {{ purchase.artist?.zone || 'N/A' }}
                       </div>
-                      <div class="text-subtitle2 text-weight-medium">
+                      <div class="text-subtitle2 text-weight-bold text-black">
                         Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
                       </div>
                     </td>
-                    <td class="text-center">
-                      <p class="artist-zone text-weight-medium q-mb-sm">{{ purchase.artist?.manager?.name || 'N/A' }}</p>
-                      <p class="q-mb-none">
-                        <q-btn flat rounded color="primary" label="Enviar Mensaje" @click="openChat(purchase)" />
-                      </p>
+                    <td class="text-center" style="width: 25%;">
+                      <div class="text-subtitle2 text-weight-bold text-black">{{ purchase.artist?.manager?.name || 'N/A' }}</div>
+                      <div class="text-caption text-grey">Contacto asignado</div>
                     </td>
-                    <td class="text-center">
-                      <div class="column items-center q-gutter-y-sm">
-                        <q-badge outline :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs text-weight-bold" style="font-size: 13px">
-                          {{ eventStatusLabel(purchase.event_status) }}
-                        </q-badge>
-                        <div v-if="isEventCompleted(purchase)">
-                          <q-btn
-                            size="sm"
-                            outline
-                            rounded
-                            color="amber"
-                            icon="star"
-                            label="CALIFICAR"
-                            @click="openRatingModal(purchase)"
-                          />
-                        </div>
+                    <td class="text-center" style="width: 15%;">
+                      <q-badge outline :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs text-weight-bold bg-white" style="font-size: 13px">
+                        {{ eventStatusLabel(purchase.event_status) }}
+                      </q-badge>
+                    </td>
+                    <td class="text-center" style="width: 20%;">
+                      <div class="flex flex-center" style="gap: 8px;">
+                        <q-btn round unelevated color="primary" size="sm" @click="openChat(purchase)" icon="chat">
+                          <q-tooltip class="bg-primary text-body2">Abrir Chat</q-tooltip>
+                        </q-btn>
+                        <q-btn round unelevated color="secondary" size="sm" @click="openOrderModal(purchase)" icon="visibility">
+                          <q-tooltip class="bg-secondary text-body2">Ver Detalles</q-tooltip>
+                        </q-btn>
+                        <q-btn v-if="isEventCompleted(purchase)" round unelevated color="amber" size="sm" icon="star" @click="openRatingModal(purchase)">
+                          <q-tooltip class="bg-amber text-body2">Calificar</q-tooltip>
+                        </q-btn>
                       </div>
-                    </td>
-                    <td class="text-center">
-                      <q-btn unelevated rounded color="primary" label="ver compra" @click="openOrderModal(purchase)" />
                     </td>
                   </tr>
                   <tr class="lt-sm">
@@ -102,36 +94,37 @@
                       <q-card class="q-pa-md shadow-1" bordered>
                         <div class="row q-col-gutter-sm items-center q-mb-md">
                           <div class="col-auto">
-                            <q-img :src="purchase.artist?.image" loading="lazy" width="60px" height="60px" style="object-fit: cover" class="rounded-circle" />
+                            <q-img :src="purchase.artist?.image" loading="lazy" width="60px" height="60px" style="object-fit: cover" class="rounded-circle shadow-1" />
                           </div>
                           <div class="col">
                             <div class="text-caption text-grey">Artista</div>
-                            <div class="text-body2 text-weight-bold">{{ purchase.artist?.name || 'N/A' }}</div>
+                            <div class="text-body2 text-primary text-weight-bold">{{ purchase.artist?.name || 'N/A' }}</div>
                             <div class="text-caption">{{ purchase.artist?.zone || 'N/A' }}</div>
                           </div>
                         </div>
                         <div class="q-mb-sm">
                           <div class="text-caption text-grey">Monto</div>
-                          <div class="text-body2 text-primary text-weight-bold">${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN</div>
+                          <div class="text-body2 text-weight-bold text-black">${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN</div>
                         </div>
                         <div class="q-mb-sm">
-                          <div class="text-caption text-grey">Contacto ({{ purchase.artist?.manager?.name || 'N/A' }})</div>
-                          <div>
-                            <q-btn flat rounded size="sm" color="primary" label="Enviar Mensaje" class="q-px-none" @click="openChat(purchase)" />
-                          </div>
+                          <div class="text-caption text-grey">Contacto asignado</div>
+                          <div class="text-subtitle2 text-weight-bold text-black">{{ purchase.artist?.manager?.name || 'N/A' }}</div>
                         </div>
                         <div class="q-mb-sm">
                           <div class="text-caption text-grey">Estado</div>
                           <div class="row items-center">
-                            <q-badge outline :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs text-weight-bold">
+                            <q-badge outline :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs text-weight-bold bg-white">
                               {{ eventStatusLabel(purchase.event_status) }}
                             </q-badge>
-                            <q-btn v-if="isEventCompleted(purchase)" size="sm" outline rounded color="amber" icon="star" label="CALIFICAR" class="q-ml-sm" @click="openRatingModal(purchase)" />
                           </div>
                         </div>
                         <div class="q-mt-md" style="border-top: 1px solid #eee; padding-top: 12px;">
-                          <div class="text-caption text-grey q-mb-xs">Acciones</div>
-                          <q-btn unelevated rounded size="sm" color="primary" label="Ver compra" class="full-width" @click="openOrderModal(purchase)" />
+                          <div class="text-caption text-grey q-mb-sm text-center">Acciones</div>
+                          <div class="flex flex-center" style="gap: 16px;">
+                            <q-btn round unelevated color="primary" icon="chat" @click="openChat(purchase)" />
+                            <q-btn round unelevated color="secondary" icon="visibility" @click="openOrderModal(purchase)" />
+                            <q-btn v-if="isEventCompleted(purchase)" round unelevated color="amber" icon="star" @click="openRatingModal(purchase)" />
+                          </div>
                         </div>
                       </q-card>
                     </td>

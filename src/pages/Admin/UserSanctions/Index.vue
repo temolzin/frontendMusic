@@ -62,9 +62,9 @@
             color="negative" 
             class="q-pa-sm text-weight-bold"
           >
-            {{ props.row.tickets_against_count }} {{ props.row.tickets_against_count === 1 ? 'Queja' : 'Quejas' }}
+            {{ props.row.tickets_against_count }} {{ props.row.tickets_against_count === 1 ? 'Ticket' : 'Tickets' }}
           </q-badge>
-          <span v-else class="text-body2 text-grey-6 text-weight-regular">Sin quejas</span>
+          <span v-else class="text-body2 text-grey-6 text-weight-regular">Sin tickets</span>
         </q-td>
       </template>
 
@@ -75,9 +75,9 @@
             :color="props.row.faults_count >= 2 ? 'negative' : 'warning'" 
             class="q-pa-sm text-weight-bold"
           >
-            {{ props.row.faults_count }} {{ props.row.faults_count === 1 ? 'Falta' : 'Faltas' }}
+            {{ props.row.faults_count }} {{ props.row.faults_count === 1 ? 'Cancelación' : 'Cancelaciones' }}
           </q-badge>
-          <span v-else class="text-body2 text-grey-6 text-weight-regular">Sin faltas</span>
+          <span v-else class="text-body2 text-grey-6 text-weight-regular">Sin cancelaciones</span>
         </q-td>
       </template>
 
@@ -135,16 +135,16 @@
                   
                   <q-item-label v-else-if="col.name === 'tickets_against'">
                     <q-badge v-if="props.row.tickets_against_count > 0" color="negative" class="q-pa-xs text-weight-bold">
-                      {{ props.row.tickets_against_count }} Quejas
+                      {{ props.row.tickets_against_count }} Tickets
                     </q-badge>
-                    <span v-else class="text-body2 text-grey-6">Sin quejas</span>
+                    <span v-else class="text-body2 text-grey-6">Sin tickets</span>
                   </q-item-label>
                   
                   <q-item-label v-else-if="col.name === 'faults'">
                     <q-badge v-if="props.row.faults_count > 0" :color="props.row.faults_count >= 2 ? 'negative' : 'warning'" class="q-pa-xs text-weight-bold">
-                      {{ props.row.faults_count }} Faltas
+                      {{ props.row.faults_count }} Cancelaciones
                     </q-badge>
-                    <span v-else class="text-body2 text-grey-6">Sin faltas</span>
+                    <span v-else class="text-body2 text-grey-6">Sin cancelaciones</span>
                   </q-item-label>
                   
                   <q-item-label v-else-if="col.name === 'status'">
@@ -220,7 +220,7 @@
 
           <q-form v-if="selectedUser?.account_status === 'active'" @submit="submitSanction" class="q-gutter-md mt-4">
             <q-select 
-              v-model="form.ticket_id" :options="userTicketsOptions" label="Ticket Resuelto en su contra *" emit-value map-options :loading="loadingTickets" :disable="userTicketsOptions.length === 0" :hint="userTicketsOptions.length === 0 ? 'Este usuario no tiene quejas resueltas en su contra.' : 'Selecciona la queja que justifica el castigo'" :rules="[val => !!val || 'Debes seleccionar un ticket obligatorio']"
+              v-model="form.ticket_id" :options="userTicketsOptions" label="Ticket Resuelto en su contra *" emit-value map-options :loading="loadingTickets" :disable="userTicketsOptions.length === 0" :hint="userTicketsOptions.length === 0 ? 'Este usuario no tiene tickets resueltos en su contra.' : 'Selecciona el ticket que justifica el castigo'" :rules="[val => !!val || 'Debes seleccionar un ticket obligatorio']"
             >
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps" class="items-center">
@@ -324,9 +324,9 @@
 
     <q-dialog v-model="showHistoryModal">
       <q-card style="width: 800px; max-width: 90vw;" class="custom-dialog">
-        <q-card-section class="row items-center bg-dark text-white q-pb-md">
+        <q-card-section class="row items-center text-white q-pb-md" :class="$q.dark.isActive ? 'bg-dark' : 'bg-primary'">
           <div class="text-h6">
-            Historial de <span class="text-primary">{{ selectedHistoryUser?.name }}</span>
+            Historial de <span class="text-weight-bold">{{ selectedHistoryUser?.name }}</span>
           </div>
           <q-space />
           <q-btn icon="close" flat round dense v-close-popup />
@@ -347,8 +347,8 @@
             narrow-indicator
           >
             <q-tab name="sanctions" icon="gavel" label="Sanciones" />
-            <q-tab name="tickets" icon="feedback" label="Quejas (Soporte)" />
-            <q-tab name="faults" icon="event_busy" label="Faltas (Cancelaciones)" />
+            <q-tab name="tickets" icon="feedback" label="Tickets (Historial)" />
+            <q-tab name="faults" icon="event_busy" label="Cancelaciones (Historial)" />
           </q-tabs>
 
           <q-separator />
@@ -412,7 +412,7 @@
             <q-tab-panel name="tickets">
               <div v-if="historyData.tickets.length === 0" class="text-center text-grey q-pa-lg">
                 <q-icon name="sentiment_very_satisfied" size="3em" color="grey-4" class="q-mb-sm" />
-                <div>Nadie ha levantado quejas en contra de este usuario.</div>
+                <div>Nadie ha levantado tickets en contra de este usuario.</div>
               </div>
               <q-list v-if="historyData.tickets.length > 0" separator class="rounded-borders" :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-white'">
                 <q-item v-for="ticket in historyData.tickets" :key="ticket.id" class="q-py-md">
@@ -463,7 +463,7 @@
             <q-tab-panel name="faults">
               <div v-if="combinedFaults.length === 0" class="text-center text-grey q-pa-lg">
                 <q-icon name="event_available" size="3em" color="grey-4" class="q-mb-sm" />
-                <div>Este usuario no tiene faltas registradas por cancelación.</div>
+                <div>Este usuario no tiene cancelaciones registradas.</div>
               </div>
               <q-list v-if="combinedFaults.length > 0" separator class="rounded-borders" :class="$q.dark.isActive ? 'bg-grey-10' : 'bg-white'">
                 <q-item v-for="fault in combinedFaults" :key="fault.id" class="q-py-md">
@@ -521,8 +521,8 @@ let $q;
 
 const columns = [
   { name: "user", required: true, label: "Usuario", align: "center", field: "name", sortable: true },
-  { name: "tickets_against", label: "Quejas (Tickets)", align: "center", field: "tickets_against_count", sortable: true },
-  { name: "faults", label: "Faltas (Cancelaciones)", align: "center", field: "faults_count", sortable: true },
+  { name: "tickets_against", label: "Tickets (Historial)", align: "center", field: "tickets_against_count", sortable: true },
+  { name: "faults", label: "Cancelaciones (Historial)", align: "center", field: "faults_count", sortable: true },
   { 
     name: "status", 
     label: "Estado de Cuenta", 
