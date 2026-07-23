@@ -347,8 +347,8 @@
             narrow-indicator
           >
             <q-tab name="sanctions" icon="gavel" label="Sanciones" />
-            <q-tab name="tickets" icon="feedback" label="Tickets(Historial)" />
-            <q-tab name="faults" icon="event_busy" label="Cancelaciones(Historial)" />
+            <q-tab name="tickets" icon="feedback" label="Tickets (Historial)" />
+            <q-tab name="faults" icon="event_busy" label="Cancelaciones (Historial)" />
           </q-tabs>
 
           <q-separator />
@@ -521,8 +521,8 @@ let $q;
 
 const columns = [
   { name: "user", required: true, label: "Usuario", align: "center", field: "name", sortable: true },
-  { name: "tickets_against", label: "Tickets(Historial)", align: "center", field: "tickets_against_count", sortable: true },
-  { name: "faults", label: "Cancelaciones(Historial)", align: "center", field: "faults_count", sortable: true },
+  { name: "tickets_against", label: "Tickets (Historial)", align: "center", field: "tickets_against_count", sortable: true },
+  { name: "faults", label: "Cancelaciones (Historial)", align: "center", field: "faults_count", sortable: true },
   { 
     name: "status", 
     label: "Estado de Cuenta", 

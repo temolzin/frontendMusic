@@ -55,7 +55,7 @@
   </div>
   <div v-if="showGallery == true" class="q-mt-lg q-mb-none">
     <h3 :class="mode?'tipogra-white':'tipogra'" class="q-mb-lg">
-      Galeria de Imagenes
+      GalerÍa de Fotos
       <q-btn
         round
         color="primary"
