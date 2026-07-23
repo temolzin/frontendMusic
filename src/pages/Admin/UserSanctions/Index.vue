@@ -614,11 +614,13 @@ export default {
   },
   computed: {
     ...mapGetters("userSanctions", ["stateUserSanctions", "stateUserTickets"]),
+    ...mapGetters("auth", ["getMe"]),
     
     users() {
       const data = this.stateUserSanctions;
-      if (Array.isArray(data)) return data;
-      if (data?.data) return data.data;
+      const currentAdminId = this.getMe?.id;
+      if (Array.isArray(data)) return data.filter(u => u.id !== currentAdminId);
+      if (data?.data) return data.data.filter(u => u.id !== currentAdminId);
       return [];
     },
     
@@ -918,11 +920,11 @@ export default {
     },
     
     goToTicket(ticketId) {
-      const routeData = this.$router.resolve({
+      this.$router.push({
         name: "admin.support-tickets-show",
         params: { id: ticketId },
+        query: { from: 'sanctions' }
       });
-      window.open(routeData.href, "_blank");
     },
     
     getStatusColor(status) {

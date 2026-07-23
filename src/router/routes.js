@@ -228,10 +228,13 @@ const routes = [
       },
       {
         name: 'admin.user-sanctions',
-        path: '/admin/sanciones',
+        path: '/admin/user-sanctions',
         component: () => import('src/pages/Admin/UserSanctions/Index.vue'),
         meta: {
           title: 'Sanciones de Usuarios',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'],
         },
       },
       {
