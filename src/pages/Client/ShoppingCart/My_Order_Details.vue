@@ -698,14 +698,11 @@ export default {
       this.$store.commit("orderDetails/setChatMessages", []);
       this.activeChatPurchase = purchase;
       this.newMessage = "";
-      
-      if (this.isChatExpired(purchase)) {
-        this.$store.commit("orderDetails/setChatActive", false);
-        this.chatBackendErrorMessage = this.getChatDisabledReason(purchase);
-      } else {
-        this.$store.commit("orderDetails/setChatActive", true);
-        this.chatBackendErrorMessage = "";
-      }
+
+      const isExpired = this.isChatExpired(purchase);
+
+      this.$store.commit("orderDetails/setChatActive", !isExpired);
+      this.chatBackendErrorMessage = isExpired ? this.getChatDisabledReason(purchase) : "";
 
       try {
         await this.fetchChatMessages(purchase.id);

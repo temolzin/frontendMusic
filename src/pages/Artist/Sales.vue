@@ -525,22 +525,19 @@ export default {
     },
 
   async openChat(sale) {
-    this.$store.commit('orderDetails/setChatMessages', []);
-    this.activeChatPurchase = sale;
-    this.newMessage = '';
+      this.$store.commit('orderDetails/setChatMessages', []);
+      this.activeChatPurchase = sale;
+      this.newMessage = '';
 
-    if (this.isChatExpired(sale)) {
-      this.$store.commit('orderDetails/setChatActive', false);
-      this.chatBackendErrorMessage = this.getChatDisabledReason(sale);
-    } else {
-      this.$store.commit('orderDetails/setChatActive', true);
-      this.chatBackendErrorMessage = '';
-    }
+      const isExpired = this.isChatExpired(sale);
 
-    await this.fetchChatMessages(sale.id);
-    this.isChatDialogOpen = true;
-    this.scrollToBottom();
-  },
+      this.$store.commit('orderDetails/setChatActive', !isExpired);
+      this.chatBackendErrorMessage = isExpired ? this.getChatDisabledReason(sale) : '';
+
+      await this.fetchChatMessages(sale.id);
+      this.isChatDialogOpen = true;
+      this.scrollToBottom();
+    },
 
    async sendMessage() {
       if (this.isChatExpired(this.activeChatPurchase)) {
