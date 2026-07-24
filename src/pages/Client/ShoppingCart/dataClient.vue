@@ -512,7 +512,7 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    {{ "MXN " + (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}
+                    {{ "MXN " + (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                   </q-item-section>
                 </q-item>
               </div>
@@ -658,7 +658,7 @@
               <div class="col-12 col-sm-3 col-md-4 text-center text-h6">
                 TOTAL:
                 <span class="text-right">{{ "$ " +
-                  (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ", ") }}</span>
+                  (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
               </div>
             </div>
           </q-card-section>

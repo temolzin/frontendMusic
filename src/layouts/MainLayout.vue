@@ -251,10 +251,10 @@
         class="my-card text-grey-5 bg-modedark"
         style="border-radius: 0px"
       >
-        <div class="row items-center justify-center">
-          <div class="col-12">
-            <div class="row items-center q-ma-lg justify-center">
-              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+        <div class="row justify-center q-pa-lg">
+          <div class="col-12" style="max-width: 1200px">
+            <div class="row q-col-gutter-lg justify-between">
+              <div class="col-12 col-sm-auto" style="max-width: 280px">
                 <p class="text-weight-bold">Vibeer</p>
                 <p>
                   Plataforma dedicada a conectar artistas musicales con clientes
@@ -262,47 +262,37 @@
                 </p>
               </div>
 
-              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+              <div class="col-12 col-sm-auto">
                 <p class="text-weight-bold">Legal</p>
-                <q-list class="text-white text-weight-light">
-                  <q-item clickable class="q-pa-none" to="/terms-conditions">
-                    <q-item-section class="text-weight-regular text-grey-5">
-                      Términos y condiciones
-                    </q-item-section>
-                  </q-item>
-                  <q-item clickable class="q-pa-none" to="/policy-privacity">
-                    <q-item-section class="text-weight-regular text-grey-5">
-                      Política de privacidad
-                    </q-item-section>
-                  </q-item>
-                </q-list>
+                <div class="column footer-links">
+                  <router-link to="/terms-conditions" class="text-weight-regular text-grey-5 footer-link">
+                    Términos y condiciones
+                  </router-link>
+                  <router-link to="/policy-privacity" class="text-weight-regular text-grey-5 footer-link">
+                    Política de privacidad
+                  </router-link>
+                </div>
               </div>
 
-              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+              <div class="col-12 col-sm-auto">
                 <p class="text-weight-bold">Explora</p>
-                <q-list class="text-white text-weight-light">
-                  <q-item clickable class="q-pa-none" to="/">
-                    <q-item-section class="text-weight-regular text-grey-5">
-                      Inicio
-                    </q-item-section>
-                  </q-item>
-                  <q-item clickable class="q-pa-none" to="/artist-list">
-                    <q-item-section class="text-weight-regular text-grey-5">
-                      Artistas
-                    </q-item-section>
-                  </q-item>
-                  <q-item clickable class="q-pa-none" to="/quotations">
-                    <q-item-section class="text-weight-regular text-grey-5">
-                      Cotizaciones
-                    </q-item-section>
-                  </q-item>
-                </q-list>
+                <div class="column footer-links">
+                  <router-link to="/" class="text-weight-regular text-grey-5 footer-link">
+                    Inicio
+                  </router-link>
+                  <router-link to="/artist-list" class="text-weight-regular text-grey-5 footer-link">
+                    Artistas
+                  </router-link>
+                  <router-link to="/quotations" class="text-weight-regular text-grey-5 footer-link">
+                    Cotizaciones
+                  </router-link>
+                </div>
               </div>
 
-              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+              <div class="col-12 col-sm-auto" style="max-width: 280px">
                 <p class="text-weight-bold">Contacto</p>
                 <p>
-                  <q-icon name="home" size="15px" class="q-mb-xs" /> Calle la Palma, 
+                  <q-icon name="home" size="15px" class="q-mb-xs" /> Calle la Palma,
                   Núm. Ext. 9, Col. Purificación, Teotihuacán, Méx. 55804
                 </p>
                 <p>
@@ -484,6 +474,15 @@ async fetchShoppingCartCount() {
 </script>
 
 <style lang="sass">
+.footer-link
+  display: block
+  text-decoration: none
+  margin-bottom: 12px
+  cursor: pointer
+
+  &:hover
+    text-decoration: underline
+
 .GPL
 
   &__toolbar

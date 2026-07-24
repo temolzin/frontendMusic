@@ -115,7 +115,7 @@
                             <td>
                               Total (Pesos)
                                 <strong>
-                                  {{"MXN " + shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ")}}
+                                  {{"MXN " + shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}}
                                 </strong>
                                 pesos
                             </td>
