@@ -452,6 +452,9 @@ export default {
           message: "Imagen subida correctamente",
         });
         this.sub_files_paths = null;
+        if (this.$refs.uploaderCreate) {
+          this.$refs.uploaderCreate.reset();
+        }
         await this.gettGalleryArtist();
       } catch (err) {
           if (this.$refs.uploaderCreate) {
@@ -478,6 +481,9 @@ export default {
         this.btnDelete = false;
         this.formGalleryShow = true;
         this.formGalleryEdit = false;
+        if (this.$refs.uploaderEdit) {
+          this.$refs.uploaderEdit.reset();
+        }
         await this.gettGalleryArtist();
       } catch (err) {
         if (this.$refs.uploaderEdit) {
