@@ -696,22 +696,99 @@ export default {
     },
     async openChat(purchase) {
       this.$store.commit("orderDetails/setChatMessages", []);
-      this.$store.commit("orderDetails/setChatActive", true);
-      
       this.activeChatPurchase = purchase;
       this.newMessage = "";
-      this.chatBackendErrorMessage = ""; 
-      
+
+      const isExpired = this.isChatExpired(purchase);
+
+      this.$store.commit("orderDetails/setChatActive", !isExpired);
+      this.chatBackendErrorMessage = isExpired ? this.getChatDisabledReason(purchase) : "";
+
       try {
         await this.fetchChatMessages(purchase.id);
       } catch (error) {
         console.error("Error al cargar mensajes iniciales:", error);
         this.chatBackendErrorMessage = error.response?.data?.message || "Error al conectar con el chat";
+        this.$store.commit("orderDetails/setChatActive", false);
       }
+
       this.isChatDialogOpen = true;
       this.scrollToBottom();
     },
+    isChatExpired(purchase) {
+      if (!purchase) return true;
+
+      const invalidStatuses = ['cancelled', 'rejected', 'expired'];
+      
+      const currentEventStatus = (purchase.event_status || '').toLowerCase();
+      const currentApprovalStatus = (purchase.approval_status || '').toLowerCase();
+      const currentStatus = (purchase.status || '').toLowerCase();
+
+      if (
+        invalidStatuses.includes(currentEventStatus) ||
+        invalidStatuses.includes(currentApprovalStatus) ||
+        invalidStatuses.includes(currentStatus)
+      ) {
+        return true;
+      }
+      if (purchase.event_date) {
+        let eventDateTimeStr = purchase.event_date;
+        if (purchase.event_hour) {
+          eventDateTimeStr += `T${purchase.event_hour}`;
+        }
+
+        const eventStart = new Date(eventDateTimeStr);
+        const durationHours = Number(purchase.event_hours) || 0;
+        const eventEnd = new Date(eventStart.getTime() + durationHours * 60 * 60 * 1000);
+
+        const expirationDate = new Date(eventEnd.getTime() + (24 * 60 * 60 * 1000));
+
+        if (new Date() > expirationDate) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    getChatDisabledReason(purchase) {
+      if (!purchase) return 'El chat no está disponible.';
+
+      const currentEventStatus = (purchase.event_status || '').toLowerCase();
+      const currentApprovalStatus = (purchase.approval_status || '').toLowerCase();
+      const currentStatus = (purchase.status || '').toLowerCase();
+
+      if (
+        currentEventStatus === 'cancelled' ||
+        currentApprovalStatus === 'cancelled' ||
+        currentStatus === 'cancelled'
+      ) {
+        return 'El chat ha sido deshabilitado porque la contratación fue cancelada.';
+      }
+
+      if (
+        currentEventStatus === 'rejected' ||
+        currentApprovalStatus === 'rejected'
+      ) {
+        return 'El chat ha sido deshabilitado porque la solicitud fue rechazada por el artista.';
+      }
+
+      if (
+        currentEventStatus === 'expired' ||
+        currentApprovalStatus === 'expired' ||
+        currentStatus === 'expired'
+      ) {
+        return 'El chat ha sido deshabilitado porque la solicitud ha expirado.';
+      }
+
+      return 'El chat ha sido deshabilitado debido a que el evento ha concluido. Gracias por usar nuestra plataforma.';
+    },
     async sendMessage() {
+      if (this.isChatExpired(this.activeChatPurchase)) {
+        this.chatBackendErrorMessage = this.getChatDisabledReason(this.activeChatPurchase);
+        this.$store.commit("orderDetails/setChatActive", false);
+        return;
+      }
+
       const messageText = this.newMessage.trim();
       if (messageText !== "") {
         const payload = {
@@ -729,6 +806,8 @@ export default {
         } catch (error) {
           console.error("Error al enviar mensaje:", error);
           this.chatBackendErrorMessage = error.response?.data?.message || "El chat ha sido deshabilitado.";
+          this.$store.commit("orderDetails/setChatActive", false);
+          
           if (this.chatPolling) {
             clearInterval(this.chatPolling);
             this.chatPolling = null;
