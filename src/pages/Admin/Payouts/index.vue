@@ -180,7 +180,7 @@
                   </q-card>
                 </div>
                 <div class="col-12 col-md-7">
-                  <q-card flat bordered :class="[$q.dark.isActive ? 'bg-red-10 text-white' : 'bg-red-1', 'fill-height flex flex-center text-center q-pa-md']" v-if="props.row.artist.payout_method">
+                  <q-card flat bordered :class="[$q.dark.isActive ? 'bg-modedark text-white' : 'bg-red-1', 'fill-height flex flex-center text-center q-pa-md']" v-if="props.row.artist.payout_method">
                     <q-card-section :class="[$q.dark.isActive ? 'bg-grey-9 text-grey-2' : 'bg-grey-3 text-grey-9', 'q-py-xs text-center']">
                       <div class="text-subtitle2 text-weight-bold">Datos Bancarios del Artista</div>
                     </q-card-section>
