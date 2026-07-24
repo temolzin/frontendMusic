@@ -524,16 +524,23 @@ export default {
       return time;
     },
 
-    async openChat(sale) {
-        this.$store.commit('orderDetails/setChatMessages', []);
-        this.$store.commit('orderDetails/setChatActive', true); 
-        this.activeChatPurchase = sale;
-        this.newMessage = '';
-        this.chatBackendErrorMessage = '';
-        await this.fetchChatMessages(sale.id);
-        this.isChatDialogOpen = true;
-        this.scrollToBottom();
-    },
+  async openChat(sale) {
+    this.$store.commit('orderDetails/setChatMessages', []);
+    this.activeChatPurchase = sale;
+    this.newMessage = '';
+
+    if (this.isChatExpired(sale)) {
+      this.$store.commit('orderDetails/setChatActive', false);
+      this.chatBackendErrorMessage = this.getChatDisabledReason(sale);
+    } else {
+      this.$store.commit('orderDetails/setChatActive', true);
+      this.chatBackendErrorMessage = '';
+    }
+
+    await this.fetchChatMessages(sale.id);
+    this.isChatDialogOpen = true;
+    this.scrollToBottom();
+  },
 
    async sendMessage() {
       if (this.isChatExpired(this.activeChatPurchase)) {
@@ -563,20 +570,47 @@ export default {
     },
 
     isChatExpired(sale) {
-      if (!sale || !sale.event_date) return false;
+  if (!sale) return true;
+      const invalidStatuses = ['cancelled', 'rejected', 'expired'];
+      const currentStatus = (sale.event_status || sale.status || '').toLowerCase();
+      
+      if (invalidStatuses.includes(currentStatus)) {
+        return true;
+      }
+      if (sale.event_date) {
+        let eventDateTimeStr = sale.event_date;
+        if (sale.event_hour) {
+          eventDateTimeStr += `T${sale.event_hour}`;
+        }
 
-      let eventDateTimeStr = sale.event_date;
-      if (sale.event_hour) {
-        eventDateTimeStr += `T${sale.event_hour}`;
+        const eventStart = new Date(eventDateTimeStr);
+        const durationHours = Number(sale.event_hours) || 0;
+        const eventEnd = new Date(eventStart.getTime() + durationHours * 60 * 60 * 1000);
+
+        const expirationDate = new Date(eventEnd.getTime() + (24 * 60 * 60 * 1000));
+
+        if (new Date() > expirationDate) {
+          return true;
+        }
       }
 
-      const eventStart = new Date(eventDateTimeStr);
-      const durationHours = Number(sale.event_hours) || 0;
-      const eventEnd = new Date(eventStart.getTime() + durationHours * 60 * 60 * 1000);
+      return false;
+    },
+    getChatDisabledReason(sale) {
+      if (!sale) return 'El chat no está disponible.';
+      const currentStatus = (sale.event_status || sale.status || '').toLowerCase();
 
-      const expirationDate = new Date(eventEnd.getTime() + (24 * 60 * 60 * 1000));
+      if (currentStatus === 'cancelled') {
+        return 'El chat ha sido deshabilitado porque la contratación fue cancelada.';
+      }
+      if (currentStatus === 'rejected') {
+        return 'El chat ha sido deshabilitado porque la solicitud fue rechazada.';
+      }
+      if (currentStatus === 'expired') {
+        return 'El chat ha sido deshabilitado porque la solicitud ha expirado.';
+      }
 
-      return new Date() > expirationDate;
+      return 'El chat ha sido deshabilitado debido a que el evento ha concluido. Gracias por usar nuestra plataforma.';
     },
 
     scrollToBottom() {
