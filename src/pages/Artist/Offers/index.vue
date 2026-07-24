@@ -207,7 +207,11 @@
                           v-model="form.start_time_only"
                           :options="optionsStartTime"
                           format24h
-                        />
+                        >
+                          <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                            <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                          </div>
+                        </q-time>
                       </q-popup-proxy>
                     </q-icon>
                   </template>
@@ -255,7 +259,11 @@
                           v-model="form.end_time_only"
                           :options="optionsEndTime"
                           format24h
-                        />
+                        >
+                          <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                            <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                          </div>
+                        </q-time>
                       </q-popup-proxy>
                     </q-icon>
                   </template>
