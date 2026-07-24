@@ -200,8 +200,6 @@
           v-model="slideVideo"
           v-model:fullscreen="fullscreenVideo"
           arrows
-          :autoplay="autoplay"
-          :disable="!!playingVideoId"
           transition-prev="slide-right"
           transition-next="slide-left"
           class="q-mt-md"
@@ -354,33 +352,48 @@ export default {
       newVideoUrls: [],
       sub_files_paths: null,
       slide: ref(1),
-      autoplay: ref(true),
+      carouselTimer: null,
       fullscreen: ref(false),
       slideVideo: ref(1),
       fullscreenVideo: ref(false),
       playingVideoId: null,
       showGallery: null,
-      ytPlayers: {},
+      ytPlayer: null,
       ytErrors: {},
     };
   },
   methods: {
     playVideo(video) {
-      this.autoplay = false;
+      clearInterval(this.carouselTimer);
       this.playingVideoId = video.id;
       this.$nextTick(() => {
         this.initPlayer(video);
       });
     },
 
-    initPlayer(video) {
-      const videoId = this.getVideoId(video.youtube_url);
-      if (!videoId) return;
-      if (this.ytPlayers[video.id]) {
-        this.ytPlayers[video.id].loadVideoById(videoId);
-        return;
+    stopPlayer() {
+      if (this.ytPlayer) {
+        try { this.ytPlayer.destroy(); } catch (_) {}
+        this.ytPlayer = null;
       }
-      this.loadYTAPI(() => this.createPlayer(video.id, videoId));
+    },
+
+    startCarouselTimer() {
+      clearInterval(this.carouselTimer);
+      if (this.artistVideos?.length > 1) {
+        this.carouselTimer = setInterval(() => {
+          if (this.playingVideoId) return;
+          const next = this.slideVideo < this.artistVideos.length ? this.slideVideo + 1 : 1;
+          this.slideVideo = next;
+        }, 8000);
+      }
+    },
+
+    initPlayer(video) {
+      const youtubeId = this.getVideoId(video.youtube_url);
+      if (!youtubeId) return;
+      this.stopPlayer();
+      this.loadYTAPI(() => this.createPlayer(video.id, youtubeId));
     },
 
     loadYTAPI(callback) {
@@ -408,7 +421,7 @@ export default {
 
     createPlayer(videoId, youtubeId) {
       try {
-        const player = new YT.Player(`yt-player-${videoId}`, {
+        this.ytPlayer = new YT.Player(`yt-player-${videoId}`, {
           videoId: youtubeId,
           width: "100%",
           height: 350,
@@ -427,7 +440,6 @@ export default {
             },
           },
         });
-        this.ytPlayers = { ...this.ytPlayers, [videoId]: player };
       } catch (e) {
         this.ytErrors = { ...this.ytErrors, [videoId]: true };
       }
@@ -676,14 +688,22 @@ export default {
   },
   watch: {
     slideVideo() {
+      this.stopPlayer();
       this.playingVideoId = null;
-      this.autoplay = true;
+      this.ytErrors = {};
+      this.startCarouselTimer();
     },
+  },
+  beforeUnmount() {
+    this.stopPlayer();
+    clearInterval(this.carouselTimer);
   },
   mounted() {
     $q = useQuasar();
     this.gettGalleryArtist();
-    this.getArtistVideos().catch((err) => {
+    this.getArtistVideos().then(() => {
+      this.startCarouselTimer();
+    }).catch((err) => {
       this.$q.notify({
         type: "negative",
         message: err.response?.data?.message ?? "No se pudieron cargar los videos",

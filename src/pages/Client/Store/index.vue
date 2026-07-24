@@ -1,7 +1,8 @@
 <template>
   <q-page class="q-pa-sm">
     <q-carousel v-model="slide" transition-prev="scale" transition-next="scale" swipeable animated control-color="white"
-      navigation padding arrows height="300px" class="bg-primary text-white shadow-1 rounded-borders">
+      navigation padding arrows height="300px" class="bg-primary text-white shadow-1 rounded-borders"
+      :autoplay="autoplay">
       <q-carousel-slide name="style" class="column no-wrap flex-center"
         img-src="https://cdn.pixabay.com/photo/2016/11/18/15/44/audience-1835431_1280.jpg">
         <div class="absolute-center custom-caption">
@@ -14,8 +15,12 @@
         </div>
       </q-carousel-slide>
 
-      <q-carousel-slide name="tv" class="column no-wrap flex-center">
-        <q-video class="absolute-full" src="https://www.youtube.com/embed/kOkQ4T5WO9E" />
+      <q-carousel-slide name="tv" class="column no-wrap flex-center cursor-pointer"
+        @click="showVideo = true">
+        <div class="absolute-center text-center">
+          <q-icon name="play_circle_filled" size="64px" class="text-white" />
+          <div class="text-white text-subtitle1 q-mt-sm">Ver video promocional</div>
+        </div>
       </q-carousel-slide>
       <q-carousel-slide name="layers" class="column no-wrap flex-center"
         img-src="https://cdn.pixabay.com/photo/2015/05/07/11/02/guitar-756326_1280.jpg">
@@ -30,6 +35,19 @@
         </div>
       </q-carousel-slide>
     </q-carousel>
+
+    <q-dialog v-model="showVideo" maximized>
+      <q-card class="bg-black">
+        <q-bar>
+          <q-space />
+          <q-btn dense flat icon="close" color="white" v-close-popup />
+        </q-bar>
+        <q-video
+          class="full-height"
+          src="https://www.youtube.com/embed/kOkQ4T5WO9E?autoplay=1"
+        />
+      </q-card>
+    </q-dialog>
 
     <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
       <q-card class=" no-shadow" bordered>
@@ -171,6 +189,8 @@ export default {
       skeleton: true,
       searchSlug: null,
       slide: ref("style"),
+      autoplay: 10000,
+      showVideo: false,
       listCarrito: [],
       favoriteArtistIds: [],
       addFavourite: {
