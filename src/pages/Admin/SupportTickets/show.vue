@@ -7,7 +7,7 @@
       label="Volver"
       color="primary"
       class="q-mb-md"
-      @click="$router.push({ name: 'admin.support-tickets' })"
+      @click="goBack"
     />
     <div v-if="loading" class="text-center q-py-xl">
       <q-spinner color="primary" size="3em" />
@@ -219,6 +219,13 @@ export default {
 
   methods: {
     ...mapActions('supportTickets', ['fetchAdminTicketDetail', 'updateTicketStatus']),
+
+    goBack() {
+      const targetRoute = this.$route.query.from === 'sanctions'
+        ? 'admin.user-sanctions'
+        : 'admin.support-tickets';
+      this.$router.push({ name: targetRoute });
+    },
 
     async fetchTicket() {
       this.loading = true;

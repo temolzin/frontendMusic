@@ -167,7 +167,7 @@
           <q-item
             clickable
             v-ripple
-            to="/admin/sanciones"
+            to="/admin/user-sanctions"
             v-if="getMe?.role?.[0] == 'administrador' && $can('view-users')"
             active-class="text-accent text-weight-bold"
           >
