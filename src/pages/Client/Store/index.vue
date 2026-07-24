@@ -15,8 +15,12 @@
         </div>
       </q-carousel-slide>
 
-      <q-carousel-slide name="tv" class="column no-wrap flex-center">
-        <q-video class="absolute-full" src="https://www.youtube.com/embed/kOkQ4T5WO9E" />
+      <q-carousel-slide name="tv" class="column no-wrap flex-center cursor-pointer"
+        @click="showVideo = true">
+        <div class="absolute-center text-center">
+          <q-icon name="play_circle_filled" size="64px" class="text-white" />
+          <div class="text-white text-subtitle1 q-mt-sm">Ver video promocional</div>
+        </div>
       </q-carousel-slide>
       <q-carousel-slide name="layers" class="column no-wrap flex-center"
         img-src="https://cdn.pixabay.com/photo/2015/05/07/11/02/guitar-756326_1280.jpg">
@@ -31,6 +35,19 @@
         </div>
       </q-carousel-slide>
     </q-carousel>
+
+    <q-dialog v-model="showVideo" maximized>
+      <q-card class="bg-black">
+        <q-bar>
+          <q-space />
+          <q-btn dense flat icon="close" color="white" v-close-popup />
+        </q-bar>
+        <q-video
+          class="full-height"
+          src="https://www.youtube.com/embed/kOkQ4T5WO9E?autoplay=1"
+        />
+      </q-card>
+    </q-dialog>
 
     <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
       <q-card class=" no-shadow" bordered>
@@ -172,7 +189,8 @@ export default {
       skeleton: true,
       searchSlug: null,
       slide: ref("style"),
-      autoplay: 6000,
+      autoplay: 10000,
+      showVideo: false,
       listCarrito: [],
       favoriteArtistIds: [],
       addFavourite: {
@@ -440,11 +458,6 @@ export default {
     }),
     mode: function () {
       return this.$q.dark.isActive;
-    },
-  },
-  watch: {
-    slide(val) {
-      this.autoplay = val === 'tv' ? false : 6000;
     },
   },
   created() {
