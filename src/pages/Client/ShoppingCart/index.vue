@@ -188,6 +188,7 @@ export default {
         }
       }
     },
+
     deleteItem(artist) {
       try {
         let artist_id = artist.id;
@@ -200,9 +201,10 @@ export default {
             cancel: true,
             persistent: true,
           })
-          .onOk(() => {
+          .onOk(async () => {
             try {
-              this.deleteItembyId(artist_id);
+              await this.deleteItembyId(artist_id);
+              await this.gettListShoppingCard();
               this.$q.notify({
                 type: "positive",
                 message: `${name} fue eliminado correctamente`,
@@ -220,6 +222,7 @@ export default {
         console.error(error);
       }
     },
+
     async changeQuantity(product, type) {
       const nextHours = type ? product.hours + 1 : product.hours - 1;
       const item = {
@@ -229,6 +232,7 @@ export default {
 
       try {
         await this.updateItemShoppingCart(item);
+        await this.gettListShoppingCard();
       } catch (err) {
         $q.notify({
           type: "negative",
