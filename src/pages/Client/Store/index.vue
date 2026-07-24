@@ -1,7 +1,8 @@
 <template>
   <q-page class="q-pa-sm">
     <q-carousel v-model="slide" transition-prev="scale" transition-next="scale" swipeable animated control-color="white"
-      navigation padding arrows height="300px" class="bg-primary text-white shadow-1 rounded-borders">
+      navigation padding arrows height="300px" class="bg-primary text-white shadow-1 rounded-borders"
+      :autoplay="autoplay">
       <q-carousel-slide name="style" class="column no-wrap flex-center"
         img-src="https://cdn.pixabay.com/photo/2016/11/18/15/44/audience-1835431_1280.jpg">
         <div class="absolute-center custom-caption">
@@ -171,6 +172,7 @@ export default {
       skeleton: true,
       searchSlug: null,
       slide: ref("style"),
+      autoplay: 6000,
       listCarrito: [],
       favoriteArtistIds: [],
       addFavourite: {
@@ -438,6 +440,11 @@ export default {
     }),
     mode: function () {
       return this.$q.dark.isActive;
+    },
+  },
+  watch: {
+    slide(val) {
+      this.autoplay = val === 'tv' ? false : 6000;
     },
   },
   created() {
