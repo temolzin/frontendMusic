@@ -62,12 +62,12 @@
                       <div class="text-caption text-grey-8 q-mb-xs">
                         {{ purchase.artist?.zone || 'N/A' }}
                       </div>
-                      <div class="text-subtitle2 text-weight-bold text-black">
+                      <div class="text-subtitle2 text-weight-bold">
                         Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
                       </div>
                     </td>
                     <td class="text-center" style="width: 25%;">
-                      <div class="text-subtitle2 text-weight-bold text-black">{{ purchase.artist?.manager?.name || 'N/A' }}</div>
+                      <div class="text-subtitle2 text-weight-bold">{{ purchase.artist?.manager?.name || 'N/A' }}</div>
                       <div class="text-caption text-grey">Contacto asignado</div>
                     </td>
                     <td class="text-center" style="width: 15%;">
@@ -104,11 +104,11 @@
                         </div>
                         <div class="q-mb-sm">
                           <div class="text-caption text-grey">Monto</div>
-                          <div class="text-body2 text-weight-bold text-black">${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN</div>
+                          <div class="text-body2 text-weight-bold">${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN</div>
                         </div>
                         <div class="q-mb-sm">
                           <div class="text-caption text-grey">Contacto asignado</div>
-                          <div class="text-subtitle2 text-weight-bold text-black">{{ purchase.artist?.manager?.name || 'N/A' }}</div>
+                          <div class="text-subtitle2 text-weight-bold">{{ purchase.artist?.manager?.name || 'N/A' }}</div>
                         </div>
                         <div class="q-mb-sm">
                           <div class="text-caption text-grey">Estado</div>
@@ -935,8 +935,10 @@ export default {
       if (purchase.event_status === 'completed' || purchase.event_status === 'cancelled') return false;
       if (!purchase.event_date) return false;
       const now = new Date();
-      const eventDate = new Date(purchase.event_date);
-      const diffTime = eventDate.getTime() - now.getTime();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const parts = purchase.event_date.split('-');
+      const eventDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      const diffTime = eventDate.getTime() - today.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return diffDays > 0;
     },
@@ -953,7 +955,8 @@ export default {
       if (purchase.event_date) {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const eventDate = new Date(purchase.event_date);
+        const parts = purchase.event_date.split('-');
+        const eventDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
         const diffTime = eventDate.getTime() - today.getTime();
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         const amount = parseFloat(purchase.amount) || 0;
@@ -1045,8 +1048,10 @@ export default {
     cancelDaysUntil() {
       if (!this.cancelSale?.event_date) return 0;
       const now = new Date();
-      const eventDate = new Date(this.cancelSale.event_date);
-      const diffTime = eventDate.getTime() - now.getTime();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const parts = this.cancelSale.event_date.split('-');
+      const eventDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      const diffTime = eventDate.getTime() - today.getTime();
       return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     },
   },
