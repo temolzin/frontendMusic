@@ -786,7 +786,6 @@ export default {
       return 'El chat ha sido deshabilitado debido a que el evento ha concluido. Gracias por usar nuestra plataforma.';
     },
     async sendMessage() {
-      // Validar si expiró antes de intentar enviar
       if (this.isChatExpired(this.activeChatPurchase)) {
         this.chatBackendErrorMessage = this.getChatDisabledReason(this.activeChatPurchase);
         this.$store.commit("orderDetails/setChatActive", false);
