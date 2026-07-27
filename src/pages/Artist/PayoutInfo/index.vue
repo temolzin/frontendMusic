@@ -5,8 +5,7 @@
         <q-banner 
           rounded 
           class="q-mb-md q-pa-md"
-          :class="$q.dark.isActive ? 'bg-grey-9 text-grey-3' : 'bg-blue-1 text-blue-9'"
-        >
+          :class="$q.dark.isActive ? 'bg-grey-9 text-grey-3' : 'bg-blue-1 text-blue-9'" >
           <template v-slot:avatar>
             <q-icon name="info" :color="$q.dark.isActive ? 'accent' : 'primary'" size="sm" />
           </template>
@@ -15,24 +14,23 @@
           </div>
         </q-banner>
         <q-banner
-            dense
-            inline-actions
-            rounded
-            class="q-mb-md q-py-sm q-px-md"
-            :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-orange-1 text-orange-9']"
-          >
-            <template v-slot:avatar>
-              <q-icon name="info" :color="$q.dark.isActive ? 'accent' : 'orange'" size="sm" />
-            </template>
-            <div class="text-body2">
-              <strong>Importante sobre tu cuenta bancaria:</strong>
-              <ul>
-                <li>
-                  Asegúrate de que la cuenta o banco que registres <strong>acepte transferencias mayores al monto total por el que te contratan</strong>. Ciertas cuentas digitales o de débito básico tienen límites mensuales de recepción de fondos.
-                </li>
-              </ul>
-            </div>
-          </q-banner>
+          dense
+          inline-actions
+          rounded
+          class="q-mb-md q-py-sm q-px-md"
+          :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-orange-1 text-orange-9']" >
+          <template v-slot:avatar>
+            <q-icon name="info" :color="$q.dark.isActive ? 'accent' : 'orange'" size="sm" />
+          </template>
+          <div class="text-body2">
+            <strong>Importante sobre tu cuenta bancaria:</strong>
+            <ul>
+              <li>
+                Asegúrate de que la cuenta o banco que registres <strong>acepte transferencias mayores al monto total por el que te contratan</strong>. Ciertas cuentas digitales o de débito básico tienen límites mensuales de recepción de fondos.
+              </li>
+            </ul>
+          </div>
+        </q-banner>
         <q-card 
           class="q-pa-sm" 
           flat 
@@ -50,97 +48,97 @@
           </q-card-section>
           <q-separator :dark="$q.dark.isActive" inset />
           <q-card-section>
-            <q-form @submit="savePayoutInfo" class="q-gutter-md">
-                <q-input
-                  outlined
-                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
-                  :dark="$q.dark.isActive"
-                  v-model="payoutData.account_holder"
-                  label="Titular de la cuenta *"
-                  hint="Nombre completo del dueño de la cuenta o razón social"
-                  lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'El nombre del titular es obligatorio' ]"
-                  :disable="!isEditing"
+          <q-form @submit="savePayoutInfo" class="q-gutter-md">
+              <q-input
+                outlined
+                :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                :dark="$q.dark.isActive"
+                v-model="payoutData.account_holder"
+                label="Titular de la cuenta *"
+                hint="Nombre completo del dueño de la cuenta o razón social"
+                lazy-rules
+                :rules="[ val => val && val.length > 0 || 'El nombre del titular es obligatorio' ]"
+                :disable="!isEditing"
+              />
+              <q-select
+                outlined
+                :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                :dark="$q.dark.isActive"
+                v-model="selectedBank"
+                :options="bankOptions"
+                label="Banco *"
+                lazy-rules
+                :rules="[ val => val && val.length > 0 || 'Debes seleccionar un banco' ]"
+                :disable="!isEditing"
+                @input="handleBankChange"
+              />
+              <q-input
+                v-if="selectedBank === 'Otro'"
+                outlined
+                :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                :dark="$q.dark.isActive"
+                v-model="customBank"
+                label="Escribe el nombre de tu banco *"
+                hint="Especifica la institución bancaria o financiera"
+                lazy-rules
+                :rules="[ val => val && val.trim().length > 0 || 'El nombre del banco es obligatorio' ]"
+                :disable="!isEditing"
+                class="q-mt-md"
+              />
+              <q-input
+                outlined
+                :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                :dark="$q.dark.isActive"
+                v-model="payoutData.clabe"
+                label="CLABE Interbancaria *"
+                mask="##################"
+                unmasked-value
+                hint="Clave de 18 dígitos numéricos para transferencias SPEI"
+                lazy-rules
+                :rules="[
+                val => val && val.length === 18 || 'La CLABE debe tener exactamente 18 dígitos',
+                val => /^\d+$/.test(val) || 'La CLABE solo debe contener números'
+                ]"
+                :disable="!isEditing"
+              />
+              <q-input
+                outlined
+                :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                :dark="$q.dark.isActive"
+                v-model="payoutData.rfc"
+                label="RFC (Opcional)"
+                mask="XXXX######XXX"
+                hint="RFC asociado a la cuenta (12 o 13 caracteres)"
+                style="text-transform: uppercase;"
+                :disable="!isEditing"
+              />
+              <div class="row justify-end q-mt-lg q-gutter-sm">
+                <q-btn 
+                  v-if="!isEditing"
+                  label="Editar Información" 
+                  color="warning" 
+                  icon="edit"
+                  class="text-weight-bold jusitfy-end"
+                  @click="startEditing"
                 />
-                <q-select
-                  outlined
-                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
-                  :dark="$q.dark.isActive"
-                  v-model="selectedBank"
-                  :options="bankOptions"
-                  label="Banco *"
-                  lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'Debes seleccionar un banco' ]"
-                  :disable="!isEditing"
-                  @input="handleBankChange"
-                />
-                <q-input
-                  v-if="selectedBank === 'Otro'"
-                  outlined
-                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
-                  :dark="$q.dark.isActive"
-                  v-model="customBank"
-                  label="Escribe el nombre de tu banco *"
-                  hint="Especifica la institución bancaria o financiera"
-                  lazy-rules
-                  :rules="[ val => val && val.trim().length > 0 || 'El nombre del banco es obligatorio' ]"
-                  :disable="!isEditing"
-                  class="q-mt-md"
-                />
-                <q-input
-                  outlined
-                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
-                  :dark="$q.dark.isActive"
-                  v-model="payoutData.clabe"
-                  label="CLABE Interbancaria *"
-                  mask="##################"
-                  unmasked-value
-                  hint="Clave de 18 dígitos numéricos para transferencias SPEI"
-                  lazy-rules
-                  :rules="[
-                  val => val && val.length === 18 || 'La CLABE debe tener exactamente 18 dígitos',
-                  val => /^\d+$/.test(val) || 'La CLABE solo debe contener números'
-                  ]"
-                  :disable="!isEditing"
-                />
-                <q-input
-                  outlined
-                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
-                  :dark="$q.dark.isActive"
-                  v-model="payoutData.rfc"
-                  label="RFC (Opcional)"
-                  mask="XXXX######XXX"
-                  hint="RFC asociado a la cuenta (12 o 13 caracteres)"
-                  style="text-transform: uppercase;"
-                  :disable="!isEditing"
-                />
-                <div class="row justify-end q-mt-lg q-gutter-sm">
-                    <q-btn 
-                      v-if="!isEditing"
-                      label="Editar Información" 
-                      color="warning" 
-                      icon="edit"
-                      class="text-weight-bold jusitfy-end"
-                      @click="startEditing"
-                    />
-                    <template v-else>
-                      <q-btn 
-                        v-if="hasSavedData"
-                        label="Cancelar" 
-                        color="negative" 
-                        icon="close"
-                        class="text-weight-bold"
-                        @click="cancelEditing"
-                      />
-                      <q-btn 
-                        label="Guardar Información" 
-                        type="submit" 
-                        color="accent" 
-                        icon="save"
-                        class="text-weight-bold"
-                      />
-                    </template>
-                </div>
+                <template v-else>
+                  <q-btn 
+                    v-if="hasSavedData"
+                    label="Cancelar" 
+                    color="negative" 
+                    icon="close"
+                    class="text-weight-bold"
+                    @click="cancelEditing"
+                  />
+                  <q-btn 
+                    label="Guardar Información" 
+                    type="submit" 
+                    color="accent" 
+                    icon="save"
+                    class="text-weight-bold"
+                  />
+                </template>
+              </div>
             </q-form>
           </q-card-section>
         </q-card>
