@@ -464,29 +464,54 @@
           </q-step>
 
           <q-step :name="3" title="Revise su orden" icon="shopping_cart" :header-nav="step > 3">
+            <q-banner
+              dense
+              rounded
+              :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-mb-md q-py-sm q-px-md']"
+            >
+              <template v-slot:avatar>
+                <q-icon name="info" color="blue" size="sm" />
+              </template>
+              <div class="text-body2">
+                <strong>Pasos a seguir para la confirmación de su evento:</strong>
+                <ul class="q-pl-md q-mt-xs q-mb-none">
+                  <li class="q-mb-xs">
+                    <strong>Aprobación del Artista:</strong> Al finalizar esta orden, la solicitud será enviada al artista, quien deberá revisar los detalles y 
+                    <strong>aceptar o rechazar</strong> el evento para formalizar el compromiso.
+                  </li>
+                  <li v-if="paymentMethod === 'cash'">
+                    <strong>Referencia de Pago:</strong> Dado que ha seleccionado pago en efectivo, la referencia para depositar se le generará y mostrará 
+                    <strong>únicamente después</strong> de que el artista acepte la solicitud.
+                  </li>
+                  <li v-if="paymentMethod === 'card'">
+                    <strong>Retención de Fondos:</strong> Su método de pago será verificado, pero el cargo definitivo estará sujeto a la confirmación de asistencia por parte del artista.
+                  </li>
+                </ul>
+              </div>
+            </q-banner>
             <div class="row">
               <div class="col-12">
                 <q-item-label header class="text-h6">Detalles de la Orden</q-item-label>
                 <template v-for="(product, index) in shoppingCardDetail" :key="index">
-                  <q-item class="full-width">
-                    <q-item-section class="r">
+                  <q-item class="full-width items-center">
+                    <q-item-section class="col-5 text-left">
                       <q-item-label>{{ castProduct(product).artist.name }}</q-item-label>
                     </q-item-section>
-                    <q-item-section class="" middle>
+                    <q-item-section class="col-3 text-center">
                       <q-item-label>Total de {{ castProduct(product).hours }} hora(s)</q-item-label>
                     </q-item-section>
-                    <q-item-section class="text-right" side>
-                      <span v-if="+castProduct(product).price < +castProduct(product).artist.price_hour">
+                    <q-item-section class="col-4 text-right">
+                      <div v-if="+castProduct(product).price < +castProduct(product).artist.price_hour" class="row justify-end items-center no-wrap">
                         <span class="text-positive text-weight-bold">
                           ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                         </span>
                         <small style="text-decoration: line-through" class="text-red q-ml-xs">
                           ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                         </small>
-                      </span>
-                      <span v-else>
+                      </div>
+                      <div v-else class="text-weight-bold">
                         {{ "$ " + (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                      </span>
+                      </div>
                     </q-item-section>
                   </q-item>
                 </template>
