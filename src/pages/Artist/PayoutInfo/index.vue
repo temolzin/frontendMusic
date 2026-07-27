@@ -87,17 +87,26 @@
                       label="Editar Información" 
                       color="warning" 
                       icon="edit"
-                      class="text-weight-bold"
-                      @click="isEditing = true"
+                      class="text-weight-bold jusitfy-end"
+                      @click="startEditing"
                     />
-                    <q-btn 
-                      v-else
-                      label="Guardar Información" 
-                      type="submit" 
-                      color="accent" 
-                      icon="save"
-                      class="text-weight-bold"
-                    />
+                    <template v-else>
+                      <q-btn 
+                        v-if="hasSavedData"
+                        label="Cancelar" 
+                        color="negative" 
+                        icon="close"
+                        class="text-weight-bold"
+                        @click="cancelEditing"
+                      />
+                      <q-btn 
+                        label="Guardar Información" 
+                        type="submit" 
+                        color="accent" 
+                        icon="save"
+                        class="text-weight-bold"
+                      />
+                    </template>
                 </div>
             </q-form>
           </q-card-section>
@@ -109,7 +118,6 @@
 
 <script>
 import { ref, onMounted } from "vue";
-useQuasar
 import { useQuasar } from "quasar";
 import { useStore } from "vuex";
 
@@ -119,6 +127,7 @@ export default {
     const $q = useQuasar();
     const store = useStore();
     const isEditing = ref(true);
+    const hasSavedData = ref(false);
 
     const payoutData = ref({
       account_holder: "",
@@ -126,6 +135,8 @@ export default {
       clabe: "",
       rfc: ""
     });
+
+    const originalPayoutData = ref({});
 
     const bankOptions = [
       "BBVA", "Banamex", "Santander", "Banorte", "HSBC", 
@@ -138,17 +149,30 @@ export default {
       
       const savedData = store.getters["payoutMethod/getPayoutData"];
       if (savedData && savedData.clabe) {
-        payoutData.value = {
+        const initialForm = {
           account_holder: savedData.account_holder || "",
           bank_name: savedData.bank_name || "",
           clabe: savedData.clabe || "",
           rfc: savedData.rfc || ""
         };
+        payoutData.value = { ...initialForm };
+        originalPayoutData.value = { ...initialForm };
         isEditing.value = false;
+        hasSavedData.value = true;
       }
       
       $q.loading.hide();
     });
+
+    function startEditing() {
+      originalPayoutData.value = { ...payoutData.value };
+      isEditing.value = true;
+    }
+
+    function cancelEditing() {
+      payoutData.value = { ...originalPayoutData.value };
+      isEditing.value = false;
+    }
 
     async function savePayoutInfo() {
       $q.loading.show({ message: 'Guardando en el servidor...' });
@@ -156,6 +180,9 @@ export default {
       try {
         await store.dispatch("payoutMethod/savePayoutMethod", payoutData.value);
         
+        originalPayoutData.value = { ...payoutData.value };
+        hasSavedData.value = true;
+
         $q.notify({
           color: "positive",
           textColor: "white",
@@ -185,7 +212,10 @@ export default {
       payoutData,
       bankOptions,
       savePayoutInfo,
-      isEditing
+      isEditing,
+      hasSavedData,
+      startEditing,
+      cancelEditing
     };
   }
 };
