@@ -14,6 +14,25 @@
             ¡Registra la cuenta donde recibirás tus ganancias! Al completar tus eventos, utilizaremos esta información para transferirte tus fondos de manera segura a través de OpenPay. Asegúrate de verificar que todos tus datos sean correctos.
           </div>
         </q-banner>
+        <q-banner
+            dense
+            inline-actions
+            rounded
+            class="q-mb-md q-py-sm q-px-md"
+            :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-orange-1 text-orange-9']"
+          >
+            <template v-slot:avatar>
+              <q-icon name="info" :color="$q.dark.isActive ? 'accent' : 'orange'" size="sm" />
+            </template>
+            <div class="text-body2">
+              <strong>Importante sobre tu cuenta bancaria:</strong>
+              <ul>
+                <li>
+                  Asegúrate de que la cuenta o banco que registres <strong>acepte transferencias mayores al monto total por el que te contratan</strong>. Ciertas cuentas digitales o de débito básico tienen límites mensuales de recepción de fondos.
+                </li>
+              </ul>
+            </div>
+          </q-banner>
         <q-card 
           class="q-pa-sm" 
           flat 
@@ -44,15 +63,29 @@
                     :disable="!isEditing"
                 />
                 <q-select
-                    outlined
-                    :bg-color="$q.dark.isActive ? '' : 'grey-2'"
-                    :dark="$q.dark.isActive"
-                    v-model="payoutData.bank_name"
-                    :options="bankOptions"
-                    label="Banco *"
-                    lazy-rules
-                    :rules="[ val => val && val.length > 0 || 'Debes seleccionar un banco' ]"
-                    :disable="!isEditing"
+                  outlined
+                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                  :dark="$q.dark.isActive"
+                  v-model="selectedBank"
+                  :options="bankOptions"
+                  label="Banco *"
+                  lazy-rules
+                  :rules="[ val => val && val.length > 0 || 'Debes seleccionar un banco' ]"
+                  :disable="!isEditing"
+                  @input="handleBankChange"
+                />
+                <q-input
+                  v-if="selectedBank === 'Otro'"
+                  outlined
+                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                  :dark="$q.dark.isActive"
+                  v-model="customBank"
+                  label="Escribe el nombre de tu banco *"
+                  hint="Especifica la institución bancaria o financiera"
+                  lazy-rules
+                  :rules="[ val => val && val.trim().length > 0 || 'El nombre del banco es obligatorio' ]"
+                  :disable="!isEditing"
+                  class="q-mt-md"
                 />
                 <q-input
                     outlined
@@ -117,7 +150,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "vuex";
 
@@ -129,6 +162,14 @@ export default {
     const isEditing = ref(true);
     const hasSavedData = ref(false);
 
+    const bankOptions = [
+      "BBVA", "Banamex", "Santander", "Banorte", "HSBC", 
+      "Scotiabank", "Banco Azteca", "BanCoppel", "Inbursa", "STP", "Otro"
+    ];
+
+    const selectedBank = ref("");
+    const customBank = ref("");
+
     const payoutData = ref({
       account_holder: "",
       bank_name: "",
@@ -138,10 +179,18 @@ export default {
 
     const originalPayoutData = ref({});
 
-    const bankOptions = [
-      "BBVA", "Banamex", "Santander", "Banorte", "HSBC", 
-      "Scotiabank", "Banco Azteca", "BanCoppel", "Inbursa", "STP"
-    ];
+    const setBankStateFromBackend = (bankName) => {
+      if (!bankName) {
+        selectedBank.value = "";
+        customBank.value = "";
+        return;
+      }
+
+      const isStandardBank = bankOptions.includes(bankName) && bankName !== "Otro";
+
+      selectedBank.value = isStandardBank ? bankName : "Otro";
+      customBank.value = isStandardBank ? "" : bankName;
+    };
 
     onMounted(async () => {
       $q.loading.show({ message: 'Cargando datos de cobro...' });
@@ -157,6 +206,9 @@ export default {
         };
         payoutData.value = { ...initialForm };
         originalPayoutData.value = { ...initialForm };
+        
+        setBankStateFromBackend(savedData.bank_name);
+
         isEditing.value = false;
         hasSavedData.value = true;
       }
@@ -164,13 +216,21 @@ export default {
       $q.loading.hide();
     });
 
+    const handleBankChange = (val) => {
+      if (val !== "Otro") {
+        customBank.value = "";
+      }
+    };
+
     function startEditing() {
       originalPayoutData.value = { ...payoutData.value };
+      setBankStateFromBackend(payoutData.value.bank_name);
       isEditing.value = true;
     }
 
     function cancelEditing() {
       payoutData.value = { ...originalPayoutData.value };
+      setBankStateFromBackend(originalPayoutData.value.bank_name);
       isEditing.value = false;
     }
 
@@ -178,8 +238,18 @@ export default {
       $q.loading.show({ message: 'Guardando en el servidor...' });
       
       try {
-        await store.dispatch("payoutMethod/savePayoutMethod", payoutData.value);
+        const finalBankName = selectedBank.value === "Otro" 
+          ? customBank.value.trim() 
+          : selectedBank.value;
+
+        const payload = {
+          ...payoutData.value,
+          bank_name: finalBankName
+        };
+
+        await store.dispatch("payoutMethod/savePayoutMethod", payload);
         
+        payoutData.value.bank_name = finalBankName;
         originalPayoutData.value = { ...payoutData.value };
         hasSavedData.value = true;
 
@@ -211,6 +281,9 @@ export default {
     return {
       payoutData,
       bankOptions,
+      selectedBank,
+      customBank,
+      handleBankChange,
       savePayoutInfo,
       isEditing,
       hasSavedData,
