@@ -489,7 +489,6 @@
                 </ul>
               </div>
             </q-banner>
-
             <div class="row">
               <div class="col-12">
                 <q-item-label header class="text-h6">Detalles de la Orden</q-item-label>
