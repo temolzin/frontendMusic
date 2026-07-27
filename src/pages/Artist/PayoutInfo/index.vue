@@ -52,15 +52,15 @@
           <q-card-section>
             <q-form @submit="savePayoutInfo" class="q-gutter-md">
                 <q-input
-                    outlined
-                    :bg-color="$q.dark.isActive ? '' : 'grey-2'"
-                    :dark="$q.dark.isActive"
-                    v-model="payoutData.account_holder"
-                    label="Titular de la cuenta *"
-                    hint="Nombre completo del dueño de la cuenta o razón social"
-                    lazy-rules
-                    :rules="[ val => val && val.length > 0 || 'El nombre del titular es obligatorio' ]"
-                    :disable="!isEditing"
+                  outlined
+                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                  :dark="$q.dark.isActive"
+                  v-model="payoutData.account_holder"
+                  label="Titular de la cuenta *"
+                  hint="Nombre completo del dueño de la cuenta o razón social"
+                  lazy-rules
+                  :rules="[ val => val && val.length > 0 || 'El nombre del titular es obligatorio' ]"
+                  :disable="!isEditing"
                 />
                 <q-select
                   outlined
@@ -88,31 +88,31 @@
                   class="q-mt-md"
                 />
                 <q-input
-                    outlined
-                    :bg-color="$q.dark.isActive ? '' : 'grey-2'"
-                    :dark="$q.dark.isActive"
-                    v-model="payoutData.clabe"
-                    label="CLABE Interbancaria *"
-                    mask="##################"
-                    unmasked-value
-                    hint="Clave de 18 dígitos numéricos para transferencias SPEI"
-                    lazy-rules
-                    :rules="[
-                    val => val && val.length === 18 || 'La CLABE debe tener exactamente 18 dígitos',
-                    val => /^\d+$/.test(val) || 'La CLABE solo debe contener números'
-                    ]"
-                    :disable="!isEditing"
+                  outlined
+                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                  :dark="$q.dark.isActive"
+                  v-model="payoutData.clabe"
+                  label="CLABE Interbancaria *"
+                  mask="##################"
+                  unmasked-value
+                  hint="Clave de 18 dígitos numéricos para transferencias SPEI"
+                  lazy-rules
+                  :rules="[
+                  val => val && val.length === 18 || 'La CLABE debe tener exactamente 18 dígitos',
+                  val => /^\d+$/.test(val) || 'La CLABE solo debe contener números'
+                  ]"
+                  :disable="!isEditing"
                 />
                 <q-input
-                    outlined
-                    :bg-color="$q.dark.isActive ? '' : 'grey-2'"
-                    :dark="$q.dark.isActive"
-                    v-model="payoutData.rfc"
-                    label="RFC (Opcional)"
-                    mask="XXXX######XXX"
-                    hint="RFC asociado a la cuenta (12 o 13 caracteres)"
-                    style="text-transform: uppercase;"
-                    :disable="!isEditing"
+                  outlined
+                  :bg-color="$q.dark.isActive ? '' : 'grey-2'"
+                  :dark="$q.dark.isActive"
+                  v-model="payoutData.rfc"
+                  label="RFC (Opcional)"
+                  mask="XXXX######XXX"
+                  hint="RFC asociado a la cuenta (12 o 13 caracteres)"
+                  style="text-transform: uppercase;"
+                  :disable="!isEditing"
                 />
                 <div class="row justify-end q-mt-lg q-gutter-sm">
                     <q-btn 
