@@ -227,6 +227,17 @@ const routes = [
         },
       },
       {
+        name: 'admin.client-refunds',
+        path: '/admin/client-refunds',
+        component: () => import('pages/Admin/Refunds/index.vue'),
+        meta: {
+          title: 'Reembolsos a Clientes',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'],
+        },
+      },
+      {
         name: 'admin.user-sanctions',
         path: '/admin/user-sanctions',
         component: () => import('src/pages/Admin/UserSanctions/Index.vue'),
