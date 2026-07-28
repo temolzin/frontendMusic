@@ -490,6 +490,10 @@ export default {
 
     formatDate(date) {
       if (!date) return '';
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        const [y, m, d] = date.split('-');
+        return new Date(Number(y), Number(m) - 1, Number(d)).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
       const d = new Date(date);
       return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
     },
