@@ -19,7 +19,7 @@
             <strong>Procesamiento de Reembolsos vía OpenPay:</strong>
             <ul>
               <li class="q-mb-xs">
-                Al hacer clic en <strong>Procesar Reembolso</strong>, la API de OpenPay devolverá el monto neto correspondiente a la tarjeta del cliente.
+                Al hacer click en <strong>Procesar Reembolso</strong>, OpenPay devolverá el monto neto correspondiente a la tarjeta del cliente.
               </li>
               <li>
                 El porcentaje a reembolsar se calcula con base en la penalización por tiempo de cancelación definida en la plataforma.
