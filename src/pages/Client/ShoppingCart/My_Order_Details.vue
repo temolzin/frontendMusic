@@ -886,8 +886,12 @@ export default {
     },
     async onCancelled({ saleId }) {
       this.cancelSale = null;
-      if (saleId) {
-        await this.evaluateCancellationSanction(saleId);
+      try {
+        if (saleId) {
+          await this.evaluateCancellationSanction(saleId);
+        }
+      } catch (err) {
+        console.warn('No se pudo evaluar sanción:', err);
       }
       this.$q.notify({ type: 'positive', message: 'Cancelación exitosa' });
       await this.viewPurchaseHistory();
