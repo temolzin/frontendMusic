@@ -85,31 +85,69 @@
         >
           <q-card>
             <q-card-section class="text-body1 text-grey-9">
-             <p><strong>Políticas de Cancelación (artistas y clientes):</strong> Para cancelaciones y reembolsos se aplican los siguientes supuestos y porcentajes para ambas partes.</p>
-              <div class="q-markup-table q-table__container q-table--horizontal-lines q-mt-md">
+             <p><strong>Políticas de Cancelación:</strong> Se aplican los siguientes porcentajes según los días restantes antes del evento.</p>
+
+              <p class="text-weight-bold q-mt-sm q-mb-xs">Si el artista cancela:</p>
+              <div class="q-markup-table q-table__container q-table--horizontal-lines">
                 <table class="q-table text-left">
                   <thead>
                     <tr class="text-weight-bold bg-grey-2">
                       <th class="text-left">Días antes del evento</th>
-                      <th class="text-left">Penalización</th>
-                      <th class="text-left">Reembolso</th>
+                      <th class="text-left">Penalización para el artista</th>
+                      <th class="text-left">Reembolso al cliente</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td>7+ días</td>
+                      <td>30+ días</td>
                       <td>0%</td>
-                      <td>100% del monto</td>
+                      <td>100%</td>
                     </tr>
                     <tr>
-                      <td>3-6 días</td>
-                      <td>25% del monto</td>
-                      <td>75%</td>
-                    </tr>
-                    <tr>
-                      <td>1-2 días</td>
-                      <td>50% del monto</td>
+                      <td>7 - 30 días</td>
                       <td>50%</td>
+                      <td>100%</td>
+                    </tr>
+                    <tr>
+                      <td>1 - 7 días</td>
+                      <td>100%</td>
+                      <td>100%</td>
+                    </tr>
+                    <tr>
+                      <td>Mismo día</td>
+                      <td colspan="2" class="text-weight-medium text-negative">No se puede cancelar</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p class="text-body2 text-grey q-mt-sm">Nota: Si el artista aún no ha aceptado la solicitud, el cliente puede cancelar sin penalización (0%).</p>
+
+              <p class="text-weight-bold q-mt-md q-mb-xs">Si el cliente cancela:</p>
+              <div class="q-markup-table q-table__container q-table--horizontal-lines">
+                <table class="q-table text-left">
+                  <thead>
+                    <tr class="text-weight-bold bg-grey-2">
+                      <th class="text-left">Días antes del evento</th>
+                      <th class="text-left">Penalización para el cliente</th>
+                      <th class="text-left">Reembolso al cliente</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>30+ días</td>
+                      <td>0%</td>
+                      <td>100%</td>
+                    </tr>
+                    <tr>
+                      <td>7 - 30 días</td>
+                      <td>50%</td>
+                      <td>50%</td>
+                    </tr>
+                    <tr>
+                      <td>1 - 7 días</td>
+                      <td>100%</td>
+                      <td>0%</td>
                     </tr>
                     <tr>
                       <td>Mismo día</td>
