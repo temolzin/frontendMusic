@@ -756,6 +756,7 @@ import { ref } from "vue";
 import { api } from "boot/axios";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { notifySuccess, notifyError, notifyWarning, platformEvents } from "src/utils/notify";
 
 let $q;
 
@@ -933,11 +934,7 @@ export default defineComponent({
         }
       } catch (err) {
         console.error('Error loading occupied dates:', err.message);
-        this.$q.notify({
-          type: 'warning',
-          message: 'No se pudieron cargar las fechas ocupadas. Por favor, verifica que el artista sea válido.',
-          timeout: 3000
-        });
+        notifyWarning('No se pudieron cargar las fechas ocupadas. Por favor, verifica que el artista sea válido.');
       }
     },
 
@@ -995,30 +992,30 @@ export default defineComponent({
     
     validateStep2() {
       !this.paymentMethod
-        ? this.$q.notify({ type: "negative", message: "Debes seleccionar un método de pago" })
+        ? notifyError("Debes seleccionar un método de pago")
         : this.paymentMethod === 'card'
           ? !this.selectedCard || !this.selectedCard.number_card
-            ? this.$q.notify({ type: "negative", message: "Debes seleccionar una tarjeta" })
+            ? notifyError("Debes seleccionar una tarjeta")
             : !this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4
-              ? (this.$q.notify({ type: "negative", message: "El CVV debe tener 3 o 4 dígitos" }),
+              ? (notifyError("El CVV debe tener 3 o 4 dígitos"),
                  this.$nextTick(() => this.$refs.cvvInput?.validate()))
               : (this.step = 3)
           : this.paymentMethod === 'cash'
             ? !this.model
-              ? this.$q.notify({ type: "negative", message: "Debes seleccionar un punto de pago en efectivo" })
+              ? notifyError("Debes seleccionar un punto de pago en efectivo")
               : (this.step = 3)
             : null;
     },
     validateCardNumber() {
       const val = this.form.number_card;
       if (!val) {
-        this.$q.notify({ type: 'negative', message: 'Campo requerido' });
+        notifyError('Campo requerido');
         return false;
       }
       const digits = (val.match(/\d/g) || []).length;
       const expLen = this.expectedCardLength(this.selectedCard.number_card || this.form.number_card);
       if (digits !== expLen) {
-        this.$q.notify({ type: 'negative', message: `Debe tener ${expLen} digitos, tiene ${digits}` });
+        notifyError(`Debe tener ${expLen} digitos, tiene ${digits}`);
         return false;
       }
       return true;
@@ -1038,10 +1035,7 @@ export default defineComponent({
       try {
         await this.showCards();
       } catch (err) {
-        err.response?.data?.message && this.$q.notify({
-          type: "negative",
-          message: err.response.data.message,
-        });
+        err.response?.data?.message && notifyError(err.response.data.message);
       }
     },
     async loadQuickBuyArtist(artistDataEncoded, hours) {
@@ -1080,10 +1074,7 @@ export default defineComponent({
         await this.loadOccupiedDates(artistId);
         this.isQuickBuy = true;
       } catch (err) {
-        this.$q.notify({
-          type: "negative",
-          message: "Error al cargar el artista. Por favor, intenta de nuevo.",
-        });
+        notifyError("Error al cargar el artista. Por favor, intenta de nuevo.");
         this.$router.push("/client/musical-genders");
       }
     },
@@ -1099,10 +1090,7 @@ export default defineComponent({
         this.loadQuickBuyArtist(artistDataEncoded, hoursParam)
         : await this.getListShoppingCard().then(async () => {
             this.shoppingCardDetail.length === 0
-              ? (this.$q.notify({
-                  type: "warning",
-                  message: "Tu carrito está vacío. Agrega artistas antes de continuar.",
-                }),
+              ? (notifyWarning("Tu carrito está vacío. Agrega artistas antes de continuar."),
                 this.$router.push("/client/shopping-cart"))
                 : (this.occupiedDates = [], await Promise.all(
                     this.shoppingCardDetail
@@ -1147,16 +1135,10 @@ export default defineComponent({
       try {
         await this.createNewOrder(this.formClient.value);
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: "Orden creada exitosamente",
-        });
+        platformEvents.orderCreated();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -1164,30 +1146,30 @@ export default defineComponent({
       const cardData = this.form?.value || this.form;
 
       if (!cardData.name || cardData.name.trim().length < 3) {
-        this.$q.notify({ type: "negative", message: "El nombre debe tener al menos 3 caracteres" });
+        notifyError("El nombre debe tener al menos 3 caracteres");
         return;
       }
 
       if (!cardData.number_card) {
-        this.$q.notify({ type: "negative", message: "El número de tarjeta es requerido" });
+        notifyError("El número de tarjeta es requerido");
         return;
       }
 
       const digits = (cardData.number_card.match(/\d/g) || []).length;
       const expLen = this.expectedCardLength(cardData.number_card);
       if (digits !== expLen) {
-        this.$q.notify({ type: "negative", message: `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}` });
+        notifyError(`El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`);
         return;
       }
 
       const cardClean = cardData.number_card.replace(/[\s-]/g, '');
       if (!this.luhnCheck(cardClean)) {
-        this.$q.notify({ type: "negative", message: "El número de tarjeta no es válido (validación Luhn)" });
+        notifyError("El número de tarjeta no es válido (validación Luhn)");
         return;
       }
 
       if (!cardData.expiration_date) {
-        this.$q.notify({ type: "negative", message: "La fecha de expiración es requerida" });
+        notifyError("La fecha de expiración es requerida");
         return;
       }
 
@@ -1195,10 +1177,7 @@ export default defineComponent({
         await this.createCard(cardData);
         this.formCreate = false;
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: `Tarjeta creada correctamente`,
-        });
+        notifySuccess("Tarjeta creada correctamente");
         await this.gettCards();
         await this.showCards();
 
@@ -1208,10 +1187,7 @@ export default defineComponent({
           this.selectedCard = { ...this.stateUserCards[lastIndex] };
         })();
       } catch (err) {
-        this.$q.notify({
-          type: "negative",
-          message: err.response?.data?.message || "Error al crear la tarjeta",
-        });
+        notifyError(err.response?.data?.message || "Error al crear la tarjeta");
       }
     },
     maskCardNumber(cardNumber) {
@@ -1268,7 +1244,7 @@ export default defineComponent({
     },
     async pay() {
       const validateAndNotify = (condition, message) => {
-        return condition && (this.$q.notify({type: "negative", message}), true);
+        return condition && (notifyError(message), true);
       };
 
       const digits = (this.selectedCard?.number_card?.match(/\d/g) || []).length;
@@ -1295,7 +1271,7 @@ export default defineComponent({
 
     payCash() {
       !this.model
-        ? this.$q.notify({ type: "negative", message: "Debes seleccionar un punto de pago" })
+        ? notifyError("Debes seleccionar un punto de pago")
         : this.processCashPay();
     },
 
@@ -1411,11 +1387,7 @@ export default defineComponent({
               }
 
               this.$q.loading.hide();
-              this.$q.notify({
-                type: "positive",
-                message: "¡Tu transacción se realizó con éxito!",
-                position: "top",
-              });
+              platformEvents.reservationRegistered();
 
               this.onReset();
               setTimeout(() => {
@@ -1430,12 +1402,7 @@ export default defineComponent({
                 err.message ??
                 "Error al procesar el pago";
               
-              this.$q.notify({
-                type: "negative",
-                message: errorMessage,
-                position: "top",
-                timeout: 5000
-              });
+              notifyError(errorMessage, { timeout: 5000 });
             }
           },
           (error) => {
@@ -1469,31 +1436,18 @@ export default defineComponent({
                 .replace(/\bthe\b/gi, "el");
             }
             
-            this.$q.notify({
-              type: "negative",
-              message: "Error al crear el token: " + errorMessage,
-              position: "top",
-              timeout: 5000
-            });
+            notifyError("Error al crear el token: " + errorMessage, { timeout: 5000 });
           }
         );
       } catch (err) {
         this.$q.loading.hide();
-        this.$q.notify({
-          type: "negative",
-          message: err.message || "Error inesperado en el pago",
-          position: "top",
-        });
+        notifyError(err.message || "Vibeer no pudo procesar tu pago. Intenta de nuevo.");
       }
     },
 
     async processCashPay() {
       if (!this.formClient.email || !this.formClient.phone || !this.shoppingCartTotal) {
-        this.$q.notify({
-          type: 'negative',
-          message: 'Por favor, completa los campos del cliente.',
-          position: 'top'
-        });
+        notifyError('Por favor, completa los campos del cliente.');
         return;
       }
 
@@ -1509,12 +1463,10 @@ export default defineComponent({
       const maxLimit = storeLimits[selectedStore] || 29999;
 
       if (this.shoppingCartTotal + this.totalExtraKmCost > maxLimit) {
-        this.$q.notify({
-          type: 'warning',
-          message: `El límite máximo para pagos en efectivo en ${selectedStore} es de $${maxLimit.toLocaleString('en-US')} MXN. Por favor, utilice tarjeta.`,
-          position: 'top',
-          timeout: 6000
-        });
+        notifyWarning(
+          `El límite máximo para pagos en efectivo en ${selectedStore} es de $${maxLimit.toLocaleString('en-US')} MXN. Por favor, utilice tarjeta.`,
+          { timeout: 6000 }
+        );
         return;
       }
 
@@ -1554,23 +1506,16 @@ export default defineComponent({
 
         const response = await api.post('/api/payment/cash', payload);
 
-        this.$q.notify({
-          type: 'positive',
-          message: response.data?.message || 'Reserva registrada. Recibirás tu referencia de pago cuando el artista acepte tu solicitud.',
-          position: 'top',
-          timeout: 6000
-        });
+        platformEvents.reservationRegistered(response.data?.message, { timeout: 6000 });
 
         this.$router.push('/client/shopping-cart/view-my-order-details');
       } catch (err) {
         console.error('Error procesando pago:', err);
 
-        this.$q.notify({
-          type: 'negative',
-          message: err.response?.data?.message || err.response?.data?.error?.description || 'Error al generar la referencia',
-          position: 'top',
-          timeout: 5000,
-        });
+        notifyError(
+          err.response?.data?.message || err.response?.data?.error?.description || 'Error al generar la referencia',
+          { timeout: 5000 }
+        );
       } finally {
         this.$q.loading.hide();
       }
@@ -1608,10 +1553,10 @@ export default defineComponent({
         link.download = `${ref}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        this.$q.notify({ type: 'positive', message: 'Imagen descargada', position: 'top' });
+        notifySuccess('Imagen descargada');
       } catch (err) {
         console.error(err);
-        this.$q.notify({ type: 'negative', message: 'Error al descargar la imagen', position: 'top' });
+        notifyError('Error al descargar la imagen');
       } finally {
         this.$q.loading.hide();
       }
@@ -1628,10 +1573,10 @@ export default defineComponent({
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         const ref = this.cashReference?.reference || 'referencia';
         pdf.save(`${ref}.pdf`);
-        this.$q.notify({ type: 'positive', message: 'PDF descargado', position: 'top' });
+        notifySuccess('PDF descargado correctamente');
       } catch (err) {
         console.error(err);
-        this.$q.notify({ type: 'negative', message: 'Error al descargar el PDF', position: 'top' });
+        notifyError('Error al descargar el PDF');
       } finally {
         this.$q.loading.hide();
       }
@@ -1650,7 +1595,7 @@ export default defineComponent({
               });
           }).catch((err) => {
             console.error('Error loading Google Maps API:', err);
-            this.$q.notify({ type: 'negative', message: 'Error al cargar Google Maps', position: 'top' });
+            notifyError('Error al cargar Google Maps');
             this.googleMapsEnabled = false;
           })
         : (this.latitude = null,
