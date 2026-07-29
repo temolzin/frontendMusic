@@ -836,7 +836,15 @@ export default defineComponent({
   methods: {
     formatDueDate(dateStr) {
       if (!dateStr) return '';
-      const date = new Date(dateStr);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        const [y, m, d] = dateStr.split('-');
+        const date = new Date(Number(y), Number(m) - 1, Number(d));
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+      const date = new Date(dateStr.replace(' ', 'T'));
       const day = String(date.getDate()).padStart(2, '0');
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = date.getFullYear();
