@@ -36,6 +36,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { notifyError } from "src/utils/notify";
 export default {
   name: "Icon-Cart",
   props: {
@@ -55,10 +56,7 @@ export default {
         await this.getCountListShoppingCard();
       } catch (err) {
         const message = err?.response?.data?.message || "No se pudo actualizar el contador del carrito.";
-        this.$q.notify({
-          type: "negative",
-          message,
-        });
+        notifyError(message);
       }
     },
   },

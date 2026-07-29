@@ -63,6 +63,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { notifyError } from 'src/utils/notify';
 import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
 
 export default {
@@ -94,7 +95,7 @@ export default {
       try {
         await this.fetchMyTickets();
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar tus reportes.', position: 'top' });
+        notifyError('Error al cargar tus reportes.');
       } finally {
         this.loading = false;
       }
