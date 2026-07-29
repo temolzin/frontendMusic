@@ -66,6 +66,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import { notifyError, platformEvents } from 'src/utils/notify';
 
 export default {
   name: 'ReportIncident',
@@ -130,11 +131,7 @@ export default {
           });
         }
 
-        this.$q.notify({
-          type: 'positive',
-          message: 'Reporte enviado exitosamente. El equipo de soporte lo revisará pronto.',
-          position: 'top',
-        });
+        platformEvents.incidentReceived();
 
         this.$router.push({ name: 'client.my-tickets' });
 
@@ -145,7 +142,7 @@ export default {
           const details = Object.values(data.errors).flat().join('<br>');
           message += `<br><br>${details}`;
         }
-        this.$q.notify({ type: 'negative', message, position: 'top', html: true, timeout: 5000 });
+        notifyError(message, { html: true, timeout: 5000 });
       } finally {
         this.loading = false;
       }
@@ -157,11 +154,7 @@ export default {
         'accept': 'Tipo de archivo no permitido. Usa JPG, PNG, MP4 o MOV.',
       };
       rejectedEntries.forEach(({ failedPropValidation }) => {
-        this.$q.notify({
-          type: 'negative',
-          message: messages[failedPropValidation] ?? 'Archivo rechazado.',
-          position: 'top',
-        });
+        notifyError(messages[failedPropValidation] ?? 'Archivo rechazado.');
       });
     },
   },
