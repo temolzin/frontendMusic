@@ -26,6 +26,7 @@ import payouts from "./admin/payouts";
 import payoutLogs from "./admin/payout-logs";
 import approvals from './artist/approvals';
 import artistApprovals from './admin/artistApprovals';
+import statsArtist from "./admin/statsArtist";
 
 const Store = createStore({
   modules: {
@@ -55,6 +56,7 @@ const Store = createStore({
     payoutLogs,
     approvals,
     artistApprovals,
+    statsArtist,
   },
   strict: process.env.DEBUGGING,
 });
