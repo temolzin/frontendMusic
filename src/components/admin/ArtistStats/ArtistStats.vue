@@ -472,7 +472,31 @@ export default {
           is_active: data.profile?.is_active ?? true,
           status: (data.profile?.is_active ?? true) ? "Activo" : "Restringido",
           genres: data.profile?.genders || data.profile?.genres       || [],
-          socials: data.profile?.socials || data.profile?.social_media || {},
+          socials: (() => {
+            const raw = data.profile?.socials || data.profile?.social_media;
+            if (!raw) return {};
+            if (Array.isArray(raw)) {
+              const map = {};
+              const keyMap = {
+                'Instagram':   'instagram',
+                'X (Twitter)': 'x',
+                'YouTube':     'youtube',
+                'Facebook':    'facebook',
+                'TikTok':      'tiktok',
+                'Spotify':     'spotify',
+                'Apple Music': 'apple_music',
+                'SoundCloud':  'soundcloud',
+                'Bandcamp':    'bandcamp',
+                'LinkedIn':    'linkedin',
+              };
+              raw.forEach((item) => {
+                const key = keyMap[item.name] || item.name?.toLowerCase().replace(/\s+/g, '_');
+                if (key && item.url) map[key] = item.url;
+              });
+              return map;
+            }
+            return raw;
+          })(),
         },
         kpis: {
           rating: data.kpis?.rating || 0,
