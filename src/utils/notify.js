@@ -55,7 +55,7 @@ export const platformEvents = {
     notifyPlatform('error', 'no pudo procesar tu pago. Intenta de nuevo.'),
 
   orderCreated: () =>
-    notifyPlatform('success', 'creó tu orden exitosamente.'),
+    notifyPlatform('success', 'creó tu orden correctamente.'),
 
   receiptDownloaded: () =>
     notifySuccess('Recibo descargado correctamente.'),

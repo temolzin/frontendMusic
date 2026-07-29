@@ -676,7 +676,7 @@ export default {
           rating: val
         });
 
-        notifySuccess("Calificación guardada con éxito");
+        notifySuccess("Calificación guardada correctamente");
         
         setTimeout(() => {
           this.isRatingModalOpen = false;
@@ -839,7 +839,7 @@ export default {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        notifySuccess('Recibo descargado');
+        notifySuccess('Recibo descargado correctamente');
       } catch (err) {
         notifyError('Error al descargar el recibo');
       }
@@ -882,7 +882,7 @@ export default {
         link.download = `${ref}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        notifySuccess('Imagen descargada');
+        notifySuccess('Imagen descargada correctamente');
       } catch (err) {
         console.error(err);
         notifyError('Error al descargar la imagen');

@@ -1565,7 +1565,7 @@ export default defineComponent({
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         const ref = this.cashReference?.reference || 'referencia';
         pdf.save(`${ref}.pdf`);
-        notifySuccess('PDF descargado');
+        notifySuccess('PDF descargado correctamente');
       } catch (err) {
         console.error(err);
         notifyError('Error al descargar el PDF');
