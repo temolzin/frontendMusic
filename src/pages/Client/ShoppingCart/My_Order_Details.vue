@@ -505,6 +505,7 @@ import { mapActions, mapGetters } from "vuex";
 import { api } from "boot/axios";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 export default {
@@ -683,11 +684,7 @@ export default {
           rating: val
         });
 
-        this.$q.notify({
-          type: "positive",
-          message: "¡Calificación guardada con éxito!",
-          position: "top"
-        });
+        notifySuccess("Calificación guardada correctamente");
         
         setTimeout(() => {
           this.isRatingModalOpen = false;
@@ -695,11 +692,7 @@ export default {
 
       } catch (err) {
         console.error("Error al calificar:", err);
-        this.$q.notify({
-          type: "negative",
-          message: "Error al guardar la calificación",
-          position: "top"
-        });
+        notifyError("Error al guardar la calificación");
       }
     },
     async openChat(purchase) {
@@ -842,7 +835,7 @@ export default {
         });
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
-          this.$q.notify({ type: 'negative', message: err.message || 'Error al descargar', position: 'top' });
+          notifyError(err.message || 'Error al descargar');
           return;
         }
         const blob = await response.blob();
@@ -854,8 +847,9 @@ export default {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
+        notifySuccess('Recibo descargado correctamente');
       } catch (err) {
-        this.$q.notify({ type: 'negative', message: 'Error al descargar el recibo', position: 'top' });
+        notifyError('Error al descargar el recibo');
       }
     },
     
@@ -896,10 +890,10 @@ export default {
         link.download = `${ref}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        this.$q.notify({ type: 'positive', message: 'Imagen descargada', position: 'top' });
+        notifySuccess('Imagen descargada correctamente');
       } catch (err) {
         console.error(err);
-        this.$q.notify({ type: 'negative', message: 'Error al descargar la imagen', position: 'top' });
+        notifyError('Error al descargar la imagen');
       } finally {
         this.$q.loading.hide();
       }
@@ -925,10 +919,10 @@ export default {
         const ref = this.regeneratedRef?.reference || 'referencia';
         pdf.save(`${ref}.pdf`);
         
-        this.$q.notify({ type: 'positive', message: 'PDF descargado', position: 'top' });
+        notifySuccess('PDF descargado');
       } catch (err) {
         console.error(err);
-        this.$q.notify({ type: 'negative', message: 'Error al descargar el PDF', position: 'top' });
+        notifyError('Error al descargar el PDF');
       } finally {
         this.$q.loading.hide();
       }
@@ -981,7 +975,7 @@ export default {
     },
     async confirmCancel() {
       if (!this.cancelReason.trim()) {
-        this.$q.notify({ type: 'negative', message: 'Debes ingresar un motivo de cancelación' });
+        notifyError('Debes ingresar un motivo de cancelación');
         return;
       }
       this.cancelLoading = true;
@@ -996,13 +990,13 @@ export default {
           console.warn("No se pudo obtener el ID de la venta para evaluar la sanción.");
         }
 
-        this.$q.notify({ type: 'positive', message: response.data.message });
+        notifySuccess(response.data.message);
         this.cancelDialog = false;
         this.cancelSale = null;
         this.cancelReason = '';
         await this.viewPurchaseHistory();
       } catch (err) {
-        this.$q.notify({ type: 'negative', message: err.response?.data?.message || 'Error al cancelar el evento' });
+        notifyError(err.response?.data?.message || 'Error al cancelar el evento');
       } finally {
         this.cancelLoading = false;
       }
