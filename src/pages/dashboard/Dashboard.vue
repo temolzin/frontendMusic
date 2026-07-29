@@ -54,6 +54,14 @@
   </div>
   <client-card v-if="getMe.role[0] == 'cliente'"></client-card>
   <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general>
+  <div v-if="getMe.role[0] == 'administrador'" class="q-px-md q-pb-md">
+    <q-separator class="q-my-lg" />
+    <div class="q-mb-md">
+      <div class="text-h4 text-weight-bold">Análisis de Artistas</div>
+      <div class="text-caption text-grey">Rendimiento detallado y métricas por talento</div>
+    </div>
+    <artist-stats />
+  </div>
 
   <div v-if="getMe.role[0] == 'administrador'" class="q-pa-md">
     <q-btn
@@ -243,12 +251,12 @@ import ClientPromotion from "src/components/Client/ClientPromotion.vue";
 import ArtistRecomendation from "src/components/Artist/ArtistRecomendation.vue";
 import NoticeNotInfo from "src/components/Artist/NoticeNotInfo.vue";
 import NoticeGeneral from "src/components/admin/NoticeGeneral.vue";
-
+import ArtistStats from "src/components/admin/ArtistStats/ArtistStats.vue";
 
 let $q = useQuasar();
 
 export default {
-  components: { ClientCard, ClientPromotion, ArtistRecomendation,NoticeNotInfo,NoticeGeneral},
+  components: { ClientCard, ClientPromotion, ArtistRecomendation,NoticeNotInfo,NoticeGeneral, ArtistStats},
   name: "Index",
   data() {
     const columns = [{ name: "name", field: "artist.name", sortable: true }];
