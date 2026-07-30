@@ -247,8 +247,20 @@
             <tbody>
               <tr v-for="field in compareFields" :key="field.label" :class="{ 'bg-yellow-1': field.changed }">
                 <td class="text-weight-bold">{{ field.label }}</td>
-                <td>{{ field.current ?? '—' }}</td>
-                <td>{{ field.proposed ?? '—' }}</td>
+                <td
+                  class="compare-cell"
+                  :class="{ 'ellipsis-cell': !expandedFields[field.label] }"
+                  @click="toggleExpand(field.label)"
+                >
+                  {{ field.current ?? '—' }}
+                </td>
+                <td
+                  class="compare-cell"
+                  :class="{ 'ellipsis-cell': !expandedFields[field.label] }"
+                  @click="toggleExpand(field.label)"
+                >
+                  {{ field.proposed ?? '—' }}
+                </td>
               </tr>
             </tbody>
           </q-markup-table>
@@ -323,6 +335,7 @@ export default {
       requestIdToReject: null,
       compareDialog: false,
       compareRequest: null,
+      expandedFields: {},
     };
   },
 
@@ -418,7 +431,15 @@ export default {
 
     openCompareDialog(row) {
       this.compareRequest = row;
+      this.expandedFields = {};
       this.compareDialog = true;
+    },
+
+    toggleExpand(label) {
+      this.expandedFields = {
+        ...this.expandedFields,
+        [label]: !this.expandedFields[label],
+      };
     },
 
     async onReject() {
@@ -441,6 +462,10 @@ export default {
 
     formatDate(raw) {
       if (!raw) return '';
+      if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+        const [y, m, d] = raw.split('-');
+        return new Date(Number(y), Number(m) - 1, Number(d)).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
       const d = new Date(raw);
       return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
     },
@@ -449,6 +474,17 @@ export default {
 </script>
 
 <style scoped>
+.compare-cell {
+  cursor: pointer;
+}
+
+.ellipsis-cell {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .q-table tbody td {
   height: 60px !important;
   vertical-align: middle;

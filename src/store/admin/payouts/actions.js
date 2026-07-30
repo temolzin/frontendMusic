@@ -10,9 +10,9 @@ export const fetchPendingPayouts = async ({ commit }) => {
   }
 };
 
-export const releasePayout = async ({ dispatch }, saleId) => {
+export const releasePayout = async ({ dispatch }, { saleId, applyOpenpayFee }) => {
   try {
-    await api.post(`/api/admin/payouts/${saleId}/release`);
+    await api.post(`/api/admin/payouts/${saleId}/release`, { apply_openpay_fee: applyOpenpayFee });
     dispatch("fetchPendingPayouts");
   } catch (error) {
     console.error(`Error al liberar el pago #${saleId}:`, error);

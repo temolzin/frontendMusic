@@ -24,7 +24,7 @@
             </ul>
             <ul>
               <li>
-                Los pagos en efectivo (como <strong>tiendas de autoservicio tipo Oxxo</strong>) muestran comisión en $0.00 debido a que la tarifa del establecimiento es cubierta directamente por el cliente al pagar en caja.
+                Los pagos en efectivo (como <strong>tiendas de autoservicio tipo Oxxo</strong>) también incluyen la comisión de OpenPay descontada de la liquidación del artista.
               </li>
             </ul>
           </div>
@@ -90,8 +90,8 @@
             <q-td key="event_date" :props="props">
               {{ props.row.event_date }} a las {{ props.row.event_hour.substring(0, 5) }} hrs
             </q-td>
-            <q-td key="net_artist_payout" :props="props" class="text-weight-bold" :class="props.row.total_penalties > 0 ? 'text-primary' : 'text-positive'">
-              ${{ formatCurrency(props.row.adjusted_net_payout) }} MXN
+            <q-td key="net_artist_payout" :props="props" class="text-weight-bold" :class="totalPenalties(props.row) > 0 ? 'text-primary' : 'text-positive'">
+              ${{ formatCurrency(computedAdjustedNet(props.row)) }} MXN
             </q-td>
             <q-td key="event_status" :props="props">
               <q-badge
@@ -144,8 +144,18 @@
                         <span class="text-weight-medium">${{ formatCurrency(props.row.amount) }} MXN</span>
                       </div>
                       <div class="row justify-between q-py-xs text-negative">
-                        <span>{{ parseFloat(props.row.openpay_fee) === 0 ? 'Pago en efectivo:' : 'Comisión OpenPay:' }}</span>
-                        <span>- ${{ formatCurrency(props.row.openpay_fee) }} MXN</span>
+                        <span>Comisión OpenPay:</span>
+                        <span class="row items-center">
+                          <q-checkbox
+                            v-model="applyFeeMap[props.row.sale_id]"
+                            dense
+                            size="sm"
+                            color="negative"
+                            class="q-mr-xs"
+                            @update:model-value="onFeeToggle(props.row)"
+                          />
+                          - ${{ formatCurrency(computedOpenpayFee(props.row)) }} MXN
+                        </span>
                       </div>
                       <div class="row justify-between q-py-xs text-negative">
                         <span>Comisión Plataforma (10%):</span>
@@ -154,7 +164,7 @@
                       <q-separator class="q-my-xs" />
                       <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold text-positive">
                         <span>Subtotal a Transferir:</span>
-                        <span>${{ formatCurrency(props.row.net_artist_payout) }} MXN</span>
+                        <span>${{ formatCurrency(computedNetPayout(props.row)) }} MXN</span>
                       </div>
                       <template v-if="props.row.penalties && props.row.penalties.length > 0">
                         <q-separator class="q-my-xs" />
@@ -172,9 +182,9 @@
                         </div>
                       </template>
                       <q-separator class="q-my-xs" />
-                      <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold" :class="props.row.total_penalties > 0 ? 'text-primary' : 'text-positive'">
+                      <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold" :class="totalPenalties(props.row) > 0 ? 'text-primary' : 'text-positive'">
                         <span>Monto Neto Final a Transferir:</span>
-                        <span>${{ formatCurrency(props.row.adjusted_net_payout) }} MXN</span>
+                        <span>${{ formatCurrency(computedAdjustedNet(props.row)) }} MXN</span>
                       </div>
                     </q-card-section>
                   </q-card>
@@ -351,6 +361,7 @@ export default {
       historyColumns,
       loadingPending: false,
       searchFilter: "",
+      applyFeeMap: {},
     };
   },
 
@@ -404,6 +415,7 @@ export default {
       this.loadingPending = true;
       try {
         await this.fetchPendingPayouts();
+        this.initFeeMap();
       } catch (error) {
         this.$q.notify({
           color: "negative",
@@ -453,8 +465,8 @@ export default {
           title: "Confirmar Liquidación",
           message: `¿Estás seguro de marcar la venta #${payout.sale_id} del artista "${payout.artist.name}" como pagada? 
           Asegúrate de haber realizado primero la transferencia SPEI manual en tu banca por 
-          $${this.formatCurrency(payout.adjusted_net_payout)} MXN.${payout.total_penalties > 0 ? `\n\nNota: 
-          Se descontaron $${this.formatCurrency(payout.total_penalties)} MXN en penalizaciones por cancelaciones previas.` : ""}`,
+          $${this.formatCurrency(this.computedAdjustedNet(payout))} MXN.${this.totalPenalties(payout) > 0 ? `\n\nNota: 
+          Se descontaron $${this.formatCurrency(this.totalPenalties(payout))} MXN en penalizaciones por cancelaciones previas.` : ""}`,
           cancel: { label: "Cancelar", color: "grey", flat: true },
           ok: { label: "Sí, Marcar Pagado", color: "positive" },
           persistent: true,
@@ -462,7 +474,8 @@ export default {
         .onOk(async () => {
           try {
             this.$q.loading.show({ message: "Actualizando estatus financiero..." });
-            await this.releasePayout(payout.sale_id);
+            const applyFee = this.applyFeeMap[payout.sale_id] !== false;
+            await this.releasePayout({ saleId: payout.sale_id, applyOpenpayFee: applyFee });
             this.$q.notify({
               color: "positive",
               icon: "thumb_up",
@@ -508,6 +521,34 @@ export default {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       });
+    },
+
+    initFeeMap() {
+      const map = {};
+      (this.pendingPayouts || []).forEach((p) => {
+        map[p.sale_id] = true;
+      });
+      this.applyFeeMap = map;
+    },
+
+    onFeeToggle(row) {
+      this.$forceUpdate();
+    },
+
+    computedOpenpayFee(row) {
+      return this.applyFeeMap[row.sale_id] !== false ? parseFloat(row.openpay_fee) : 0;
+    },
+
+    computedNetPayout(row) {
+      return parseFloat(row.amount) - this.computedOpenpayFee(row) - parseFloat(row.platform_fee);
+    },
+
+    totalPenalties(row) {
+      return parseFloat(row.total_penalties || 0);
+    },
+
+    computedAdjustedNet(row) {
+      return Math.max(0, this.computedNetPayout(row) - this.totalPenalties(row));
     },
   },
 };
