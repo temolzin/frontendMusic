@@ -275,7 +275,7 @@ export default {
             this.$q.notify({
               color: "positive",
               icon: "thumb_up",
-              message: "¡Reembolso procesado exitosamente con OpenPay!",
+              message: "¡Reembolso procesado correctamente con OpenPay!",
             });
           } catch (error) {
             this.$q.notify({
