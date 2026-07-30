@@ -132,6 +132,10 @@
               <q-item-section avatar><q-icon name="payments" /></q-item-section>
               <q-item-section> Liquidaciones </q-item-section>
             </q-item>
+            <q-item clickable v-ripple to="/admin/client-refunds" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="price_check" /></q-item-section>
+              <q-item-section> Reembolsos </q-item-section>
+            </q-item>
             <q-item clickable v-ripple to="/admin/artist-approvals" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
               <q-item-section avatar><q-icon name="fas fa-solid fa-user-check" /></q-item-section>
               <q-item-section> Solicitudes de Artistas </q-item-section>
