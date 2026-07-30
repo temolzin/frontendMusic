@@ -111,8 +111,8 @@
 
 <script>
 import { ref, computed, watch } from 'vue'
-import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
+import { notifyError } from 'src/utils/notify'
 
 export default {
   name: 'CancellationModal',
@@ -128,7 +128,6 @@ export default {
   },
   emits: ['update:modelValue', 'cancelled'],
   setup(props, { emit }) {
-    const $q = useQuasar()
     const reason = ref('')
     const loading = ref(false)
     const loadingPreview = ref(false)
@@ -189,11 +188,7 @@ export default {
         reason.value = ''
         emit('update:modelValue', false)
       } catch (error) {
-        $q.notify({
-          type: 'negative',
-          icon: 'error',
-          message: error.response?.data?.message || 'Error al cancelar',
-        })
+        notifyError(error.response?.data?.message || 'Error al cancelar')
       } finally {
         loading.value = false
       }

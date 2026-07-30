@@ -277,6 +277,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { notifyError, platformEvents } from 'src/utils/notify';
 
 const columns = [
   { name: 'cliente', label: 'Cliente', align: 'center', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
@@ -355,7 +356,7 @@ export default {
       try {
         await this.fetchPendingApprovals();
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar solicitudes.', position: 'top' });
+        notifyError('Error al cargar solicitudes.');
       } finally {
         this.loading = false;
       }
@@ -366,7 +367,7 @@ export default {
       try {
         await this.fetchApprovalHistory();
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar el historial.', position: 'top' });
+        notifyError('Error al cargar el historial.');
       } finally {
         this.loadingHistory = false;
       }
@@ -398,11 +399,11 @@ export default {
       this.loadingId = saleId + '_accept';
       try {
         await this.acceptApproval(saleId);
-        this.$q.notify({ type: 'positive', message: 'Solicitud aceptada. El cobro fue procesado.', position: 'top' });
+        platformEvents.saleRequestAccepted();
         this.loadHistory();
       } catch (err) {
         const message = err.response?.data?.message || 'Error al aceptar la solicitud.';
-        this.$q.notify({ type: 'negative', message, position: 'top' });
+        notifyError(message);
       } finally {
         this.loadingId = null;
       }
@@ -412,11 +413,11 @@ export default {
       this.loadingId = saleId + '_reject';
       try {
         await this.rejectApproval(saleId);
-        this.$q.notify({ type: 'warning', message: 'Solicitud rechazada. No se realizará ningún cobro al cliente.', position: 'top' });
+        platformEvents.saleRequestRejected();
         this.loadHistory();
       } catch (err) {
         const message = err.response?.data?.message || 'Error al rechazar la solicitud.';
-        this.$q.notify({ type: 'negative', message, position: 'top' });
+        notifyError(message);
       } finally {
         this.loadingId = null;
       }

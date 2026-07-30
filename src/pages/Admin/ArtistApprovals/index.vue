@@ -300,6 +300,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
 
 const columns = [
   { name: 'artista', label: 'Artista', align: 'center', field: (row) => row.proposed_data?.name, sortable: true },
@@ -390,7 +391,7 @@ export default {
       try {
         await this.fetchPendingRequests();
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar solicitudes.', position: 'top' });
+        notifyError('Error al cargar solicitudes.');
       } finally {
         this.loading = false;
       }
@@ -401,7 +402,7 @@ export default {
       try {
         await this.fetchHistory();
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar el historial.', position: 'top' });
+        notifyError('Error al cargar el historial.');
       } finally {
         this.loadingHistory = false;
       }
@@ -411,10 +412,10 @@ export default {
       this.loadingId = requestId + '_accept';
       try {
         await this.acceptRequest(requestId);
-        this.$q.notify({ type: 'positive', message: 'Solicitud aceptada. El artista ya es visible en tienda.', position: 'top' });
+        notifySuccess('Solicitud aceptada. El artista ya es visible en tienda.');
       } catch (err) {
         const message = err.response?.data?.message || 'Error al aceptar la solicitud.';
-        this.$q.notify({ type: 'negative', message, position: 'top' });
+        notifyError(message);
         if (err.response?.status === 404) {
           this.loadPending();
         }
@@ -448,10 +449,10 @@ export default {
       this.loadingId = requestId + '_reject';
       try {
         await this.rejectRequest({ requestId, rejectionReason: this.rejectionReason });
-        this.$q.notify({ type: 'warning', message: 'Solicitud rechazada.', position: 'top' });
+        notifyWarning('Solicitud rechazada.');
       } catch (err) {
         const message = err.response?.data?.message || 'Error al rechazar la solicitud.';
-        this.$q.notify({ type: 'negative', message, position: 'top' });
+        notifyError(message);
         if (err.response?.status === 404) {
           this.loadPending();
         }

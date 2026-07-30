@@ -287,6 +287,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 export default {
   name: "ArtistOffers",
@@ -448,14 +449,11 @@ export default {
         ? this.updateOffer({ id: this.editingOffer.id, ...payload })
         : this.createOffer(payload));
 
-      this.$q.notify({ 
-        type: 'positive', 
-        message: this.editingOffer ? 'Oferta actualizada' : 'Oferta creada' 
-      });
+      notifySuccess(this.editingOffer ? 'Oferta actualizada' : 'Oferta creada');
         this.formDialog = false;
         await this.getOffers();
       } catch (err) {
-        this.$q.notify({ type: 'negative', message: err.response?.data?.message || 'Error al guardar' });
+        notifyError(err.response?.data?.message || 'Error al guardar');
       } finally {
         this.loading = false;
       }
@@ -470,9 +468,9 @@ export default {
       }).onOk(async () => {
         try {
           await this.deleteOffer(id);
-          this.$q.notify({ type: "positive", message: "Oferta eliminada" });
+          notifySuccess("Oferta eliminada");
         } catch (err) {
-          this.$q.notify({ type: "negative", message: err?.response?.data?.message || "Error al eliminar la oferta" });
+          notifyError(err?.response?.data?.message || "Error al eliminar la oferta");
         }
       });
     },
@@ -484,10 +482,7 @@ export default {
   },
   mounted() {
     this.getOffers().catch((err) => {
-      this.$q.notify({
-        type: "negative",
-        message: err?.response?.data?.message || "No se pudieron cargar las ofertas",
-      });
+      notifyError(err?.response?.data?.message || "No se pudieron cargar las ofertas");
     });
   },
 };
