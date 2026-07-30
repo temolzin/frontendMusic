@@ -435,7 +435,7 @@ import { api } from "boot/axios";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import CancellationModal from "components/CancellationModal.vue";
-import { notifySuccess, notifyError } from "src/utils/notify";
+import { notifySuccess, notifyError, platformEvents } from "src/utils/notify";
 
 let $q;
 export default {
@@ -887,7 +887,7 @@ export default {
       } catch (err) {
         console.warn('No se pudo evaluar sanción:', err);
       }
-      this.$q.notify({ type: 'positive', message: 'Cancelación exitosa' });
+      platformEvents.eventCancelledByClient();
       await this.viewPurchaseHistory();
     },
   },

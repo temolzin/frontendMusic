@@ -362,6 +362,7 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useQuasar } from 'quasar';
+import { notifyError } from 'src/utils/notify';
 import NoticeNoSales from 'src/components/Artist/NoticeNoSales.vue';
 import NoticeNotInfo from 'src/components/Artist/NoticeNotInfo.vue';
 
@@ -453,7 +454,7 @@ export default {
         }
       } catch (err) {
         if (err?.response?.data?.message) {
-          $q.notify({ type: 'negative', message: err.response.data.message });
+          notifyError(err.response.data.message);
         }
       }
     },

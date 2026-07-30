@@ -339,6 +339,7 @@ import langEs from 'quasar/lang/es';
 import { api } from 'boot/axios';
 import { mapActions } from 'vuex';
 import CancellationModal from 'components/CancellationModal.vue';
+import { notifySuccess, notifyError, platformEvents } from 'src/utils/notify';
 
 export default defineComponent({
   name: 'MyCalendar',
@@ -422,11 +423,7 @@ export default defineComponent({
           ? response.data.sales
           : [];
         if (allSales.length === 0 && !response.data?.sales) {
-          this.$q.notify({
-            type: 'negative',
-            message: 'No se pudieron cargar los eventos. Intenta de nuevo más tarde.',
-            position: 'top',
-          });
+          notifyError('No se pudieron cargar los eventos. Intenta de nuevo más tarde.');
         }
         this.contracts = allSales
           .map((sale) => ({
@@ -452,11 +449,7 @@ export default defineComponent({
             }));
       } catch (error) {
         console.error('Error loading artist-sales:', error);
-        this.$q.notify({
-          type: 'negative',
-          message: 'Error cargando eventos. Intenta de nuevo más tarde.',
-          position: 'top',
-        });
+        notifyError('Error cargando eventos. Intenta de nuevo más tarde.');
         this.contracts = [];
       } finally {
         this.loading = false;
@@ -506,17 +499,11 @@ export default defineComponent({
           event.status = 'completed';
           this.expanded = { ...this.expanded, [event.id]: false };
         }
-        this.$q.notify({
-          type: ok ? 'positive' : 'negative',
-          message: ok ? 'Evento marcado como completado' : (response.data?.message || 'Error al marcar como completado'),
-          position: 'top',
-        });
+        ok
+          ? notifySuccess('Evento marcado como completado')
+          : notifyError(response.data?.message || 'Error al marcar como completado');
       } catch (error) {
-        this.$q.notify({
-          type: 'negative',
-          message: error.response?.data?.message || 'Error al marcar como completado',
-          position: 'top',
-        });
+        notifyError(error.response?.data?.message || 'Error al marcar como completado');
       }
     },
 
@@ -535,12 +522,7 @@ export default defineComponent({
       if (saleId) {
         await this.evaluateCancellationSanction(saleId);
       }
-      this.$q.notify({
-        type: 'positive',
-        icon: 'check_circle',
-        message: 'Evento cancelado exitosamente. Se reembolsará al cliente.',
-        position: 'top',
-      });
+      platformEvents.eventCancelledByArtist();
       this.expanded = { ...this.expanded, [saleId]: false };
       await this.loadContracts();
     },

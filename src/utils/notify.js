@@ -62,4 +62,22 @@ export const platformEvents = {
 
   incidentReceived: () =>
     notifyPlatform('success', 'recibió tu reporte. El equipo de soporte lo revisará pronto.'),
+
+  profileRequestSubmitted: () =>
+    notifyPlatform('success', 'recibió tu solicitud de perfil. Nuestro equipo la revisará pronto.'),
+
+  profileUnderReview: () =>
+    notifyPlatform('warning', 'está revisando tu perfil. No podrás editarlo hasta que sea aprobado.'),
+
+  saleRequestAccepted: () =>
+    notifyPlatform('success', 'procesó el cobro de la solicitud que aceptaste.'),
+
+  saleRequestRejected: () =>
+    notifyPlatform('warning', 'canceló la solicitud que rechazaste. No se realizará ningún cobro al cliente.'),
+
+  eventCancelledByArtist: () =>
+    notifyPlatform('success', 'rechazó el evento y reembolsará al cliente.'),
+
+  eventCancelledByClient: () =>
+    notifyPlatform('success', 'rechazó tu solicitud correctamente.'),
 };

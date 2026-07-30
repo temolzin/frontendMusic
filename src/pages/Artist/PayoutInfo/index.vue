@@ -151,6 +151,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 export default {
   name: "PayoutInfoPage",
@@ -251,26 +252,14 @@ export default {
         originalPayoutData.value = { ...payoutData.value };
         hasSavedData.value = true;
 
-        $q.notify({
-          color: "positive",
-          textColor: "white",
-          icon: "cloud_done",
-          message: "¡Datos de cobro guardados en el servidor con éxito!",
-          position: "bottom"
-        });
+        notifySuccess("¡Datos de cobro guardados en el servidor con éxito!", { position: "top" });
 
         isEditing.value = false;
       } catch (error) {
         const errorMessage = error.errors && error.errors.clabe 
           ? error.errors.clabe[0] 
           : "Hubo un error al guardar los datos bancarios.";
-        $q.notify({
-          color: "negative",
-          textColor: "white",
-          icon: "error",
-          message: errorMessage,
-          position: "bottom"
-        });
+        notifyError(errorMessage, { position: "bottom" });
       } finally {
         $q.loading.hide();
       }
