@@ -7,8 +7,12 @@
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
       <q-card-section class="q-pt-md">
-        <div class="text-weight-bold q-mb-sm">{{ confirmText }}</div>
-        <q-list dense>
+        <div v-if="loadingPreview" class="text-center q-py-md">
+          <q-spinner size="30px" color="negative" />
+          <p class="text-grey q-mt-sm">Calculando penalización...</p>
+        </div>
+        <div v-if="!loadingPreview" class="text-weight-bold q-mb-sm">{{ confirmText }}</div>
+        <q-list v-if="!loadingPreview" dense>
           <q-item v-if="type === 'artist'">
             <q-item-section>
               <q-item-label caption>Cliente</q-item-label>
@@ -18,7 +22,7 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-else>
+          <q-item v-if="type === 'client'">
             <q-item-section>
               <q-item-label caption>Artista</q-item-label>
               <q-item-label class="text-weight-medium">{{ sale?.artist?.name || '' }}</q-item-label>
@@ -33,7 +37,7 @@
           <q-item>
             <q-item-section>
               <q-item-label caption>Días restantes</q-item-label>
-              <q-item-label class="text-weight-medium">{{ daysUntilEvent }} días</q-item-label>
+              <q-item-label class="text-weight-medium">{{       preview?.days_until_event ?? 0 }} días</q-item-label>
             </q-item-section>
           </q-item>
           <q-item>
@@ -44,15 +48,15 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-if="penaltyPercentage > 0">
+          <q-item v-if="      (preview?.penalty_percentage ?? 0) > 0">
             <q-item-section>
               <q-item-label caption>Penalización</q-item-label>
               <q-item-label class="text-weight-medium text-negative">
-                {{ penaltyPercentage }}% (${{ Number(penaltyAmount).toLocaleString('es-MX') }})
+                {{ preview?.penalty_percentage ?? 0 }}% (${{ Number(preview?.penalty_amount ?? 0).toLocaleString('es-MX') }})
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-else>
+          <q-item v-if="      (preview?.penalty_percentage ?? 0) === 0">
             <q-item-section>
               <q-item-label caption>Penalización</q-item-label>
               <q-item-label class="text-weight-medium text-positive">0% (Sin penalización)</q-item-label>
@@ -66,16 +70,17 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-else>
+          <q-item v-if="type === 'client'">
             <q-item-section>
               <q-item-label caption>Reembolso</q-item-label>
               <q-item-label class="text-weight-medium text-primary">
-                ${{ Number(refundAmount).toLocaleString('es-MX') }}
+                ${{ Number(preview?.refund_amount ?? 0).toLocaleString('es-MX') }}
               </q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
         <q-input
+          v-if="!loadingPreview"
           v-model="reason"
           type="textarea"
           outlined
@@ -96,7 +101,7 @@
           color="negative"
           icon="cancel"
           :loading="loading"
-          :disable="!reason.trim()"
+          :disable="!reason.trim() || loadingPreview"
           @click="confirm"
         />
       </q-card-actions>
@@ -105,7 +110,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 
@@ -126,6 +131,8 @@ export default {
     const $q = useQuasar()
     const reason = ref('')
     const loading = ref(false)
+    const loadingPreview = ref(false)
+    const preview = ref(null)
 
     const eventDate = computed(() => {
       if (!props.sale) return null
@@ -134,15 +141,6 @@ export default {
       const sep = raw.includes('/') ? '/' : '-'
       const parts = raw.split(sep)
       return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]))
-    })
-
-    const daysUntilEvent = computed(() => {
-      const ed = eventDate.value
-      if (!ed) return 0
-      const now = new Date()
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-      const diff = Math.ceil((ed - today) / (1000 * 60 * 60 * 24))
-      return Math.max(0, diff)
     })
 
     const amount = computed(() => {
@@ -157,33 +155,29 @@ export default {
     const dialogTitle = computed(() => `Cancelar ${label.value}`)
     const confirmText = computed(() => `¿Estás seguro de cancelar ${label.value === 'solicitud' ? 'esta solicitud' : 'este evento'}?`)
 
-    const penaltyPercentage = computed(() => {
-      const days = daysUntilEvent.value
-      if (props.type === 'artist') {
-        if (days >= 30) return 0
-        if (days >= 7) return 50
-        if (days >= 1) return 100
-        return 0
-      }
-      if (props.sale?.approval_status !== 'accepted') return 0
-      if (days >= 30) return 0
-      if (days >= 7) return 50
-      if (days >= 1) return 100
-      return 0
-    })
-
-    const penaltyAmount = computed(() => {
-      return Math.round(amount.value * (penaltyPercentage.value / 100) * 100) / 100
-    })
-
-    const refundAmount = computed(() => {
-      return amount.value - penaltyAmount.value
-    })
-
     const formattedDate = computed(() => {
       const ed = eventDate.value
       if (!ed) return ''
       return ed.toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' })
+    })
+
+    watch(() => props.modelValue, async (open) => {
+      if (open && props.sale?.id) {
+        preview.value = null
+        loadingPreview.value = true
+        try {
+          const res = await api.get(`/api/sales/${props.sale.id}/cancellation-preview`, {
+            params: { role: props.type }
+          })
+          if (res.data?.success) {
+            preview.value = res.data.data
+          }
+        } catch {
+          preview.value = null
+        } finally {
+          loadingPreview.value = false
+        }
+      }
     })
 
     async function confirm() {
@@ -208,14 +202,12 @@ export default {
     return {
       reason,
       loading,
-      daysUntilEvent,
+      loadingPreview,
+      preview,
       amount,
       label,
       dialogTitle,
       confirmText,
-      penaltyPercentage,
-      penaltyAmount,
-      refundAmount,
       formattedDate,
       confirm,
     }

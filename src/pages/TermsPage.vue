@@ -120,9 +120,7 @@
                   </tbody>
                 </table>
               </div>
-
               <p class="text-body2 text-grey q-mt-sm">Nota: Si el artista aún no ha aceptado la solicitud, el cliente puede cancelar sin penalización (0%).</p>
-
               <p class="text-weight-bold q-mt-md q-mb-xs">Si el cliente cancela:</p>
               <div class="q-markup-table q-table__container q-table--horizontal-lines">
                 <table class="q-table text-left">
