@@ -185,6 +185,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 const columns = [
   { name: "expand", label: "Detalles", align: "center" },
@@ -246,11 +247,7 @@ export default {
       try {
         await this.fetchRefunds();
       } catch (error) {
-        this.$q.notify({
-          color: "negative",
-          icon: "error",
-          message: "No se pudieron cargar las devoluciones de clientes.",
-        });
+        notifyError("No se pudieron cargar las devoluciones de clientes.");
       } finally {
         this.loading = false;
       }
@@ -272,17 +269,11 @@ export default {
           try {
             this.$q.loading.show({ message: "Conectando con la API de OpenPay..." });
             await this.processClientRefund(refund.id);
-            this.$q.notify({
-              color: "positive",
-              icon: "thumb_up",
-              message: "¡Reembolso procesado correctamente con OpenPay!",
-            });
+            notifySuccess("¡Reembolso procesado correctamente con OpenPay!");
           } catch (error) {
-            this.$q.notify({
-              color: "negative",
-              icon: "error",
-              message: error.response?.data?.message || "Error al procesar el reembolso en el servidor.",
-            });
+            notifyError(
+              error.response?.data?.message || "Error al procesar el reembolso en el servidor."
+            );
           } finally {
             this.$q.loading.hide();
           }
