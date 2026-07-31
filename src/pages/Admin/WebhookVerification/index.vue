@@ -115,6 +115,7 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
+import { notifySuccess, notifyError } from 'src/utils/notify';
 
 export default defineComponent({
   name: 'WebhookVerificationIndex',
@@ -140,7 +141,7 @@ export default defineComponent({
           webhookUrl.value = res.data.webhook_url
         }
       } catch (e) {
-        $q.notify({ type: 'negative', message: 'Error al cargar los códigos' })
+        notifyError('Error al cargar los códigos')
       } finally {
         loading.value = false
       }
@@ -148,17 +149,17 @@ export default defineComponent({
 
     const copyUrl = () => {
       navigator.clipboard.writeText(webhookUrl.value).then(() => {
-        $q.notify({ type: 'positive', message: 'URL copiada al portapapeles' })
+        notifySuccess('URL copiada al portapapeles')
       }).catch(() => {
-        $q.notify({ type: 'negative', message: 'No se pudo copiar la URL' })
+        notifyError('No se pudo copiar la URL')
       })
     }
 
     const copyCode = (code) => {
       navigator.clipboard.writeText(code).then(() => {
-        $q.notify({ type: 'positive', message: `Código "${code}" copiado al portapapeles` })
+        notifySuccess(`Código "${code}" copiado al portapapeles`)
       }).catch(() => {
-        $q.notify({ type: 'negative', message: 'No se pudo copiar el código' })
+        notifyError('No se pudo copiar el código')
       })
     }
 
@@ -172,9 +173,9 @@ export default defineComponent({
         try {
           await api.delete(`/api/admin/webhook-verification-codes/${row.id}`)
           codes.value = codes.value.filter(c => c.id !== row.id)
-          $q.notify({ type: 'positive', message: 'Código eliminado' })
+          notifySuccess('Código eliminado')
         } catch (e) {
-          $q.notify({ type: 'negative', message: 'Error al eliminar el código' })
+          notifyError('Error al eliminar el código')
         }
       })
     }
@@ -189,9 +190,9 @@ export default defineComponent({
         try {
           await api.delete('/api/admin/webhook-verification-codes')
           codes.value = []
-          $q.notify({ type: 'positive', message: 'Todos los códigos fueron eliminados' })
+          notifySuccess('Todos los códigos fueron eliminados')
         } catch (e) {
-          $q.notify({ type: 'negative', message: 'Error al limpiar los códigos' })
+          notifyError('Error al limpiar los códigos')
         }
       })
     }

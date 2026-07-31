@@ -198,6 +198,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import { api } from 'boot/axios';
+import { notifySuccess, notifyError } from 'src/utils/notify';
 
 export default {
   name: 'SupportTicketShow',
@@ -232,7 +233,7 @@ export default {
       try {
         await this.fetchAdminTicketDetail(this.$route.params.id);
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar el ticket.', position: 'top' });
+        notifyError('Error al cargar el ticket.');
       } finally {
         this.loading = false;
       }
@@ -246,13 +247,9 @@ export default {
           status,
           resolution_type: resolutionType,
         });
-        this.$q.notify({
-          type: 'positive',
-          message: 'Ticket actualizado correctamente.',
-          position: 'top',
-        });
+        notifySuccess('Ticket actualizado correctamente.');
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al actualizar el ticket.', position: 'top' });
+        notifyError('Error al actualizar el ticket.');
       } finally {
         this.resolving = false;
       }

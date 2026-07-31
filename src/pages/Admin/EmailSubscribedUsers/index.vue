@@ -55,6 +55,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 export default {
@@ -71,18 +72,12 @@ export default {
         async sendEmails() {
             try {
                 if (!this.selectedRoles.length) {
-                    $q.notify({
-                        type: "negative",
-                        message: "Selecciona al menos un rol antes de enviar el correo",
-                    });
+                    notifyError("Selecciona al menos un rol antes de enviar el correo");
                     return;
                 }
 
                 if (!this.emailSubject.trim() || !this.emailContent.trim()) {
-                    $q.notify({
-                        type: "negative",
-                        message: "El asunto y el contenido no pueden quedar vacíos",
-                    });
+                    notifyError("El asunto y el contenido no pueden quedar vacíos");
                     return;
                 }
 
@@ -95,10 +90,7 @@ export default {
                 this.emailSubject = '';
                 this.emailContent = '';
                 this.selectedRoles = [];
-                $q.notify({
-                    type: "positive",
-                    message: `Se envió el email de forma correcta`,
-                });
+                notifySuccess(`Se envió el email de forma correcta`);
             } catch (err) {
                 const backendMessage =
                     err?.response?.data?.message ||
@@ -108,10 +100,7 @@ export default {
                     err?.message ||
                     "Algo salió mal, vuelve a intentarlo más tarde";
 
-                $q.notify({
-                type: "negative",
-                message: backendMessage
-            });
+                notifyError(backendMessage);
         }
     },
 },
@@ -134,10 +123,7 @@ export default {
     },
     created() {
         this.getRoles().catch((err) => {
-            this.$q.notify({
-                type: "negative",
-                message: err.response?.data?.message ?? "No se pudieron cargar los roles",
-            });
+            notifyError(err.response?.data?.message ?? "No se pudieron cargar los roles");
         });
     },
     mounted() {
