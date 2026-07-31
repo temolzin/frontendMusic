@@ -266,6 +266,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 const columns = [
@@ -357,10 +358,7 @@ export default {
         await this.getUsers();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -369,32 +367,17 @@ export default {
         await this.createUser(this.form);
         this.formCreate = false;
         this.clearForm();
-        this.$q.notify({
-          type: "positive",
-          message: `Usuario creado correctamente`,
-        });
+        notifySuccess(`Usuario creado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
           if (err.response.data.errors.name) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.name,
-            });
+            notifyError(err.response.data.errors.name);
           } else if (err.response.data.errors.email) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.email,
-            });
+            notifyError(err.response.data.errors.email);
           } else if (err.response.data.errors.password) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.password,
-            });
+            notifyError(err.response.data.errors.password);
           } else if (err.response.data.errors.role_id) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.role_id,
-            });
+            notifyError(err.response.data.errors.role_id);
           }
         }
       }
@@ -412,16 +395,10 @@ export default {
         .onOk(() => {
           try {
             this.deleteUser(props.row.id);
-            this.$q.notify({
-              type: "positive",
-              message: `Usuario ${props.row.name} eliminado correctamente`,
-            });
+            notifySuccess(`Usuario ${props.row.name} eliminado correctamente`);
           } catch (err) {
             if (err.response.data.message) {
-              $q.notify({
-                type: "negative",
-                message: err.response.data.message,
-              });
+              notifyError(err.response.data.message);
             }
           }
         });
@@ -437,10 +414,7 @@ export default {
         this.form.role_id = props.row.role_id;
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -450,32 +424,17 @@ export default {
         await this.updateUser(this.form);
         this.formEdit = false;
         this.clearForm();
-        this.$q.notify({
-          type: "positive",
-          message: `Usuario modificado correctamente`,
-        });
+        notifySuccess(`Usuario modificado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
           if (err.response.data.errors.name) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.name,
-            });
+            notifyError(err.response.data.errors.name);
           } else if (err.response.data.errors.email) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.email,
-            });
+            notifyError(err.response.data.errors.email);
           } else if (err.response.data.errors.password) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.password,
-            });
+            notifyError(err.response.data.errors.password);
           } else if (err.response.data.errors.role_id) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.role_id,
-            });
+            notifyError(err.response.data.errors.role_id);
           }
         }
       }
@@ -486,10 +445,7 @@ export default {
         await this.getRoles();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },

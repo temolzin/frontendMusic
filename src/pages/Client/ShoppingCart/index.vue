@@ -160,6 +160,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
+import { notifyError, notifySuccess } from "src/utils/notify";
 
 let $q;
 export default {
@@ -181,10 +182,7 @@ export default {
         await this.getListShoppingCard();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -205,16 +203,10 @@ export default {
             try {
               await this.deleteItembyId(artist_id);
               await this.gettListShoppingCard();
-              this.$q.notify({
-                type: "positive",
-                message: `${name} fue eliminado correctamente`,
-              });
+              notifySuccess(`${name} fue eliminado correctamente`);
             } catch (err) {
               if (err.response.data.message) {
-                $q.notify({
-                  type: "negative",
-                  message: err.response.data.message,
-                });
+                notifyError(err.response.data.message);
               }
             }
           });
@@ -234,11 +226,10 @@ export default {
         await this.updateItemShoppingCart(item);
         await this.gettListShoppingCard();
       } catch (err) {
-        $q.notify({
-          type: "negative",
-          message: err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo actualizar la cantidad de horas",
-          timeout: 3000,
-        });
+        notifyError(
+          err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo actualizar la cantidad de horas",
+          { timeout: 3000 }
+        );
       }
     }
   },

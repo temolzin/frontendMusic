@@ -73,6 +73,7 @@
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 let $q;
 export default {
   data() {
@@ -92,10 +93,7 @@ export default {
         await this.getPermissions();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -103,16 +101,10 @@ export default {
       try {
         await this.createRole(this.form);
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: `Rol creado correctamente`,
-        });
+        notifySuccess(`Rol creado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },

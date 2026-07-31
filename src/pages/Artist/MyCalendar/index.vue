@@ -322,94 +322,13 @@
       </q-card-section>
     </q-card>
 
-    <q-dialog v-model="isCancelDialogOpen" persistent>
-      <q-card style="width: 500px; max-width: 95vw">
-        <q-card-section class="row items-center bg-negative text-white q-pb-sm">
-          <div class="text-h6">Cancelar Evento</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section class="q-pt-md">
-          <div class="text-weight-bold q-mb-sm">¿Estás seguro de cancelar este evento?</div>
-          <q-list dense>
-            <q-item>
-              <q-item-section>
-                <q-item-label caption>Cliente</q-item-label>
-                <q-item-label class="text-weight-medium">
-                  {{ cancelTargetEvent?.customerFirstName }} {{ cancelTargetEvent?.customerLastName }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section>
-                <q-item-label caption>Fecha del evento</q-item-label>
-                <q-item-label class="text-weight-medium">{{ formatDateDisplay(cancelTargetEvent?.date) }}</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section>
-                <q-item-label caption>Días restantes</q-item-label>
-                <q-item-label class="text-weight-medium">{{ cancelDaysUntil }} días</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section>
-                <q-item-label caption>Monto del evento</q-item-label>
-                <q-item-label class="text-weight-medium text-positive">
-                  ${{ Number(cancelTargetEvent?.rate || 0).toLocaleString('es-MX') }}
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item v-if="cancelPenaltyPercentage > 0">
-              <q-item-section>
-                <q-item-label caption>Penalización</q-item-label>
-                <q-item-label class="text-weight-medium text-negative">
-                  {{ cancelPenaltyPercentage }}% (${{ Number(cancelPenaltyAmount).toLocaleString('es-MX') }})
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item v-else>
-              <q-item-section>
-                <q-item-label caption>Penalización</q-item-label>
-                <q-item-label class="text-weight-medium text-positive">0% (Sin penalización)</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section>
-                <q-item-label caption>Reembolso al cliente</q-item-label>
-                <q-item-label class="text-weight-medium text-primary">
-                  100% (${{ Number(cancelTargetEvent?.rate || 0).toLocaleString('es-MX') }})
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-input
-            v-model="cancelReasonText"
-            type="textarea"
-            outlined
-            dense
-            rows="3"
-            label="Motivo de la cancelación *"
-            placeholder="Explica por qué cancelas el evento..."
-            :rules="[val => !!val || 'El motivo es requerido']"
-            class="q-mt-md"
-          />
-        </q-card-section>
-        <q-separator />
-        <q-card-actions align="right" class="q-pa-md">
-          <q-btn flat label="Volver" color="grey" v-close-popup />
-          <q-btn
-            unelevated
-            label="Sí, cancelar evento"
-            color="negative"
-            icon="cancel"
-            :loading="cancelLoading"
-            :disable="!cancelReasonText.trim()"
-            @click="confirmCancel"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <CancellationModal
+      v-model="cancelDialogOpen"
+      :sale="cancelTargetEvent"
+      type="artist"
+      :cancel-endpoint="`/api/artist/sales/${cancelTargetEvent?.id}/cancel`"
+      @cancelled="onCancelled"
+    />
   </div>
 </template>
 
@@ -419,9 +338,12 @@ import { useQuasar } from 'quasar';
 import langEs from 'quasar/lang/es';
 import { api } from 'boot/axios';
 import { mapActions } from 'vuex';
+import CancellationModal from 'components/CancellationModal.vue';
+import { notifySuccess, notifyError, platformEvents } from 'src/utils/notify';
 
 export default defineComponent({
   name: 'MyCalendar',
+  components: { CancellationModal },
 
   setup() {
     const $q = useQuasar();
@@ -436,10 +358,8 @@ export default defineComponent({
       expanded: {},
       contracts: [],
       loading: true,
-      isCancelDialogOpen: false,
+      cancelDialogOpen: false,
       cancelTargetEvent: null,
-      cancelReasonText: '',
-      cancelLoading: false,
     };
   },
   computed: {
@@ -481,26 +401,7 @@ export default defineComponent({
     mode() {
       return this.$q.dark.isActive;
     },
-    cancelDaysUntil() {
-      if (!this.cancelTargetEvent?.date) return 0;
-      const [year, month, day] = this.cancelTargetEvent.date.split('/');
-      const eventDate = new Date(Number(year), Number(month) - 1, Number(day));
-      const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const diff = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
-      return Math.max(0, diff);
-    },
-    cancelPenaltyPercentage() {
-      const days = this.cancelDaysUntil;
-      if (days >= 7) return 0;
-      if (days >= 3) return 25;
-      if (days >= 1) return 50;
-      return 0;
-    },
-    cancelPenaltyAmount() {
-      const amount = Number(this.cancelTargetEvent?.rate || 0);
-      return amount * (this.cancelPenaltyPercentage / 100);
-    },
+
   },
   methods: {
     ...mapActions("userSanctions", [
@@ -522,11 +423,7 @@ export default defineComponent({
           ? response.data.sales
           : [];
         if (allSales.length === 0 && !response.data?.sales) {
-          this.$q.notify({
-            type: 'negative',
-            message: 'No se pudieron cargar los eventos. Intenta de nuevo más tarde.',
-            position: 'top',
-          });
+          notifyError('No se pudieron cargar los eventos. Intenta de nuevo más tarde.');
         }
         this.contracts = allSales
           .map((sale) => ({
@@ -552,11 +449,7 @@ export default defineComponent({
             }));
       } catch (error) {
         console.error('Error loading artist-sales:', error);
-        this.$q.notify({
-          type: 'negative',
-          message: 'Error cargando eventos. Intenta de nuevo más tarde.',
-          position: 'top',
-        });
+        notifyError('Error cargando eventos. Intenta de nuevo más tarde.');
         this.contracts = [];
       } finally {
         this.loading = false;
@@ -606,17 +499,11 @@ export default defineComponent({
           event.status = 'completed';
           this.expanded = { ...this.expanded, [event.id]: false };
         }
-        this.$q.notify({
-          type: ok ? 'positive' : 'negative',
-          message: ok ? 'Evento marcado como completado' : (response.data?.message || 'Error al marcar como completado'),
-          position: 'top',
-        });
+        ok
+          ? notifySuccess('Evento marcado como completado')
+          : notifyError(response.data?.message || 'Error al marcar como completado');
       } catch (error) {
-        this.$q.notify({
-          type: 'negative',
-          message: error.response?.data?.message || 'Error al marcar como completado',
-          position: 'top',
-        });
+        notifyError(error.response?.data?.message || 'Error al marcar como completado');
       }
     },
 
@@ -628,41 +515,16 @@ export default defineComponent({
 
     openCancelDialog(event) {
       this.cancelTargetEvent = event;
-      this.cancelReasonText = '';
-      this.isCancelDialogOpen = true;
+      this.cancelDialogOpen = true;
     },
 
-    async confirmCancel() {
-      if (!this.cancelReasonText.trim()) return;
-      this.cancelLoading = true;
-      try {
-        const response = await api.post(`/api/artist/sales/${this.cancelTargetEvent.id}/cancel`, { reason: this.cancelReasonText });
-        const saleId = this.cancelTargetEvent.id;
-        if (saleId) {
-          await this.evaluateCancellationSanction(saleId);
-        }
-        if (!saleId) {
-          console.warn("No se pudo obtener el ID de la venta para evaluar la sanción.");
-        }
-        this.$q.notify({
-          type: 'positive',
-          icon: 'check_circle',
-          message: response.data?.message || 'Evento cancelado exitosamente. Se reembolsará al cliente.',
-          position: 'top',
-        });
-        this.isCancelDialogOpen = false;
-        this.expanded = { ...this.expanded, [this.cancelTargetEvent.id]: false };
-        await this.loadContracts();
-      } catch (error) {
-        this.$q.notify({
-          type: 'negative',
-          icon: 'error',
-          message: error.response?.data?.message || 'Error al cancelar el evento',
-          position: 'top',
-        });
-      } finally {
-        this.cancelLoading = false;
+    async onCancelled({ saleId }) {
+      if (saleId) {
+        await this.evaluateCancellationSanction(saleId);
       }
+      platformEvents.eventCancelledByArtist();
+      this.expanded = { ...this.expanded, [saleId]: false };
+      await this.loadContracts();
     },
 
     openGoogleMaps(event) {

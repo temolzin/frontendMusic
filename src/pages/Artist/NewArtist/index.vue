@@ -834,6 +834,7 @@ import { mapActions, mapState } from "vuex";
 import { useQuasar } from "quasar";
 import NoticeGallery from "src/components/Artist/NoticeGallery.vue";
 import { api } from "boot/axios";
+import { notifySuccess, notifyError, platformEvents } from "src/utils/notify";
 
 let $q = useQuasar();
 
@@ -917,10 +918,7 @@ export default {
         }
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.message,
-          });
+          notifyError(err.message);
         }
       }
     },
@@ -929,10 +927,7 @@ export default {
         await this.getMusicalGenders();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -942,28 +937,16 @@ export default {
 
         switch (true) {
           case this.formCreate.image_artist.length == 0:
-            this.$q.notify({
-              type: "negative",
-              message: `Ingresa una foto de grupo o artista`,
-            });
+            notifyError(`Ingresa una foto de grupo o artista`);
             return;
           case this.formCreate.image_manager.length == 0:
-            this.$q.notify({
-              type: "negative",
-              message: `Ingresa una foto del manager`,
-            });
+            notifyError(`Ingresa una foto del manager`);
             return;
           case this.formCreate.image_artist.size > 20971520:
-            this.$q.notify({
-              type: "negative",
-              message: `El tamaño de la imagen del grupo excede de lo permitido`,
-            });
+            notifyError(`El tamaño de la imagen del grupo excede de lo permitido`);
             return;
           case this.formCreate.image_manager.size > 20971520:
-            this.$q.notify({
-              type: "negative",
-              message: `El tamaño de la imagen del manager excede de lo permitido`,
-            });
+            notifyError(`El tamaño de la imagen del manager excede de lo permitido`);
             return;
         }
 
@@ -998,20 +981,14 @@ export default {
 
         for (const red of this.formCreate.social_media) {
           if (!red.name || !red.url) {
-            this.$q.notify({
-              type: 'negative',
-              message: 'Cada red social debe tener nombre y URL.',
-            });
+            notifyError('Cada red social debe tener nombre y URL.');
             return;
           }
 
           try {
             new URL(red.url);
           } catch {
-            this.$q.notify({
-              type: 'negative',
-              message: `La URL de ${red.name} no es válida.`,
-            });
+            notifyError(`La URL de ${red.name} no es válida.`);
             return;
           }
 
@@ -1019,10 +996,7 @@ export default {
           const actualHost = new URL(red.url).hostname.replace('www.', '');
 
           if (expectedDomain && !actualHost.includes(expectedDomain)) {
-            this.$q.notify({
-              type: 'negative',
-              message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
-            });
+            notifyError(`La URL de ${red.name} debe pertenecer a ${expectedDomain}.`);
             return;
           }
         }
@@ -1032,16 +1006,13 @@ export default {
 
         const response = await this.createArtist(InstFormData);
         this.gettArtist();
-        this.$q.notify({
-          type: "positive",
-          message: response?.message || "Tu solicitud fue enviada, Vibeer la revisará.",
-        });
+        response?.message ? notifySuccess(response.message) : platformEvents.profileRequestSubmitted();
       } catch (err) {
         err.response?.data?.errors
-          ? $q.notify({ type: "negative", message: Object.values(err.response.data.errors).flat().join('<br>'), html: true })
+          ? notifyError(Object.values(err.response.data.errors).flat().join('<br>'), { html: true })
           : err.response?.data?.message
-            ? $q.notify({ type: "negative", message: err.response.data.message })
-            : $q.notify({ type: "negative", message: 'Error al guardar el artista' });
+            ? notifyError(err.response.data.message)
+            : notifyError('Error al guardar el artista');
       } finally {
         this.btnE = true;
       }
@@ -1071,10 +1042,7 @@ export default {
     },
     showInfoArtist() {
       if (this.isPendingReview) {
-        this.$q.notify({
-          type: "warning",
-          message: "Tu perfil está en revisión, no puedes editar hasta que sea aprobado.",
-        });
+        platformEvents.profileUnderReview();
         return;
       }
       this.showInfo = "none";
@@ -1112,16 +1080,10 @@ export default {
       try {
         switch (true) {
           case this.formCreate.image_artist.size > 20971520:
-            this.$q.notify({
-              type: "negative",
-              message: `El tamaño de la imagen del grupo excede de lo permitido`,
-            });
+            notifyError(`El tamaño de la imagen del grupo excede de lo permitido`);
             return;
           case this.formCreate.image_manager.size > 20971520:
-            this.$q.notify({
-              type: "negative",
-              message: `El tamaño de la imagen del manager excede de lo permitido`,
-            });
+            notifyError(`El tamaño de la imagen del manager excede de lo permitido`);
             return;
         }
 
@@ -1163,20 +1125,14 @@ export default {
 
         for (const red of this.formCreate.social_media) {
           if (!red.name || !red.url) {
-            this.$q.notify({
-              type: 'negative',
-              message: 'Cada red social debe tener nombre y URL.',
-            });
+            notifyError('Cada red social debe tener nombre y URL.');
             return;
           }
 
           try {
             new URL(red.url);
           } catch {
-            this.$q.notify({
-              type: 'negative',
-              message: `La URL de ${red.name} no es válida.`,
-            });
+            notifyError(`La URL de ${red.name} no es válida.`);
             return;
           }
 
@@ -1184,10 +1140,7 @@ export default {
           const actualHost = new URL(red.url).hostname.replace('www.', '');
 
           if (expectedDomain && !actualHost.includes(expectedDomain)) {
-            this.$q.notify({
-              type: 'negative',
-              message: `La URL de ${red.name} debe pertenecer a ${expectedDomain}.`,
-            });
+            notifyError(`La URL de ${red.name} debe pertenecer a ${expectedDomain}.`);
             return;
           }
         }
@@ -1203,31 +1156,22 @@ export default {
         await this.gettArtist();
         this.showEdit = "false";
         this.showInfo = "false";
-        this.$q.notify({
-          type: "positive",
-          message: response?.message || "Tu solicitud fue enviada, el soporte de Vibeer la revisará.",
-        });
+        response?.message ? notifySuccess(response.message) : platformEvents.profileRequestSubmitted();
         this.onReset();
       } catch (err) {
         err.response?.data?.errors
-          ? $q.notify({ type: "negative", message: Object.values(err.response.data.errors).flat().join('<br>'), html: true })
+          ? notifyError(Object.values(err.response.data.errors).flat().join('<br>'), { html: true })
           : err.response?.data?.message
-            ? $q.notify({ type: "negative", message: err.response.data.message })
+            ? notifyError(err.response.data.message)
             : null;
       }
     },
     onRejected() {
-      $q.notify({
-        type: "negative",
-        message: `El archivo no ha superado las restricciones de validación`,
-      });
+      notifyError(`El archivo no ha superado las restricciones de validación`);
       this.formCreate.image_manager = [];
     },
     onRejectedArtists() {
-      $q.notify({
-        type: "negative",
-        message: `El archivo no ha superado las restricciones de validación`,
-      });
+      notifyError(`El archivo no ha superado las restricciones de validación`);
       this.formCreate.image_artist = [];
     },
     cancel() {

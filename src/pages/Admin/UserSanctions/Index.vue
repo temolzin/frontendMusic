@@ -516,6 +516,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import { api } from 'boot/axios';
+import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
 
 let $q;
 
@@ -781,10 +782,7 @@ export default {
         await this.getUserSanctions();
       } catch (err) {
         if (showSpinner) {
-          $q.notify({
-            type: "negative",
-            message: err.response?.data?.message || "Error al cargar los usuarios",
-          });
+          notifyError(err.response?.data?.message || "Error al cargar los usuarios");
         }
       } finally {
         if (showSpinner) this.loading = false;
@@ -810,10 +808,7 @@ export default {
         try {
           await this.getUserTickets(user.id);
         } catch (err) {
-          $q.notify({
-            type: "warning",
-            message: "No se pudieron cargar los tickets del usuario",
-          });
+          notifyWarning("No se pudieron cargar los tickets del usuario");
         } finally {
           this.loadingTickets = false;
         }
@@ -842,10 +837,7 @@ export default {
           cancellations: data.cancellations || []
         };
       } catch (err) {
-        $q.notify({
-          type: "negative",
-          message: "No se pudo cargar el historial del usuario.",
-        });
+        notifyError("No se pudo cargar el historial del usuario.");
         this.showHistoryModal = false;
       } finally {
         this.loadingHistory = false;
@@ -866,18 +858,12 @@ export default {
         
         await this.applySanction(payload);
         
-        $q.notify({
-          type: "positive",
-          message: "Sanción aplicada correctamente.",
-        });
+        notifySuccess("Sanción aplicada correctamente.");
         
         this.showModal = false;
         this.fetchUsers(true);
       } catch (err) {
-        $q.notify({
-          type: "negative",
-          message: err.response?.data?.message || "Ocurrió un error al aplicar la sanción.",
-        });
+        notifyError(err.response?.data?.message || "Ocurrió un error al aplicar la sanción.");
       } finally {
         this.submitting = false;
       }
@@ -888,18 +874,12 @@ export default {
       try {
         await this.revokeSanction(this.selectedUser.id);
         
-        $q.notify({
-          type: "positive",
-          message: "Restricción levantada correctamente.",
-        });
+        notifySuccess("Restricción levantada correctamente.");
         
         this.showModal = false;
         this.fetchUsers(true);
       } catch (err) {
-        $q.notify({
-          type: "negative",
-          message: err.response?.data?.message || "Error al restaurar la cuenta.",
-        });
+        notifyError(err.response?.data?.message || "Error al restaurar la cuenta.");
       } finally {
         this.submitting = false;
       }
