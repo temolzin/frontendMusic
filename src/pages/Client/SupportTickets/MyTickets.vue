@@ -1,5 +1,4 @@
 <template>
-
   <q-page padding>
     <div class="q-pa-md">
       <q-card class="shadow-1">
@@ -9,7 +8,6 @@
             Consulta los tickets que has levantado y los que han sido levantados en tu contra.
           </div>
         </q-card-section>
-        
         <q-tabs
           v-model="activeTab"
           dense
@@ -49,7 +47,6 @@
                   </q-badge>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-status="props">
                 <q-td :props="props">
                   <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
@@ -57,20 +54,17 @@
                   </q-badge>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-against="props">
                 <q-td :props="props">
                   <div class="text-weight-medium">{{ props.row.artist_sale?.artist?.name || 'N/A' }}</div>
                   <div class="text-caption text-grey">Orden #{{ props.row.artist_sale_id }}</div>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-date="props">
                 <q-td :props="props">
                   {{ formatDate(props.row.created_at) }}
                 </q-td>
               </template>
-
               <template v-slot:body-cell-actions="props">
                 <q-td :props="props" class="text-center">
                   <q-btn
@@ -92,12 +86,10 @@
             <div v-if="loadingAgainst" class="text-center q-py-xl">
               <q-spinner color="primary" size="3em" />
             </div>
-
             <div v-else-if="customerTickets.length === 0" class="text-center q-py-xl">
               <q-icon name="verified_user" size="4em" color="grey-4" />
               <p class="text-grey-6 q-mt-md">No tienes reportes en tu contra.</p>
             </div>
-
             <q-table
               v-else
               :rows="customerTickets"
@@ -116,7 +108,6 @@
                   </q-badge>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-status="props">
                 <q-td :props="props">
                   <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
@@ -124,20 +115,17 @@
                   </q-badge>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-reporter="props">
                 <q-td :props="props">
                   <div class="text-weight-medium">{{ props.row.reporter?.name || 'N/A' }}</div>
                   <div class="text-caption text-grey">{{ props.row.reporter?.email || '' }}</div>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-date="props">
                 <q-td :props="props">
                   {{ formatDate(props.row.created_at) }}
                 </q-td>
               </template>
-
               <template v-slot:body-cell-actions="props">
                 <q-td :props="props" class="text-center">
                   <q-btn

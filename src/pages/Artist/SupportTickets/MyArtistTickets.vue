@@ -9,7 +9,6 @@
             Consulta los tickets que has levantado y los que han sido levantados en tu contra.
           </div>
         </q-card-section>
-
         <q-tabs
           v-model="activeTab"
           dense
@@ -49,7 +48,6 @@
                   </q-badge>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-status="props">
                 <q-td :props="props">
                   <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
@@ -57,20 +55,17 @@
                   </q-badge>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-against="props">
                 <q-td :props="props">
                   <div class="text-weight-medium">{{ props.row.artist_sale?.artist?.name || 'N/A' }}</div>
                   <div class="text-caption text-grey">Orden #{{ props.row.artist_sale_id }}</div>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-date="props">
                 <q-td :props="props">
                   {{ formatDate(props.row.created_at) }}
                 </q-td>
               </template>
-
               <template v-slot:body-cell-actions="props">
                 <q-td :props="props" class="text-center">
                   <q-btn
@@ -114,7 +109,6 @@
                   </q-badge>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-status="props">
                 <q-td :props="props">
                   <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
@@ -122,7 +116,6 @@
                   </q-badge>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-reporter="props">
                 <q-td :props="props">
                   <div class="text-weight-medium">{{ props.row.reporter?.name || 'N/A' }}</div>
@@ -131,13 +124,11 @@
                   </div>
                 </q-td>
               </template>
-
               <template v-slot:body-cell-date="props">
                 <q-td :props="props">
                   {{ formatDate(props.row.created_at) }}
                 </q-td>
               </template>
-
               <template v-slot:body-cell-actions="props">
                 <q-td :props="props" class="text-center">
                   <q-btn
