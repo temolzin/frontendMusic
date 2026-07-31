@@ -103,10 +103,10 @@
             </q-td>
             <q-td key="payout_status" :props="props">
               <q-badge
-                :color="props.row.status === 'liquidated' ? 'positive' : 'orange'"
+                :color="props.row.status === 'liquidated' ? 'positive' : !props.row.can_release ? 'warning' : 'orange'"
                 class="text-weight-bold"
               >
-                {{ props.row.status === 'liquidated' ? 'LIQUIDADO' : 'PENDIENTE' }}
+                {{ props.row.status === 'liquidated' ? 'LIQUIDADO' : !props.row.can_release ? 'RETENIDO (3 DÍAS)' : 'PENDIENTE' }}
               </q-badge>
             </q-td>
           </q-tr>
@@ -233,14 +233,26 @@
                           </q-btn>
                         </div>
                       </div>
+                      <div v-if="!props.row.can_release" class="col-12 q-mt-sm">
+                        <q-banner rounded dense class="bg-amber-2 text-dark text-left">
+                          <template v-slot:avatar>
+                            <q-icon name="schedule" color="warning" size="sm" />
+                          </template>
+                          <div class="text-caption">
+                            <strong>Liquidación en periodo de aclaración (3 días):</strong><br />
+                            El evento concluyó el <b>{{ props.row.event_date }}</b>.<br />
+                            Podrás liberar este pago a partir del <b>{{ formatDate(props.row.available_at) }}</b>.
+                          </div>
+                        </q-banner>
+                      </div>
                     </q-card-section>
-                    <q-card-actions align="right" class="q-pb-md q-pr-md">
+                    <q-card-actions align="right" class="q-pb-md q-pr-md column items-end">
                       <q-btn
                         label="Confirmar Transferencia Realizada"
                         color="positive"
                         icon="check_circle"
                         class="text-weight-bold"
-                        :disable="props.row.event_status !== 'completed' || props.row.status === 'liquidated'"
+                        :disable="props.row.event_status !== 'completed' || props.row.status === 'liquidated' || !props.row.can_release"
                         @click.stop="confirmRelease(props.row)"
                       >
                         <q-tooltip v-if="props.row.status === 'liquidated'">
@@ -248,6 +260,9 @@
                         </q-tooltip>
                         <q-tooltip v-else-if="props.row.event_status !== 'completed'">
                           No puedes liquidar este pago hasta que el artista marque el evento como COMPLETADO.
+                        </q-tooltip>
+                        <q-tooltip v-else-if="!props.row.can_release">
+                          Deben pasar 3 días desde el evento antes de poder liberar esta liquidación.
                         </q-tooltip>
                       </q-btn>
                     </q-card-actions>
