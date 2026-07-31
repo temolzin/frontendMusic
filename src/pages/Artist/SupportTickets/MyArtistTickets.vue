@@ -1,4 +1,5 @@
 <template>
+
   <q-page padding>
     <div class="q-pa-md">
       <q-card class="shadow-1">
@@ -8,6 +9,7 @@
             Consulta los tickets que has levantado y los que han sido levantados en tu contra.
           </div>
         </q-card-section>
+
         <q-tabs
           v-model="activeTab"
           dense

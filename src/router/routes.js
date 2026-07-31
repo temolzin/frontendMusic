@@ -331,7 +331,7 @@ const routes = [
       {
         name: 'artist.my-tickets',
         path: '/artist/my-tickets',
-        component: () => import('src/pages/Artist/MyArtistTickets.vue'),
+        component: () => import('src/pages/Artist/SupportTickets/MyArtistTickets.vue'),
         meta: {
           title: 'Mis Reportes',
           middleware: [Middlewares.checkPermissions],
@@ -472,7 +472,7 @@ const routes = [
       {
         name: 'client.my-tickets',
         path: '/client/my-tickets',
-        component: import('src/pages/Client/ShoppingCart/MyTickets.vue'),
+        component: () => import('src/pages/Client/SupportTickets/MyTickets.vue'),
         meta: {
           title: 'Mis Reportes',
           middleware: [Middlewares.checkPermissions],
