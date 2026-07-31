@@ -328,6 +328,17 @@ const routes = [
           permissions: ["view-profile-artist"], 
         },
       },
+      {
+        name: 'artist.my-tickets',
+        path: '/artist/my-tickets',
+        component: () => import('src/pages/Artist/MyArtistTickets.vue'),
+        meta: {
+          title: 'Mis Reportes',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-profile-artist'],
+        },
+      },
       // Fin de rutas del artista
 
       // Rutas del cliente

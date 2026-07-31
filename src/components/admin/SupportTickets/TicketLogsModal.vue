@@ -9,7 +9,7 @@
 
       <q-separator />
 
-      <q-card-section class="q-pa-md" style="max-height: 70vh; overflow-y: auto">
+      <q-card-section class="q-pa-md" style="max-height: 55vh; overflow-y: auto">
         <div v-if="loading" class="text-center q-py-xl">
           <q-spinner color="primary" size="2.5em" />
         </div>
@@ -27,6 +27,13 @@
           >
             <div class="column items-center q-mr-md" style="min-width: 36px">
               <q-icon
+                v-if="isComment(log)"
+                name="chat_bubble"
+                color="blue-grey-4"
+                size="28px"
+              />
+              <q-icon
+                v-else
                 :name="statusIcon(log.status)"
                 :color="statusColor(log.status)"
                 size="28px"
@@ -34,13 +41,22 @@
               <div
                 v-if="i < logs.length - 1"
                 style="width: 2px; flex: 1; min-height: 24px; margin-top: 4px"
-                :class="`bg-${statusColor(log.status)}`"
+                :class="isComment(log) ? 'bg-blue-grey-2' : `bg-${statusColor(log.status)}`"
               />
             </div>
 
             <q-card flat bordered class="col q-pa-sm" style="border-radius: 8px">
               <div class="row items-center justify-between q-mb-xs">
                 <q-badge
+                  v-if="isComment(log)"
+                  color="blue-grey-3"
+                  text-color="dark"
+                  class="q-px-sm q-py-xs text-subtitle2"
+                >
+                  Comentario
+                </q-badge>
+                <q-badge
+                  v-else
                   :color="statusColor(log.status)"
                   class="q-px-sm q-py-xs text-subtitle2"
                 >
@@ -66,6 +82,11 @@
               <div v-if="log.notes" class="row items-start q-mb-xs">
                 <q-icon name="notes" size="xs" class="q-mr-xs q-mt-xs text-grey-6" />
                 <span class="text-caption text-grey-8">{{ log.notes }}</span>
+              </div>
+
+              <div v-if="log.message" class="row items-start q-mb-xs">
+                <q-icon name="chat" size="xs" class="q-mr-xs q-mt-xs text-primary" />
+                <span class="text-body2">{{ log.message }}</span>
               </div>
 
               <div v-if="log.notes === 'Ticket creado.' && ticketWithEvidences && ticketWithEvidences.evidences && ticketWithEvidences.evidences.length > 0">
@@ -104,8 +125,51 @@
       </q-card-section>
 
       <q-separator />
-      <q-card-actions align="right" class="q-pa-sm">
-        <q-btn flat label="Cerrar" color="primary" @click="$emit('update:modelValue', false)" />
+      <q-card-section v-if="!isTicketClosed" class="q-pa-sm">
+        <div class="row items-end q-gutter-sm">
+          <q-input
+            v-model="newMessage"
+            outlined
+            dense
+            class="col"
+            placeholder="Escribe un comentario..."
+            autogrow
+            :disable="sending"
+            @keyup.enter.exact.prevent="sendComment"
+          />
+          <q-btn
+            round
+            unelevated
+            color="primary"
+            icon="send"
+            :loading="sending"
+            :disable="!newMessage.trim()"
+            @click="sendComment"
+          >
+            <q-tooltip>Enviar comentario</q-tooltip>
+          </q-btn>
+        </div>
+        <div class="text-caption text-grey-5 q-mt-xs q-ml-xs">
+          Presiona Enter para enviar
+        </div>
+      </q-card-section>
+      <q-card-actions
+        v-else
+        class="q-pa-md justify-center items-center text-center animate__animated animate__fadeIn"
+        :class="bannerColorClass"
+        style="border-top: 1px solid rgba(0, 0, 0, 0.1); min-height: 80px; flex-direction: column;"
+      >
+        <div class="row items-center justify-center q-gutter-xs q-mb-xs">
+          <q-icon
+            :name="ticketStatus === 'resolved' ? 'check_circle' : 'cancel'"
+            size="sm"
+            :color="ticketStatus === 'resolved' ? 'positive' : 'negative'"
+          />
+          <span class="text-weight-bold text-subtitle1">{{ closedMessageTitle }}</span>
+        </div>
+        <div class="text-body2 text-weight-medium">
+          {{ closedMessageText }}
+        </div>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -114,6 +178,7 @@
 <script>
 import { mapActions } from 'vuex';
 import { api } from 'boot/axios';
+const POLLING_INTERVAL = 5000;
 
 export default {
   name: 'TicketLogsModal',
@@ -122,6 +187,7 @@ export default {
     modelValue: { type: Boolean, default: false },
     ticketId:   { type: [Number, String], default: null },
     ticket:     { type: Object, default: null },
+    isAdmin:    { type: Boolean, default: false },
   },
 
   emits: ['update:modelValue'],
@@ -129,40 +195,152 @@ export default {
   data() {
     return {
       loading: false,
+      sending: false,
       ticketWithEvidences: null,
       logs: [],
+      newMessage: '',
+      pollingTimer: null,
     };
+  },
+
+  computed: {
+    ticketStatus() {
+      if (this.ticketWithEvidences && this.ticketWithEvidences.status) {
+        return this.ticketWithEvidences.status;
+      }
+      if (this.logs && this.logs.length > 0) {
+        const lastLog = this.logs[this.logs.length - 1];
+        if (lastLog && lastLog.status) {
+          return lastLog.status;
+        }
+      }
+      if (this.ticket && this.ticket.status) {
+        return this.ticket.status;
+      }
+      return null;
+    },
+
+    isTicketClosed() {
+      const s = this.ticketStatus;
+      return s === 'resolved' || s === 'rejected';
+    },
+
+    bannerColorClass() {
+      const isDark = this.$q.dark.isActive;
+      if (this.ticketStatus === 'resolved') {
+        return isDark ? 'bg-green-9 text-white' : 'bg-green-1 text-green-9';
+      }
+      if (this.ticketStatus === 'rejected') {
+        return isDark ? 'bg-red-9 text-white' : 'bg-red-1 text-red-9';
+      }
+      return isDark ? 'bg-grey-9 text-grey-4' : 'bg-grey-5 text-grey-1';
+    },
+
+    closedMessageTitle() {
+      if (this.ticketStatus === 'resolved') return 'Ticket Resuelto';
+      if (this.ticketStatus === 'rejected') return 'Ticket Rechazado';
+      return 'Ticket Cerrado';
+    },
+
+    closedMessageText() {
+      return 'Este ticket ya tiene una resolución y los comentarios han sido deshabilitados.';
+    },
   },
 
   watch: {
     modelValue(val) {
       if (val && this.ticketId) {
         this.loadLogs();
+        this.startPolling();
       } else {
+        this.stopPolling();
         this.logs = [];
         this.ticketWithEvidences = null;
+        this.newMessage = '';
       }
     },
   },
 
+  beforeUnmount() {
+    this.stopPolling();
+  },
+
   methods: {
-    ...mapActions('supportTickets', ['fetchTicketLogs', 'fetchAdminTicketDetail', 'fetchMyTicketLogs']),
+    ...mapActions('supportTickets', [
+      'fetchTicketLogs',
+      'fetchAdminTicketDetail',
+      'fetchMyTicketLogs',
+      'addTicketComment',
+    ]),
 
     async loadLogs() {
       this.loading = true;
       try {
-        const logs = await (this.ticket
-          ? this.fetchMyTicketLogs(this.ticketId)
-          : this.fetchTicketLogs(this.ticketId));
-        this.logs = logs;
-        this.ticketWithEvidences = this.ticket
-          ? this.ticket
-          : await this.fetchAdminTicketDetail(this.ticketId);
+        const logs = this.isAdmin
+          ? await this.fetchTicketLogs(this.ticketId)
+          : await this.fetchMyTicketLogs(this.ticketId);
+
+        this.logs = (logs || []).slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+        this.ticketWithEvidences = this.isAdmin
+          ? await this.fetchAdminTicketDetail(this.ticketId)
+          : this.ticket;
       } catch {
         this.$q.notify({ type: 'negative', message: 'Error al cargar el historial.', position: 'top' });
       } finally {
         this.loading = false;
       }
+    },
+
+    async pollLogs() {
+      try {
+        const logs = this.isAdmin
+          ? await this.fetchTicketLogs(this.ticketId)
+          : await this.fetchMyTicketLogs(this.ticketId);
+        if (logs.length !== this.logs.length) {
+          this.logs = (logs || []).slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        }
+      } catch {
+      }
+    },
+
+    startPolling() {
+      this.stopPolling();
+      this.pollingTimer = setInterval(() => {
+        this.pollLogs();
+      }, POLLING_INTERVAL);
+    },
+
+    stopPolling() {
+      if (this.pollingTimer) {
+        clearInterval(this.pollingTimer);
+        this.pollingTimer = null;
+      }
+    },
+
+    async sendComment() {
+      const message = this.newMessage.trim();
+      if (!message || this.isTicketClosed) return;
+      this.sending = true;
+      try {
+        const newLog = await this.addTicketComment({
+          ticketId: this.ticketId,
+          message,
+          isAdmin: this.isAdmin,
+        });
+        this.logs.push(newLog);
+        this.newMessage = '';
+        this.$q.notify({ type: 'positive', message: 'Comentario enviado.', position: 'top' });
+      } catch (err) {
+        const msg = err.response?.data?.message || 'Error al enviar el comentario.';
+        this.$q.notify({ type: 'negative', message: msg, position: 'top' });
+      } finally {
+        this.sending = false;
+      }
+    },
+
+    isComment(log) {
+      return !!log.message && !log.notes;
     },
 
     buildUrl(filePath) {

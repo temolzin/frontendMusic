@@ -2,6 +2,14 @@ export const setMyTickets = (state, tickets) => {
     state.myTickets = tickets;
 };
 
+export const setArtistTickets = (state, tickets) => {
+    state.artistTickets = tickets;
+};
+
+export const setCustomerTickets = (state, tickets) => {
+    state.customerTickets = tickets;
+};
+
 export const setAdminTickets = (state, tickets) => {
     state.adminTickets = tickets;
 };

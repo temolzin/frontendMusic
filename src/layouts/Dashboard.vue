@@ -308,7 +308,7 @@
           <q-item
             clickable
             v-ripple
-            to="/client/my-tickets"
+            to="/artist/my-tickets"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
           >

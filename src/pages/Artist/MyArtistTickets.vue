@@ -32,7 +32,7 @@
             <q-table
               v-else
               :rows="myTickets"
-              :columns="columns"
+              :columns="columnsRaised"
               row-key="id"
               flat
               bordered
@@ -90,15 +90,13 @@
             <div v-if="loadingAgainst" class="text-center q-py-xl">
               <q-spinner color="primary" size="3em" />
             </div>
-
-            <div v-else-if="customerTickets.length === 0" class="text-center q-py-xl">
+            <div v-else-if="artistTickets.length === 0" class="text-center q-py-xl">
               <q-icon name="verified_user" size="4em" color="grey-4" />
               <p class="text-grey-6 q-mt-md">No tienes reportes en tu contra.</p>
             </div>
-
             <q-table
               v-else
-              :rows="customerTickets"
+              :rows="artistTickets"
               :columns="columnsAgainst"
               row-key="id"
               flat
@@ -126,7 +124,9 @@
               <template v-slot:body-cell-reporter="props">
                 <q-td :props="props">
                   <div class="text-weight-medium">{{ props.row.reporter?.name || 'N/A' }}</div>
-                  <div class="text-caption text-grey">{{ props.row.reporter?.email || '' }}</div>
+                  <div class="text-caption text-grey">
+                    {{ props.row.reporter?.email || '' }} (Orden #{{ props.row.artist_sale_id }})
+                  </div>
                 </q-td>
               </template>
 
@@ -169,7 +169,7 @@ import { mapActions, mapGetters } from 'vuex';
 import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
 
 export default {
-  name: 'MyTickets',
+  name: 'MyArtistTickets',
   components: { TicketLogsModal },
 
   data() {
@@ -181,7 +181,7 @@ export default {
       selectedTicketId: null,
       selectedTicket: null,
 
-      columns: [
+      columnsRaised: [
         { name: 'category', label: 'Categoría', field: 'category', align: 'center' },
         { name: 'against', label: 'Artista involucrado', field: 'against', align: 'center' },
         { name: 'date', label: 'Fecha del reporte', field: 'created_at', align: 'center' },
@@ -201,14 +201,14 @@ export default {
 
   computed: {
     ...mapGetters('supportTickets', {
-      myTickets:       'getMyTickets',
-      customerTickets: 'getCustomerTickets',
+      artistTickets: 'getArtistTickets',
+      myTickets:     'getMyTickets',
     }),
   },
 
   watch: {
     activeTab(tab) {
-      if (tab === 'against' && this.customerTickets.length === 0 && !this.loadingAgainst) {
+      if (tab === 'against' && this.artistTickets.length === 0 && !this.loadingAgainst) {
         this.fetchAgainst();
       }
     },
@@ -219,7 +219,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('supportTickets', ['fetchMyTickets', 'fetchMyCustomerTickets']),
+    ...mapActions('supportTickets', ['fetchMyArtistTickets', 'fetchMyTickets']),
 
     async fetchRaised() {
       this.loadingRaised = true;
@@ -235,7 +235,7 @@ export default {
     async fetchAgainst() {
       this.loadingAgainst = true;
       try {
-        await this.fetchMyCustomerTickets();
+        await this.fetchMyArtistTickets();
       } catch {
         this.$q.notify({ type: 'negative', message: 'Error al cargar los reportes en tu contra.', position: 'top' });
       } finally {
