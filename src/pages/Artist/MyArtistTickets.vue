@@ -167,6 +167,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
+import { notifyError } from 'src/utils/notify';
 
 export default {
   name: 'MyArtistTickets',
@@ -226,7 +227,7 @@ export default {
       try {
         await this.fetchMyTickets();
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar tus reportes.', position: 'top' });
+        notifyError('Error al cargar tus reportes.');
       } finally {
         this.loadingRaised = false;
       }
@@ -237,7 +238,7 @@ export default {
       try {
         await this.fetchMyArtistTickets();
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar los reportes en tu contra.', position: 'top' });
+        notifyError('Error al cargar los reportes en tu contra.');
       } finally {
         this.loadingAgainst = false;
       }

@@ -178,6 +178,7 @@
 <script>
 import { mapActions } from 'vuex';
 import { api } from 'boot/axios';
+import { notifyError, notifySuccess } from 'src/utils/notify';
 const POLLING_INTERVAL = 5000;
 
 export default {
@@ -286,7 +287,7 @@ export default {
           ? await this.fetchAdminTicketDetail(this.ticketId)
           : this.ticket;
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar el historial.', position: 'top' });
+        notifyError('Error al cargar el historial.');
       } finally {
         this.loading = false;
       }
@@ -330,10 +331,10 @@ export default {
         });
         this.logs.push(newLog);
         this.newMessage = '';
-        this.$q.notify({ type: 'positive', message: 'Comentario enviado.', position: 'top' });
+        notifySuccess('Comentario enviado.');
       } catch (err) {
         const msg = err.response?.data?.message || 'Error al enviar el comentario.';
-        this.$q.notify({ type: 'negative', message: msg, position: 'top' });
+        notifyError(msg);
       } finally {
         this.sending = false;
       }
