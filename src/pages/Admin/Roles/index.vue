@@ -271,6 +271,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 const columns = [
@@ -354,10 +355,7 @@ export default {
         await this.getRoles();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -377,16 +375,10 @@ export default {
           .onOk(() => {
             try {
               this.deleteRole(id);
-              this.$q.notify({
-                type: "positive",
-                message: `Rol ${name} eliminado correctamente`,
-              });
+              notifySuccess(`Rol ${name} eliminado correctamente`);
             } catch (err) {
               if (err.response.data.message) {
-                $q.notify({
-                  type: "negative",
-                  message: err.response.data.message,
-                });
+                notifyError(err.response.data.message);
               }
             }
           });
@@ -409,10 +401,7 @@ export default {
         }
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -421,16 +410,10 @@ export default {
         await this.updateRole(this.form);
         this.formEdit = false;
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: `Rol modificado correctamente`,
-        });
+        notifySuccess(`Rol modificado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -439,10 +422,7 @@ export default {
         await this.getPermissions();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -453,16 +433,10 @@ export default {
         await this.createRole(this.form);
         this.formCreate = false;
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: `Rol creado correctamente`,
-        });
+        notifySuccess(`Rol creado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },

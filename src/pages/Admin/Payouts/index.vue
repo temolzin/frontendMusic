@@ -332,6 +332,7 @@
 
 <script>
 import { mapActions, mapGetters, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 const columns = [
   { name: "expand", label: "Detalles", align: "center" },
@@ -417,11 +418,7 @@ export default {
         await this.fetchPendingPayouts();
         this.initFeeMap();
       } catch (error) {
-        this.$q.notify({
-          color: "negative",
-          icon: "error",
-          message: "No se pudieron cargar las liquidaciones de los artistas.",
-        });
+        notifyError("No se pudieron cargar las liquidaciones de los artistas.");
       } finally {
         this.loadingPending = false;
       }
@@ -431,11 +428,7 @@ export default {
       try {
         await this.fetchPayoutHistory();
       } catch (error) {
-        this.$q.notify({
-          color: "negative",
-          icon: "error",
-          message: "No se pudo cargar el historial de liquidaciones.",
-        });
+        notifyError("No se pudo cargar el historial de liquidaciones.");
       }
     },
 
@@ -443,19 +436,10 @@ export default {
       navigator.clipboard
         .writeText(text)
         .then(() => {
-          this.$q.notify({
-            color: "secondary",
-            icon: "assignment_turned_in",
-            message: "CLABE copiada al portapapeles",
-            timeout: 1500,
-          });
+          notifySuccess("CLABE copiada al portapapeles", { timeout: 1500 });
         })
         .catch(() => {
-          this.$q.notify({
-            color: "negative",
-            icon: "error",
-            message: "No se pudo copiar de forma automática.",
-          });
+          notifyError("No se pudo copiar de forma automática.");
         });
     },
 
@@ -476,17 +460,9 @@ export default {
             this.$q.loading.show({ message: "Actualizando estatus financiero..." });
             const applyFee = this.applyFeeMap[payout.sale_id] !== false;
             await this.releasePayout({ saleId: payout.sale_id, applyOpenpayFee: applyFee });
-            this.$q.notify({
-              color: "positive",
-              icon: "thumb_up",
-              message: "Liquidación registrada exitosamente.",
-            });
+            notifySuccess("Liquidación registrada exitosamente.");
           } catch (error) {
-            this.$q.notify({
-              color: "negative",
-              icon: "error",
-              message: "Error al actualizar el estatus en el servidor.",
-            });
+            notifyError("Error al actualizar el estatus en el servidor.");
           } finally {
             this.$q.loading.hide();
           }
