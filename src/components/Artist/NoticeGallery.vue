@@ -620,10 +620,6 @@ export default {
           if (this.imageList.length === 0) {
             this.showGallery = false;
           }
-          this.$q.notify({
-            type: "positive",
-            message: "Imagen eliminada",
-          });
         } catch (err) {
           notifyError(err?.response?.data?.message || "Error al eliminar la imagen");
         }
