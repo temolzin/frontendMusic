@@ -435,6 +435,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapGetters, mapActions } from "vuex";
+import { notifyError } from "src/utils/notify";
 
 export default {
   name: "ArtistStats",
@@ -529,7 +530,7 @@ export default {
       try {
         await this.fetchArtistsList();
       } catch {
-        this.$q.notify({ type: "negative", message: "Error al cargar la lista de artistas." });
+        notifyError("Error al cargar la lista de artistas.");
       } finally {
         this.loading = false;
       }
@@ -544,7 +545,7 @@ export default {
           filter: this.chartFilter,
         });
       } catch {
-        this.$q.notify({ type: "negative", message: "Error al cargar las estadísticas del artista." });
+        notifyError("Error al cargar las estadísticas del artista.");
       } finally {
         this.loading = false;
       }

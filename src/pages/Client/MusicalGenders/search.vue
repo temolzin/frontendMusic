@@ -193,6 +193,7 @@
 import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapGetters, mapState } from "vuex";
 import { ref } from "vue";
+import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 
 let $q;
 export default {
@@ -224,10 +225,7 @@ export default {
         });
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -244,7 +242,7 @@ export default {
     copyArtistLink(artistSlug, genreSlug) {
       const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
       navigator.clipboard.writeText(link).then(() => {
-        this.$q.notify({ type: 'positive', message: 'Link copiado al portapapeles' });
+        notifySuccess('Link copiado al portapapeles');
       });
     },
 
@@ -273,11 +271,7 @@ export default {
       //alert(JSON.stringify(item));
     },
     onSendOrder(artist) {
-      $q.notify({
-        spinner: QSpinnerGears,
-        message: "Agregando al carrito...",
-        timeout: 200,
-      });
+      notifyInfo("Agregando al carrito...", { spinner: QSpinnerGears, timeout: 200 });
       const formData = new FormData();
       formData.append("service_id", artist.id);
       formData.append("name", artist.name);
@@ -286,18 +280,9 @@ export default {
       formData.append("order_date_finish", this.printDateFinish());
       //formData.append("total", total);
       this.create_order(formData).then(() => {
-        $q.notify({
-          type: "positive",
-          spinner: QSpinnerAudio,
-          message: "Artista agregado",
-          timeout: 1000,
-        });
+        notifySuccess("Artista agregado", { spinner: QSpinnerAudio, timeout: 1000 });
       }).catch((err) => {
-        $q.notify({
-          type: "negative",
-          message: err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo agregar el artista al carrito",
-          timeout: 3000,
-        });
+        notifyError(err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo agregar el artista al carrito", { timeout: 3000 });
       });
     },
     printDateStart: function () {
@@ -327,18 +312,12 @@ export default {
       try {
         await this.createFavouriteArtist(this.addFavourite).then(() => {
           this.toggleFavoriteArtist(id);
-          this.$q.notify({
-            type: "positive",
-            message: this.favouriteArtists,
-          });
+          notifySuccess(this.favouriteArtists);
         });
         this.addFavourite.artist_id = "";
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -368,10 +347,7 @@ export default {
         this.syncFavoriteArtistIds();
       } catch (err) {
         if (err.response && err.response.data && err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },

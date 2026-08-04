@@ -835,6 +835,46 @@ export default defineComponent({
     };
   },
   methods: {
+    translateOpenPayClientError(rawMessage) {
+      const msg = (rawMessage || "").toLowerCase();
+
+      const knownPatterns = [
+        {
+          test: /api key|merchant.?id/i,
+          message: "Las credenciales de pago no son válidas o no están configuradas. Contacta a soporte.",
+        },
+        {
+          test: /session.?id|device.?data/i,
+          message: "No se pudo verificar el dispositivo para procesar el pago. Recarga la página e intenta de nuevo.",
+        },
+        {
+          test: /rate limit|too many requests/i,
+          message: "Demasiados intentos. Espera unos segundos e intenta de nuevo.",
+        },
+        {
+          test: /network|timeout|connection/i,
+          message: "No se pudo conectar con el procesador de pagos. Verifica tu conexión e intenta de nuevo.",
+        },
+      ];
+
+      const match = knownPatterns.find((p) => p.test.test(msg));
+      if (match) return match.message;
+
+      if (!rawMessage) return "Error desconocido en OpenPay";
+
+      return rawMessage
+        .replace(/cvv2/gi, "CVV")
+        .replace(/card number/gi, "número de tarjeta")
+        .replace(/verification digit/gi, "dígito de verificación")
+        .replace(/expiration year/gi, "año de expiración")
+        .replace(/expiration month/gi, "mes de expiración")
+        .replace(/holder name/gi, "nombre del titular")
+        .replace(/invalid/gi, "inválido")
+        .replace(/must be/gi, "debe ser")
+        .replace(/length/gi, "longitud")
+        .replace(/wrong/gi, "incorrecto")
+        .replace(/\bthe\b/gi, "el");
+    },
     formatDueDate(dateStr) {
       if (!dateStr) return '';
       if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
@@ -1285,8 +1325,19 @@ export default defineComponent({
       });
 
       try {
-        const keysRes = await this.$api.get('/api/openpay-keys/public');
-        const openpayKeys = keysRes.data.data;
+        let openpayKeys;
+        try {
+          const keysRes = await this.$api.get('/api/openpay-keys/public');
+          openpayKeys = keysRes.data.data;
+          if (!openpayKeys || !openpayKeys.openpay_id || !openpayKeys.openpay_public_key) {
+            throw new Error('missing-keys');
+          }
+        } catch (keysErr) {
+          this.$q.loading.hide();
+          notifyError("Vibeer no pudo procesar tu pago: los pagos con tarjeta no están disponibles en este momento. Contacta a soporte.", { timeout: 6000 });
+          return;
+        }
+
         OpenPay.setId(openpayKeys.openpay_id);
         OpenPay.setApiKey(openpayKeys.openpay_public_key);
         OpenPay.setSandboxMode(openpayKeys.openpay_sandbox_mode ?? true);
@@ -1407,36 +1458,10 @@ export default defineComponent({
           },
           (error) => {
             this.$q.loading.hide();
-            
-            let errorMessage = error?.description || error?.message || "Error desconocido en OpenPay";
-            errorMessage = errorMessage
-              .replace(/cvv2/gi, "CVV")
-              .replace(/card number/gi, "número de tarjeta")
-              .replace(/verification digit/gi, "dígito de verificación")
-              .replace(/expiration year/gi, "año de expiración")
-              .replace(/expiration month/gi, "mes de expiración")
-              .replace(/holder name/gi, "nombre del titular")
-              .replace(/invalid/gi, "inválido")
-              .replace(/must be/gi, "debe ser")
-              .replace(/length/gi, "longitud")
-              .replace(/wrong/gi, "incorrecto")
-              .replace(/\bthe\b/gi, "el");
-            if (error?.data?.description) {
-              errorMessage = error.data.description
-                .replace(/cvv2/gi, "CVV")
-                .replace(/card number/gi, "número de tarjeta")
-                .replace(/verification digit/gi, "dígito de verificación")
-                .replace(/expiration year/gi, "año de expiración")
-                .replace(/expiration month/gi, "mes de expiración")
-                .replace(/holder name/gi, "nombre del titular")
-                .replace(/invalid/gi, "inválido")
-                .replace(/must be/gi, "debe ser")
-                .replace(/length/gi, "longitud")
-                .replace(/wrong/gi, "incorrecto")
-                .replace(/\bthe\b/gi, "el");
-            }
-            
-            notifyError("Error al crear el token: " + errorMessage, { timeout: 5000 });
+
+            const rawMessage = error?.data?.description || error?.description || error?.message || "";
+
+            notifyError("Error al crear el token: " + this.translateOpenPayClientError(rawMessage), { timeout: 5000 });
           }
         );
       } catch (err) {

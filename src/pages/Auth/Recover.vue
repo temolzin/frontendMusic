@@ -50,6 +50,7 @@ import { defineComponent, computed, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { notifySuccess, notifyError } from 'src/utils/notify'
 
 export default defineComponent({
   name: 'Recover',
@@ -62,14 +63,6 @@ export default defineComponent({
     const loading = ref(false)
 
     const mode = computed(() => $q.dark.isActive)
-
-    const notifyError = (message) => {
-      $q.notify({ type: 'negative', message })
-    }
-
-    const notifySuccess = (message) => {
-      $q.notify({ type: 'positive', message })
-    }
 
     const submitRecover = async () => {
       if (!email.value) {

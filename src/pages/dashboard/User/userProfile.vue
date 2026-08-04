@@ -221,6 +221,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapGetters, mapActions } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 let $q;
 
 export default {
@@ -250,67 +251,43 @@ export default {
     async onSubmitDetails() {
       try {
         await this.updateDetails(this.formUpdateMain);
-        this.$q.notify({
-          type: "positive",
-          message: `Información actualizada`,
-        });
+        notifySuccess(`Información actualizada`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
     async onSubmitPassword() {
       try {
         await this.updatePassword(this.formUpdatePassword);
-        this.$q.notify({
-          type: "positive",
-          message: `Contraseña actualizada`,
-        });
+        notifySuccess(`Contraseña actualizada`);
         this.clearPasswordForm();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
     async onSubmitImageProfle() {
       try {
         if (this.image_profile.length == 0) {
-          this.$q.notify({
-            type: "negative",
-            message: `Ningún archivo seleccionado`,
-          });
+          notifyError(`Ningún archivo seleccionado`);
         } else {
           if (this.image_profile.size > 1000000) {
-            this.$q.notify({
-              type: "negative",
-              message: `La imagen excede el tamaño permitido`,
-            });
+            notifyError(`La imagen excede el tamaño permitido`);
           } else {
             let InstFormData = new FormData();
             InstFormData.append("image_profile", this.image_profile);
 
             await this.updateImageProfile(InstFormData);
             this.image_profile = null;
-            this.$q.notify({
-              type: "positive",
-              message: `Información actualizada`,
-            });
+            notifySuccess(`Información actualizada`);
           }
         }
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -335,10 +312,7 @@ export default {
       this.image_profile = null;
     },
     onRejected() {
-      $q.notify({
-        type: "negative",
-        message: `El archivo no ha superado las restricciones de validación`,
-      });
+      notifyError(`El archivo no ha superado las restricciones de validación`);
       this.image_profile = [];
     },
     getBackendImageUrl(image) {

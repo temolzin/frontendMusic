@@ -78,6 +78,7 @@ import { defineComponent, computed, onMounted, ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { notifySuccess, notifyError } from 'src/utils/notify'
 
 export default defineComponent({
   name: 'ResetPassword',
@@ -117,14 +118,6 @@ export default defineComponent({
     watch(() => route.query.email, () => {
       readEmail()
     })
-
-    const notifyError = (message) => {
-      $q.notify({ type: 'negative', message })
-    }
-
-    const notifySuccess = (message) => {
-      $q.notify({ type: 'positive', message })
-    }
 
     const submitReset = async () => {
       if (!token.value || !email.value || !password.value || !passwordConfirmation.value) {

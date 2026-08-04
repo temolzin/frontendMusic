@@ -40,6 +40,7 @@
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { mapGetters, mapActions } from "vuex";
+import { notifyError } from "src/utils/notify";
 
 let $q;
 export default {
@@ -71,10 +72,7 @@ export default {
         await this.getArtists();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       } finally {
           this.loading = false;

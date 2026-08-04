@@ -122,6 +122,7 @@
 import { useQuasar } from "quasar";
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 export default {
   name: "Dashboard",
@@ -164,10 +165,7 @@ export default {
         await this.getProducts();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -184,16 +182,10 @@ export default {
           .onOk(() => {
             try {
               this.deleteProduct(id);
-              this.$q.notify({
-                type: "positive",
-                message: `Producto eliminado correctamente`,
-              });
+              notifySuccess(`Producto eliminado correctamente`);
             } catch (err) {
               if (err.response.data.message) {
-                  $q.notify({
-                  type: "negative",
-                  message: err.response.data.message,
-                });
+                  notifyError(err.response.data.message);
               }
             }
           });
@@ -206,15 +198,9 @@ export default {
       try {
         await this.createProduct(this.form);
         this.clearForm();
-        this.$q.notify({
-          type: "positive",
-          message: `Producto creado correctamente`,
-        });
+        notifySuccess(`Producto creado correctamente`);
       } catch (err) {
-        this.$q.notify({
-          type: "negative",
-          message: err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo crear el producto",
-        });
+        notifyError(err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo crear el producto");
       }
     },
 
@@ -227,10 +213,7 @@ export default {
         this.edit = true;
       } catch (err) {
         if (err.response.data.error) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.error,
-          });
+          notifyError(err.response.data.error);
         }
       }
     },
@@ -243,11 +226,7 @@ export default {
         };
         this.edit = true;
         await this.updateProduct(product);
-        this.$q.notify({
-          type: "positive",
-          message:
-            `Producto ` + this.editForm.name + ` actualizado correctamente`,
-        });
+        notifySuccess(`Producto ` + this.editForm.name + ` actualizado correctamente`);
       } catch (error) {
         console.error(error);
       }

@@ -160,6 +160,7 @@
   import { useQuasar, QSelect } from "quasar";
   import { mapActions, mapGetters } from "vuex";
   import { ref } from "vue";
+  import { notifyError } from "src/utils/notify";
 
   let $q;
 
@@ -275,10 +276,7 @@
         });
         } catch (err) {
           if (err.response.data.message) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.message,
-            });
+            notifyError(err.response.data.message);
           }
         }
       },

@@ -21,6 +21,7 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import { useQuasar } from "quasar";
+import { notifyError } from "src/utils/notify";
 
 let $q = useQuasar();
 
@@ -43,10 +44,7 @@ export default {
         }
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.message,
-          });
+          notifyError(err.message);
         }
       }
     },
