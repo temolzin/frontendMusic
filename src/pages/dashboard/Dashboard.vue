@@ -252,6 +252,7 @@ import ArtistRecomendation from "src/components/Artist/ArtistRecomendation.vue";
 import NoticeNotInfo from "src/components/Artist/NoticeNotInfo.vue";
 import NoticeGeneral from "src/components/admin/NoticeGeneral.vue";
 import ArtistStats from "src/components/admin/ArtistStats/ArtistStats.vue";
+import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 
 let $q = useQuasar();
 
@@ -295,10 +296,7 @@ export default {
         });
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -335,10 +333,10 @@ export default {
       this.openpayLoading = true;
       try {
         await this.$api.put("/api/admin/openpay-keys", this.openpayForm);
-        this.$q.notify({ type: "positive", message: "Credenciales guardadas correctamente" });
+        notifySuccess("Credenciales guardadas correctamente");
         this.openpayModal = false;
       } catch (e) {
-        this.$q.notify({ type: "negative", message: "Error al guardar las credenciales" });
+        notifyError("Error al guardar las credenciales");
       } finally {
         this.openpayLoading = false;
       }
@@ -355,25 +353,25 @@ export default {
     copyArtistLink(artistSlug) {
       const link = `${window.location.origin}/client/musical-genders/search/${artistSlug}`;
       navigator.clipboard.writeText(link).then(() => {
-        this.$q.notify({ type: 'positive', message: 'Link copiado al portapapeles' });
+        notifySuccess('Link copiado al portapapeles');
       });
     },
     showNotif() {
-      $q.notify({
-        message:
-          "Guarda tus tarjetas de crédito o débito, es totalmente seguro. Solo se te pedirá el número de cuenta y la fecha de expiración",
-        color: "red",
-
-        actions: [
-          {
-            label: "Cerrar",
-            color: "yellow",
-            handler: () => {
-              this.showCard = false;
+      notifyInfo(
+        "Guarda tus tarjetas de crédito o débito, es totalmente seguro. Solo se te pedirá el número de cuenta y la fecha de expiración",
+        {
+          color: "red",
+          actions: [
+            {
+              label: "Cerrar",
+              color: "yellow",
+              handler: () => {
+                this.showCard = false;
+              },
             },
-          },
-        ],
-      });
+          ],
+        }
+      );
     },
     getBackendImageUrl(image) {
       const baseURL = this.$q.config.backendUrl;

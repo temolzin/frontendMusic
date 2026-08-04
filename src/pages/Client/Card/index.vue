@@ -248,6 +248,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 export default {
@@ -330,10 +331,7 @@ export default {
         await this.getCards();
       } catch (err) {
         if (err.response?.data?.message) {
-          this.$q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -341,10 +339,7 @@ export default {
     async createCardNew() {
       const valid = await this.$refs.formCreateCard.validate();
       if (!valid) {
-        this.$q.notify({
-          type: "negative",
-          message: "Por favor completa todos los campos correctamente",
-        });
+        notifyError("Por favor completa todos los campos correctamente");
         return;
       }
       
@@ -352,27 +347,18 @@ export default {
       const digits = (this.form.number_card.match(/\d/g) || []).length;
       const expLen = this.expectedCardLength(this.form.number_card);
       if (digits !== expLen) {
-        this.$q.notify({
-          type: "negative",
-          message: `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`,
-        });
+        notifyError(`El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`);
         return;
       }
       
       const cardClean = this.form.number_card.replace(/[\s-]/g, '');
       if (!/^\d+$/.test(cardClean)) {
-        this.$q.notify({
-          type: "negative",
-          message: "El número de tarjeta solo debe contener dígitos",
-        });
+        notifyError("El número de tarjeta solo debe contener dígitos");
         return;
       }
       
       if (!this.luhnCheck(cardClean)) {
-        this.$q.notify({
-          type: "negative",
-          message: "El número de tarjeta no es válido (validación Luhn)",
-        });
+        notifyError("El número de tarjeta no es válido (validación Luhn)");
         return;
       }
       
@@ -380,17 +366,11 @@ export default {
         await this.createCard(this.form);
         this.formCreate = false;
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: `Tarjeta creada correctamente`,
-        });
+        notifySuccess(`Tarjeta creada correctamente`);
         await this.gettCards();
       } catch (err) {
         if (err.response?.data?.message) {
-          this.$q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -410,16 +390,10 @@ export default {
           .onOk(() => {
             try {
               this.deleteCard(id);
-              this.$q.notify({
-                type: "positive",
-                message: `La tarjeta de ${name} fue eliminada correctamente`,
-              });
+              notifySuccess(`La tarjeta de ${name} fue eliminada correctamente`);
             } catch (err) {
               if (err.response?.data?.message) {
-                this.$q.notify({
-                  type: "negative",
-                  message: err.response.data.message,
-                });
+                notifyError(err.response.data.message);
               }
             }
           });
@@ -439,55 +413,37 @@ export default {
     async editCard() {
       const valid = await this.$refs.formEditCard.validate();
       if (!valid) {
-        this.$q.notify({
-          type: "negative",
-          message: "Por favor completa todos los campos correctamente",
-        });
+        notifyError("Por favor completa todos los campos correctamente");
         return;
       }
       
       const digits = (this.form.number_card.match(/\d/g) || []).length;
       const expLen = this.expectedCardLength(this.form.number_card);
       if (digits !== expLen) {
-        this.$q.notify({
-          type: "negative",
-          message: `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`,
-        });
+        notifyError(`El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`);
         return;
       }
       
       const cardClean = this.form.number_card.replace(/[\s-]/g, '');
       if (!/^\d+$/.test(cardClean)) {
-        this.$q.notify({
-          type: "negative",
-          message: "El número de tarjeta solo debe contener dígitos",
-        });
+        notifyError("El número de tarjeta solo debe contener dígitos");
         return;
       }
       
       if (!this.luhnCheck(cardClean)) {
-        this.$q.notify({
-          type: "negative",
-          message: "El número de tarjeta no es válido (validación Luhn)",
-        });
+        notifyError("El número de tarjeta no es válido (validación Luhn)");
         return;
       }
       
       try {
         await this.updateCard(this.form);
         this.formEdit = false;
-        this.$q.notify({
-          type: "positive",
-          message: `Tarjeta modificada correctamente`,
-        });
+        notifySuccess(`Tarjeta modificada correctamente`);
         this.onReset();
         await this.gettCards();
       } catch (err) {
         if (err.response?.data?.message) {
-          this.$q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },

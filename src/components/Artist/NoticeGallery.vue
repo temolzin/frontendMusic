@@ -366,6 +366,7 @@
 <script>
 import { ref } from "vue";
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 import { useQuasar } from "quasar";
 
 let $q = useQuasar();
@@ -491,12 +492,9 @@ export default {
         InstFormData.append("sub_files_paths", this.sub_files_paths);
         
         await this.createGalleryArtist(InstFormData);
-        await this.gettGalleryArtist();
-        await this.waitForContentToLoad();
-        this.$q.notify({
-          type: "positive",
-          message: "Imagen subida correctamente",
-        });
+        
+        this.showGallery = true;
+        notifySuccess("Imagen subida correctamente");
         this.sub_files_paths = null;
         if (this.$refs.uploaderCreate) {
           this.$refs.uploaderCreate.reset();
@@ -506,12 +504,7 @@ export default {
           if (this.$refs.uploaderCreate) {
             this.$refs.uploaderCreate.reset(); 
           }
-          this.$q.notify({ 
-            type: "negative",
-            message: "Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.",
-          });
-        } finally {
-          this.loadingImages = false;
+          notifyError("Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.");
         }
     },
 
@@ -523,12 +516,8 @@ export default {
         let InstFormData = new FormData();
         InstFormData.append("sub_files_paths", files[0]);
         await this.upDateGalleryArtist(InstFormData);
-        await this.gettGalleryArtist();
-        await this.waitForContentToLoad();
-        this.$q.notify({
-          type: "positive",
-          message: "Imagen subida correctamente",
-        });
+        this.showGallery = true;
+        notifySuccess("Imagen subida correctamente");
         this.btnDelete = false;
         this.formGalleryShow = true;
         if (this.$refs.uploaderEdit) {
@@ -539,10 +528,7 @@ export default {
           this.$refs.uploaderEdit.reset();
         }
 
-        this.$q.notify({
-          type: "negative",
-          message: "Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.",
-        });
+        notifyError("Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.");
         this.formGalleryEdit = false;
         await this.gettGalleryArtist();
       } finally {
@@ -555,10 +541,7 @@ export default {
         await this.getGalleryArtist();
         this.showGallery = this.imageList.length > 0;
       } catch (err) {
-        this.$q.notify({
-          type: "negative",
-          message: err.message || "Error al obtener la galería",
-        });
+        notifyError(err.message || "Error al obtener la galería");
         this.showGallery = false;
       }
     },
@@ -598,10 +581,7 @@ export default {
         const fileExtension = file.name.split('.').pop().toLowerCase();
         if (!validExtensions.includes(fileExtension)) {
           uploader.removeFile(file);
-          this.$q.notify({
-            type: "negative",
-            message: `El archivo "${file.name}" no tiene un formato válido (Solo jpg, jpeg, png, jpe).`,
-          });
+          notifyError(`El archivo "${file.name}" no tiene un formato válido (Solo jpg, jpeg, png, jpe).`);
           return;
         }
 
@@ -611,10 +591,7 @@ export default {
           URL.revokeObjectURL(url);
           if (img.width <= img.height) {
             uploader.removeFile(file);
-            this.$q.notify({
-              type: "negative",
-              message: `"${file.name}" debe ser horizontal (ancho mayor que alto).`,
-            });
+            notifyError(`"${file.name}" debe ser horizontal (ancho mayor que alto).`);
           }
         };
         img.onerror = () => {
@@ -637,6 +614,7 @@ export default {
         this.formGalleryEdit = false;
         try {
           await this.deleteGalleryArtist({ media_id: id });
+          notifySuccess("Imagen eliminada");
           await this.gettGalleryArtist();
           await this.waitForContentToLoad();
           if (this.imageList.length === 0) {
@@ -647,12 +625,7 @@ export default {
             message: "Imagen eliminada",
           });
         } catch (err) {
-          this.$q.notify({
-            type: "negative",
-            message: err?.response?.data?.message || "Error al eliminar la imagen",
-          });
-        } finally {
-          this.loadingImages = false;
+          notifyError(err?.response?.data?.message || "Error al eliminar la imagen");
         }
       });
     },
@@ -693,18 +666,10 @@ export default {
       try {
         await this.createArtistVideo({ youtube_urls: validUrls });
         await this.getArtistVideos();
-        this.carouselVideoKey++;
-        this.$q.notify({
-          type: "positive",
-          message: "Video(s) agregado(s) correctamente",
-        });
+        notifySuccess("Video(s) agregado(s) correctamente");
+        this.formVideo = false;
       } catch (err) {
-        this.$q.notify({
-          type: "negative",
-          message: err?.response?.data?.message || "Error al agregar el video",
-        });
-      } finally {
-        this.loadingVideos = false;
+        notifyError(err?.response?.data?.message || "Error al agregar el video");
       }
     },
 
@@ -724,28 +689,15 @@ export default {
           if (this.slideVideo > this.artistVideos.length) {
             this.slideVideo = this.artistVideos.length;
           }
-          this.$q.notify({
-            type: "positive",
-            message: "Video eliminado",
-            timeout: 2000,
-          });
+          notifySuccess("Video eliminado");
         } catch (err) {
-          this.$q.notify({
-            type: "negative",
-            message: "Error al eliminar el video",
-            timeout: 3000,
-          });
-        } finally {
-          this.loadingVideos = false;
+          notifyError("Error al eliminar el video");
         }
       });
     },
 
     onRejected(rejectedEntries) {
-      this.$q.notify({
-        type: "negative",
-        message: `${rejectedEntries.length} archivo(s) no han superado las restricciones de validación`,
-      });
+      notifyError(`${rejectedEntries.length} archivo(s) no han superado las restricciones de validación`);
     },
   },
   computed: {
@@ -784,10 +736,7 @@ export default {
     this.getArtistVideos().then(() => {
       this.startCarouselTimer();
     }).catch((err) => {
-      this.$q.notify({
-        type: "negative",
-        message: err.response?.data?.message ?? "No se pudieron cargar los videos",
-      });
+      notifyError(err.response?.data?.message ?? "No se pudieron cargar los videos");
     });
   },
 };

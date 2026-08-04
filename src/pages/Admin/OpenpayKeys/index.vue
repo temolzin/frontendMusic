@@ -65,6 +65,7 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
+import { notifySuccess, notifyError } from 'src/utils/notify';
 
 export default defineComponent({
   name: 'OpenpayKeysIndex',
@@ -90,7 +91,7 @@ export default defineComponent({
           form.value.openpay_sandbox_mode = res.data.data.openpay_sandbox_mode ?? true
         }
       } catch (e) {
-        console.error('Error cargando credenciales', e)
+        notifyError('Error cargando credenciales', { position: "top" })
       }
     }
 
@@ -98,9 +99,9 @@ export default defineComponent({
       loading.value = true
       try {
         await api.put('/api/admin/openpay-keys', form.value)
-        $q.notify({ type: 'positive', message: 'Credenciales guardadas correctamente' })
+        notifySuccess('Credenciales guardadas correctamente', { position: "top" })
       } catch (e) {
-        $q.notify({ type: 'negative', message: 'Error al guardar las credenciales' })
+        notifyError('Error al guardar las credenciales', { position: "top" })
       } finally {
         loading.value = false
       }

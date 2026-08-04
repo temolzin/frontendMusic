@@ -184,6 +184,7 @@
 import { useQuasar } from "quasar";
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
+import { notifyError } from "src/utils/notify";
 
 let $q;
 
@@ -207,16 +208,10 @@ export default {
     async submitForm() {
       this.loading = false;
       if (!this.login.email || !this.login.password) {
-        $q.notify({
-          type: "negative",
-          message: "Los datos no son validos.",
-        });
+        notifyError("Los datos no son validos.");
         this.loading = true;
       } else if (this.login.password.length < 4) {
-        $q.notify({
-          type: "negative",
-          message: "La contraseña debe de ser mayor a 6 carácteres.",
-        });
+        notifyError("La contraseña debe de ser mayor a 6 carácteres.");
         this.loading = true;
       } else {
         try {
@@ -226,10 +221,7 @@ export default {
           });
         } catch (err) {
           if (err.response.data.error) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.error,
-            });
+            notifyError(err.response.data.error);
           }
           this.loading = true;
         }
@@ -240,10 +232,7 @@ export default {
       try {
         await this.doLoginGmail();
       } catch (err) {
-        $q.notify({
-          type: "negative",
-          message: err.response?.data?.message ?? "No se pudo iniciar sesión con Google",
-        });
+        notifyError(err.response?.data?.message ?? "No se pudo iniciar sesión con Google");
       } finally {
         this.loadingGmail = true;
       }
@@ -253,10 +242,7 @@ export default {
       try {
         await this.doLoginFacebook();
       } catch (err) {
-        $q.notify({
-          type: "negative",
-          message: err.response?.data?.message ?? "No se pudo iniciar sesión con Facebook",
-        });
+        notifyError(err.response?.data?.message ?? "No se pudo iniciar sesión con Facebook");
       } finally {
         this.loadingFacebook = true;
       }

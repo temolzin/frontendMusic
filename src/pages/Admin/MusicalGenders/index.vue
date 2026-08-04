@@ -359,6 +359,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 let $q;
 const columns = [
   {
@@ -489,10 +490,7 @@ export default {
         await this.getMusicalGenders();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -504,11 +502,7 @@ export default {
       );
 
       if (duplicateExists) {
-        this.$q.notify({
-          type: "negative",
-          message: `El género musical "${this.form.name}" ya existe en el sistema.`,
-          position: "bottom"
-        });
+        notifyError(`El género musical "${this.form.name}" ya existe en el sistema.`);
         return;
       }
       try {
@@ -520,16 +514,10 @@ export default {
           await this.createMusicalGender(fd);
           this.formCreate = false;
           this.onReset();
-          this.$q.notify({
-            type: "positive",
-            message: `Género musical creado correctamente`,
-          });
+          notifySuccess(`Género musical creado correctamente`);
       } catch (err) {
         if (err.response && err.response.data && err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -544,10 +532,7 @@ export default {
         this.form.image_url = props.row.image;
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -562,16 +547,10 @@ export default {
         await this.updateMusicalGender({ id: this.form.id, form: fd });
         this.formEdit = false;
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: `Género musical modificado correctamente`,
-        });
+        notifySuccess(`Género musical modificado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -591,16 +570,10 @@ export default {
           .onOk(() => {
             try {
               this.deleteMusicalGender(id);
-              this.$q.notify({
-                type: "positive",
-                message: `Rol ${name} eliminado correctamente`,
-              });
+              notifySuccess(`Genero Musical ${name} eliminado correctamente`);
             } catch (err) {
               if (err.response.data.message) {
-                $q.notify({
-                  type: "negative",
-                  message: err.response.data.message,
-                });
+                notifyError(err.response.data.message);
               }
             }
           });

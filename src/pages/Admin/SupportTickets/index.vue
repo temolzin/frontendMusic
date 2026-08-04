@@ -115,6 +115,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
+import { notifyError } from 'src/utils/notify';
 
 export default {
   name: 'SupportTicketsIndex',
@@ -170,7 +171,7 @@ export default {
         if (this.filterCategory) filters.category = this.filterCategory;
         await this.fetchAdminTickets(filters);
       } catch {
-        this.$q.notify({ type: 'negative', message: 'Error al cargar los tickets.', position: 'top' });
+        notifyError('Error al cargar los tickets.');
       } finally {
         this.loading = false;
       }

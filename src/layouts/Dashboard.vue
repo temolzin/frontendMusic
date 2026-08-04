@@ -321,7 +321,7 @@
           <q-item
             clickable
             v-ripple
-            to="/client/my-tickets"
+            to="/artist/my-tickets"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
           >
@@ -500,6 +500,7 @@ import { mapGetters, mapActions } from "vuex";
 import iconCart from "src/components/ShoppingCart/iconCart.vue";
 import SearchBar from "src/components/SearchBar/SearchBar.vue";
 import ProfilePhoto from "src/components/ProfilePhoto.vue";
+import { notifyError } from "src/utils/notify";
 
 export default {
   components: { iconCart, SearchBar, ProfilePhoto },
@@ -566,10 +567,7 @@ export default {
         await this.getArtists();
       } catch (err) {
         const message = err?.response?.data?.message || "No se pudieron cargar los artistas.";
-        this.$q.notify({
-          type: "negative",
-          message,
-        });
+        notifyError(message);
       }
     },
     async fetchShoppingCartCount() {
@@ -577,10 +575,7 @@ export default {
         await this.getCountListShoppingCard();
       } catch (err) {
         const message = err?.response?.data?.message || "No se pudo cargar el carrito.";
-        this.$q.notify({
-          type: "negative",
-          message,
-        });
+        notifyError(message);
       }
     },
     async fetchTicketCount() {

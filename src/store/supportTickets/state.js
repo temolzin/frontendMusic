@@ -1,6 +1,8 @@
 export default function () {
     return {
         myTickets: [],
+        artistTickets: [],
+        customerTickets: [],
         adminTickets: [],
         currentTicket: null,
     };

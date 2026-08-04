@@ -207,6 +207,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 export default {
@@ -246,10 +247,7 @@ export default {
           this.showLatestArtist = true;
         });
       } catch (err) {
-        $q.notify({
-          type: "negative",
-          message: err,
-        });
+        notifyError(err);
       }
     },
     async subscribeUser() {
@@ -259,16 +257,10 @@ export default {
         };
         await this.setEmail(jsonData);
         this.email = '';
-        this.$q.notify({
-          type: "positive",
-          message: `Suscrito correctamente`,
-        });
+        notifySuccess(`Suscrito correctamente`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: `Algo salió mal, vuelve a intentarlo más tarde`
-          });
+          notifyError(`Algo salió mal, vuelve a intentarlo más tarde`);
         }
       }
     },
