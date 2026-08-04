@@ -192,6 +192,7 @@ import { useQuasar } from "quasar";
 import { mapActions } from "vuex";
 import { ref } from "vue";
 import { mapGetters } from "vuex";
+import { notifySuccess, notifyError, notifyWarning } from "src/utils/notify";
 
 let $q;
 
@@ -217,44 +218,26 @@ export default {
     ...mapActions("auth", ["doLoginFacebook"]),
     async submitForm() {
       if (!this.acceptTerms) {
-        $q.notify({
-          type: "warning",
-          message: "Debes aceptar los Términos y Condiciones para continuar.",
-        });
+        notifyWarning("Debes aceptar los Términos y Condiciones para continuar.");
         return;
       }
       this.loading = false;
       if (!this.user.email || !this.user.password || !this.user.name) {
-        $q.notify({
-          type: "negative",
-          message: "Los datos no son validos.",
-        });
+        notifyError("Los datos no son validos.");
       } else if (this.user.password.length < 4) {
-        $q.notify({
-          type: "negative",
-          message: "La contraseña debe de ser mayor a 6 carácteres.",
-        });
+        notifyError("La contraseña debe de ser mayor a 6 carácteres.");
       } else {
         try {
           await this.registerUser(this.user);
-          $q.notify({
-            type: "positive",
-            message: "Usuario registrado",
-          });
+          notifySuccess("Usuario registrado");
           const toPath = this.$route.query.to || "/login";
           this.$router.push(toPath);
           this.loading = true;
         } catch (err) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.errors.email,
-          });
+          notifyError(err.response.data.errors.email);
 
           if (err.response.data.error) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.error,
-            });
+            notifyError(err.response.data.error);
           }
           this.loading = true;
         }

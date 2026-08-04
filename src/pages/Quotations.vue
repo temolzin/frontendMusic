@@ -245,6 +245,7 @@ import { mapActions } from "vuex";
 import { ref } from "vue";
 import { mapGetters } from "vuex";
 import { api } from "boot/axios";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 
@@ -284,10 +285,7 @@ export default {
   },
   created() {
     this.getArtists().catch((err) => {
-      this.$q.notify({
-        type: "negative",
-        message: err.response?.data?.message ?? "No se pudo cargar la lista de artistas",
-      });
+      notifyError(err.response?.data?.message ?? "No se pudo cargar la lista de artistas");
     });
   },
   computed: {
@@ -334,10 +332,7 @@ export default {
           this.newQuotation.event_hours = this.event_hours;
           await this.newQuotations({ ...this.newQuotation, artist_id: artistIdReal, latitude: this.latitude, longitude: this.longitude, google_place_id: this.googlePlaceId });
 
-          $q.notify({
-            type: "positive",
-            message: "Cotización registrada",
-          });
+          notifySuccess("Cotización registrada");
 
           this.$router.push(this.$route.query.to || "/");
         } catch (err) {
@@ -348,17 +343,12 @@ export default {
             msg = errors[firstField][0];
           }
 
-          $q.notify({
-            type: "negative",
-            message: msg,
-          });
+          notifyError(msg);
         }
       } else {
-        $q.notify({
-          type: "negative",
-          message:
-            "Los datos no son válidos. Por favor, completa todos los campos.",
-        });
+        notifyError(
+          "Los datos no son válidos. Por favor, completa todos los campos."
+        );
         this.loading = true;
       }
     },

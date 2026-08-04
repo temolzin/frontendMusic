@@ -388,6 +388,7 @@
 import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapState, mapGetters } from "vuex";
 import { ref } from "vue";
+import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 
 let $q;
 export default {
@@ -534,17 +535,11 @@ export default {
       try {
         await this.createFavouriteArtist(this.addFavourite);
         this.toggleFavoriteArtist(id);
-        this.$q.notify({
-          type: "positive",
-          message: "Agregado a Favoritos",
-        });
+        notifySuccess("Agregado a Favoritos");
         this.addFavourite.artist_id = "";
       } catch (err) {
         if (err.response && err.response.data && err.response.data.message) {
-            this.$q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+            notifyError(err.response.data.message);
         }
       }
     },
@@ -558,10 +553,7 @@ export default {
         });
       } catch (err) {
         if (err.response.data.message) {
-            this.$q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+            notifyError(err.response.data.message);
         }
       }
     },
@@ -589,18 +581,11 @@ export default {
     },
     onSendOrder(artist) {
       if (this.getMe?.account_status === 'restricted' || this.artist?.user?.account_status === 'restricted') {
-        this.$q.notify({
-          type: 'negative',
-          message: 'No es posible realizar la acción. Cuenta restringida.'
-        });
+        notifyError('No es posible realizar la acción. Cuenta restringida.');
         return;
       }
 
-      this.$q.notify({
-        spinner: QSpinnerGears,
-        message: "Agregando al carrito...",
-        timeout: 200,
-      });
+      notifyInfo("Agregando al carrito...", { spinner: QSpinnerGears, timeout: 200 });
       const formData = new FormData();
       formData.append("service_id", artist.id);
       formData.append("name", artist.name);
@@ -612,26 +597,14 @@ export default {
       formData.append("order_date_start", this.printDateStart());
       formData.append("order_date_finish", this.printDateFinish());
       this.create_order(formData).then(() => {
-        this.$q.notify({
-          type: "positive",
-          spinner: QSpinnerAudio,
-          message: "Artista agregado",
-          timeout: 1000,
-        });
+        notifySuccess("Artista agregado", { spinner: QSpinnerAudio, timeout: 1000 });
       }).catch((err) => {
-        this.$q.notify({
-          type: "negative",
-          message: err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo agregar el artista al carrito",
-          timeout: 3000,
-        });
+        notifyError(err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo agregar el artista al carrito", { timeout: 3000 });
       });
     },
     handleHireNow(artist) {
       if (this.getMe?.account_status === 'restricted' || this.artist?.user?.account_status === 'restricted') {
-        this.$q.notify({
-          type: 'negative',
-          message: 'No es posible realizar la acción. Cuenta restringida.'
-        });
+        notifyError('No es posible realizar la acción. Cuenta restringida.');
         return;
       }
 
@@ -655,7 +628,7 @@ export default {
         try {
           artistDataEncoded = btoa(artistData);
         } catch (err2) {
-          this.$q.notify({ type: 'negative', message: 'Error al preparar datos de compra. Intenta de nuevo.' });
+          notifyError('Error al preparar datos de compra. Intenta de nuevo.');
           return;
         }
       }
@@ -672,7 +645,7 @@ export default {
     copyArtistLink() {
       const link = `${window.location.origin}/client/musical-genders/${this.slugMG}/${this.slug}`;
       navigator.clipboard.writeText(link).then(() => {
-        this.$q.notify({ type: 'positive', message: 'Link copiado al portapapeles' });
+        notifySuccess('Link copiado al portapapeles');
       });
     },
     isFavoriteArtist(id) {
@@ -701,10 +674,7 @@ export default {
         this.syncFavoriteArtistIds();
       } catch (err) {
         if (err.response && err.response.data && err.response.data.message) {
-            this.$q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+            notifyError(err.response.data.message);
         }
       }
     },

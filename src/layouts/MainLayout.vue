@@ -330,6 +330,7 @@ import { mapGetters, mapActions } from "vuex";
 import SearchBar from "src/components/SearchBar/SearchBar.vue";
 import ProfilePhoto from "src/components/ProfilePhoto.vue";
 import iconCart from "src/components/ShoppingCart/iconCart.vue";
+import { notifyError, notifyInfo } from "src/utils/notify";
 
 export default {
   name: "GooglePhotosLayout",
@@ -368,10 +369,7 @@ export default {
         await this.getArtists();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -383,20 +381,10 @@ async fetchShoppingCartCount() {
   } catch (err) {
     const message = err?.response?.data?.message || "No se pudo cargar el carrito.";
     if (message === 'Unauthenticated.' || err?.response?.status === 401) {
-      this.$q.notify({
-        color: "primary",      
-        textColor: "white",    
-        icon: "sentiment_satisfied_alt", 
-        message: '¡Hasta luego!',
-        timeout: 2000,         
-        position: "bottom"        
-      });
+      notifyInfo('¡Hasta luego!', { color: "primary", textColor: "white", icon: "sentiment_satisfied_alt", timeout: 2000 });
       return; 
     }
-    this.$q.notify({
-      type: "negative",
-      message,
-    });
+    notifyError(message);
   }
 },
     darkMode(val) {
