@@ -238,6 +238,7 @@
               icon="report_problem"
               label="Reportar Incidente"
               class="full-width q-mt-sm"
+              v-if="canReportIncident(selectedPurchase)"
               :disable="!isEventPast(selectedPurchase)"
               @click="goToReport(selectedPurchase)"
             >
@@ -581,6 +582,28 @@ export default {
         return today > eventDate;
       }
       return new Date() > new Date(purchase.event_date);
+    },
+    canReportIncident(purchase) {
+      if (!purchase?.event_date) return false;
+
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const datePart = purchase.event_date.split('T')[0];
+      const parts = datePart.split('-');
+
+      if (parts.length === 3) {
+        const eventDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+        const limitDate = new Date(eventDate);
+        limitDate.setDate(limitDate.getDate() + 3);
+
+        return today > eventDate && today <= limitDate;
+      }
+
+      const eventDate = new Date(purchase.event_date);
+      const limitDate = new Date(eventDate);
+      limitDate.setDate(limitDate.getDate() + 3);
+
+      return new Date() > eventDate && new Date() <= limitDate;
     },
     async openRatingModal(purchase) {
       this.transactionToRate = purchase;
