@@ -13,6 +13,16 @@
         </template>
       </q-banner>
     </div>
+    
+    <div v-if="loadingImages" class="relative-position q-mt-md" style="height: 400px;">
+      <div
+        class="absolute-full column flex-center items-center"
+        style="background: rgba(0, 0, 0, 0.45); color: #FF78A5;"
+      >
+        <q-spinner color="accent" size="2.5em" />
+        <span class="text-weight-bold q-mt-sm">Cargando...</span>
+      </div>
+    </div>
 
     <!-- Inicio de Formulario galeria de imagenes -->
     <section>
@@ -68,7 +78,15 @@
         @click="formGalleryEdit = true"
       />
     </h3>
-    <div>
+    <div class="relative-position">
+      <div
+        v-if="loadingImages"
+        class="absolute-full column flex-center items-center"
+        style="background: rgba(0, 0, 0, 0.45); color: #FF78A5; z-index: 15; pointer-events: none;"
+      >
+        <q-spinner color="accent" size="2.5em" />
+        <span class="text-weight-bold q-mt-sm">Cargando...</span>
+      </div>
       <q-carousel
         class="q-mt-md"
         :style="fullscreen ? 'height: 100vh' : 'height: 400px'"
@@ -126,7 +144,7 @@
 
               <div class="row q-col-gutter-sm q-mb-md" v-if="imageList.length > 0">
                 <div v-for="img in imageList" :key="img.id" class="col-4 relative-position">
-                  <q-img :src="img.original_url" style="height: 100px; border-radius: 8px;" fit="cover" />
+                  <q-img :src="img.original_url" style="height: 100px; border-radius: 8px;" fit="cover" spinner-color="accent" />
                   <q-btn
                     round dense color="negative" icon="delete" size="sm"
                     class="absolute-top-right q-ma-xs" style="z-index: 1;"
@@ -192,8 +210,17 @@
       </q-chip>
     </div>
     <div v-if="artistVideos && artistVideos.length > 0">
-      <div class="q-pa-md">
+      <div class="q-pa-md relative-position">
+        <div
+          v-if="loadingVideos"
+          class="absolute-full column flex-center items-center"
+          style="background: rgba(0, 0, 0, 0.45); color: #FF78A5; z-index: 15; pointer-events: none;"
+        >
+          <q-spinner color="accent" size="2.5em" />
+          <span class="text-weight-bold q-mt-sm">Cargando...</span>
+        </div>
         <q-carousel
+          :key="'video-carousel-' + carouselVideoKey"
           swipeable
           animated
           infinite
@@ -230,6 +257,7 @@
                   :src="`https://img.youtube.com/vi/${getVideoId(video.youtube_url)}/hqdefault.jpg`"
                   class="video-thumb"
                   fit="cover"
+                  spinner-color="accent"
                 >
                   <div class="video-overlay">
                     <q-btn
@@ -287,6 +315,7 @@
             <q-img
               :src="`https://img.youtube.com/vi/${getVideoId(video.youtube_url)}/hqdefault.jpg`"
               style="width: 120px; height: 68px; border-radius: 6px;"
+              spinner-color="accent"
             />
           </div>
         </div>
@@ -359,6 +388,9 @@ export default {
       fullscreenVideo: ref(false),
       playingVideoId: null,
       showGallery: null,
+      loadingImages: false,
+      loadingVideos: false,
+      carouselVideoKey: 0,
       ytPlayer: null,
       ytErrors: {},
     };
@@ -452,6 +484,8 @@ export default {
     ...mapActions("videoArtist", ["getArtistVideos", "createArtistVideo", "deleteArtistVideo"]),
 
     async uploadSubImages(files) {
+      this.loadingImages = true;
+      this.formGallery = false;
       try {
         this.sub_files_paths = files[0];
         let InstFormData = new FormData();
@@ -465,7 +499,7 @@ export default {
         if (this.$refs.uploaderCreate) {
           this.$refs.uploaderCreate.reset();
         }
-        await this.gettGalleryArtist();
+        this.showGallery = true;
       } catch (err) {
           if (this.$refs.uploaderCreate) {
             this.$refs.uploaderCreate.reset(); 
@@ -475,6 +509,8 @@ export default {
     },
 
     async updateSubImages(files) {
+      this.loadingImages = true;
+      this.formGalleryEdit = false;
       try {
         this.sub_files_paths = files[0];
         let InstFormData = new FormData();
@@ -484,11 +520,9 @@ export default {
         notifySuccess("Imagen subida correctamente");
         this.btnDelete = false;
         this.formGalleryShow = true;
-        this.formGalleryEdit = false;
         if (this.$refs.uploaderEdit) {
           this.$refs.uploaderEdit.reset();
         }
-        await this.gettGalleryArtist();
       } catch (err) {
         if (this.$refs.uploaderEdit) {
           this.$refs.uploaderEdit.reset();
@@ -497,6 +531,8 @@ export default {
         notifyError("Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.");
         this.formGalleryEdit = false;
         await this.gettGalleryArtist();
+      } finally {
+        this.loadingImages = false;
       }
     },
 
@@ -508,6 +544,33 @@ export default {
         notifyError(err.message || "Error al obtener la galería");
         this.showGallery = false;
       }
+    },
+
+    loadImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+        img.src = url;
+      });
+    },
+
+    async waitForContentToLoad() {
+      const urls = [];
+      for (const img of this.imageList) {
+        if (img.original_url) urls.push(img.original_url);
+      }
+      if (this.artistVideos && this.artistVideos.length > 0) {
+        for (const v of this.artistVideos) {
+          const vid = this.getVideoId(v.youtube_url);
+          if (vid) urls.push(`https://img.youtube.com/vi/${vid}/hqdefault.jpg`);
+        }
+      }
+      if (urls.length > 0) {
+        await Promise.all(urls.map((url) => this.loadImage(url)));
+      }
+      await this.$nextTick();
+      await this.$nextTick();
     },
 
     validateAddedFiles(files, uploaderRef) {
@@ -541,17 +604,20 @@ export default {
 
     confirmDeleteImage(id) {
       this.$q.dialog({
-        title: "Confirmar eliminación",
-        message: "¿Estás seguro de que quieres eliminar esta imagen?",
+        title: "Confirmar",
+        message: "¿Eliminar esta imagen?",
         cancel: true,
         persistent: true,
+        ok: { label: "Sí, eliminar imagen", color: "negative" },
       }).onOk(async () => {
+        this.loadingImages = true;
+        this.formGalleryEdit = false;
         try {
           await this.deleteGalleryArtist({ media_id: id });
           notifySuccess("Imagen eliminada");
           await this.gettGalleryArtist();
+          await this.waitForContentToLoad();
           if (this.imageList.length === 0) {
-            this.formGalleryEdit = false;
             this.showGallery = false;
           }
         } catch (err) {
@@ -591,6 +657,8 @@ export default {
     async submitVideo() {
       const validUrls = this.newVideoUrls.filter(url => url.trim() !== '');
       if (validUrls.length === 0) return;
+      this.loadingVideos = true;
+      this.formVideo = false;
       try {
         await this.createArtistVideo({ youtube_urls: validUrls });
         await this.getArtistVideos();
@@ -607,10 +675,13 @@ export default {
         message: "¿Eliminar este video?",
         cancel: true,
         persistent: true,
+        ok: { label: "Sí, eliminar video", color: "negative" },
       }).onOk(async () => {
+        this.loadingVideos = true;
         try {
           await this.deleteArtistVideo(id);
           await this.getArtistVideos();
+          this.carouselVideoKey++;
           if (this.slideVideo > this.artistVideos.length) {
             this.slideVideo = this.artistVideos.length;
           }
@@ -768,5 +839,16 @@ export default {
   .video-card {
     max-width: 100%;
   }
+}
+
+.q-uploader :deep(.q-uploader__spinner),
+.q-uploader :deep(.q-uploader__file-status) {
+  display: none !important;
+}
+</style>
+<style>
+.q-uploader .q-uploader__spinner,
+.q-uploader .q-uploader__file-status {
+  display: none !important;
 }
 </style>

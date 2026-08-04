@@ -824,7 +824,8 @@
   </div>
   <center>
     <q-inner-loading :showing="visible" class="text-center">
-      <q-spinner-ball  size="70px"  />
+      <q-spinner size="50px" color="accent" />
+      <div class="q-mt-sm text-weight-bold" style="color: #FF78A5;">Cargando</div>
     </q-inner-loading>
   </center>
 </template>
