@@ -62,8 +62,14 @@
     </div>
     <artist-stats />
   </div>
-
-  <div v-if="getMe.role[0] == 'administrador'" class="q-pa-md">
+  <div v-if="getMe.role[0] == 'administrador'" class="q-px-md q-pb-lg">
+    <q-separator class="q-my-lg" />
+    <div class="q-mb-md">
+      <div class="text-h4 text-weight-bold">Configuración OpenPay</div>
+      <div class="text-caption text-grey">
+        Administra tus credenciales de conexión y modo Sandbox de la pasarela de pago
+      </div>
+    </div>
     <q-btn
       unelevated
       color="primary"
