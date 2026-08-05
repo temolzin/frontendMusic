@@ -21,3 +21,7 @@ export function getCurrentTicket(state) {
 export function getOpenTicketsCount(state) {
     return state.myTickets.filter((ticket) => ticket.status === 'open').length;
 }
+
+export function getOpenAdminTicketsCount(state) {
+    return state.openAdminTicketsCount;
+}

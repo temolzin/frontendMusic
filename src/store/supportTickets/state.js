@@ -5,5 +5,6 @@ export default function () {
         customerTickets: [],
         adminTickets: [],
         currentTicket: null,
+        openAdminTicketsCount: 0,
     };
 }

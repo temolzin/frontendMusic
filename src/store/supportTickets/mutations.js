@@ -21,3 +21,7 @@ export const setCurrentTicket = (state, ticket) => {
 export const addMyTicket = (state, ticket) => {
     state.myTickets.unshift(ticket);
 };
+
+export const setOpenAdminTicketsCount = (state, count) => {
+    state.openAdminTicketsCount = count;
+};
