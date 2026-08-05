@@ -75,3 +75,10 @@ export const addTicketComment = async (context, { ticketId, message, isAdmin }) 
     const response = await api.post(url, { message });
     return response.data.data;
 };
+
+export const fetchOpenAdminTicketsCount = async ({ commit }) => {
+    const response = await api.get("/api/admin/support-tickets", {
+        params: { status: "open", per_page: 1 },
+    });
+    commit("setOpenAdminTicketsCount", response.data.data.total ?? 0);
+};

@@ -883,7 +883,8 @@ export default {
     },
     canCancel(purchase) {
       if (!purchase) return false;
-      if (purchase.event_status === 'completed' || purchase.event_status === 'cancelled') return false;
+      if (['completed', 'cancelled', 'rejected', 'expired'].includes(purchase.event_status)) return false;
+      if (purchase.approval_status === 'rejected') return false;
       if (!purchase.event_date) return false;
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

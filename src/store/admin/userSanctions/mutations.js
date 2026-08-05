@@ -4,3 +4,6 @@ export const setUserSanctions = (state, userSanctions) => {
 export const setUserTickets = (state, tickets) => {
   state.userTickets = tickets;
 };
+export const setRestrictedUsersCount = (state, count) => {
+  state.restrictedUsersCount = count;
+};

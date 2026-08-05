@@ -6,6 +6,17 @@ export const getUserSanctions = async ({ commit }) => {
   });
 };
 
+export const fetchRestrictedUsersCount = async ({ commit }) => {
+  try {
+    const response = await api.get("/api/admin/user-sanctions", {
+      params: { account_status: "restricted", per_page: 1 },
+    });
+    commit("setRestrictedUsersCount", response.data.total ?? 0);
+  } catch (error) {
+    console.error("Error al obtener el conteo de usuarios sancionados", error);
+  }
+};
+
 export const applySanction = async ({ dispatch }, payload) => {
   await api.post("/api/admin/user-sanctions", payload);
   dispatch("getUserSanctions");

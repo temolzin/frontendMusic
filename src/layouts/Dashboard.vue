@@ -145,7 +145,19 @@
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <q-icon name="report_problem" />
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="report_problem" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="openAdminTicketsCount > 0" color="red" floating transparent>
+                    {{ openAdminTicketsCount }}
+                  </q-badge>
+                </transition>
+              </div>
             </q-item-section>
 
             <q-item-section> Tickets de Soporte </q-item-section>
@@ -159,7 +171,19 @@
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <q-icon name="payments" />
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="payments" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="pendingPayoutsCount > 0" color="red" floating transparent>
+                    {{ pendingPayoutsCount }}
+                  </q-badge>
+                </transition>
+              </div>
             </q-item-section>
 
             <q-item-section> Liquidaciones </q-item-section>
@@ -185,7 +209,19 @@
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <q-icon name="gavel" />
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="gavel" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="restrictedUsersCount > 0" color="red" floating transparent>
+                    {{ restrictedUsersCount }}
+                  </q-badge>
+                </transition>
+              </div>
             </q-item-section>
             <q-item-section> Sanciones </q-item-section>
           </q-item>
@@ -223,16 +259,16 @@
             header-class="text-white"
             expand-icon-class="text-white"
           >
-            <q-item
-              clickable
-              v-ripple
-              to="/admin/webhook-verification"
-              active-class="text-accent text-weight-bold"
+          <q-item
+            clickable
+            v-ripple
+            to="/admin/webhook-verification"
+            active-class="text-accent text-weight-bold"
               class="q-pl-xl"
-            >
-              <q-item-section avatar>
+          >
+            <q-item-section avatar>
                 <q-icon name="verified" size="sm" />
-              </q-item-section>
+            </q-item-section>
               <q-item-section> Webhook </q-item-section>
             </q-item>
             <q-item
@@ -246,7 +282,7 @@
                 <q-icon name="key" size="sm" />
               </q-item-section>
               <q-item-section> Llaves </q-item-section>
-            </q-item>
+          </q-item>
           </q-expansion-item>
 
           <q-item
@@ -547,6 +583,9 @@ export default {
     ...mapGetters("artistList", ["stateArtistList"]),
     ...mapGetters("approvals", { pendingApprovalsCount: "getPendingApprovalsCount" }),
     ...mapGetters("artistApprovals", { pendingArtistApprovalsCount: "getPendingRequestsCount" }),
+    ...mapGetters("supportTickets", { openAdminTicketsCount: "getOpenAdminTicketsCount" }),
+    ...mapGetters("payouts", { pendingPayoutsCount: "getPendingPayoutsCount" }),
+    ...mapGetters("userSanctions", { restrictedUsersCount: "getRestrictedUsersCount" }),
     mode: function () {
       return this.$q.dark.isActive;
     },
@@ -574,6 +613,11 @@ export default {
     }
     if (this.getMe?.role?.[0] === 'administrador' && this.$can('view-users')) {
       this.fetchArtistApprovalCount();
+      this.fetchPendingPayoutsCountSafe();
+      this.fetchRestrictedUsersCountSafe();
+    }
+    if (this.getMe?.role?.[0] === 'administrador') {
+      this.fetchOpenAdminTicketsCountSafe();
     }
   },
   methods: {
@@ -581,6 +625,9 @@ export default {
     ...mapActions("shoppingCard", ["getCountListShoppingCard"]),
     ...mapActions("approvals", ["fetchPendingApprovals"]),
     ...mapActions("artistApprovals", ["fetchPendingRequests"]),
+    ...mapActions("supportTickets", ["fetchOpenAdminTicketsCount"]),
+    ...mapActions("payouts", ["fetchPendingPayouts"]),
+    ...mapActions("userSanctions", ["fetchRestrictedUsersCount"]),
     async getArtistss() {
       try {
         await this.getArtists();
@@ -614,6 +661,24 @@ export default {
     async fetchArtistApprovalCount() {
       try {
         await this.fetchPendingRequests();
+      } catch {
+      }
+    },
+    async fetchOpenAdminTicketsCountSafe() {
+      try {
+        await this.fetchOpenAdminTicketsCount();
+      } catch {
+      }
+    },
+    async fetchPendingPayoutsCountSafe() {
+      try {
+        await this.fetchPendingPayouts();
+      } catch {
+      }
+    },
+    async fetchRestrictedUsersCountSafe() {
+      try {
+        await this.fetchRestrictedUsersCount();
       } catch {
       }
     },
