@@ -16,15 +16,13 @@
             <q-icon name="info" color="blue" size="sm" />
           </template>
           <div class="text-body2">
-            <strong>Nota sobre comisiones OpenPay y establecimientos:</strong>
-            <ul>
+            <strong>Nota sobre comisiones OpenPay y plataforma:</strong>
+            <ul class="q-mb-none q-pl-md">
               <li class="q-mb-xs">
-                Los pagos realizados con tarjeta mediante <strong>OpenPay</strong> incluyen el desglose de su comisión transaccional digital.
+                Las comisiones transaccionales de <strong>OpenPay</strong> (pagos digitales o tiendas de autoservicio) son <strong>absorbidas por Vibeer</strong> y deducidas de nuestra comisión de plataforma.
               </li>
-            </ul>
-            <ul>
               <li>
-                Los pagos en efectivo (como <strong>tiendas de autoservicio tipo Oxxo</strong>) también incluyen la comisión de OpenPay descontada de la liquidación del artista.
+                El artista recibe íntegro su pago correspondiente deduciendo únicamente la comisión estándar del servicio.
               </li>
             </ul>
           </div>
@@ -144,22 +142,12 @@
                         <span class="text-weight-medium">${{ formatCurrency(props.row.amount) }} MXN</span>
                       </div>
                       <div class="row justify-between q-py-xs text-negative">
-                        <span>Comisión OpenPay:</span>
-                        <span class="row items-center">
-                          <q-checkbox
-                            v-model="applyFeeMap[props.row.sale_id]"
-                            dense
-                            size="sm"
-                            color="negative"
-                            class="q-mr-xs"
-                            @update:model-value="onFeeToggle(props.row)"
-                          />
-                          - ${{ formatCurrency(computedOpenpayFee(props.row)) }} MXN
-                        </span>
-                      </div>
-                      <div class="row justify-between q-py-xs text-negative">
                         <span>Comisión Plataforma (10%):</span>
                         <span>- ${{ formatCurrency(props.row.platform_fee) }} MXN</span>
+                      </div>
+                      <div class="row justify-between q-py-xs text-grey-7 text-caption">
+                        <span>Comisión OpenPay (Absorbida por Vibeer):</span>
+                        <span>- ${{ formatCurrency(props.row.openpay_fee) }} MXN</span>
                       </div>
                       <q-separator class="q-my-xs" />
                       <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold text-positive">
@@ -531,7 +519,7 @@ export default {
     },
 
     computedNetPayout(row) {
-      return parseFloat(row.amount) - this.computedOpenpayFee(row) - parseFloat(row.platform_fee);
+      return parseFloat(row.amount) - parseFloat(row.platform_fee);
     },
 
     totalPenalties(row) {
