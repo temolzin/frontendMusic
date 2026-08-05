@@ -27,7 +27,7 @@
               <q-item v-bind="scope.itemProps">
                 <q-item-section avatar>
                   <q-avatar size="28px">
-                    <q-img :src="scope.opt.image || 'https://cdn.quasar.dev/img/avatar.png'" />
+                    <q-img :src="scope.opt.image || 'icons/logovibeer-16x16.png'" />
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -518,7 +518,7 @@ export default {
 
     selectedArtistImage() {
       const found = this.artistsList.find((a) => a.id === this.selectedArtistId);
-      return found?.image || "https://cdn.quasar.dev/img/avatar.png";
+      return found?.image || "icons/logovibeer-16x16.png";
     },
   },
 

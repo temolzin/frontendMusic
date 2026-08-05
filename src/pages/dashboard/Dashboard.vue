@@ -63,16 +63,6 @@
     <artist-stats />
   </div>
 
-  <div v-if="getMe.role[0] == 'administrador'" class="q-pa-md">
-    <q-btn
-      unelevated
-      color="primary"
-      icon="payment"
-      label="Configurar OpenPay"
-      @click="openpayModal = true"
-    />
-  </div>
-
   <q-dialog v-model="openpayModal" persistent>
     <q-card style="width: 500px; max-width: 90vw;">
       <q-card-section class="row items-center q-pb-none">
