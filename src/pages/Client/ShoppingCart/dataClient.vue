@@ -158,7 +158,7 @@
                     </q-input>
                   </q-item>
                 </div>
-                <div class="col-12 col-sm-6">
+                <div class="col-12 col-sm-6" v-if="shoppingCardDetail.length <= 1">
                   <q-item>
                     <q-input
                       dense
@@ -186,13 +186,65 @@
                     </q-input>
                   </q-item>
                 </div>
-                <div class="col-12 col-sm-6">
+                <div class="col-12">
                   <q-item>
                     <q-checkbox dense outlined class="full-width"
                       label="Deseas guardar los datos para la siguiente compra"
                       v-model="address_detail.checkbox" />
                   </q-item>
                 </div>
+                <template v-if="shoppingCardDetail.length > 1">
+                  <div class="col-12 q-mt-lg q-mb-sm">
+                    <div class="text-h6 text-primary text-weight-bold">
+                      Hora de presentación
+                    </div>
+                    <div class="text-caption text-grey-7 q-mt-xs">
+                      Cada artista tiene su propia hora de inicio, así pueden presentarse uno tras otro.
+                    </div>
+                  </div>
+                  <div v-for="(product, index) in shoppingCardDetail" :key="'hour-' + index" class="col-12 col-sm-6 col-md-4">
+                    <q-card flat bordered class="q-pa-md" style="border-radius: 12px; height: 100%">
+                      <div class="row items-center q-gutter-sm">
+                        <q-avatar size="48px">
+                          <img :src="castProduct(product).artist?.image" />
+                        </q-avatar>
+                        <div class="col">
+                          <div class="text-subtitle2 text-weight-bold ellipsis">
+                            {{ castProduct(product).artist?.name || 'Artista ' + (index + 1) }}
+                          </div>
+                          <div class="text-caption text-grey-7">
+                            {{ castProduct(product).hours }} hora(s)
+                          </div>
+                        </div>
+                      </div>
+                      <q-input
+                        dense
+                        filled
+                        class="q-mt-md full-width"
+                        v-model="artistHours[castProduct(product).artist_id]"
+                        :label="`Hora de inicio *`"
+                        readonly
+                        :rules="[
+                          (val) => !!val || 'Selecciona una hora'
+                        ]"
+                        @update:model-value="onArtistHourChange(castProduct(product).artist_id)"
+                        required
+                      >
+                        <template v-slot:append>
+                          <q-icon name="schedule" class="cursor-pointer">
+                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                              <q-time v-model="artistHours[castProduct(product).artist_id]" mask="HH:mm" format24h :options="timeOptionForArtist(castProduct(product).artist_id)">
+                                <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                                  <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                                </div>
+                              </q-time>
+                            </q-popup-proxy>
+                          </q-icon>
+                        </template>
+                      </q-input>
+                    </q-card>
+                  </div>
+                </template>
               </div>
 
               <q-stepper-navigation>
@@ -832,7 +884,28 @@ export default defineComponent({
       userPosition: ref(null),
       googleMapsApiKey: ref(null),
       extraKmDataList: ref({}),
+      artistHours: ref({}),
     };
+  },
+  watch: {
+    "formClient.event_hour"(newHour) {
+      if (!newHour || !this.shoppingCardDetail?.length) return;
+      const map = { ...this.artistHours };
+      this.shoppingCardDetail.forEach((product) => {
+        const id = this.castProduct(product).artist_id;
+        if (!map[id]) map[id] = newHour;
+      });
+      this.artistHours = map;
+    },
+    shoppingCardDetail(details) {
+      if (!this.formClient.event_hour || !details?.length) return;
+      const map = { ...this.artistHours };
+      details.forEach((product) => {
+        const id = this.castProduct(product).artist_id;
+        if (!map[id]) map[id] = this.formClient.event_hour;
+      });
+      this.artistHours = map;
+    },
   },
   methods: {
     translateOpenPayClientError(rawMessage) {
@@ -932,6 +1005,60 @@ export default defineComponent({
       }
 
       return true;
+    },
+
+    timeOptionForArtist(artistId) {
+      return (hr, min) => {
+        if (!this.timeOption(hr, min)) return false;
+
+        const occupiedMinutes = this.shoppingCardDetail
+          .filter((product) => this.castProduct(product).artist_id !== artistId)
+          .map((product) => {
+            const start = this.artistHours[this.castProduct(product).artist_id];
+            if (!start || !start.includes(':')) return null;
+            const [h, m] = start.split(':').map(Number);
+            const duration = parseInt(this.castProduct(product).hours, 10) || 0;
+            return { start: h * 60 + m, end: h * 60 + m + duration * 60 };
+          })
+          .filter((slot) => slot !== null);
+
+        const candidate = (hr * 60 + (min || 0));
+        return !occupiedMinutes.some((slot) => candidate >= slot.start && candidate < slot.end);
+      };
+    },
+
+    onArtistHourChange(changedArtistId) {
+      const changedStart = this.artistHours[changedArtistId];
+      if (!changedStart || !changedStart.includes(':')) return;
+
+      const [h, m] = changedStart.split(':').map(Number);
+      const duration = this.shoppingCardDetail.find(
+        (product) => this.castProduct(product).artist_id === changedArtistId
+      );
+      const hours = parseInt(duration?.hours, 10) || 0;
+      const blockStart = h * 60 + m;
+      const blockEnd = blockStart + hours * 60;
+
+      const map = { ...this.artistHours };
+      let changed = false;
+
+      this.shoppingCardDetail.forEach((product) => {
+        const id = this.castProduct(product).artist_id;
+        if (id === changedArtistId) return;
+        const other = map[id];
+        if (!other || !other.includes(':')) return;
+        const [oh, om] = other.split(':').map(Number);
+        const otherMinutes = oh * 60 + om;
+        if (otherMinutes >= blockStart && otherMinutes < blockEnd) {
+          map[id] = '';
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        this.artistHours = map;
+        notifyWarning('Esa hora choca con otro artista. Reasigna la hora del artista afectado.');
+      }
     },
 
     async loadOccupiedDates(artistId) {
@@ -1375,10 +1502,11 @@ export default defineComponent({
 
               const token = response.data.id;
               const artistList = this.isQuickBuy 
-                ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours }]
+                ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours, event_hour: this.formClient.event_hour }]
                 : this.shoppingCardDetail.map((element) => ({ 
                     artist_id: element.artist_id, 
-                    hours: element.hours 
+                    hours: element.hours,
+                    event_hour: this.artistHours[element.artist_id] || this.formClient.event_hour
                   }));
 
               const paymentData = {
@@ -1502,8 +1630,8 @@ export default defineComponent({
 
       try {
         const artistList = this.isQuickBuy
-          ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours }]
-          : this.shoppingCardDetail.map((e) => ({ artist_id: e.artist_id, hours: e.hours }));
+          ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours, event_hour: this.formClient.event_hour }]
+          : this.shoppingCardDetail.map((e) => ({ artist_id: e.artist_id, hours: e.hours, event_hour: this.artistHours[e.artist_id] || this.formClient.event_hour }));
 
         const payload = {
           store: this.model,
