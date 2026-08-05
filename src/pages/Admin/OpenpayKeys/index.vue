@@ -1,58 +1,70 @@
 <template>
   <q-page class="q-pa-lg">
-    <div class="text-h5 text-weight-bold q-mb-lg">Configuración OpenPay</div>
-
-    <q-card class="shadow-4" style="max-width: 600px;">
-      <q-card-section class="q-pt-sm q-pb-sm">
-        <div class="text-subtitle2 text-grey q-mb-sm">Credenciales de la pasarela de pago</div>
-
-        <q-input
-          v-model="form.openpay_id"
-          label="ID de OpenPay"
-          outlined
-          class="q-mb-sm"
-        />
-
-        <q-input
-          v-model="form.openpay_secret"
-          label="Llave Secreta"
-          outlined
-          :type="showSecret ? 'text' : 'password'"
-          class="q-mb-sm"
-        >
-          <template #append>
-            <q-icon
-              :name="showSecret ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="showSecret = !showSecret"
+    <div class="text-h5 text-weight-bold q-mb-md">Configuración OpenPay</div>
+    <q-card class="shadow-4">
+      <q-card-section class="q-pa-md">
+        <div class="text-body2 text-grey q-mb-lg">
+          Configura tus credenciales de la pasarela de pago para procesar las transacciones.
+        </div>
+        <div class="row q-col-gutter-lg">
+          <div class="col-12 col-md-6">
+            <div class="text-subtitle2 text-weight-medium q-mb-xs">ID de OpenPay</div>
+            <q-input
+              v-model="form.openpay_id"
+              placeholder="Ingresa tu ID de comercio"
+              outlined
+              dense
             />
-          </template>
-        </q-input>
-
-        <q-input
-          v-model="form.openpay_public_key"
-          label="Llave Pública"
-          outlined
-          class="q-mb-sm"
-        />
-
-        <q-toggle
-          v-model="form.openpay_sandbox_mode"
-          label="Modo Sandbox (pruebas)"
-          color="primary"
-          class="q-mt-sm"
-        />
-        <div class="text-caption text-grey q-ml-xs">
-          <template v-if="form.openpay_sandbox_mode">Activado — las transacciones serán simuladas</template>
-          <template v-else>Desactivado — las transacciones serán reales (producción)</template>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="text-subtitle2 text-weight-medium q-mb-xs">Llave Secreta</div>
+            <q-input
+              v-model="form.openpay_secret"
+              placeholder="Ingresa tu llave secreta"
+              outlined
+              dense
+              :type="showSecret ? 'text' : 'password'"
+            >
+              <template #append>
+                <q-icon
+                  :name="showSecret ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="showSecret = !showSecret"
+                />
+              </template>
+            </q-input>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="text-subtitle2 text-weight-medium q-mb-xs">Llave Pública</div>
+            <q-input
+              v-model="form.openpay_public_key"
+              placeholder="Ingresa tu llave pública"
+              outlined
+              dense
+            />
+          </div>
+          <div class="col-12 col-md-6 flex items-center">
+            <div>
+              <q-toggle
+                v-model="form.openpay_sandbox_mode"
+                label="Modo Sandbox (pruebas)"
+                color="primary"
+                class="text-subtitle2 text-weight-medium"
+              />
+              <div class="text-caption text-grey q-ml-md q-mt-xs">
+                <template v-if="form.openpay_sandbox_mode">Activado — las transacciones serán simuladas</template>
+                <template v-else>Desactivado — las transacciones serán reales (producción)</template>
+              </div>
+            </div>
+          </div>
         </div>
       </q-card-section>
-
-      <q-card-actions align="right" class="q-pa-sm">
+      <q-card-actions align="right" class="q-pa-md bg-grey-1">
         <q-btn
           unelevated
-          label="Guardar"
+          label="Guardar Credenciales"
           color="primary"
+          icon="save"
           :loading="loading"
           @click="save"
         />

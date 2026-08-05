@@ -216,19 +216,38 @@
             <q-item-section> Solicitudes de Artistas </q-item-section>
           </q-item>
 
-          <q-item
-            clickable
-            v-ripple
-            to="/admin/webhook-verification"
+          <q-expansion-item
             v-if="getMe?.role?.[0] == 'administrador'"
-            active-class="text-accent text-weight-bold"
+            icon="payment"
+            label="Configuración OpenPay"
+            header-class="text-white"
+            expand-icon-class="text-white"
           >
-            <q-item-section avatar>
-              <q-icon name="verified" />
-            </q-item-section>
-
-            <q-item-section> Verificación Webhook </q-item-section>
-          </q-item>
+            <q-item
+              clickable
+              v-ripple
+              to="/admin/webhook-verification"
+              active-class="text-accent text-weight-bold"
+              class="q-pl-xl"
+            >
+              <q-item-section avatar>
+                <q-icon name="verified" size="sm" />
+              </q-item-section>
+              <q-item-section> Webhook </q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              v-ripple
+              to="/admin/openpay-keys"
+              active-class="text-accent text-weight-bold"
+              class="q-pl-xl"
+            >
+              <q-item-section avatar>
+                <q-icon name="key" size="sm" />
+              </q-item-section>
+              <q-item-section> Llaves </q-item-section>
+            </q-item>
+          </q-expansion-item>
 
           <q-item
             clickable

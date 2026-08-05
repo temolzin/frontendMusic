@@ -270,6 +270,17 @@ const routes = [
           permissions: ['view-users'],
         },
       },
+      {
+        name: 'admin.openpay-keys',
+        path: '/admin/openpay-keys',
+        component: import('pages/Admin/OpenpayKeys/index.vue'),
+        meta: {
+          title: 'Llaves OpenPay',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'],
+        },
+      },
       // Fin de rutas del admin
 
       // Rutas del artista

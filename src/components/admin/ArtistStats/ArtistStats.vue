@@ -27,7 +27,7 @@
               <q-item v-bind="scope.itemProps">
                 <q-item-section avatar>
                   <q-avatar size="28px">
-                    <q-img :src="scope.opt.image || 'https://api.iconify.design/fluent-emoji-flat:studio-microphone.svg'" />
+                    <q-img :src="scope.opt.image || 'icons/logovibeer-16x16.png'" />
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -517,7 +517,7 @@ export default {
 
     selectedArtistImage() {
       const found = this.artistsList.find((a) => a.id === this.selectedArtistId);
-      return found?.image || "https://api.iconify.design/fluent-emoji-flat:studio-microphone.svg";
+      return found?.image || "icons/logovibeer-16x16.png";
     },
   },
 
