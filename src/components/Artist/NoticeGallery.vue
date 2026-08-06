@@ -96,7 +96,7 @@
         infinite
         v-model="slide"
         v-model:fullscreen="fullscreen"
-        :autoplay="autoplay"
+        :autoplay="imageList.length > 1 ? 8000 : false"
         arrows
         transition-prev="slide-right"
         transition-next="slide-left"
@@ -230,7 +230,7 @@
           transition-prev="slide-right"
           transition-next="slide-left"
           class="q-mt-md"
-          style="min-height: 400px; background: transparent;"
+          :style="fullscreenVideo ? 'height: 100vh' : 'height: 440px'"
         >
           <q-carousel-slide
             v-for="(video, index) in artistVideos"
@@ -493,6 +493,8 @@ export default {
         
         await this.createGalleryArtist(InstFormData);
         
+        await this.gettGalleryArtist();
+        await this.waitForContentToLoad();
         this.showGallery = true;
         notifySuccess("Imagen subida correctamente");
         this.sub_files_paths = null;
@@ -505,6 +507,8 @@ export default {
             this.$refs.uploaderCreate.reset(); 
           }
           notifyError("Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.");
+        } finally {
+          this.loadingImages = false;
         }
     },
 
@@ -516,6 +520,8 @@ export default {
         let InstFormData = new FormData();
         InstFormData.append("sub_files_paths", files[0]);
         await this.upDateGalleryArtist(InstFormData);
+        await this.gettGalleryArtist();
+        await this.waitForContentToLoad();
         this.showGallery = true;
         notifySuccess("Imagen subida correctamente");
         this.btnDelete = false;
@@ -622,6 +628,8 @@ export default {
           }
         } catch (err) {
           notifyError(err?.response?.data?.message || "Error al eliminar la imagen");
+        } finally {
+          this.loadingImages = false;
         }
       });
     },
@@ -662,10 +670,20 @@ export default {
       try {
         await this.createArtistVideo({ youtube_urls: validUrls });
         await this.getArtistVideos();
+        await this.waitForContentToLoad();
+        this.carouselVideoKey++;
+        if (this.slideVideo > this.artistVideos.length) {
+          this.slideVideo = this.artistVideos.length;
+        }
+        this.$nextTick(() => {
+          this.startCarouselTimer();
+        });
         notifySuccess("Video(s) agregado(s) correctamente");
         this.formVideo = false;
       } catch (err) {
         notifyError(err?.response?.data?.message || "Error al agregar el video");
+      } finally {
+        this.loadingVideos = false;
       }
     },
 
@@ -688,6 +706,8 @@ export default {
           notifySuccess("Video eliminado");
         } catch (err) {
           notifyError("Error al eliminar el video");
+        } finally {
+          this.loadingVideos = false;
         }
       });
     },
