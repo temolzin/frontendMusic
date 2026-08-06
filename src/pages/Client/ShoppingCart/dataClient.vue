@@ -808,7 +808,7 @@ import { ref } from "vue";
 import { api } from "boot/axios";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-import { notifySuccess, notifyError, notifyWarning, platformEvents } from "src/utils/notify";
+import { notifySuccess, notifyError, notifyWarning, notifyInfo, platformEvents } from "src/utils/notify";
 
 let $q;
 
@@ -1057,7 +1057,7 @@ export default defineComponent({
 
       if (changed) {
         this.artistHours = map;
-        notifyWarning('Esa hora choca con otro artista. Reasigna la hora del artista afectado.');
+        notifyInfo('La hora ajustada ya era usada por otro artista, así que se liberó para evitar el cruce de presentaciones.');
       }
     },
 
