@@ -59,7 +59,7 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-actions align="right" class="q-pa-md bg-grey-1">
+      <q-card-actions align="right" class="q-pa-md">
         <q-btn
           unelevated
           label="Guardar Credenciales"
