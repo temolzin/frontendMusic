@@ -618,7 +618,21 @@
                   </div>
                   <div class="row items-center">
                     <q-icon name="schedule" color="deep-orange" size="xs" class="q-mr-sm" />
-                    <span class="text-caption text-weight-medium">{{ formClient.event_hour }}</span>
+                    <span class="text-caption text-weight-medium">
+                      <template v-if="shoppingCardDetail.length <= 1">{{ formClient.event_hour }}</template>
+                      <template v-else>
+                        <div class="q-mt-xs">
+                          <div class="row q-col-gutter-x-md q-col-gutter-y-xs">
+                            <div v-for="(product, index) in shoppingCardDetail" :key="'rev-hour-' + index" class="col-6">
+                              <div class="column">
+                                <span class="text-caption ellipsis">{{ castProduct(product).artist?.name || 'Artista ' + (index + 1) }}</span>
+                                <span class="text-caption text-weight-bold">{{ artistHours[castProduct(product).artist_id] || '—' }}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                    </span>
                   </div>
                   <q-separator class="q-my-sm" />
                   <div class="row items-center q-mb-sm">
@@ -898,11 +912,11 @@ export default defineComponent({
       this.artistHours = map;
     },
     shoppingCardDetail(details) {
-      if (!this.formClient.event_hour || !details?.length) return;
+      if (!details?.length) return;
       const map = { ...this.artistHours };
       details.forEach((product) => {
         const id = this.castProduct(product).artist_id;
-        if (!map[id]) map[id] = this.formClient.event_hour;
+        if (map[id] === undefined) map[id] = this.formClient.event_hour || '';
       });
       this.artistHours = map;
     },
@@ -1004,12 +1018,26 @@ export default defineComponent({
         if (today.getHours() === hr && null !== min && today.getMinutes() > min) return false;
       }
 
+      if (this.shoppingCardDetail.length <= 1) {
+        const singleHourLimit = 24 * 60;
+        const singleDuration = parseInt(this.quickBuyData?.hours || this.shoppingCardDetail?.[0]?.hours, 10) || 1;
+        if (hr * 60 + (min || 0) + singleDuration * 60 > singleHourLimit) return false;
+      }
+
       return true;
     },
 
     timeOptionForArtist(artistId) {
       return (hr, min) => {
         if (!this.timeOption(hr, min)) return false;
+
+        const candidate = hr * 60 + (min || 0);
+        const limit = 24 * 60;
+        const own = this.shoppingCardDetail.find(
+          (product) => this.castProduct(product).artist_id === artistId
+        );
+        const ownDuration = parseInt(own?.hours, 10) || 1;
+        if (candidate + ownDuration * 60 > limit) return false;
 
         const occupiedMinutes = this.shoppingCardDetail
           .filter((product) => this.castProduct(product).artist_id !== artistId)
@@ -1022,7 +1050,6 @@ export default defineComponent({
           })
           .filter((slot) => slot !== null);
 
-        const candidate = (hr * 60 + (min || 0));
         return !occupiedMinutes.some((slot) => candidate >= slot.start && candidate < slot.end);
       };
     },
@@ -1511,7 +1538,7 @@ export default defineComponent({
 
               const paymentData = {
                 token: token,
-                amount: this.shoppingCartTotal * 100,
+                amount: Math.round(this.shoppingCartTotal * 100),
                 customer_name: this.formClient.first_name + " " + this.formClient.first_last,
                 customer_email: this.formClient.email,
                 customer_phone: this.formClient.phone,
@@ -1635,7 +1662,7 @@ export default defineComponent({
 
         const payload = {
           store: this.model,
-          amount: this.shoppingCartTotal * 100,
+          amount: Math.round(this.shoppingCartTotal * 100),
           order_details: {
             first_name: this.formClient.first_name,
             last_name: this.formClient.first_last,
