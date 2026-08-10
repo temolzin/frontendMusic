@@ -4,7 +4,32 @@
       <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
         <q-stepper v-model="step" header-nav ref="stepper" class="no-shadow" bordered animated>
           <q-step :name="1" title="Informacion del Pedido" icon="shopping_cart" :done="step > 1" :header-nav="step > 1">
-            <img class="openpay" src="https://assets.stickpng.com/images/62e3c66bd889babae63d750e.png" />
+            <q-banner
+              dense
+              rounded
+              :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-mb-md q-py-sm q-px-md']"
+            >
+              <template v-slot:avatar>
+                <q-icon name="info" color="blue" size="sm" />
+              </template>
+              <div class="text-body2">
+                <strong>Completa los datos de tu pedido:</strong>
+                <ul class="q-pl-md q-mt-xs q-mb-none">
+                  <li class="q-mb-xs">
+                    Llena tus <strong>datos personales</strong> (nombre, apellidos, correo y teléfono).
+                  </li>
+                  <li class="q-mb-xs">
+                    Indica el <strong>domicilio</strong> donde será el evento o usa el <strong>mapa</strong> para ubicarlo.
+                  </li>
+                  <li class="q-mb-xs">
+                    Selecciona la <strong>fecha</strong> y la <strong>hora</strong> del evento.
+                  </li>
+                  <li v-if="shoppingCardDetail.length > 1">
+                    Asigna la <strong>hora de presentación</strong> de cada artista para que se presenten uno tras otro.
+                  </li>
+                </ul>
+              </div>
+            </q-banner>
             <q-form @submit="nextStep" ref="formClient1">
               <div class="row">
                 <div class="col-12 col-sm-6">
@@ -255,6 +280,26 @@
           </q-step>
 
           <q-step :name="2" title="Opciones de Pago" icon="shopping_cart" :done="step > 2" :header-nav="step > 2">
+            <q-banner
+              dense
+              rounded
+              :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-mb-md q-py-sm q-px-md']"
+            >
+              <template v-slot:avatar>
+                <q-icon name="info" color="blue" size="sm" />
+              </template>
+              <div class="text-body2">
+                <strong>Elige cómo quieres pagar:</strong>
+                <ul class="q-pl-md q-mt-xs q-mb-none">
+                  <li class="q-mb-xs">
+                    <strong>Pagar con Tarjeta:</strong> selecciona una tarjeta guardada o agrega una nueva, verifica los datos y captura el <strong>CVV</strong>.
+                  </li>
+                  <li class="q-mb-xs">
+                    <strong>Pagar en Efectivo:</strong> elige un punto de pago; la <strong>referencia</strong> se generará después de que el artista acepte el evento.
+                  </li>
+                </ul>
+              </div>
+            </q-banner>
             <div class="q-mb-lg">
               <div class="text-h6 q-mb-md">Selecciona tu método de pago:</div>
               <div class="row q-col-gutter-md">
@@ -516,6 +561,29 @@
           </q-step>
 
           <q-step :name="3" title="Revise su orden" icon="shopping_cart" :header-nav="step > 3">
+            <q-banner
+              dense
+              rounded
+              :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-mb-md q-py-sm q-px-md']"
+            >
+              <template v-slot:avatar>
+                <q-icon name="info" color="blue" size="sm" />
+              </template>
+              <div class="text-body2">
+                <strong>Revisa tu orden antes de confirmar:</strong>
+                <ul class="q-pl-md q-mt-xs q-mb-none">
+                  <li class="q-mb-xs">
+                    Verifica que los <strong>artistas</strong>, las <strong>horas</strong> y el <strong>total</strong> sean correctos.
+                  </li>
+                  <li class="q-mb-xs">
+                    Confirma tus <strong>datos de contacto</strong> y el método de pago elegido.
+                  </li>
+                  <li class="q-mb-xs">
+                    Haz clic en <strong>Confirmar Orden</strong> para enviar la solicitud.
+                  </li>
+                </ul>
+              </div>
+            </q-banner>
             <q-banner
               dense
               rounded
@@ -2093,18 +2161,6 @@ export default defineComponent({
   -moz-transform-style: preserve-3d;
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
-}
-.openpay {
-  top: 0;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  height: 190px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  border-radius: 1px;
 }
 .card__front {
   padding: 18px;
