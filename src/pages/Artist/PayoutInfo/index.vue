@@ -117,6 +117,7 @@
                   v-if="!isEditing"
                   label="Editar Información" 
                   color="warning" 
+                  style="border-radius: 8px; font-weight: bold;"
                   icon="edit"
                   class="text-weight-bold jusitfy-end"
                   @click="startEditing"

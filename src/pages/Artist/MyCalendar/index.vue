@@ -172,6 +172,7 @@
                                   <q-btn
                                     v-if="canCancelEvent(event)"
                                     color="negative"
+                                    style="border-radius: 8px; font-weight: bold;"
                                     label="Cancelar evento"
                                     outline
                                     size="sm"

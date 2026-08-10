@@ -52,6 +52,7 @@
           unelevated
           rounded
           color="negative"
+          style="border-radius: 8px; font-weight: bold;"
           icon="report_problem"
           label="Enviar Reporte"
           class="full-width"
