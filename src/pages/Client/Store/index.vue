@@ -336,8 +336,62 @@ export default {
     },
     copyArtistLink(artistSlug, genreSlug) {
       const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
-      navigator.clipboard.writeText(link).then(() => {
-        notifySuccess('Link copiado al portapapeles');
+      const shareText = '¡Mira este artista en Vibeer!';
+
+      this.$q.bottomSheet({
+        title: 'Selecciona una opción para compartir',
+        actions: [
+          {
+            label: 'WhatsApp',
+            icon: 'fab fa-whatsapp',
+            id: 'whatsapp'
+          },
+          {
+            label: 'Facebook',
+            icon: 'fab fa-facebook',
+            id: 'facebook'
+          },
+          {
+            label: 'Messenger',
+            icon: 'fab fa-facebook-messenger',
+            id: 'messenger'
+          },
+          {
+            label: 'Copiar enlace',
+            icon: 'content_copy',
+            id: 'copy'
+          }
+        ]
+      }).onOk(action => {
+        const encodedUrl = encodeURIComponent(link);
+        const encodedText = encodeURIComponent(shareText);
+
+        switch (action.id) {
+          case 'whatsapp':
+            window.open(`https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`, '_blank');
+            break;
+
+          case 'facebook':
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank');
+            break;
+
+          case 'messenger':
+            // En web se usa la redirección dialog de Facebook Share/Send
+            window.open(`https://www.facebook.com/dialog/send?link=${encodedUrl}&redirect_uri=${encodedUrl}`, '_blank');
+            break;
+
+          case 'copy':
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(link).then(() => {
+                notifySuccess('Link copiado al portapapeles');
+              });
+            } else {
+              this.$q.copyToClipboard(link).then(() => {
+                notifySuccess('Link copiado al portapapeles');
+              });
+            }
+            break;
+        }
       });
     },
     isFavoriteArtist(id) {
