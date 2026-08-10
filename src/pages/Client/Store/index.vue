@@ -376,7 +376,6 @@ export default {
             break;
 
           case 'messenger':
-            // En web se usa la redirección dialog de Facebook Share/Send
             window.open(`https://www.facebook.com/dialog/send?link=${encodedUrl}&redirect_uri=${encodedUrl}`, '_blank');
             break;
 
