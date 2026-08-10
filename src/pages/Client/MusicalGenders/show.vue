@@ -87,7 +87,7 @@
                     :icon="isFavoriteArtist(artist.id) ? 'fas fa-solid fa-heart' : 'far fa-heart'"
                     @click="addFavouriteArtist(artist.id)"
                   />
-                  <q-btn flat round color="white" icon="share" @click="copyArtistLink()" />
+                  <q-btn flat round color="white" icon="share" @click="copyArtistLink(artist.slug, slugMG)" />
                 </div>
               </div>
             </div>

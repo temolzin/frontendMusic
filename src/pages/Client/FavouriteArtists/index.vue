@@ -90,7 +90,7 @@
                   icon="fas fa-solid fa-heart"
                   @click="destroy(props.row.artist.id)"
                 />
-                <q-btn flat round color="primary" icon="share" @click="copyArtistLink(props.row.artist.slug)" />
+                <q-btn flat round color="primary" icon="share" @click="copyArtistLink(props.row.artist.slug, 'search')" />
               </q-card-actions>
             </q-card>
           </div>
