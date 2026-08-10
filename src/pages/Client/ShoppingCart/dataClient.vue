@@ -248,7 +248,11 @@
               </div>
 
               <q-stepper-navigation>
-                <q-btn rounded type="submit" class="float-right q-mr-md q-mb-md" color="blue"
+                <q-btn 
+                  rounded type="submit" 
+                  class="float-right q-mr-md q-mb-md" 
+                  color="blue"
+                  style="border-radius: 8px; font-weight: bold;"
                   label="Siguiente" />
               </q-stepper-navigation>
             </q-form>
@@ -265,7 +269,7 @@
                     rounded 
                     color="primary" 
                     class="full-width"
-                    style="padding: 16px; font-weight: bold; border: 2px solid;"
+                    style="border-radius: 8px; font-weight: bold;"
                     :style="paymentMethod === 'card' ? 'border-color: #1976d2; background-color: #e3f2fd;' : 'border-color: #ccc; background-color: transparent;'"
                     label="💳 Pagar con Tarjeta" 
                     @click="paymentMethod = 'card'; model = null" 
@@ -279,7 +283,7 @@
                     rounded 
                     color="primary" 
                     class="full-width"
-                    style="padding: 16px; font-weight: bold; border: 2px solid;"
+                    style="border-radius: 8px; font-weight: bold;"
                     :style="paymentMethod === 'cash' ? 'border-color: #1976d2; background-color: #e3f2fd;' : 'border-color: #ccc; background-color: transparent;'"
                     :label="shoppingCartTotal + totalExtraKmCost > 29999 ? '💰 Excede límite de efectivo ($29,999)' : '💰 Pagar en Efectivo'" 
                     @click="paymentMethod = 'cash'; selectedCard = {id: '', name: '', number_card: '', expiration_date: ''}; cvv = ''" 
@@ -290,8 +294,8 @@
             <q-separator></q-separator>
             <div class="q-mt-lg" v-if="paymentMethod === 'card'">
               <div class="row justify-center q-gutter-lg q-mb-md">
-                <q-btn unelevated rounded color="primary" :label="selectedCard.id ? 'Cambiar Tarjeta' : 'Seleccionar Tarjeta'" @click="basic = true" />
-                <q-btn outline rounded style="color: goldenrod;" label="Agregar nueva tarjeta" icon-right="fas fa-plus" @click="formCreate = true" />
+                <q-btn unelevated color="primary" style="border-radius: 8px; font-weight: bold;" :label="selectedCard.id ? 'Cambiar Tarjeta' : 'Seleccionar Tarjeta'" @click="basic = true" />
+                <q-btn unelevated color="primary" style="border-radius: 8px; font-weight: bold;" label="Agregar nueva tarjeta" icon="fas fa-plus" @click="formCreate = true" />
               </div>
             <q-dialog v-model="basic" transition-show="rotate" transition-hide="rotate">
               <q-card>
@@ -509,9 +513,9 @@
             </div>
 
             <q-stepper-navigation>
-              <q-btn rounded @click="validateStep2" class="float-right q-mr-md q-mb-md" color="blue"
+              <q-btn @click="validateStep2" class="float-right q-mr-md q-mb-md" color="blue" style="border-radius: 8px; font-weight: bold;"
                 label="Siguiente" />
-              <q-btn flat @click="step = 1" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
+              <q-btn flat @click="step = 1" color="primary" style="border-radius: 8px; font-weight: bold;" label="Anterior" class="q-mr-sm float-right" />
             </q-stepper-navigation>
           </q-step>
 
@@ -702,9 +706,9 @@
             </q-card>
 
             <q-stepper-navigation>
-              <q-btn rounded @click="paymentMethod === 'cash' ? payCash() : pay()" class="float-right q-mr-md q-mb-md" color="blue"
+              <q-btn @click="paymentMethod === 'cash' ? payCash() : pay()" class="float-right q-mr-md q-mb-md" color="blue" style="border-radius: 8px; font-weight: bold;"
                 label="Realizar Compra" />
-              <q-btn flat @click="step = 2" color="primary" rounded label="Anterior" class="q-mr-sm float-right" />
+              <q-btn flat @click="step = 2" color="primary" style="border-radius: 8px; font-weight: bold;" label="Anterior" class="q-mr-sm float-right" />
             </q-stepper-navigation>
           </q-step>
         </q-stepper>
