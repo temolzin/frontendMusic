@@ -43,10 +43,12 @@
         ></q-editor>
 
         <q-btn
-          label="Enviar Correo"
+          unelevated
+          style="border-radius: 8px;"
+          label="ENVIAR CORREO"
           color="primary"
+          icon="send"
           class="q-mt-md"
-          rounded
           @click="sendEmails"
         ></q-btn>
       </q-card-section>

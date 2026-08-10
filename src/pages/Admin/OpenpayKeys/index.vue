@@ -62,8 +62,9 @@
       <q-card-actions align="right" class="q-pa-md">
         <q-btn
           unelevated
-          label="Guardar Credenciales"
           color="primary"
+          style="border-radius: 8px;"
+          label="GUARDAR CREDENCIALES"
           icon="save"
           :loading="loading"
           @click="save"

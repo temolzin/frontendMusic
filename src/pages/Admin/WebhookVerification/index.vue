@@ -21,6 +21,7 @@
             color="primary"
             icon="content_copy"
             label="Copiar URL"
+            style="border-radius: 8px"
             @click="copyUrl"
           />
         </div>
@@ -47,6 +48,7 @@
             icon="delete_sweep"
             label="Limpiar todos"
             size="sm"
+            style="border-radius: 8px"
             :disable="!codes.length"
             @click="confirmClearAll"
           />
@@ -56,6 +58,7 @@
             icon="refresh"
             label="Actualizar"
             size="sm"
+            style="border-radius: 8px"
             @click="loadCodes"
             :loading="loading"
           />

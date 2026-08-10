@@ -249,7 +249,9 @@
                     </q-card-section>
                     <q-card-actions align="right" class="q-pb-md q-pr-md column items-end">
                       <q-btn
-                        label="Confirmar Transferencia Realizada"
+                        unelevated
+                        style="border-radius: 8px;"
+                        label="CONFIRMAR TRANSFERENCIA REALIZADA"
                         color="positive"
                         icon="check_circle"
                         class="text-weight-bold"

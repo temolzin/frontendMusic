@@ -150,7 +150,9 @@
                           Haz clic para procesar automáticamente la devolución a través del gateway de OpenPay.
                         </div>
                         <q-btn
-                          label="Procesar Reembolso en OpenPay"
+                          unelevated
+                          style="border-radius: 8px;"
+                          label="PROCESAR REEMBOLSO EN OPENPAY"
                           color="primary"
                           icon="send"
                           class="text-weight-bold"
