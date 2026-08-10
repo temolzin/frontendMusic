@@ -205,9 +205,12 @@
             </q-list>
             <q-btn
               v-if="selectedPurchase.payment_method === 'cash' && selectedPurchase.approval_status === 'accepted' && selectedPurchase.cash_reference"
-              unelevated rounded color="primary" icon="visibility"
+              unelevated
+              color="primary"
+              icon="visibility"
               label="Referencia de Pago"
               class="full-width q-mt-md"
+              style="border-radius: 8px"
               :disable="selectedPurchase.status === 'completed'"
               @click="viewReference(selectedPurchase)"
             />
@@ -216,9 +219,12 @@
             </div>
             <q-btn
               v-if="selectedPurchase.approval_status === 'accepted' && !(selectedPurchase.payment_method === 'cash' && selectedPurchase.status !== 'completed')"
-              unelevated rounded color="positive" icon="file_download"
+              unelevated
+              color="positive"
+              icon="file_download"
               label="Descargar Recibo"
               class="full-width q-mt-md"
+              style="border-radius: 8px"
               @click="downloadReceipt(selectedPurchase)"
             />
             <q-btn
@@ -233,11 +239,11 @@
             />
             <q-btn
               unelevated
-              rounded
               color="negative"
               icon="report_problem"
               label="Reportar Incidente"
               class="full-width q-mt-sm"
+              style="border-radius: 8px"
               v-if="canReportIncident(selectedPurchase)"
               :disable="!isEventPast(selectedPurchase)"
               @click="goToReport(selectedPurchase)"

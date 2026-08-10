@@ -193,7 +193,8 @@
                     <q-btn
                       label="Agregar al carrito"
                       color="primary"
-                      icon-right="fas fa-cart-plus"
+                      style="border-radius: 8px; font-weight: bold;"
+                      icon="fas fa-cart-plus"
                       class="full-width q-mt-xs"
                       v-on:click="onSendOrder(artist)"
                       :disable="artist?.user?.account_status === 'restricted' || getMe?.account_status === 'restricted'"
@@ -210,7 +211,8 @@
                     <q-btn
                       label="Contratar ahora"
                       color="amber"
-                      icon-right="send"
+                      style="border-radius: 8px; font-weight: bold;"
+                      icon="send"
                       class="full-width q-mt-xs text-dark"
                       @click="handleHireNow(artist)"
                       :disable="artist?.user?.account_status === 'restricted' || getMe?.account_status === 'restricted'"

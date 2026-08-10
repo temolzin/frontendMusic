@@ -1,12 +1,13 @@
 <template>
   <q-page>
-    <h6 class="q-mb-md q-ml-lg q-mt-lg">
-      Tus tarjetas
+    <h6 class="q-mb-md q-ml-lg q-mt-lg row items-center">
+      <span class="q-mr-md">Tus tarjetas</span>
       <q-btn
-        outline
-        style="color: goldenrod"
-        label="Agregar nueva tarjeta"
-        icon-right="fas fa-plus"
+        unelevated
+        color="primary"
+        style="border-radius: 8px;"
+        label="AGREGAR NUEVA TARJETA"
+        icon="fas fa-plus"
         @click="formCreate = true"
       />
     </h6>

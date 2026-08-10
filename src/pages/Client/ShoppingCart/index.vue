@@ -124,6 +124,7 @@
                             <td colspan="2">
                               <q-btn
                                 label="Procesar Pedido"
+                                style="border-radius: 8px; font-weight: bold;"
                                 color="primary"
                                 @click="$router.push('/client/shopping-cart/dataClient')"
                               />
@@ -148,6 +149,8 @@
         </p>
         <q-btn
           color="primary"
+          style="border-radius:
+          8px; font-weight: bold;"
           label="Ir a la tienda"
           icon="store"
           @click="$router.push('/client/store')"
