@@ -255,6 +255,7 @@
             infinite
             v-model="slide"
             v-model:fullscreen="fullscreen"
+            :autoplay="imageList.length > 1 ? 8000 : false"
             arrows
             transition-prev="slide-right"
             transition-next="slide-left"
