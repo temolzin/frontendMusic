@@ -1,8 +1,8 @@
 <template>
-  <q-page class="q-pa-lg">
-    <div class="text-h5 text-weight-bold q-mb-md">Configuración OpenPay</div>
-    <q-card class="shadow-4">
+  <div class="q-pa-md">
+    <q-card flat bordered class="q-mt-md">
       <q-card-section class="q-pa-md">
+        <b class="text-h5 q-mb-md d-block">Configuración OpenPay</b>
         <div class="text-body2 text-grey q-mb-lg">
           Configura tus credenciales de la pasarela de pago para procesar las transacciones.
         </div>
@@ -70,7 +70,7 @@
         />
       </q-card-actions>
     </q-card>
-  </q-page>
+  </div>
 </template>
 
 <script>

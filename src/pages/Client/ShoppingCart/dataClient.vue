@@ -491,31 +491,35 @@
             </q-banner>
             <div class="row">
               <div class="col-12">
-                <q-item-label header class="text-h6">Detalles de la Orden</q-item-label>
-                <template v-for="(product, index) in shoppingCardDetail" :key="index">
-                  <q-item class="full-width items-center">
-                    <q-item-section class="col-5 text-left">
-                      <q-item-label>{{ castProduct(product).artist.name }}</q-item-label>
-                    </q-item-section>
-                    <q-item-section class="col-3 text-center">
-                      <q-item-label>Total de {{ castProduct(product).hours }} hora(s)</q-item-label>
-                    </q-item-section>
-                    <q-item-section class="col-4 text-right">
-                      <div v-if="+castProduct(product).price < +castProduct(product).artist.price_hour" class="row justify-end items-center no-wrap">
-                        <span class="text-positive text-weight-bold">
-                          ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                        </span>
-                        <small style="text-decoration: line-through" class="text-red q-ml-xs">
-                          ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                        </small>
-                      </div>
-                      <div v-else class="text-weight-bold">
-                        {{ "$ " + (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                      </div>
-                    </q-item-section>
-                  </q-item>
-                </template>
-                <q-separator></q-separator>
+                <q-item-label header class="text-h6 q-px-none">Detalles de la Orden</q-item-label>
+                <q-markup-table flat bordered class="q-mt-sm full-width">
+                  <thead>
+                    <tr>
+                      <th class="text-left">Artista / Grupo</th>
+                      <th class="text-center">Duración</th>
+                      <th class="text-right">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(product, index) in shoppingCardDetail" :key="index">
+                      <td class="text-left">{{ castProduct(product).artist.name }}</td>
+                      <td class="text-center">{{ castProduct(product).hours }} hora(s)</td>
+                      <td class="text-right">
+                        <div v-if="+castProduct(product).price < +castProduct(product).artist.price_hour" class="row justify-end items-center no-wrap">
+                          <span class="text-positive text-weight-bold">
+                            ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                          </span>
+                          <small style="text-decoration: line-through" class="text-red q-ml-xs">
+                            ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                          </small>
+                        </div>
+                        <div v-else class="text-weight-bold">
+                          {{ "$ " + (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </q-markup-table>
                 <div v-if="totalExtraKmCost > 0" class="q-px-md q-py-sm">
                   <div class="text-subtitle2">Costo por cobertura extra:</div>
                   <template v-for="(product, index) in shoppingCardDetail" :key="index">
@@ -2035,7 +2039,7 @@ export default defineComponent({
 }
 
 .resumen-scroll {
-  max-height: 400px;
+  max-height: 800px;
   overflow-y: auto;
 }
 </style>

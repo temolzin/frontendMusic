@@ -1,74 +1,75 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="row q-col-gutter-sm items-center q-mb-md">
-      <div class="col-12">
-        <div class="text-h5">Liquidaciones por Pagar</div>
-        <p class="text-subtitle1 text-grey-7 q-mt-xs">
-          Gestiona las transferencias de los eventos finalizados y consulta el historial de liquidaciones realizadas.
-        </p>
-        <q-banner
-          dense
-          inline-actions
-          rounded
-          :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-py-sm q-px-md']"
-        >
-          <template v-slot:avatar>
-            <q-icon name="info" color="blue" size="sm" />
-          </template>
-          <div class="text-body2">
-            <strong>Nota sobre comisiones OpenPay y establecimientos:</strong>
-            <ul>
-              <li class="q-mb-xs">
-                Los pagos realizados con tarjeta mediante <strong>OpenPay</strong> incluyen el desglose de su comisión transaccional digital.
-              </li>
-            </ul>
-            <ul>
-              <li>
-                Los pagos en efectivo (como <strong>tiendas de autoservicio tipo Oxxo</strong>) también incluyen la comisión de OpenPay descontada de la liquidación del artista.
-              </li>
-            </ul>
-          </div>
-        </q-banner>
-        <div class="row q-col-gutter-md items-center q-mt-md">
-          <div class="col">
-            <q-tabs
-              v-model="activeTab"
+  <div class="q-pa-md">
+    <q-card flat bordered>
+      <q-card-section class="q-pa-md">
+        <div class="row q-col-gutter-sm items-center q-mb-md">
+          <div class="col-12">
+            <b class="text-h5">Liquidaciones por Pagar</b>
+            <p class="text-subtitle1 text-grey-7 q-mt-xs">
+              Gestiona las transferencias de los eventos finalizados y consulta el historial de liquidaciones realizadas.
+            </p>
+            <q-banner
               dense
-              class="text-grey"
-              active-color="primary"
-              indicator-color="primary"
-              align="left"
+              inline-actions
+              rounded
+              :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-py-sm q-px-md']"
             >
-              <q-tab name="pending" label="Liquidaciones Pendientes" />
-              <q-tab name="history" label="Historial de Liquidaciones" />
-            </q-tabs>
-          </div>
-          <div v-if="activeTab === 'history'" class="col-12 col-md-auto">
-            <q-input
-              dense
-              debounce="100"
-              v-model="searchFilter"
-              color="primary"
-              style="min-width: 280px"
-            >
-              <template v-slot:append>
-                <q-icon name="search" />
+              <template v-slot:avatar>
+                <q-icon name="info" color="blue" size="sm" />
               </template>
-            </q-input>
+              <div class="text-body2">
+                <strong>Nota sobre comisiones OpenPay y establecimientos:</strong>
+                <ul>
+                  <li class="q-mb-xs">
+                    Los pagos realizados con tarjeta mediante <strong>OpenPay</strong> incluyen el desglose de su comisión transaccional digital.
+                  </li>
+                </ul>
+                <ul>
+                  <li>
+                    Los pagos en efectivo (como <strong>tiendas de autoservicio tipo Oxxo</strong>) también incluyen la comisión de OpenPay descontada de la liquidación del artista.
+                  </li>
+                </ul>
+              </div>
+            </q-banner>
+            <div class="row q-col-gutter-md items-center q-mt-md">
+              <div class="col">
+                <q-tabs
+                  v-model="activeTab"
+                  dense
+                  class="text-grey"
+                  active-color="primary"
+                  indicator-color="primary"
+                  align="left"
+                >
+                  <q-tab name="pending" label="Liquidaciones Pendientes" />
+                  <q-tab name="history" label="Historial de Liquidaciones" />
+                </q-tabs>
+              </div>
+              <div v-if="activeTab === 'history'" class="col-12 col-md-auto">
+                <q-input
+                  dense
+                  debounce="100"
+                  v-model="searchFilter"
+                  color="primary"
+                  style="min-width: 280px"
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div v-if="activeTab === 'pending'">
-      <q-table
-        :rows="pendingPayouts || []"
-        :columns="columns"
-        row-key="sale_id"
-        :loading="loadingPending"
-        flat
-        bordered
-        no-data-label="No hay liquidaciones pendientes por pagar"
+        <div v-if="activeTab === 'pending'">
+          <q-table
+            :rows="pendingPayouts || []"
+            :columns="columns"
+            row-key="sale_id"
+            :loading="loadingPending"
+            flat
+            no-data-label="No hay liquidaciones pendientes por pagar"
         rows-per-page-label="Registros por página:"
         class="payouts-table"
       >
@@ -84,13 +85,13 @@
               />
             </q-td>
             <q-td key="sale_id" :props="props">#{{ props.row.sale_id }}</q-td>
-            <q-td key="artist_name" :props="props" class="text-weight-medium">
+            <q-td key="artist_name" :props="props">
               {{ props.row.artist.name }}
             </q-td>
             <q-td key="event_date" :props="props">
               {{ props.row.event_date }} a las {{ props.row.event_hour.substring(0, 5) }} hrs
             </q-td>
-            <q-td key="net_artist_payout" :props="props" class="text-weight-bold" :class="totalPenalties(props.row) > 0 ? 'text-primary' : 'text-positive'">
+            <q-td key="net_artist_payout" :props="props" :class="totalPenalties(props.row) > 0 ? 'text-primary' : 'text-positive'">
               ${{ formatCurrency(computedAdjustedNet(props.row)) }} MXN
             </q-td>
             <q-td key="event_status" :props="props">
@@ -295,7 +296,6 @@
         no-data-label="Aún no hay registros en el historial de liquidaciones"
         rows-per-page-label="Registros por página:"
         flat
-        bordered
         class="payouts-table"
       >
         <template v-slot:body-cell-sale_id="props">
@@ -305,7 +305,7 @@
         </template>
 
         <template v-slot:body-cell-artist_name="props">
-          <q-td :props="props" class="text-center text-weight-medium">
+          <q-td :props="props" class="text-center">
             {{ props.row.artist_name }}
           </q-td>
         </template>
@@ -323,7 +323,7 @@
         </template>
 
         <template v-slot:body-cell-amount="props">
-          <q-td :props="props" class="text-center text-weight-bold text-positive">
+          <q-td :props="props" class="text-center text-positive">
             ${{ formatCurrency(props.row.amount) }} MXN
           </q-td>
         </template>
@@ -342,7 +342,9 @@
         <p class="text-grey-6 q-mt-md">Aún no hay registros en el historial de liquidaciones.</p>
       </div>
     </div>
-  </q-page>
+      </q-card-section>
+    </q-card>
+  </div>
 </template>
 
 <script>
