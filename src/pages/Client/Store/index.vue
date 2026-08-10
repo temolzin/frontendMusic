@@ -340,16 +340,11 @@ export default {
 
       this.$q.bottomSheet({
         title: 'Selecciona una opción para compartir',
-        actions: [
+       actions: [
           {
             label: 'WhatsApp',
             icon: 'fab fa-whatsapp',
             id: 'whatsapp'
-          },
-          {
-            label: 'Facebook',
-            icon: 'fab fa-facebook',
-            id: 'facebook'
           },
           {
             label: 'Messenger',
@@ -360,6 +355,11 @@ export default {
             label: 'Instagram',
             icon: 'fab fa-instagram',
             id: 'instagram'
+          },
+          {
+            label: 'Facebook',
+            icon: 'fab fa-facebook',
+            id: 'facebook'
           },
           {
             label: 'Copiar enlace',

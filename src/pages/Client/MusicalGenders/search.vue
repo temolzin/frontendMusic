@@ -252,11 +252,6 @@ export default {
             id: 'whatsapp'
           },
           {
-            label: 'Facebook',
-            icon: 'fab fa-facebook',
-            id: 'facebook'
-          },
-          {
             label: 'Messenger',
             icon: 'fab fa-facebook-messenger',
             id: 'messenger'
@@ -265,6 +260,11 @@ export default {
             label: 'Instagram',
             icon: 'fab fa-instagram',
             id: 'instagram'
+          },
+          {
+            label: 'Facebook',
+            icon: 'fab fa-facebook',
+            id: 'facebook'
           },
           {
             label: 'Copiar enlace',
