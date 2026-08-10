@@ -357,6 +357,11 @@ export default {
             id: 'messenger'
           },
           {
+            label: 'Instagram',
+            icon: 'fab fa-instagram',
+            id: 'instagram'
+          },
+          {
             label: 'Copiar enlace',
             icon: 'content_copy',
             id: 'copy'
@@ -378,6 +383,22 @@ export default {
           case 'messenger':
             window.open(`https://www.facebook.com/dialog/send?link=${encodedUrl}&redirect_uri=${encodedUrl}`, '_blank');
             break;
+
+          case 'instagram': {
+            const instagramWindow = window.open('https://www.instagram.com/', '_blank');
+            if (!instagramWindow) {
+              notifyError('No se pudo abrir Instagram');
+              return;
+            }
+            (navigator.clipboard && navigator.clipboard.writeText
+              ? navigator.clipboard.writeText(link)
+              : this.$q.copyToClipboard(link)
+            )
+              .then(() => {
+                notifySuccess('Enlace copiado. Abriendo Instagram...');
+              })
+            break;
+          }
 
           case 'copy':
             if (navigator.clipboard && navigator.clipboard.writeText) {
