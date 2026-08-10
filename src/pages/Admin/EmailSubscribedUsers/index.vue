@@ -1,55 +1,59 @@
 <template>
-    <q-card style="margin-top:-50px; width: 100%; padding: 10px;">
-        <q-card-section>
-        <div class="text-h5 q-mb-md q-mt-md">Envío de Correos</div>
-            <q-select
-            v-model="selectedRoles"
-            :options="rolesOptions"
-            label="Enviar a roles"
-            dense
-            outlined
-            multiple
-            use-chips
-            emit-value
-            map-options
-            option-label="name"
-            option-value="id"
-            clearable
-            hint="Selecciona uno o varios roles que recibirán el correo"
-            class="q-mb-md"
-            ></q-select>
+  <div class="q-pa-md">
+    <q-card flat bordered class="q-mt-md">
+      <q-card-section>
+        <b class="text-h5 q-mb-md d-block">Envío de Correos</b>
+        <q-select
+          v-model="selectedRoles"
+          :options="rolesOptions"
+          label="Enviar a roles"
+          dense
+          outlined
+          multiple
+          use-chips
+          emit-value
+          map-options
+          option-label="name"
+          option-value="id"
+          clearable
+          hint="Selecciona uno o varios roles que recibirán el correo"
+          class="q-mb-md"
+        ></q-select>
 
-            <q-input
-            style="margin-bottom: 15px;"
-            label="Asunto"
-            v-model="emailSubject"
-            dense
-            outlined
-            required
-            ></q-input>
+        <q-input
+          style="margin-bottom: 15px;"
+          label="Asunto"
+          v-model="emailSubject"
+          dense
+          outlined
+          required
+        ></q-input>
 
-            <q-editor
-            v-model="emailContent"
-            dense
-            outlined
-            toolbar-bg="primary"
-            toolbar-toggle-color="pink-4"
-            toolbar-text-color="white"
-            required
-            :definitions="{
-                bold: {label: 'Negrita', icon: null, tip: 'Poner texto en negrita'}
-            }"
-            ></q-editor>
+        <q-editor
+          v-model="emailContent"
+          dense
+          outlined
+          toolbar-bg="primary"
+          toolbar-toggle-color="pink-4"
+          toolbar-text-color="white"
+          required
+          :definitions="{
+            bold: {label: 'Negrita', icon: null, tip: 'Poner texto en negrita'}
+          }"
+        ></q-editor>
 
-            <q-btn
-            label="Enviar Correo"
-            color="primary"
-            class="q-mt-md"
-            rounded
-            @click="sendEmails"
-            ></q-btn>
-        </q-card-section>
+        <q-btn
+          unelevated
+          style="border-radius: 8px;"
+          label="ENVIAR CORREO"
+          color="primary"
+          icon="send"
+          class="q-mt-md"
+          @click="sendEmails"
+        ></q-btn>
+      </q-card-section>
     </q-card>
+  </div>
 </template>
 
 <script>

@@ -1,7 +1,8 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="q-mb-md">
-      <b class="text-h5">Solicitudes de Artistas</b>
+  <div class="q-pa-md">
+    <q-card flat bordered class="q-pa-md">
+      <div class="q-mb-md">
+        <b class="text-h5">Solicitudes de Artistas</b>
       <q-tabs
         v-model="activeTab"
         dense
@@ -26,13 +27,12 @@
         rows-per-page-label="Solicitudes por página"
         :rows-per-page-options="[5, 10, 20]"
         flat
-        bordered
         :grid="$q.screen.lt.md"
       >
         <template v-slot:body-cell-artista="props">
           <q-td :props="props" class="text-center">
             <div class="cell-center">
-              <div class="text-weight-bold">{{ props.row.proposed_data.name }}</div>
+              <div>{{ props.row.proposed_data.name }}</div>
               <div class="text-caption text-grey">{{ props.row.user?.email }}</div>
             </div>
           </q-td>
@@ -54,7 +54,7 @@
         <template v-slot:body-cell-precio="props">
           <q-td :props="props" class="text-center">
             <div class="cell-center">
-              <span class="text-weight-bold text-positive">
+              <span class="text-positive">
                 ${{ Number(props.row.proposed_data.price_hour).toLocaleString('es-MX') }} MXN
               </span>
             </div>
@@ -130,13 +130,12 @@
         rows-per-page-label="Registros por página"
         :rows-per-page-options="[5, 10, 20]"
         flat
-        bordered
         :grid="$q.screen.lt.md"
       >
         <template v-slot:body-cell-artista="props">
           <q-td :props="props" class="text-center">
             <div class="cell-center">
-              <div class="text-weight-bold">{{ props.row.proposed_data.name }}</div>
+              <div>{{ props.row.proposed_data.name }}</div>
               <div class="text-caption text-grey">{{ props.row.user?.email }}</div>
             </div>
           </q-td>
@@ -194,6 +193,7 @@
         <q-spinner color="primary" size="3em" />
       </div>
     </div>
+    </q-card>
 
     <q-dialog v-model="compareDialog">
       <q-card style="min-width: 700px; max-width: 90vw">
@@ -246,7 +246,7 @@
             </thead>
             <tbody>
               <tr v-for="field in compareFields" :key="field.label" :class="{ 'bg-yellow-1': field.changed }">
-                <td class="text-weight-bold">{{ field.label }}</td>
+                <td>{{ field.label }}</td>
                 <td
                   class="compare-cell"
                   :class="{ 'ellipsis-cell': !expandedFields[field.label] }"
@@ -295,7 +295,7 @@
         </q-form>
       </q-card>
     </q-dialog>
-  </q-page>
+  </div>
 </template>
 
 <script>

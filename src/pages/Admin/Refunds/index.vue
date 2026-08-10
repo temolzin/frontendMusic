@@ -1,75 +1,75 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="row q-col-gutter-sm items-center q-mb-md">
-      <div class="col-12">
-        <div class="text-h5">Reembolsos a Clientes</div>
-        <p class="text-subtitle1 text-grey-7 q-mt-xs">
-          Gestiona y procesa las devoluciones de dinero a clientes por cancelaciones de eventos a través de OpenPay.
-        </p>
-        <q-banner
-          dense
-          inline-actions
-          rounded
-          :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-py-sm q-px-md']"
-        >
-          <template v-slot:avatar>
-            <q-icon name="info" color="blue" size="sm" />
-          </template>
-          <div class="text-body2">
-            <strong>Procesamiento de Reembolsos vía OpenPay:</strong>
-            <ul>
-              <li class="q-mb-xs">
-                Al hacer click en <strong>Procesar Reembolso</strong>, OpenPay devolverá el monto neto correspondiente a la tarjeta del cliente.
-              </li>
-              <li>
-                El porcentaje a reembolsar se calcula con base en la penalización por tiempo de cancelación definida en la plataforma.
-              </li>
-            </ul>
-          </div>
-        </q-banner>
-        <div class="row q-col-gutter-md items-center q-mt-md">
-          <div class="col">
-            <q-tabs
-              v-model="activeTab"
+  <div class="q-pa-md">
+    <q-table
+      :rows="displayedRefunds"
+      :columns="columns"
+      row-key="id"
+      :loading="loading"
+      flat
+      bordered
+      no-data-label="No hay registros de reembolsos"
+      rows-per-page-label="Registros por página:"
+      class="refunds-table" >
+      <template v-slot:top>
+        <div class="row q-col-gutter-sm items-center full-width">
+          <div class="col-12">
+            <b class="text-h5">Reembolsos a Clientes</b>
+            <p class="text-subtitle1 text-grey-7 q-mt-xs">
+              Gestiona y procesa las devoluciones de dinero a clientes por cancelaciones de eventos a través de OpenPay.
+            </p>
+            <q-banner
               dense
-              class="text-grey"
-              active-color="primary"
-              indicator-color="primary"
-              align="left"
+              inline-actions
+              rounded
+              :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-py-sm q-px-md']"
             >
-              <q-tab name="pending" label="Reembolsos Pendientes" />
-              <q-tab name="history" label="Historial de Reembolsos" />
-            </q-tabs>
-          </div>
-          <div class="col-12 col-md-auto">
-            <q-input
-              dense
-              debounce="100"
-              v-model="searchFilter"
-              placeholder="Buscar..."
-              color="primary"
-              style="min-width: 280px"
-            > 
-              <template v-slot:append>
-                <q-icon name="search" />
+              <template v-slot:avatar>
+                <q-icon name="info" color="blue" size="sm" />
               </template>
-            </q-input>
+              <div class="text-body2">
+                <strong>Procesamiento de Reembolsos vía OpenPay:</strong>
+                <ul>
+                  <li class="q-mb-xs">
+                    Al hacer click en <strong>Procesar Reembolso</strong>, OpenPay devolverá el monto neto correspondiente a la tarjeta del cliente.
+                  </li>
+                  <li>
+                    El porcentaje a reembolsar se calcula con base en la penalización por tiempo de cancelación definida en la plataforma.
+                  </li>
+                </ul>
+              </div>
+            </q-banner>
+            <div class="row q-col-gutter-md items-center q-mt-md">
+              <div class="col">
+                <q-tabs
+                  v-model="activeTab"
+                  dense
+                  class="text-grey"
+                  active-color="primary"
+                  indicator-color="primary"
+                  align="left"
+                >
+                  <q-tab name="pending" label="Reembolsos Pendientes" />
+                  <q-tab name="history" label="Historial de Reembolsos" />
+                </q-tabs>
+              </div>
+              <div class="col-12 col-md-auto">
+                <q-input
+                  dense
+                  debounce="100"
+                  v-model="searchFilter"
+                  placeholder="Buscar..."
+                  color="primary"
+                  style="min-width: 280px"
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div>
-      <q-table
-        v-if="displayedRefunds && displayedRefunds.length > 0"
-        :rows="displayedRefunds"
-        :columns="columns"
-        row-key="id"
-        :loading="loading"
-        flat
-        bordered
-        no-data-label="No hay registros de reembolsos"
-        rows-per-page-label="Registros por página:"
-        class="refunds-table" >
+      </template>
         <template v-slot:body="props">
           <q-tr :props="props" class="cursor-pointer" @click="props.expand = !props.expand">
             <q-td auto-width>
@@ -81,19 +81,19 @@
                 :icon="props.expand ? 'keyboard_arrow_up' : 'keyboard_arrow_down'" 
               />
             </q-td>
-            <q-td key="sale_id" :props="props" class="text-weight-bold">
+            <q-td key="sale_id" :props="props">
               #{{ props.row.cancellation?.artist_sale_id || 'N/A' }}
             </q-td>
-            <q-td key="customer_name" :props="props" class="text-weight-medium">
+            <q-td key="customer_name" :props="props">
               {{ props.row.customer?.name || 'Cliente desconocido' }}
             </q-td>
             <q-td key="reason" :props="props">
               {{ props.row.cancellation?.cancellation_reason || 'Sin motivo especificado' }}
             </q-td>
-            <q-td key="refund_percentage" :props="props" class="text-weight-medium">
+            <q-td key="refund_percentage" :props="props">
               {{ props.row.refund_percentage }}%
             </q-td>
-            <q-td key="refund_amount" :props="props" class="text-weight-bold text-positive">
+            <q-td key="refund_amount" :props="props" class="text-positive">
               ${{ formatCurrency(props.row.refund_amount) }} MXN
             </q-td>
             <q-td key="status" :props="props">
@@ -150,7 +150,9 @@
                           Haz clic para procesar automáticamente la devolución a través del gateway de OpenPay.
                         </div>
                         <q-btn
-                          label="Procesar Reembolso en OpenPay"
+                          unelevated
+                          style="border-radius: 8px;"
+                          label="PROCESAR REEMBOLSO EN OPENPAY"
                           color="primary"
                           icon="send"
                           class="text-weight-bold"
@@ -165,22 +167,25 @@
             </q-td>
           </q-tr>
         </template>
+      <template v-slot:no-data>
+        <div class="full-width text-center q-py-xl">
+          <template v-if="loading">
+            <q-spinner color="primary" size="3em" />
+          </template>
+          <template v-else>
+            <q-icon
+              :name="activeTab === 'history' ? 'history' : 'receipt_long'"
+              size="4em"
+              color="grey-5"
+            />
+            <p class="text-grey-6 q-mt-md">
+              {{ activeTab === 'history' ? 'Aún no hay registros en el historial de reembolsos.' : 'No hay solicitudes de reembolso pendientes.' }}
+            </p>
+          </template>
+        </div>
+      </template>
       </q-table>
-      <div v-else-if="loading" class="text-center q-py-xl">
-        <q-spinner color="primary" size="3em" />
-      </div>
-      <div v-else-if="!loading" class="text-center q-py-xl">
-        <q-icon 
-          :name="activeTab === 'history' ? 'history' : 'receipt_long'" 
-          size="4em" 
-          color="grey-5" 
-        />
-        <p class="text-grey-6 q-mt-md">
-          {{ activeTab === 'history' ? 'Aún no hay registros en el historial de reembolsos.' : 'No hay solicitudes de reembolso pendientes.' }}
-        </p>
-      </div>
-    </div>
-  </q-page>
+  </div>
 </template>
 
 <script>

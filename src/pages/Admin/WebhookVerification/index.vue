@@ -1,8 +1,8 @@
 <template>
-  <q-page class="q-pa-lg">
-    <div class="text-h5 text-weight-bold q-mb-md">Códigos de Verificación Webhook</div>
-    <q-card class="shadow-4 q-mb-lg">
+  <div class="q-pa-md">
+    <q-card flat bordered class="q-mb-md">
       <q-card-section>
+        <b class="text-h5 q-mb-md d-block">Códigos de Verificación Webhook</b>
         <div class="text-body2 text-grey q-mb-md">
           Cuando configures un webhook en OpenPay, el sistema enviará un código de verificación a esta URL. Los códigos capturados aparecerán aquí. Copia el código y pégalo en el panel de OpenPay para completar la verificación.
         </div>
@@ -21,95 +21,97 @@
             color="primary"
             icon="content_copy"
             label="Copiar URL"
+            style="border-radius: 8px"
             @click="copyUrl"
           />
         </div>
       </q-card-section>
     </q-card>
-    <q-card class="shadow-4">
-      <q-card-section class="q-pb-none">
-        <div class="row items-center justify-between">
-          <div class="text-h6">Códigos Recibidos</div>
-          <div class="q-gutter-sm">
-            <q-btn
-              unelevated
-              color="negative"
-              icon="delete_sweep"
-              label="Limpiar todos"
-              :disable="!codes.length"
-              @click="confirmClearAll"
-            />
-            <q-btn
-              unelevated
-              color="secondary"
-              icon="refresh"
-              label="Actualizar"
-              @click="loadCodes"
-              :loading="loading"
-            />
-          </div>
+
+    <q-table
+      :rows="codes"
+      :columns="columns"
+      row-key="id"
+      flat
+      bordered
+      no-data-label="No se han recibido códigos de verificación aún"
+      :rows-per-page-options="[10, 25, 50, 0]"
+      :loading="loading"
+    >
+      <template v-slot:top>
+        <b class="text-h6">Códigos Recibidos</b>
+        <q-space />
+        <div class="q-gutter-sm">
+          <q-btn
+            unelevated
+            color="negative"
+            icon="delete_sweep"
+            label="Limpiar todos"
+            size="sm"
+            style="border-radius: 8px"
+            :disable="!codes.length"
+            @click="confirmClearAll"
+          />
+          <q-btn
+            unelevated
+            color="secondary"
+            icon="refresh"
+            label="Actualizar"
+            size="sm"
+            style="border-radius: 8px"
+            @click="loadCodes"
+            :loading="loading"
+          />
         </div>
-      </q-card-section>
-      <q-card-section>
-        <q-table
-          :rows="codes"
-          :columns="columns"
-          row-key="id"
-          flat
-          bordered
-          no-data-label="No se han recibido códigos de verificación aún"
-          :rows-per-page-options="[10, 25, 50, 0]"
-          :loading="loading"
-        >
-          <template v-slot:body-cell-verification_code="props">
-            <q-td :props="props">
-              <div class="row items-center q-gutter-sm">
-                <span class="text-weight-medium text-monospace">{{ props.row.verification_code }}</span>
-                <q-btn
-                  flat
-                  dense
-                  round
-                  size="sm"
-                  icon="content_copy"
-                  color="primary"
-                  @click="copyCode(props.row.verification_code)"
-                >
-                  <q-tooltip>Copiar código</q-tooltip>
-                </q-btn>
-              </div>
-            </q-td>
-          </template>
-          <template v-slot:body-cell-event_date="props">
-            <q-td :props="props">
-              {{ formatDate(props.row.event_date) }}
-            </q-td>
-          </template>
-          <template v-slot:body-cell-created_at="props">
-            <q-td :props="props">
-              <q-badge :color="getTimeBadgeColor(props.row.created_at)">
-                {{ timeAgo(props.row.created_at) }}
-              </q-badge>
-            </q-td>
-          </template>
-          <template v-slot:body-cell-actions="props">
-            <q-td :props="props">
-              <q-btn
-                flat
-                dense
-                round
-                size="sm"
-                icon="delete"
-                color="negative"
-                @click="confirmDelete(props.row)"
-              >
-                <q-tooltip>Quitar código</q-tooltip>
-              </q-btn>
-            </q-td>
-          </template>
-        </q-table>
-      </q-card-section>
-    </q-card>
-  </q-page>
+      </template>
+
+      <template v-slot:body-cell-verification_code="props">
+        <q-td :props="props">
+          <div class="row items-center q-gutter-sm">
+            <span class="text-weight-medium text-monospace">{{ props.row.verification_code }}</span>
+            <q-btn
+              flat
+              dense
+              round
+              size="sm"
+              icon="content_copy"
+              color="primary"
+              @click="copyCode(props.row.verification_code)"
+            >
+              <q-tooltip>Copiar código</q-tooltip>
+            </q-btn>
+          </div>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-event_date="props">
+        <q-td :props="props">
+          {{ formatDate(props.row.event_date) }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-created_at="props">
+        <q-td :props="props">
+          <q-badge :color="getTimeBadgeColor(props.row.created_at)">
+            {{ timeAgo(props.row.created_at) }}
+          </q-badge>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props">
+          <q-btn
+            flat
+            dense
+            round
+            size="sm"
+            icon="delete"
+            color="negative"
+            @click="confirmDelete(props.row)"
+          >
+            <q-tooltip>Quitar código</q-tooltip>
+          </q-btn>
+        </q-td>
+      </template>
+    </q-table>
+  </div>
 </template>
 <script>
 import { defineComponent, ref, onMounted } from 'vue'
