@@ -66,15 +66,7 @@ export function openArtistLinkShareSheet({ q, link, shareText = '¡Mira este art
       }
 
       case 'copy':
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(link).then(() => {
-            notifySuccess('Link copiado al portapapeles');
-          });
-        } else {
-          q.copyToClipboard(link).then(() => {
-            notifySuccess('Link copiado al portapapeles');
-          });
-        }
+        q.copyToClipboard(link).then(() => notifySuccess('Link copiado al portapapeles'));
         break;
     }
   });
