@@ -513,9 +513,9 @@
             </div>
 
             <q-stepper-navigation>
-              <q-btn @click="validateStep2" class="float-right q-mr-md q-mb-md" color="blue"style="border-radius: 8px; font-weight: bold;"
+              <q-btn @click="validateStep2" class="float-right q-mr-md q-mb-md" color="blue" style="border-radius: 8px; font-weight: bold;"
                 label="Siguiente" />
-              <q-btn flat @click="step = 1" color="primary" style="border-radius: 8px; font-weight: bold;" rounded label="Anterior" class="q-mr-sm float-right" />
+              <q-btn flat @click="step = 1" color="primary" style="border-radius: 8px; font-weight: bold;" label="Anterior" class="q-mr-sm float-right" />
             </q-stepper-navigation>
           </q-step>
 
