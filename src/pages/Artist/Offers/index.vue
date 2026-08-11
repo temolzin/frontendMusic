@@ -16,7 +16,7 @@
       <template v-slot:top>
         <b class="text-h5">
           Mis Ofertas
-          <q-btn color="primary" icon="add" label="Nueva Oferta" size="sm" @click="openForm()" />
+          <q-btn color="primary" style="border-radius: 8px; font-weight: bold;" icon="add" label="Nueva Oferta" size="sm" @click="openForm()" />
         </b>
         <q-space />
         <q-input dense debounce="100" color="primary" v-model="filter">
@@ -272,10 +272,11 @@
             </div>
           </q-card-section>
           <q-card-actions align="right">
-            <q-btn flat label="Cancelar" color="primary" v-close-popup />
+            <q-btn flat label="Cancelar" color="primary" style="border-radius: 8px; font-weight: bold;" v-close-popup />
             <q-btn
               label="Guardar"
               color="primary"
+              style="border-radius: 8px; font-weight: bold;"
               @click="$refs.offerForm.validate().then(valid => { if(valid) submitForm() })"
             />
           </q-card-actions>

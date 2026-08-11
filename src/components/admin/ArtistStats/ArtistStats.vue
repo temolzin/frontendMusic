@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card flat bordered class="q-mb-lg">
+    <q-card v-if="!ownView" flat bordered class="q-mb-lg">
       <q-card-section class="q-pa-sm">
         <div style="max-width: 360px;">
           <q-select
@@ -324,7 +324,7 @@
                     style="min-width: 120px;"
                     transition-show="jump-down"
                     transition-hide="jump-up"
-                    @update:model-value="fetchArtistData"
+                    @update:model-value="refreshChart"
                   />
                 </q-item-section>
               </q-item>
@@ -453,6 +453,13 @@ export default {
     };
   },
 
+  props: {
+    ownView: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   computed: {
     ...mapGetters("statsArtist", {
       artistsList:   "getArtistsList",
@@ -523,7 +530,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("statsArtist", ["fetchArtistsList", "fetchArtistAnalytics"]),
+    ...mapActions("statsArtist", ["fetchArtistsList", "fetchArtistAnalytics", "fetchMyArtistAnalytics"]),
 
     async fetchArtists() {
       this.loading = true;
@@ -549,6 +556,21 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+
+    async fetchMyArtistData() {
+      this.loading = true;
+      try {
+        await this.fetchMyArtistAnalytics({ filter: this.chartFilter });
+      } catch {
+        notifyError("Error al cargar tus estadísticas.");
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    refreshChart() {
+      this.ownView ? this.fetchMyArtistData() : this.fetchArtistData();
     },
 
     generateSvgChart(labels, series) {
@@ -626,7 +648,7 @@ export default {
   },
 
   created() {
-    this.fetchArtists();
+    this.ownView ? this.fetchMyArtistData() : this.fetchArtists();
   },
 };
 </script>

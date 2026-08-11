@@ -797,11 +797,13 @@
                 <q-btn
                   class="q-mr-md"
                   color="red"
+                  style="border-radius: 8px; font-weight: bold;"
                   label="Cancelar"
                   @click="cancel"
                 ></q-btn>
                 <q-btn
                   color="primary"
+                  style="border-radius: 8px; font-weight: bold;"
                   label="Actualizar"
                   type="submit"
                   v-if="btnE == true"

@@ -13,3 +13,11 @@ export const fetchArtistAnalytics = async ({ commit }, { artistId, filter }) => 
         commit("setArtistData", response.data.data);
     });
 };
+
+export const fetchMyArtistAnalytics = async ({ commit }, { filter } = {}) => {
+    await api.get("/api/artist/my-analytics", {
+        params: { filter },
+    }).then((response) => {
+        commit("setArtistData", response.data.data);
+    });
+};

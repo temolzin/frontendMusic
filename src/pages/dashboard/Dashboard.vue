@@ -52,6 +52,14 @@
       </q-card>
     </div>
   </div>
+  <div v-if="getMe.role[0] == 'artista'" class="q-px-md q-pb-md">
+    <q-separator class="q-my-lg" />
+    <div class="q-mb-md">
+      <div class="text-h4 text-weight-bold">Mis Estadísticas</div>
+      <div class="text-caption text-grey">Rendimiento detallado de tu perfil</div>
+    </div>
+    <artist-stats own-view />
+  </div>
   <client-card v-if="getMe.role[0] == 'cliente'"></client-card>
   <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general>
   <div v-if="getMe.role[0] == 'administrador'" class="q-px-md q-pb-md">
