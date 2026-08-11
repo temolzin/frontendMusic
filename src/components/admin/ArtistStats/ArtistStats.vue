@@ -570,11 +570,7 @@ export default {
     },
 
     refreshChart() {
-      if (this.ownView) {
-        this.fetchMyArtistData();
-      } else {
-        this.fetchArtistData();
-      }
+      this.ownView ? this.fetchMyArtistData() : this.fetchArtistData();
     },
 
     generateSvgChart(labels, series) {
@@ -652,11 +648,7 @@ export default {
   },
 
   created() {
-    if (this.ownView) {
-      this.fetchMyArtistData();
-    } else {
-      this.fetchArtists();
-    }
+    this.ownView ? this.fetchMyArtistData() : this.fetchArtists();
   },
 };
 </script>
