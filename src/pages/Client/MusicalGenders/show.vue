@@ -114,7 +114,7 @@
               </div>
               <h4 class="q-ma-none text-center q-mt-sm text-primary">
                 <template v-if="activeOffer">
-                  <q-badge color="orange" class="q-mb-sm" style="font-size:13px">
+                  <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-sm text-weight-medium text-uppercase" style="font-size:13px">
                       {{ formatDiscount(activeOffer.discount_percentage) }}% de descuento
                   </q-badge>
                   <div class="text-caption text-grey-7 q-mt-xs">{{ activeOffer.description }}</div>
@@ -389,7 +389,8 @@
 
 <script>
 import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
-import { mapActions, mapState, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
+import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 
@@ -428,6 +429,7 @@ export default {
     };
   },
   methods: {
+    getDiscountBadgeColor,
     getVideoId(value) {
       if (!value) return '';
       if (/^[a-zA-Z0-9_-]{11}$/.test(value)) return value;

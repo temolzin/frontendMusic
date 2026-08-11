@@ -40,7 +40,7 @@
         <template v-slot:body-cell-tipo="props">
           <q-td :props="props" class="text-center">
             <div class="cell-center">
-              <q-badge :color="props.row.request_type === 'creation' ? 'primary' : 'secondary'" class="q-px-sm q-py-xs">
+              <q-badge v-bind="getArtistApprovalTypeColor(props.row.request_type, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                 {{ props.row.request_type === 'creation' ? 'Alta nueva' : 'Edición' }}
               </q-badge>
             </div>
@@ -143,7 +143,7 @@
         <template v-slot:body-cell-tipo="props">
           <q-td :props="props" class="text-center">
             <div class="cell-center">
-              <q-badge :color="props.row.request_type === 'creation' ? 'primary' : 'secondary'" class="q-px-sm q-py-xs">
+              <q-badge v-bind="getArtistApprovalTypeColor(props.row.request_type, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                 {{ props.row.request_type === 'creation' ? 'Alta nueva' : 'Edición' }}
               </q-badge>
             </div>
@@ -152,7 +152,7 @@
         <template v-slot:body-cell-estatus="props">
           <q-td :props="props" class="text-center">
             <div class="cell-center">
-              <q-badge :color="props.row.approval_status === 'accepted' ? 'positive' : 'negative'" class="q-px-sm q-py-xs">
+              <q-badge v-bind="getArtistApprovalStatusColor(props.row.approval_status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                 {{ props.row.approval_status === 'accepted' ? 'Aceptada' : 'Rechazada' }}
               </q-badge>
             </div>
@@ -301,6 +301,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
+import { getArtistApprovalTypeColor, getArtistApprovalStatusColor } from 'src/utils/badgeStyles';
 
 const columns = [
   { name: 'artista', label: 'Artista', align: 'center', field: (row) => row.proposed_data?.name, sortable: true },
@@ -384,6 +385,8 @@ export default {
   },
 
   methods: {
+    getArtistApprovalTypeColor,
+    getArtistApprovalStatusColor,
     ...mapActions('artistApprovals', ['fetchPendingRequests', 'fetchHistory', 'acceptRequest', 'rejectRequest']),
 
     async loadPending() {

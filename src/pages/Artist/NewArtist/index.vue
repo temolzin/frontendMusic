@@ -387,7 +387,7 @@
             outline
             align="middle"
             :color="musicalGender.color"
-            class="q-ma-sm q-mt-none"
+            class="q-ma-sm q-mt-none text-weight-medium text-uppercase"
           >
             {{ musicalGender.name }}
           </q-badge>

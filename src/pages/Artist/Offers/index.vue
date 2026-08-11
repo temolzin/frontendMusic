@@ -27,7 +27,7 @@
       </template>
       <template v-slot:body-cell-is_active="props">
         <q-td :props="props">
-          <q-badge :color="props.row.is_active ? 'positive' : 'grey'">
+          <q-badge v-bind="getOfferStatusColor(props.row.is_active, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
             {{ props.row.is_active ? 'Activa' : 'Inactiva' }}
           </q-badge>
         </q-td>
@@ -89,7 +89,7 @@
                 <q-item-section>
                   <q-item-label caption>{{ col.label }}</q-item-label>
                   <q-item-label v-if="col.name === 'is_active'">
-                    <q-badge :color="props.row.is_active ? 'positive' : 'grey'">
+                    <q-badge v-bind="getOfferStatusColor(props.row.is_active, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                       {{ props.row.is_active ? 'Activa' : 'Inactiva' }}
                     </q-badge>
                   </q-item-label>
@@ -289,6 +289,7 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
+import { getOfferStatusColor } from "src/utils/badgeStyles";
 
 export default {
   name: "ArtistOffers",
@@ -321,6 +322,7 @@ export default {
     mode() { return this.$q.dark.isActive; },
   },
   methods: {
+    getOfferStatusColor,
     ...mapActions("offers", ["getOffers", "createOffer", "updateOffer", "deleteOffer"]),
 
     isValidFutureDateTime(dateTimeStr) {

@@ -802,7 +802,7 @@
                 <div class="text-body2 text-grey text-strike q-mb-xs">
                   ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                 </div>
-                <q-badge color="orange" class="q-mb-xs" :label="Math.round((1 - castProduct(product).price / castProduct(product).artist.price_hour) * 100) + '% OFF'" />
+                <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase" :label="Math.round((1 - castProduct(product).price / castProduct(product).artist.price_hour) * 100) + '% OFF'" />
                 <div class="text-weight-bold text-positive" style="font-size: 1.3rem">
                   ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                 </div>
@@ -892,6 +892,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 import { useQuasar } from "quasar";
 import { mapActions, mapState, mapGetters } from "vuex";
 import { ref } from "vue";
@@ -998,6 +999,8 @@ export default defineComponent({
     },
   },
   methods: {
+    getDiscountBadgeColor,
+    handleStep(stepName) {},
     translateOpenPayClientError(rawMessage) {
       const msg = (rawMessage || "").toLowerCase();
 

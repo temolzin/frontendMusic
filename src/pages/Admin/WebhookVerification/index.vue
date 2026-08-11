@@ -90,7 +90,7 @@
       </template>
       <template v-slot:body-cell-created_at="props">
         <q-td :props="props">
-          <q-badge :color="getTimeBadgeColor(props.row.created_at)">
+          <q-badge v-bind="getWebhookTimeColor(props.row.created_at, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
             {{ timeAgo(props.row.created_at) }}
           </q-badge>
         </q-td>
@@ -117,6 +117,7 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
+import { getWebhookTimeColor } from 'src/utils/badgeStyles'
 import { notifySuccess, notifyError } from 'src/utils/notify';
 
 export default defineComponent({
@@ -231,16 +232,6 @@ export default defineComponent({
       return 'hace unos segundos'
     }
 
-    const getTimeBadgeColor = (date) => {
-      if (!date) return 'grey'
-      const now = new Date()
-      const diff = now - new Date(date)
-      const hours = Math.floor(diff / (1000 * 60 * 60))
-      if (hours < 1) return 'positive'
-      if (hours < 24) return 'warning'
-      return 'grey'
-    }
-
     onMounted(() => {
       loadCodes()
     })
@@ -257,7 +248,7 @@ export default defineComponent({
       confirmClearAll,
       formatDate,
       timeAgo,
-      getTimeBadgeColor,
+      getWebhookTimeColor
     }
   },
 })

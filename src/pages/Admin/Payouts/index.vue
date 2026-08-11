@@ -95,18 +95,12 @@
               ${{ formatCurrency(computedAdjustedNet(props.row)) }} MXN
             </q-td>
             <q-td key="event_status" :props="props">
-              <q-badge
-                :color="props.row.event_status === 'completed' ? 'positive' : 'warning'"
-                class="text-weight-bold"
-              >
+              <q-badge v-bind="getEventStatusColor(props.row.event_status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                 {{ props.row.event_status === 'completed' ? 'COMPLETADO' : 'PENDIENTE' }}
               </q-badge>
             </q-td>
             <q-td key="payout_status" :props="props">
-              <q-badge
-                :color="props.row.status === 'liquidated' ? 'positive' : !props.row.can_release ? 'warning' : 'orange'"
-                class="text-weight-bold"
-              >
+              <q-badge v-bind="getPayoutStatusColor(props.row, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                 {{ props.row.status === 'liquidated' ? 'LIQUIDADO' : !props.row.can_release ? 'RETENIDO (3 DÍAS)' : 'PENDIENTE' }}
               </q-badge>
             </q-td>
@@ -352,6 +346,7 @@
 <script>
 import { mapActions, mapGetters, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
+import { getEventStatusColor, getPayoutStatusColor } from 'src/utils/badgeStyles';
 
 const columns = [
   { name: "expand", label: "Detalles", align: "center" },
@@ -428,6 +423,8 @@ export default {
   },
 
   methods: {
+    getEventStatusColor,
+    getPayoutStatusColor,
     ...mapActions("payouts", ["fetchPendingPayouts", "releasePayout"]),
     ...mapActions("payoutLogs", ["fetchPayoutHistory"]),
 
