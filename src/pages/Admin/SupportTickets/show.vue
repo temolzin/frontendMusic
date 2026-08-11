@@ -16,7 +16,7 @@
       <div class="row items-center q-mb-md">
         <div class="text-h5 text-weight-bold">Ticket #{{ ticket.id }}</div>
         <q-space />
-        <q-badge :color="statusColor(ticket.status)" class="q-px-md q-py-sm text-subtitle2">
+        <q-badge v-bind="getSupportTicketStatusColor(ticket.status, $q.dark.isActive)" class="q-px-md q-py-sm text-subtitle2 text-weight-medium text-uppercase">
           {{ statusLabel(ticket.status) }}
         </q-badge>
       </div>
@@ -64,7 +64,7 @@
             </div>
             <div class="col-12 col-sm-6">
               <div class="text-caption text-grey">Categoría</div>
-              <q-badge :color="categoryColor(ticket.category)" class="q-px-sm q-py-xs q-mt-xs">
+              <q-badge v-bind="getSupportTicketCategoryColor(ticket.category, $q.dark.isActive)" class="q-px-sm q-py-xs q-mt-xs text-weight-medium text-uppercase">
                 {{ categoryLabel(ticket.category) }}
               </q-badge>
             </div>
@@ -199,6 +199,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import { api } from 'boot/axios';
 import { notifySuccess, notifyError } from 'src/utils/notify';
+import { getSupportTicketCategoryColor, getSupportTicketStatusColor } from 'src/utils/badgeStyles';
 
 export default {
   name: 'SupportTicketShow',
@@ -220,6 +221,8 @@ export default {
 
   methods: {
     ...mapActions('supportTickets', ['fetchAdminTicketDetail', 'updateTicketStatus']),
+    getSupportTicketCategoryColor,
+    getSupportTicketStatusColor,
 
     goBack() {
       const targetRoute = this.$route.query.from === 'sanctions'
@@ -288,17 +291,6 @@ export default {
       return map[cat] || cat;
     },
 
-    categoryColor(cat) {
-      const map = {
-        no_show: 'negative',
-        delay: 'orange',
-        bad_service: 'deep-orange',
-        cancellation: 'red',
-        other: 'grey',
-      };
-      return map[cat] || 'grey';
-    },
-
     statusLabel(status) {
       const map = {
         open: 'Abierto',
@@ -307,16 +299,6 @@ export default {
         rejected: 'Rechazado',
       };
       return map[status] || status;
-    },
-
-    statusColor(status) {
-      const map = {
-        open: 'warning',
-        under_review: 'info',
-        resolved: 'positive',
-        rejected: 'negative',
-      };
-      return map[status] || 'grey';
     },
   },
 };

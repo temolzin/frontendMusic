@@ -105,7 +105,7 @@
               <q-card-section class="q-pt-none">
                 <div class="text-subtitle1">
                   <template v-if="props.row.offers && props.row.offers.length > 0">
-                    <q-badge color="orange" class="q-mb-xs">
+                    <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase">
                       {{ formatDiscount(props.row.offers[0].discount_percentage) }}% de descuento
                     </q-badge><br/>
                     <span class="text-h5 text-positive text-weight-bold">
@@ -159,6 +159,7 @@
   <script>
   import { useQuasar, QSelect } from "quasar";
   import { mapActions, mapGetters } from "vuex";
+  import { getDiscountBadgeColor } from "src/utils/badgeStyles";
   import { ref } from "vue";
   import { notifyError } from "src/utils/notify";
 
@@ -199,6 +200,7 @@
       },
     },
     methods: {
+      getDiscountBadgeColor,
       ...mapActions("artistList", ["getArtists"]),
       formatGenres(genres) {
       return genres.map(genre => genre.name).join(', ');
