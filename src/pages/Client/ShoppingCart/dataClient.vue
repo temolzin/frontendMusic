@@ -492,12 +492,13 @@
               <div class="col-12 col-sm-6">
                 <q-item>
                   <q-input dense outlined class="full-width" label="Número de la Tarjeta"
-                    v-model="selectedCard.number_card" :rules="[
-                      (val) => !!val || 'Campo requerido',
-                      (val) => {
-                        if (!val) return true;
-                        const digits = (val.match(/\d/g) || []).length;
-                        const expLen = this.expectedCardLength(val);
+                    :model-value="maskCardNumber(selectedCard.number_card)" readonly
+                    :rules="[
+                      () => !!selectedCard.number_card || 'Campo requerido',
+                      () => {
+                        if (!selectedCard.number_card) return true;
+                        const digits = (selectedCard.number_card.match(/\d/g) || []).length;
+                        const expLen = this.expectedCardLength(selectedCard.number_card);
                         return digits === expLen || `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
                       }
                     ]"/>
@@ -530,7 +531,11 @@
                   <q-input dense outlined class="full-width" v-model="cvv" type="text" maxlength="4" ref="cvvInput"
                     label="CVV *" :rules="[
                       (val) => !!val || 'El CVV es requerido',
-                      (val) => (val.toString().length >= 3 && val.toString().length <= 4) || 'El CVV debe tener 3 o 4 dígitos'
+                      (val) => {
+                        if (!val) return true;
+                        const expected = this.getExpectedCvvLength(this.selectedCard?.number_card || '');
+                        return val.toString().length === expected || (expected === 4 ? 'Esta tarjeta requiere un CVV de 4 dígitos' : 'Esta tarjeta requiere un CVV de 3 dígitos');
+                      }
                     ]" />
                 </q-item>
               </div>
