@@ -227,7 +227,9 @@
                       Cada artista tiene su propia hora de inicio, así pueden presentarse uno tras otro.
                     </div>
                   </div>
-                  <div v-for="(product, index) in shoppingCardDetail" :key="'hour-' + index" class="col-12 col-sm-6 col-md-4">
+                  <div class="col-12">
+                    <div class="row q-col-gutter-sm justify-center">
+                  <div v-for="(product, index) in shoppingCardDetail" :key="'hour-' + index" :class="artistCardColClass">
                     <q-card flat bordered class="q-pa-md" style="border-radius: 12px; height: 100%">
                       <div class="row items-center q-gutter-sm">
                         <q-avatar size="48px">
@@ -268,6 +270,8 @@
                         </template>
                       </q-input>
                     </q-card>
+                  </div>
+                    </div>
                   </div>
                 </template>
               </div>
@@ -782,12 +786,13 @@
         </q-stepper>
       </div>
       <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-        <q-card class=" no-shadow" bordered>
+        <q-card class="no-shadow column" bordered :style="summaryCardStyle">
           <q-card-section class="text-center text-h6 text-white bg-primary">
             <q-icon name="shopping_cart" class="q-mr-sm" />
             Resumen del pedido
           </q-card-section>
           <div class="resumen-scroll">
+          <div class="resumen-inner full-width">
           <template v-for="(product, index) in shoppingCardDetail" :key="index">
             <q-card-section class="q-pa-md text-center">
               <q-img :src="castProduct(product).artist.image" loading="lazy" style="object-fit: cover" height="70px"
@@ -818,9 +823,10 @@
             <q-separator v-if="index < shoppingCardDetail.length - 1"></q-separator>
           </template>
           </div>
+          </div>
 
           <q-separator></q-separator>
-          <q-card-section class="col-3 q-pt-xs  text-white bg-primary">
+          <q-card-section class="col-auto q-pt-xs  text-white bg-primary">
             <div class=" full-width ">
               <div class="col-12 col-sm-3 col-md-4 text-center text-h6">
                 TOTAL:
@@ -975,6 +981,7 @@ export default defineComponent({
       googleMapsApiKey: ref(null),
       extraKmDataList: ref({}),
       artistHours: ref({}),
+      stepperCardHeight: ref(null),
     };
   },
   watch: {
@@ -2015,6 +2022,12 @@ export default defineComponent({
         }
       }
     },
+    updateStepperHeight() {
+      const el = this.$refs.stepper?.$el;
+      if (el) {
+        this.stepperCardHeight = el.offsetHeight;
+      }
+    },
   },
   computed: {
     ...mapGetters("card", ["stateUserCards"]),
@@ -2067,6 +2080,15 @@ export default defineComponent({
           ...option,
           label: `${option.label} (Max $${storeMaxLimits[option.value].toLocaleString('en-US')})`
         }));
+    },
+    summaryCardStyle() {
+      return this.stepperCardHeight ? { height: this.stepperCardHeight + 'px' } : {};
+    },
+    artistCardColClass() {
+      const count = this.shoppingCardDetail.length;
+      if (count === 2) return 'col-12 col-sm-6';
+      if (count === 3) return 'col-12 col-sm-6 col-md-4';
+      return 'col-12 col-sm-6 col-md-4';
     }
   },
   watch: {
@@ -2087,6 +2109,9 @@ export default defineComponent({
         if (val !== formatted) this.form.number_card = formatted;
       },
     },
+    step() {
+      this.$nextTick(() => this.updateStepperHeight());
+    },
   },
   async created() {
     await this.initializeCheckout();
@@ -2094,6 +2119,18 @@ export default defineComponent({
   mounted() {
     $q = useQuasar();
 
+    this.$nextTick(() => {
+      this.updateStepperHeight();
+      if (window.ResizeObserver && this.$refs.stepper?.$el) {
+        this.stepperResizeObserver = new ResizeObserver(() => this.updateStepperHeight());
+        this.stepperResizeObserver.observe(this.$refs.stepper.$el);
+      }
+      window.addEventListener('resize', this.updateStepperHeight);
+    });
+  },
+  beforeUnmount() {
+    this.stepperResizeObserver?.disconnect();
+    window.removeEventListener('resize', this.updateStepperHeight);
   },
 });
 </script>
@@ -2254,7 +2291,18 @@ export default defineComponent({
 }
 
 .resumen-scroll {
-  max-height: 800px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.resumen-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  min-height: 100%;
+  width: 100%;
 }
 </style>
