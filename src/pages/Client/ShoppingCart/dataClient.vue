@@ -229,48 +229,48 @@
                   </div>
                   <div class="col-12">
                     <div class="row q-col-gutter-sm justify-center">
-                  <div v-for="(product, index) in shoppingCardDetail" :key="'hour-' + index" :class="artistCardColClass">
-                    <q-card flat bordered class="q-pa-md" style="border-radius: 12px; height: 100%">
-                      <div class="row items-center q-gutter-sm">
-                        <q-avatar size="48px">
-                          <img :src="castProduct(product).artist?.image" />
-                        </q-avatar>
-                        <div class="col">
-                          <div class="text-subtitle2 text-weight-bold ellipsis">
-                            {{ castProduct(product).artist?.name || 'Artista ' + (index + 1) }}
+                      <div v-for="(product, index) in shoppingCardDetail" :key="'hour-' + index" :class="artistCardColClass">
+                        <q-card flat bordered class="q-pa-md" style="border-radius: 12px; height: 100%">
+                          <div class="row items-center q-gutter-sm">
+                            <q-avatar size="48px">
+                              <img :src="castProduct(product).artist?.image" />
+                            </q-avatar>
+                            <div class="col">
+                              <div class="text-subtitle2 text-weight-bold ellipsis">
+                                {{ castProduct(product).artist?.name || 'Artista ' + (index + 1) }}
+                              </div>
+                              <div class="text-caption text-grey-7">
+                                {{ castProduct(product).hours }} hora(s)
+                              </div>
+                            </div>
                           </div>
-                          <div class="text-caption text-grey-7">
-                            {{ castProduct(product).hours }} hora(s)
-                          </div>
-                        </div>
+                          <q-input
+                            dense
+                            filled
+                            class="q-mt-md full-width"
+                            v-model="artistHours[castProduct(product).artist_id]"
+                            :label="`Hora de inicio *`"
+                            readonly
+                            :rules="[
+                              (val) => !!val || 'Selecciona una hora'
+                            ]"
+                            @update:model-value="onArtistHourChange(castProduct(product).artist_id)"
+                            required
+                          >
+                            <template v-slot:append>
+                              <q-icon name="schedule" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                  <q-time v-model="artistHours[castProduct(product).artist_id]" mask="HH:mm" format24h :options="timeOptionForArtist(castProduct(product).artist_id)">
+                                    <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                                      <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                                    </div>
+                                  </q-time>
+                                </q-popup-proxy>
+                              </q-icon>
+                            </template>
+                          </q-input>
+                        </q-card>
                       </div>
-                      <q-input
-                        dense
-                        filled
-                        class="q-mt-md full-width"
-                        v-model="artistHours[castProduct(product).artist_id]"
-                        :label="`Hora de inicio *`"
-                        readonly
-                        :rules="[
-                          (val) => !!val || 'Selecciona una hora'
-                        ]"
-                        @update:model-value="onArtistHourChange(castProduct(product).artist_id)"
-                        required
-                      >
-                        <template v-slot:append>
-                          <q-icon name="schedule" class="cursor-pointer">
-                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                              <q-time v-model="artistHours[castProduct(product).artist_id]" mask="HH:mm" format24h :options="timeOptionForArtist(castProduct(product).artist_id)">
-                                <div class="row items-center justify-end q-gutter-sm q-pa-sm">
-                                  <q-btn v-close-popup label="Cerrar" color="primary" flat />
-                                </div>
-                              </q-time>
-                            </q-popup-proxy>
-                          </q-icon>
-                        </template>
-                      </q-input>
-                    </q-card>
-                  </div>
                     </div>
                   </div>
                 </template>

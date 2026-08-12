@@ -69,7 +69,6 @@
                   >
                     {{ formatDate(log.created_at) }}
                   </span>
-
                   <span
                     class="text-caption"
                     :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-7'"
