@@ -229,8 +229,8 @@
             />
             <q-btn
               unelevated
-              rounded
               color="negative"
+              style="border-radius: 8px"
               icon="cancel"
               :label="'Cancelar ' + (selectedPurchase?.approval_status === 'accepted' ? 'evento' : 'solicitud')"
               class="full-width q-mt-sm"
