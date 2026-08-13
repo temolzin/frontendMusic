@@ -161,7 +161,7 @@
                         <span>Subtotal a Transferir:</span>
                         <span>${{ formatCurrency(computedNetPayout(props.row)) }} MXN</span>
                       </div>
-                      <template v-if="props.row.penalties && props.row.penalties.length > 0">
+                      <template v-if="props.row.has_pending_penalties">
                         <q-separator class="q-my-xs" />
                         <div class="text-subtitle2 text-negative q-mb-xs q-mt-sm">
                           Penalizaciones pendientes
@@ -175,6 +175,12 @@
                           <span>Total penalizaciones:</span>
                           <span>- ${{ formatCurrency(props.row.total_penalties) }} MXN</span>
                         </div>
+                        <q-banner v-if="props.row.penalty_exceeds_payout" dense rounded class="bg-red-1 text-negative q-mt-sm text-caption" style="white-space: normal; line-height: 1.4;">
+                          <template v-slot:avatar>
+                            <q-icon name="warning" color="negative" />
+                          </template>
+                          La penalización supera el saldo a favor. Se descontarán <strong>${{ formatCurrency(computedNetPayout(props.row)) }} MXN</strong> y quedará una deuda de <strong>${{ formatCurrency(props.row.remaining_penalty) }} MXN</strong> para el siguiente evento.
+                        </q-banner>
                       </template>
                       <q-separator class="q-my-xs" />
                       <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold" :class="totalPenalties(props.row) > 0 ? 'text-primary' : 'text-positive'">
@@ -245,8 +251,8 @@
                       <q-btn
                         unelevated
                         style="border-radius: 8px;"
-                        label="CONFIRMAR TRANSFERENCIA REALIZADA"
-                        color="positive"
+                        :label="computedAdjustedNet(props.row) > 0 ? 'CONFIRMAR TRANSFERENCIA REALIZADA' : 'APLICAR PENALIZACIÓN (SIN TRANSFERENCIA)'"
+                        :color="computedAdjustedNet(props.row) > 0 ? 'positive' : 'warning'"
                         icon="check_circle"
                         class="text-weight-bold"
                         :disable="props.row.event_status !== 'completed' || props.row.status === 'liquidated' || !props.row.can_release"
@@ -477,6 +483,7 @@ export default {
             const applyFee = this.applyFeeMap[payout.sale_id] !== false;
             await this.releasePayout({ saleId: payout.sale_id, applyOpenpayFee: applyFee });
             notifySuccess("Liquidación registrada exitosamente.");
+            await this.loadPending();
           } catch (error) {
             notifyError("Error al actualizar el estatus en el servidor.");
           } finally {
