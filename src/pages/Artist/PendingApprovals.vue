@@ -75,7 +75,7 @@
         </template>
         <template v-slot:body-cell-tiempo="props">
           <q-td :props="props" class="text-center">
-            <q-badge color="warning" class="q-px-sm q-py-xs">
+            <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
               <q-icon name="schedule" size="12px" class="q-mr-xs" />
               {{ formatCountdown(props.row.time_remaining_seconds) }}
             </q-badge>
@@ -117,7 +117,7 @@
                     {{ props.row.customer_first_name }} {{ props.row.customer_last_name }}
                   </div>
                   <q-space />
-                  <q-badge color="warning" class="q-px-sm q-py-xs">
+                  <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                     <q-icon name="schedule" size="12px" class="q-mr-xs" />
                     {{ formatCountdown(props.row.time_remaining_seconds) }}
                   </q-badge>
@@ -220,7 +220,7 @@
         </template>
         <template v-slot:body-cell-resultado="props">
           <q-td :props="props">
-            <q-badge :color="historyStatusColor(props.row.approval_status)" class="q-px-sm q-py-xs">
+            <q-badge v-bind="getApprovalHistoryStatusColor(props.row.approval_status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
               {{ historyStatusLabel(props.row.approval_status) }}
             </q-badge>
           </q-td>
@@ -239,7 +239,7 @@
                     {{ props.row.customer_first_name }} {{ props.row.customer_last_name }}
                   </div>
                   <q-space />
-                  <q-badge :color="historyStatusColor(props.row.approval_status)" class="q-px-sm q-py-xs">
+                  <q-badge v-bind="getApprovalHistoryStatusColor(props.row.approval_status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                     {{ historyStatusLabel(props.row.approval_status) }}
                   </q-badge>
                 </div>
@@ -277,6 +277,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { getDiscountBadgeColor, getApprovalHistoryStatusColor } from 'src/utils/badgeStyles';
 import { notifyError, platformEvents } from 'src/utils/notify';
 
 const columns = [
@@ -349,6 +350,8 @@ export default {
   },
 
   methods: {
+    getDiscountBadgeColor,
+    getApprovalHistoryStatusColor,
     ...mapActions('approvals', ['fetchPendingApprovals', 'fetchApprovalHistory', 'acceptApproval', 'rejectApproval']),
 
     async loadPending() {
@@ -371,14 +374,6 @@ export default {
       } finally {
         this.loadingHistory = false;
       }
-    },
-
-    historyStatusColor(status) {
-      if (status === 'accepted') return 'positive';
-      if (status === 'rejected') return 'negative';
-      if (status === 'expired') return 'grey-7';
-      if (status === 'cancelled') return 'grey-5';
-      return 'grey-5';
     },
 
     historyStatusLabel(status) {

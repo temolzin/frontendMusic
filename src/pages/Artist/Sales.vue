@@ -57,10 +57,11 @@
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="text-center">
           <q-badge
-            :color="statusColor(props.row)"
-            :label="statusLabel(props.row)"
-            class="q-pa-sm"
-          />
+            v-bind="getEventStatusColor(props.row.event_status, $q.dark.isActive)"
+            class="q-px-sm q-py-xs text-weight-medium text-uppercase"
+          >
+            {{ statusLabel(props.row) }}
+          </q-badge>
         </q-td>
       </template>
 
@@ -141,10 +142,11 @@
                   </q-item-label>
                   <q-item-label v-if="col.name === 'status'">
                     <q-badge
-                      :color="statusColor(props.row)"
-                      :label="statusLabel(props.row)"
-                      class="q-pa-sm"
-                    />
+                      v-bind="getEventStatusColor(props.row.event_status, $q.dark.isActive)"
+                      class="q-px-sm q-py-xs text-weight-medium text-uppercase"
+                    >
+                      {{ statusLabel(props.row) }}
+                    </q-badge>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'amount'">
                     <span class="text-weight-bold text-positive text-h6">
@@ -333,7 +335,7 @@
               <div class="detail-label">Método de pago</div>
               <q-badge
                 :color="detailsSale?.payment_method === 'card' ? 'primary' : 'positive'"
-                class="q-px-sm q-py-xs q-mt-xs"
+                class="q-px-sm q-py-xs q-mt-xs text-weight-medium text-uppercase"
               >
                 {{ detailsSale?.payment_method === 'card' ? 'Tarjeta' : 'Efectivo' }}
               </q-badge>
@@ -342,12 +344,11 @@
           <q-separator class="q-my-md" />
           <div class="text-overline text-primary text-weight-bold">Estado</div>
           <div class="detail-row">
-            <q-icon name="check_circle" size="20px" :color="paymentStatusColor(detailsSale?.status)" />
+            <q-icon name="check_circle" size="20px" :color="getPaymentStatusColor(detailsSale?.status, $q.dark.isActive).color" />
             <div>
-              <div class="detail-label">Estado del pago</div>
               <q-badge
-                :color="paymentStatusColor(detailsSale?.status)"
-                class="q-px-sm q-py-xs q-mt-xs"
+                v-bind="getPaymentStatusColor(detailsSale?.status, $q.dark.isActive)"
+                class="q-px-sm q-py-xs q-mt-xs text-weight-medium text-uppercase"
               >
                 {{ paymentStatusLabel(detailsSale?.status) }}
               </q-badge>
@@ -362,6 +363,7 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useQuasar } from 'quasar';
+import { getEventStatusColor, getPaymentStatusColor } from 'src/utils/badgeStyles';
 import { notifyError } from 'src/utils/notify';
 import NoticeNoSales from 'src/components/Artist/NoticeNoSales.vue';
 import NoticeNotInfo from 'src/components/Artist/NoticeNotInfo.vue';
@@ -439,6 +441,9 @@ export default {
   },
 
   methods: {
+    getEventStatusColor,
+    getPaymentStatusColor,
+    ...mapActions('sales', ['fetchSales', 'fetchSaleDetails']),
     ...mapActions("artistSales", ["getArtistSales"]),
     ...mapActions("artist", ["getArtist"]),
     ...mapActions("orderDetails", [
@@ -465,14 +470,6 @@ export default {
       if (row.event_status === 'expired') return 'Expirado';
       if (row.event_status === 'completed') return 'Completado';
       return 'Pendiente';
-    },
-
-    statusColor(row) {
-      if (row.event_status === 'cancelled') return 'negative';
-      if (row.event_status === 'rejected') return 'negative';
-      if (row.event_status === 'expired') return 'grey-7';
-      if (row.event_status === 'completed') return 'positive';
-      return 'warning';
     },
 
     canReport(row) {
@@ -507,12 +504,6 @@ export default {
       if (status === 'cancelled') return 'Cancelado';
       if (status === 'expired') return 'Expirado';
       return 'Pendiente';
-    },
-
-    paymentStatusColor(status) {
-      if (status === 'completed') return 'positive';
-      if (status === 'failed' || status === 'cancelled' || status === 'expired') return 'negative';
-      return 'warning';
     },
 
     formatChatDate(rawDate) {

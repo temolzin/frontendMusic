@@ -4,7 +4,32 @@
       <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
         <q-stepper v-model="step" header-nav ref="stepper" class="no-shadow" bordered animated>
           <q-step :name="1" title="Informacion del Pedido" icon="shopping_cart" :done="step > 1" :header-nav="step > 1">
-            <img class="openpay" src="https://assets.stickpng.com/images/62e3c66bd889babae63d750e.png" />
+            <q-banner
+              dense
+              rounded
+              :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-mb-md q-py-sm q-px-md']"
+            >
+              <template v-slot:avatar>
+                <q-icon name="info" color="blue" size="sm" />
+              </template>
+              <div class="text-body2">
+                <strong>Completa los datos de tu pedido:</strong>
+                <ul class="q-pl-md q-mt-xs q-mb-none">
+                  <li class="q-mb-xs">
+                    Llena tus <strong>datos personales</strong> (nombre, apellidos, correo y teléfono).
+                  </li>
+                  <li class="q-mb-xs">
+                    Indica el <strong>domicilio</strong> donde será el evento o usa el <strong>mapa</strong> para ubicarlo.
+                  </li>
+                  <li class="q-mb-xs">
+                    Selecciona la <strong>fecha</strong> y la <strong>hora</strong> del evento.
+                  </li>
+                  <li v-if="shoppingCardDetail.length > 1">
+                    Asigna la <strong>hora de presentación</strong> de cada artista para que se presenten uno tras otro.
+                  </li>
+                </ul>
+              </div>
+            </q-banner>
             <q-form @submit="nextStep" ref="formClient1">
               <div class="row">
                 <div class="col-12 col-sm-6">
@@ -202,47 +227,51 @@
                       Cada artista tiene su propia hora de inicio, así pueden presentarse uno tras otro.
                     </div>
                   </div>
-                  <div v-for="(product, index) in shoppingCardDetail" :key="'hour-' + index" class="col-12 col-sm-6 col-md-4">
-                    <q-card flat bordered class="q-pa-md" style="border-radius: 12px; height: 100%">
-                      <div class="row items-center q-gutter-sm">
-                        <q-avatar size="48px">
-                          <img :src="castProduct(product).artist?.image" />
-                        </q-avatar>
-                        <div class="col">
-                          <div class="text-subtitle2 text-weight-bold ellipsis">
-                            {{ castProduct(product).artist?.name || 'Artista ' + (index + 1) }}
+                  <div class="col-12">
+                    <div class="row q-col-gutter-sm justify-center">
+                      <div v-for="(product, index) in shoppingCardDetail" :key="'hour-' + index" :class="artistCardColClass">
+                        <q-card flat bordered class="q-pa-md" style="border-radius: 12px; height: 100%">
+                          <div class="row items-center q-gutter-sm">
+                            <q-avatar size="48px">
+                              <img :src="castProduct(product).artist?.image" />
+                            </q-avatar>
+                            <div class="col">
+                              <div class="text-subtitle2 text-weight-bold ellipsis">
+                                {{ castProduct(product).artist?.name || 'Artista ' + (index + 1) }}
+                              </div>
+                              <div class="text-caption text-grey-7">
+                                {{ castProduct(product).hours }} hora(s)
+                              </div>
+                            </div>
                           </div>
-                          <div class="text-caption text-grey-7">
-                            {{ castProduct(product).hours }} hora(s)
-                          </div>
-                        </div>
+                          <q-input
+                            dense
+                            filled
+                            class="q-mt-md full-width"
+                            v-model="artistHours[castProduct(product).artist_id]"
+                            :label="`Hora de inicio *`"
+                            readonly
+                            :rules="[
+                              (val) => !!val || 'Selecciona una hora'
+                            ]"
+                            @update:model-value="onArtistHourChange(castProduct(product).artist_id)"
+                            required
+                          >
+                            <template v-slot:append>
+                              <q-icon name="schedule" class="cursor-pointer">
+                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                  <q-time v-model="artistHours[castProduct(product).artist_id]" mask="HH:mm" format24h :options="timeOptionForArtist(castProduct(product).artist_id)">
+                                    <div class="row items-center justify-end q-gutter-sm q-pa-sm">
+                                      <q-btn v-close-popup label="Cerrar" color="primary" flat />
+                                    </div>
+                                  </q-time>
+                                </q-popup-proxy>
+                              </q-icon>
+                            </template>
+                          </q-input>
+                        </q-card>
                       </div>
-                      <q-input
-                        dense
-                        filled
-                        class="q-mt-md full-width"
-                        v-model="artistHours[castProduct(product).artist_id]"
-                        :label="`Hora de inicio *`"
-                        readonly
-                        :rules="[
-                          (val) => !!val || 'Selecciona una hora'
-                        ]"
-                        @update:model-value="onArtistHourChange(castProduct(product).artist_id)"
-                        required
-                      >
-                        <template v-slot:append>
-                          <q-icon name="schedule" class="cursor-pointer">
-                            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                              <q-time v-model="artistHours[castProduct(product).artist_id]" mask="HH:mm" format24h :options="timeOptionForArtist(castProduct(product).artist_id)">
-                                <div class="row items-center justify-end q-gutter-sm q-pa-sm">
-                                  <q-btn v-close-popup label="Cerrar" color="primary" flat />
-                                </div>
-                              </q-time>
-                            </q-popup-proxy>
-                          </q-icon>
-                        </template>
-                      </q-input>
-                    </q-card>
+                    </div>
                   </div>
                 </template>
               </div>
@@ -259,6 +288,26 @@
           </q-step>
 
           <q-step :name="2" title="Opciones de Pago" icon="shopping_cart" :done="step > 2" :header-nav="step > 2">
+            <q-banner
+              dense
+              rounded
+              :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-mb-md q-py-sm q-px-md']"
+            >
+              <template v-slot:avatar>
+                <q-icon name="info" color="blue" size="sm" />
+              </template>
+              <div class="text-body2">
+                <strong>Elige cómo quieres pagar:</strong>
+                <ul class="q-pl-md q-mt-xs q-mb-none">
+                  <li class="q-mb-xs">
+                    <strong>Pagar con Tarjeta:</strong> selecciona una tarjeta guardada o agrega una nueva, verifica los datos y captura el <strong>CVV</strong>.
+                  </li>
+                  <li class="q-mb-xs">
+                    <strong>Pagar en Efectivo:</strong> elige un punto de pago; la <strong>referencia</strong> se generará después de que el artista acepte el evento.
+                  </li>
+                </ul>
+              </div>
+            </q-banner>
             <div class="q-mb-lg">
               <div class="text-h6 q-mb-md">Selecciona tu método de pago:</div>
               <div class="row q-col-gutter-md">
@@ -447,12 +496,13 @@
               <div class="col-12 col-sm-6">
                 <q-item>
                   <q-input dense outlined class="full-width" label="Número de la Tarjeta"
-                    v-model="selectedCard.number_card" :rules="[
-                      (val) => !!val || 'Campo requerido',
-                      (val) => {
-                        if (!val) return true;
-                        const digits = (val.match(/\d/g) || []).length;
-                        const expLen = this.expectedCardLength(val);
+                    :model-value="maskCardNumber(selectedCard.number_card)" readonly
+                    :rules="[
+                      () => !!selectedCard.number_card || 'Campo requerido',
+                      () => {
+                        if (!selectedCard.number_card) return true;
+                        const digits = (selectedCard.number_card.match(/\d/g) || []).length;
+                        const expLen = this.expectedCardLength(selectedCard.number_card);
                         return digits === expLen || `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
                       }
                     ]"/>
@@ -485,7 +535,11 @@
                   <q-input dense outlined class="full-width" v-model="cvv" type="text" maxlength="4" ref="cvvInput"
                     label="CVV *" :rules="[
                       (val) => !!val || 'El CVV es requerido',
-                      (val) => (val.toString().length >= 3 && val.toString().length <= 4) || 'El CVV debe tener 3 o 4 dígitos'
+                      (val) => {
+                        if (!val) return true;
+                        const expected = this.getExpectedCvvLength(this.selectedCard?.number_card || '');
+                        return val.toString().length === expected || (expected === 4 ? 'Esta tarjeta requiere un CVV de 4 dígitos' : 'Esta tarjeta requiere un CVV de 3 dígitos');
+                      }
                     ]" />
                 </q-item>
               </div>
@@ -520,6 +574,29 @@
           </q-step>
 
           <q-step :name="3" title="Revise su orden" icon="shopping_cart" :header-nav="step > 3">
+            <q-banner
+              dense
+              rounded
+              :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-mb-md q-py-sm q-px-md']"
+            >
+              <template v-slot:avatar>
+                <q-icon name="info" color="blue" size="sm" />
+              </template>
+              <div class="text-body2">
+                <strong>Revisa tu orden antes de confirmar:</strong>
+                <ul class="q-pl-md q-mt-xs q-mb-none">
+                  <li class="q-mb-xs">
+                    Verifica que los <strong>artistas</strong>, las <strong>horas</strong> y el <strong>total</strong> sean correctos.
+                  </li>
+                  <li class="q-mb-xs">
+                    Confirma tus <strong>datos de contacto</strong> y el método de pago elegido.
+                  </li>
+                  <li class="q-mb-xs">
+                    Haz clic en <strong>Confirmar Orden</strong> para enviar la solicitud.
+                  </li>
+                </ul>
+              </div>
+            </q-banner>
             <q-banner
               dense
               rounded
@@ -714,12 +791,13 @@
         </q-stepper>
       </div>
       <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-        <q-card class=" no-shadow" bordered>
+        <q-card class="no-shadow column" bordered :style="summaryCardStyle">
           <q-card-section class="text-center text-h6 text-white bg-primary">
             <q-icon name="shopping_cart" class="q-mr-sm" />
             Resumen del pedido
           </q-card-section>
           <div class="resumen-scroll">
+          <div class="resumen-inner full-width">
           <template v-for="(product, index) in shoppingCardDetail" :key="index">
             <q-card-section class="q-pa-md text-center">
               <q-img :src="castProduct(product).artist.image" loading="lazy" style="object-fit: cover" height="70px"
@@ -734,7 +812,7 @@
                 <div class="text-body2 text-grey text-strike q-mb-xs">
                   ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                 </div>
-                <q-badge color="orange" class="q-mb-xs" :label="Math.round((1 - castProduct(product).price / castProduct(product).artist.price_hour) * 100) + '% OFF'" />
+                <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase" :label="Math.round((1 - castProduct(product).price / castProduct(product).artist.price_hour) * 100) + '% OFF'" />
                 <div class="text-weight-bold text-positive" style="font-size: 1.3rem">
                   ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
                 </div>
@@ -750,9 +828,10 @@
             <q-separator v-if="index < shoppingCardDetail.length - 1"></q-separator>
           </template>
           </div>
+          </div>
 
           <q-separator></q-separator>
-          <q-card-section class="col-3 q-pt-xs  text-white bg-primary">
+          <q-card-section class="col-auto q-pt-xs  text-white bg-primary">
             <div class=" full-width ">
               <div class="col-12 col-sm-3 col-md-4 text-center text-h6">
                 TOTAL:
@@ -824,6 +903,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 import { useQuasar } from "quasar";
 import { mapActions, mapState, mapGetters } from "vuex";
 import { ref } from "vue";
@@ -907,6 +987,7 @@ export default defineComponent({
       googleMapsApiKey: ref(null),
       extraKmDataList: ref({}),
       artistHours: ref({}),
+      stepperCardHeight: ref(null),
     };
   },
   watch: {
@@ -930,6 +1011,8 @@ export default defineComponent({
     },
   },
   methods: {
+    getDiscountBadgeColor,
+    handleStep(stepName) {},
     translateOpenPayClientError(rawMessage) {
       const msg = (rawMessage || "").toLowerCase();
 
@@ -1947,6 +2030,12 @@ export default defineComponent({
         }
       }
     },
+    updateStepperHeight() {
+      const el = this.$refs.stepper?.$el;
+      if (el) {
+        this.stepperCardHeight = el.offsetHeight;
+      }
+    },
   },
   computed: {
     ...mapGetters("card", ["stateUserCards"]),
@@ -1999,6 +2088,15 @@ export default defineComponent({
           ...option,
           label: `${option.label} (Max $${storeMaxLimits[option.value].toLocaleString('en-US')})`
         }));
+    },
+    summaryCardStyle() {
+      return this.stepperCardHeight ? { height: this.stepperCardHeight + 'px' } : {};
+    },
+    artistCardColClass() {
+      const count = this.shoppingCardDetail.length;
+      if (count === 2) return 'col-12 col-sm-6';
+      if (count === 3) return 'col-12 col-sm-6 col-md-4';
+      return 'col-12 col-sm-6 col-md-4';
     }
   },
   watch: {
@@ -2019,6 +2117,9 @@ export default defineComponent({
         if (val !== formatted) this.form.number_card = formatted;
       },
     },
+    step() {
+      this.$nextTick(() => this.updateStepperHeight());
+    },
   },
   async created() {
     await this.initializeCheckout();
@@ -2026,6 +2127,18 @@ export default defineComponent({
   mounted() {
     $q = useQuasar();
 
+    this.$nextTick(() => {
+      this.updateStepperHeight();
+      if (window.ResizeObserver && this.$refs.stepper?.$el) {
+        this.stepperResizeObserver = new ResizeObserver(() => this.updateStepperHeight());
+        this.stepperResizeObserver.observe(this.$refs.stepper.$el);
+      }
+      window.addEventListener('resize', this.updateStepperHeight);
+    });
+  },
+  beforeUnmount() {
+    this.stepperResizeObserver?.disconnect();
+    window.removeEventListener('resize', this.updateStepperHeight);
   },
 });
 </script>
@@ -2101,18 +2214,6 @@ export default defineComponent({
   -moz-transform-style: preserve-3d;
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
-}
-.openpay {
-  top: 0;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  height: 190px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  border-radius: 1px;
 }
 .card__front {
   padding: 18px;
@@ -2198,7 +2299,18 @@ export default defineComponent({
 }
 
 .resumen-scroll {
-  max-height: 800px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.resumen-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  min-height: 100%;
+  width: 100%;
 }
 </style>

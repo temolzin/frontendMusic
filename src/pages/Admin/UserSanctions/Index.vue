@@ -59,8 +59,8 @@
         <q-td :props="props" class="text-center">
           <q-badge 
             v-if="props.row.tickets_against_count > 0" 
-            color="negative" 
-            class="q-pa-sm text-weight-bold"
+            v-bind="getUserSanctionTicketsColor($q.dark.isActive)"
+            class="q-pa-sm text-weight-medium text-uppercase"
           >
             {{ props.row.tickets_against_count }} {{ props.row.tickets_against_count === 1 ? 'Ticket' : 'Tickets' }}
           </q-badge>
@@ -71,9 +71,9 @@
       <template v-slot:body-cell-faults="props">
         <q-td :props="props" class="text-center">
           <q-badge 
-            v-if="props.row.faults_count > 0" 
-            :color="props.row.faults_count >= 2 ? 'negative' : 'warning'" 
-            class="q-pa-sm text-weight-bold"
+            v-if="props.row.faults_count > 0"
+            v-bind="getUserSanctionFaultsColor(props.row.faults_count, $q.dark.isActive)"
+            class="q-pa-sm text-weight-medium text-uppercase"
           >
             {{ props.row.faults_count }} {{ props.row.faults_count === 1 ? 'Cancelación' : 'Cancelaciones' }}
           </q-badge>
@@ -84,8 +84,8 @@
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="text-center">
           <q-badge 
-            :color="getStatusColor(props.row.account_status)" 
-            class="q-pa-sm text-weight-bold"
+            v-bind="getUserSanctionStatusColor(props.row.account_status, $q.dark.isActive)"
+            class="q-pa-sm text-weight-medium text-uppercase"
           >
             {{ formatStatus(props.row.account_status) }}
           </q-badge>
@@ -134,21 +134,21 @@
                   </q-item-label>
                   
                   <q-item-label v-else-if="col.name === 'tickets_against'">
-                    <q-badge v-if="props.row.tickets_against_count > 0" color="negative" class="q-pa-xs text-weight-bold">
+                    <q-badge v-if="props.row.tickets_against_count > 0" v-bind="getUserSanctionTicketsColor($q.dark.isActive)" class="q-pa-xs text-weight-medium text-uppercase">
                       {{ props.row.tickets_against_count }} Tickets
                     </q-badge>
                     <span v-else class="text-body2 text-grey-6">Sin tickets</span>
                   </q-item-label>
                   
                   <q-item-label v-else-if="col.name === 'faults'">
-                    <q-badge v-if="props.row.faults_count > 0" :color="props.row.faults_count >= 2 ? 'negative' : 'warning'" class="q-pa-xs text-weight-bold">
+                    <q-badge v-if="props.row.faults_count > 0" v-bind="getUserSanctionFaultsColor(props.row.faults_count, $q.dark.isActive)" class="q-pa-xs text-weight-medium text-uppercase">
                       {{ props.row.faults_count }} Cancelaciones
                     </q-badge>
                     <span v-else class="text-body2 text-grey-6">Sin cancelaciones</span>
                   </q-item-label>
                   
                   <q-item-label v-else-if="col.name === 'status'">
-                    <q-badge :color="getStatusColor(props.row.account_status)" class="q-pa-xs text-weight-bold">
+                    <q-badge v-bind="getUserSanctionStatusColor(props.row.account_status, $q.dark.isActive)" class="q-pa-xs text-weight-medium text-uppercase">
                       {{ formatStatus(props.row.account_status) }}
                     </q-badge>
                   </q-item-label>
@@ -227,7 +227,7 @@
                   <q-item-section>
                     <q-item-label class="text-weight-bold row items-center">
                       <span>Ticket #{{ scope.opt.value }}</span>
-                      <q-badge :color="getCategoryColor(scope.opt.categoryRaw)" class="q-ml-sm q-px-sm py-1">{{ formatTicketCategory(scope.opt.categoryRaw) }}</q-badge>
+                      <q-badge v-bind="getUserSanctionCategoryColor(scope.opt.categoryRaw, $q.dark.isActive)" class="q-ml-sm q-px-sm q-py-xs text-weight-medium text-uppercase">{{ formatTicketCategory(scope.opt.categoryRaw) }}</q-badge>
                     </q-item-label>
                     <q-item-label caption lines="2" class="q-mt-xs">{{ scope.opt.description }}</q-item-label>
                   </q-item-section>
@@ -517,6 +517,7 @@
 import { mapActions, mapGetters } from "vuex";
 import { api } from 'boot/axios';
 import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
+import { getUserSanctionStatusColor, getUserSanctionCategoryColor, getUserSanctionTicketsColor, getUserSanctionFaultsColor } from 'src/utils/badgeStyles';
 
 let $q;
 
@@ -690,6 +691,10 @@ export default {
     }
   },
   methods: {
+    getUserSanctionStatusColor,
+    getUserSanctionCategoryColor,
+    getUserSanctionTicketsColor,
+    getUserSanctionFaultsColor,
     ...mapActions("userSanctions", [
       "getUserSanctions",
       "getUserTickets",
@@ -888,10 +893,6 @@ export default {
     formatTicketCategory(cat) {
       return TICKET_CATEGORIES[cat] || cat;
     },
-    
-    getCategoryColor(cat) {
-      return TICKET_COLORS[cat] || "primary";
-    },
 
     formatDate(dateStr) {
       if (!dateStr) return "N/A";
@@ -905,10 +906,6 @@ export default {
         params: { id: ticketId },
         query: { from: 'sanctions' }
       });
-    },
-    
-    getStatusColor(status) {
-      return ACCOUNT_STATUS_COLORS[status] || "grey";
     },
     
     formatStatus(status) {

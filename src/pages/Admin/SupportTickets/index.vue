@@ -65,7 +65,7 @@
 
       <template v-slot:body-cell-category="props">
         <q-td :props="props">
-          <q-badge :color="categoryColor(props.row.category)" class="q-px-sm q-py-xs">
+          <q-badge v-bind="getSupportTicketCategoryColor(props.row.category, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
             {{ categoryLabel(props.row.category) }}
           </q-badge>
         </q-td>
@@ -73,7 +73,7 @@
 
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-badge :color="statusColor(props.row.status)" class="q-px-sm q-py-xs">
+          <q-badge v-bind="getSupportTicketStatusColor(props.row.status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
             {{ statusLabel(props.row.status) }}
           </q-badge>
         </q-td>
@@ -116,6 +116,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
 import { notifyError } from 'src/utils/notify';
+import { getSupportTicketCategoryColor, getSupportTicketStatusColor } from 'src/utils/badgeStyles';
 
 export default {
   name: 'SupportTicketsIndex',
@@ -162,6 +163,8 @@ export default {
 
   methods: {
     ...mapActions('supportTickets', ['fetchAdminTickets']),
+    getSupportTicketCategoryColor,
+    getSupportTicketStatusColor,
 
     async fetchTickets() {
       this.loading = true;
@@ -198,17 +201,6 @@ export default {
       return map[cat] || cat;
     },
 
-    categoryColor(cat) {
-      const map = {
-        no_show: 'negative',
-        delay: 'orange',
-        bad_service: 'deep-orange',
-        cancellation: 'red',
-        other: 'grey',
-      };
-      return map[cat] || 'grey';
-    },
-
     statusLabel(status) {
       const map = {
         open: 'Abierto',
@@ -217,16 +209,6 @@ export default {
         rejected: 'Rechazado',
       };
       return map[status] || status;
-    },
-
-    statusColor(status) {
-      const map = {
-        open: 'warning',
-        under_review: 'info',
-        resolved: 'positive',
-        rejected: 'negative',
-      };
-      return map[status] || 'grey';
     },
 
     openLogs(row) {

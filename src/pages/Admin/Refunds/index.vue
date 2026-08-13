@@ -97,9 +97,7 @@
               ${{ formatCurrency(props.row.refund_amount) }} MXN
             </q-td>
             <q-td key="status" :props="props">
-              <q-badge
-                :color="getStatusBadgeColor(props.row.status)"
-                class="text-weight-bold" >
+              <q-badge v-bind="getRefundStatusColor(props.row.status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                 {{ getStatusLabel(props.row.status) }}
               </q-badge>
             </q-td>
@@ -191,6 +189,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
+import { getRefundStatusColor } from 'src/utils/badgeStyles';
 
 const columns = [
   { name: "expand", label: "Detalles", align: "center" },
@@ -245,6 +244,7 @@ export default {
   },
 
   methods: {
+    getRefundStatusColor,
     ...mapActions("refunds", ["fetchRefunds", "processClientRefund"]),
 
     async loadData() {
@@ -285,26 +285,10 @@ export default {
         });
     },
 
-    getStatusBadgeColor(status) {
-      switch (status) {
-        case "processed":
-          return "positive";
-        case "failed":
-          return "negative";
-        default:
-          return "warning";
-      }
-    },
-
     getStatusLabel(status) {
-      switch (status) {
-        case "processed":
-          return "PROCESADO";
-        case "failed":
-          return "FALLIDO";
-        default:
-          return "PENDIENTE";
-      }
+      if (status === 'processed') return 'Aprobado';
+      if (status === 'failed') return 'Rechazado';
+      return 'Pendiente';
     },
 
     formatCurrency(value) {

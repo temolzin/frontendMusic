@@ -63,25 +63,73 @@
                   {{ statusLabel(log.status) }}
                 </q-badge>
                 <div class="column items-end">
-                  <span class="text-caption text-grey-6">{{ formatDate(log.created_at) }}</span>
-                  <span class="text-caption text-grey-5">{{ formatTime(log.created_at) }}</span>
+                  <span
+                    class="text-caption text-weight-medium"
+                    :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-8'"
+                  >
+                    {{ formatDate(log.created_at) }}
+                  </span>
+                  <span
+                    class="text-caption"
+                    :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-7'"
+                  >
+                    {{ formatTime(log.created_at) }}
+                  </span>
                 </div>
               </div>
 
               <div class="row items-center q-mb-xs">
-                <q-icon name="person" size="xs" class="q-mr-xs text-grey-6" />
-                <span class="text-body2 text-weight-medium">{{ log.changed_by?.name || 'N/A' }}</span>
-                <span class="text-caption text-grey-5 q-ml-xs">{{ log.changed_by?.email || '' }}</span>
+                <q-icon
+                  name="person"
+                  size="xs"
+                  class="q-mr-xs"
+                  :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-8'"
+                />
+
+                <span
+                  class="text-body2 text-weight-bold"
+                  :class="$q.dark.isActive ? 'text-white' : 'text-grey-10'"
+                >
+                  {{ log.changed_by?.name || 'N/A' }}
+                </span>
+
+                <span
+                  class="text-body2 q-ml-xs"
+                  :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-8'"
+                >
+                  {{ log.changed_by?.email || '' }}
+                </span>
               </div>
 
               <div v-if="log.resolution_type" class="row items-center q-mb-xs">
-                <q-icon name="gavel" size="xs" class="q-mr-xs text-grey-6" />
-                <span class="text-caption">Resolución: <strong>{{ resolutionLabel(log.resolution_type) }}</strong></span>
+                <q-icon
+                  name="gavel"
+                  size="xs"
+                  class="q-mr-xs"
+                  :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-8'"
+                />
+                <span
+                  class="text-caption"
+                  :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'"
+                >
+                  Resolución: <strong>{{ resolutionLabel(log.resolution_type) }}</strong>
+                </span>
               </div>
 
               <div v-if="log.notes" class="row items-start q-mb-xs">
-                <q-icon name="notes" size="xs" class="q-mr-xs q-mt-xs text-grey-6" />
-                <span class="text-caption text-grey-8">{{ log.notes }}</span>
+                <q-icon
+                  name="notes"
+                  size="xs"
+                  class="q-mr-xs q-mt-xs"
+                  :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-8'"
+                />
+
+                <span
+                  class="text-body2"
+                  :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'"
+                >
+                  {{ log.notes }}
+                </span>
               </div>
 
               <div v-if="log.message" class="row items-start q-mb-xs">
@@ -91,7 +139,10 @@
 
               <div v-if="log.notes === 'Ticket creado.' && ticketWithEvidences && ticketWithEvidences.evidences && ticketWithEvidences.evidences.length > 0">
                 <q-separator class="q-my-xs" />
-                <div class="text-caption text-grey-6 q-mb-xs">
+                <div
+                  class="text-caption q-mb-xs"
+                  :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-8'"
+                >
                   <q-icon name="attach_file" size="xs" class="q-mr-xs" />Evidencias
                 </div>
                 <div class="row q-gutter-xs">

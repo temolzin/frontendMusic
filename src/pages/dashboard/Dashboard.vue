@@ -52,6 +52,14 @@
       </q-card>
     </div>
   </div>
+  <div v-if="getMe.role[0] == 'artista'" class="q-px-md q-pb-md">
+    <q-separator class="q-my-lg" />
+    <div class="q-mb-md">
+      <div class="text-h4 text-weight-bold">Mis Estadísticas</div>
+      <div class="text-caption text-grey">Rendimiento detallado de tu perfil</div>
+    </div>
+    <artist-stats own-view />
+  </div>
   <client-card v-if="getMe.role[0] == 'cliente'"></client-card>
   <notice-general v-if="getMe.role[0] == 'administrador'"></notice-general>
   <div v-if="getMe.role[0] == 'administrador'" class="q-px-md q-pb-md">
@@ -179,7 +187,7 @@
             <q-card-section class="q-pt-none">
               <div class="text-subtitle1">
                 <template v-if="props.row.artist.offers && props.row.artist.offers.length > 0">
-                  <q-badge color="orange" class="q-mb-xs">
+                  <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase">
                     {{ formatDiscount(props.row.artist.offers[0].discount_percentage) }}% de descuento
                   </q-badge><br/>
                   <span class="text-h5 text-positive text-weight-bold">
@@ -235,6 +243,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 import { useQuasar } from "quasar";
 import ClientCard from "src/components/Client/ClientCard.vue";
 import ClientPromotion from "src/components/Client/ClientPromotion.vue";
@@ -278,6 +287,7 @@ export default {
     ...mapGetters("favouriteArtists", ["stateFavouriteArtists"]),
   },
   methods: {
+    getDiscountBadgeColor,
     ...mapActions("favouriteArtists", ["getFavouriteArtists"]),
     async gettFavouriteArtists() {
       try {

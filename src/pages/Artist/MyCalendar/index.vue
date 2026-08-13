@@ -97,9 +97,11 @@
                               </div>
                               <div class="event-right">
                                 <q-badge
-                                  :color="statusColor(event.status)"
-                                  :label="statusLabel(event.status)"
-                                />
+                                  v-bind="getEventStatusColor(event.status, $q.dark.isActive)"
+                                  class="q-px-sm q-py-xs text-weight-medium text-uppercase"
+                                >
+                                  {{ statusLabel(event.status) }}
+                                </q-badge>
                                 <q-icon
                                   :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
                                   color="primary"
@@ -172,6 +174,7 @@
                                   <q-btn
                                     v-if="canCancelEvent(event)"
                                     color="negative"
+                                    style="border-radius: 8px; font-weight: bold;"
                                     label="Cancelar evento"
                                     outline
                                     size="sm"
@@ -220,9 +223,11 @@
                               </div>
                               <div class="event-right">
                                 <q-badge
-                                  :color="statusColor(event.status)"
-                                  :label="statusLabel(event.status)"
-                                />
+                                  v-bind="getEventStatusColor(event.status, $q.dark.isActive)"
+                                  class="q-px-sm q-py-xs text-weight-medium text-uppercase"
+                                >
+                                  {{ statusLabel(event.status) }}
+                                </q-badge>
                                 <q-icon
                                   :name="expanded[event.id] ? 'expand_less' : 'expand_more'"
                                   color="primary"
@@ -338,6 +343,7 @@ import { useQuasar } from 'quasar';
 import langEs from 'quasar/lang/es';
 import { api } from 'boot/axios';
 import { mapActions } from 'vuex';
+import { getEventStatusColor } from 'src/utils/badgeStyles';
 import CancellationModal from 'components/CancellationModal.vue';
 import { notifySuccess, notifyError, platformEvents } from 'src/utils/notify';
 
@@ -404,6 +410,7 @@ export default defineComponent({
 
   },
   methods: {
+    getEventStatusColor,
     ...mapActions("userSanctions", [
       "evaluateCancellationSanction"
     ]),
@@ -537,14 +544,6 @@ export default defineComponent({
       ].filter(Boolean).join(', ');
       const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
       window.open(url, '_blank');
-    },
-
-    statusColor(status) {
-      if (status === 'completed') return 'positive';
-      if (status === 'rejected') return 'negative';
-      if (status === 'expired') return 'grey-7';
-      if (status === 'cancelled') return 'grey-5';
-      return 'warning';
     },
 
     statusLabel(status) {

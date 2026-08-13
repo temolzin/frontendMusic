@@ -117,7 +117,7 @@
             <q-separator inset />
 
             <q-card-section>
-              <div class="text-caption text-grey-5 q-mb-sm">Desglose sutil del estado actual</div>
+              <div class="text-caption text-grey-6 q-mb-sm">Desglose sutil del estado actual</div>
               <div class="column q-gutter-sm">
                 <div
                   v-for="item in card.breakdown || []"

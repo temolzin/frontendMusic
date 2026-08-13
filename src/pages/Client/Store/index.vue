@@ -115,7 +115,7 @@
                 <q-card-section class="q-pt-none">
                   <div class="text-subtitle1">
                     <template v-if="props.row.offers && props.row.offers.length > 0">
-                      <q-badge color="warning" class="q-mb-xs">
+                      <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase">
                         {{ formatDiscount(props.row.offers[0].discount_percentage) }}% de descuento
                       </q-badge><br/>
                       <span class="text-h5 text-positive text-weight-bold">
@@ -178,6 +178,7 @@ import { mapActions, mapGetters, mapState } from "vuex";
 import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
+import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 
 let $q;
 export default {
@@ -214,6 +215,7 @@ export default {
     };
   },
   methods: {
+    getDiscountBadgeColor,
     ...mapActions("artistList", ["getArtists"]),
     ...mapActions("clientMusicalGenders", ["getMusicalGenders"]),
     ...mapActions("shoppingCard", ["create_order"]),

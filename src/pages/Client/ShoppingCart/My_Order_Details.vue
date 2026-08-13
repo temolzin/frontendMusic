@@ -71,7 +71,7 @@
                       <div class="text-caption text-grey">Contacto asignado</div>
                     </td>
                     <td class="text-center" style="width: 15%;">
-                      <q-badge outline :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs text-weight-bold bg-white" style="font-size: 13px">
+                      <q-badge v-bind="getEventStatusColor(purchase.event_status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase" style="font-size: 13px">
                         {{ eventStatusLabel(purchase.event_status) }}
                       </q-badge>
                     </td>
@@ -113,7 +113,7 @@
                         <div class="q-mb-sm">
                           <div class="text-caption text-grey">Estado</div>
                           <div class="row items-center">
-                            <q-badge outline :color="eventStatusColor(purchase.event_status)" class="q-px-sm q-py-xs text-weight-bold bg-white">
+                            <q-badge v-bind="getEventStatusColor(purchase.event_status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                               {{ eventStatusLabel(purchase.event_status) }}
                             </q-badge>
                           </div>
@@ -186,7 +186,7 @@
                 <q-item-section>
                   <q-item-label caption>Estado del evento</q-item-label>
                   <q-item-label>
-                    <q-badge outline :color="eventStatusColor(selectedPurchase.event_status)" class="q-px-sm q-py-xs text-weight-bold">
+                    <q-badge v-bind="getEventStatusColor(selectedPurchase.event_status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                       {{ eventStatusLabel(selectedPurchase.event_status) }}
                     </q-badge>
                   </q-item-label>
@@ -196,7 +196,7 @@
                 <q-item-section>
                   <q-item-label caption>Estado del pago</q-item-label>
                   <q-item-label>
-                    <q-badge outline :color="paymentStatusColor(selectedPurchase)" class="q-px-sm q-py-xs text-weight-bold">
+                    <q-badge v-bind="getOrderPaymentStatusColor(selectedPurchase, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
                       {{ paymentStatusLabel(selectedPurchase) }}
                     </q-badge>
                   </q-item-label>
@@ -229,8 +229,8 @@
             />
             <q-btn
               unelevated
-              rounded
               color="negative"
+              style="border-radius: 8px"
               icon="cancel"
               :label="'Cancelar ' + (selectedPurchase?.approval_status === 'accepted' ? 'evento' : 'solicitud')"
               class="full-width q-mt-sm"
@@ -439,6 +439,7 @@
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { api } from "boot/axios";
+import { getEventStatusColor, getOrderPaymentStatusColor } from 'src/utils/badgeStyles';
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import CancellationModal from "components/CancellationModal.vue";
@@ -470,6 +471,8 @@ export default {
     };
   },
   methods: {
+    getEventStatusColor,
+    getOrderPaymentStatusColor,
     ...mapActions("orderDetails", [
       "viewPurchaseHistory",
       "fetchChatMessages",
@@ -548,12 +551,6 @@ export default {
       this.selectedPurchase = purchase;
       this.showModal = true;
     },
-    eventStatusColor(status) {
-      if (status === 'completed') return 'positive';
-      if (status === 'expired' || status === 'rejected') return 'negative';
-      if (status === 'cancelled') return 'grey';
-      return 'orange'; 
-    },
     eventStatusLabel(status) {
       if (status === 'completed') return 'Completado';
       if (status === 'rejected') return 'Rechazado';
@@ -567,11 +564,6 @@ export default {
       if (purchase.approval_status === 'expired') return 'Solicitud expirada';
       if (purchase.approval_status === 'cancelled') return 'Cancelada por el cliente';
       return purchase.status === 'completed' ? 'Completado' : 'Pendiente';
-    },
-    paymentStatusColor(purchase) {
-      if (purchase.approval_status === 'pending_approval') return 'orange';
-      if (purchase.approval_status === 'rejected' || purchase.approval_status === 'expired' || purchase.approval_status === 'cancelled') return 'negative';
-      return purchase.status === 'completed' ? 'green' : 'orange';
     },
     isEventCompleted(purchase) {
       return purchase && purchase.event_status === 'completed';
