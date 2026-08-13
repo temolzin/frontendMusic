@@ -74,6 +74,15 @@
               <q-img :src="props.row.image" class="imageArtist" />
 
               <q-card-section>
+                <q-btn
+                  fab
+                  color="primary"
+                  icon="fas fa-solid fa-cart-plus"
+                  class="absolute"
+                  style="top: 0; right: 12px; transform: translateY(-50%)"
+                  v-on:click="onSendOrder(props.row)"
+                />
+
                 <div class="row no-wrap items-center">
                   <div
                     class="col text-h6 ellipsis search text-weight-regular"
@@ -157,11 +166,11 @@
 </template>
   
   <script>
-  import { useQuasar, QSelect } from "quasar";
+  import { useQuasar, QSelect, QSpinnerGears, QSpinnerAudio } from "quasar";
   import { mapActions, mapGetters } from "vuex";
   import { getDiscountBadgeColor } from "src/utils/badgeStyles";
   import { ref } from "vue";
-  import { notifyError } from "src/utils/notify";
+  import { notifyError, notifySuccess, notifyInfo } from "src/utils/notify";
 
   let $q;
 
@@ -202,6 +211,7 @@
     methods: {
       getDiscountBadgeColor,
       ...mapActions("artistList", ["getArtists"]),
+      ...mapActions("shoppingCard", ["create_order"]),
       formatGenres(genres) {
       return genres.map(genre => genre.name).join(', ');
     },
@@ -285,6 +295,46 @@
       formatDiscount(value) {
         const num = parseFloat(value);
         return num % 1 === 0 ? parseInt(num) : num;
+      },
+      onSendOrder(artist) {
+        notifyInfo("Agregando al carrito...", { spinner: QSpinnerGears, timeout: 200 });
+        const formData = new FormData();
+        formData.append("service_id", artist.id);
+        formData.append("name", artist.name);
+        const offer = artist.offers && artist.offers.length > 0 ? artist.offers[0] : null;
+        const finalPrice = Math.round((offer ? artist.price_hour * (1 - offer.discount_percentage / 100) : artist.price_hour) * 100) / 100;
+        formData.append("price", finalPrice);
+        formData.append("order_date_start", this.printDateStart());
+        formData.append("order_date_finish", this.printDateFinish());
+        this.create_order(formData).then(() => {
+          notifySuccess("Artista agregado", { spinner: QSpinnerAudio, timeout: 1000 });
+        }).catch((err) => {
+          notifyError(err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo agregar el artista al carrito", { timeout: 3000 });
+        });
+      },
+      printDateStart: function () {
+        return this.formatCartDate(new Date());
+      },
+      printDateFinish: function () {
+        var d = new Date();
+        return this.sumarDias(d, 2);
+      },
+      sumarDias(fecha, dias) {
+        fecha.setDate(fecha.getDate() + dias);
+        return this.formatCartDate(fecha);
+      },
+      padCartDatePart(value) {
+        return String(value).padStart(2, "0");
+      },
+      formatCartDate(date) {
+        const year = date.getFullYear();
+        const month = this.padCartDatePart(date.getMonth() + 1);
+        const day = this.padCartDatePart(date.getDate());
+        const hours = this.padCartDatePart(date.getHours());
+        const minutes = this.padCartDatePart(date.getMinutes());
+        const seconds = this.padCartDatePart(date.getSeconds());
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
       },
     },
     mounted() {
