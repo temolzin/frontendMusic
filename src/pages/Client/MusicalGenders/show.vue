@@ -87,7 +87,7 @@
                     :icon="isFavoriteArtist(artist.id) ? 'fas fa-solid fa-heart' : 'far fa-heart'"
                     @click="addFavouriteArtist(artist.id)"
                   />
-                  <q-btn flat round color="white" icon="share" @click="copyArtistLink()" />
+                  <q-btn flat round color="white" icon="share" @click="copyArtistLink(artist.slug, slugMG)" />
                 </div>
               </div>
             </div>
@@ -393,6 +393,7 @@ import { mapActions, mapGetters, mapState } from "vuex";
 import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
+import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
 
 let $q;
 export default {
@@ -647,11 +648,9 @@ export default {
         }
       });
     },
-    copyArtistLink() {
-      const link = `${window.location.origin}/client/musical-genders/${this.slugMG}/${this.slug}`;
-      navigator.clipboard.writeText(link).then(() => {
-        notifySuccess('Link copiado al portapapeles');
-      });
+    copyArtistLink(artistSlug, genreSlug) {
+      const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
+      openArtistLinkShareSheet({ q: this.$q, link });
     },
     isFavoriteArtist(id) {
       return this.favoriteArtistIds.includes(id);

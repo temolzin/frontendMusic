@@ -252,6 +252,7 @@ import NoticeNotInfo from "src/components/Artist/NoticeNotInfo.vue";
 import NoticeGeneral from "src/components/admin/NoticeGeneral.vue";
 import ArtistStats from "src/components/admin/ArtistStats/ArtistStats.vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
+import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
 
 let $q = useQuasar();
 
@@ -352,9 +353,7 @@ export default {
     },
     copyArtistLink(artistSlug) {
       const link = `${window.location.origin}/client/musical-genders/search/${artistSlug}`;
-      navigator.clipboard.writeText(link).then(() => {
-        notifySuccess('Link copiado al portapapeles');
-      });
+      openArtistLinkShareSheet({ q: this.$q, link });
     },
     showNotif() {
       notifyInfo(

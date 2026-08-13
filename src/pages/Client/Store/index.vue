@@ -177,6 +177,7 @@ import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapGetters, mapState } from "vuex";
 import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
+import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
 import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 
 let $q;
@@ -338,9 +339,7 @@ export default {
     },
     copyArtistLink(artistSlug, genreSlug) {
       const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
-      navigator.clipboard.writeText(link).then(() => {
-        notifySuccess('Link copiado al portapapeles');
-      });
+      openArtistLinkShareSheet({ q: this.$q, link });
     },
     isFavoriteArtist(id) {
       return this.favoriteArtistIds.includes(id);

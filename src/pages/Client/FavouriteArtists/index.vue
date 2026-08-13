@@ -90,7 +90,7 @@
                   icon="fas fa-solid fa-heart"
                   @click="destroy(props.row.artist.id)"
                 />
-                <q-btn flat round color="primary" icon="share" @click="copyArtistLink(props.row.artist.slug)" />
+                <q-btn flat round color="primary" icon="share" @click="copyArtistLink(props.row.artist.slug, 'search')" />
               </q-card-actions>
             </q-card>
           </div>
@@ -121,6 +121,7 @@
 import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
+import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
 import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 
 let $q;
@@ -165,13 +166,10 @@ export default {
       }
     },
 
-    copyArtistLink(artistSlug) {
-      const link = `${window.location.origin}/client/musical-genders/search/${artistSlug}`;
-      navigator.clipboard.writeText(link).then(() => {
-        notifySuccess('Link copiado al portapapeles');
-      });
+    copyArtistLink(artistSlug, genreSlug) {
+      const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
+      openArtistLinkShareSheet({ q: this.$q, link });
     },
-
     search(slug) {
       this.$router.push({
         name: "client.view-group-by-gender-slug",
