@@ -28,17 +28,43 @@
     <section>
       <div class="q-pa-md q-gutter-sm">
         <q-dialog v-model="formGallery" persistent>
-          <q-card style="min-width: 350px">
-            <q-card-section>
+          <q-card style="min-width: 480px; max-width: 900px; width: 100%">
+            <q-card-section class="row items-center q-pb-sm">
               <div class="text-h6">Crear galería de imágenes</div>
+              <q-space />
+              <q-btn icon="close" flat round dense v-close-popup />
             </q-card-section>
-
-            <q-card-section class="q-pt-none">
+            <q-separator />
+            <q-card-section class="q-pt-md">
+              <q-banner rounded class="bg-grey-3 q-mb-md text-dark">
+                <div class="row items-start q-gutter-x-sm q-gutter-y-xs">
+                  <div class="col-12 text-caption text-weight-medium text-dark q-mb-xs">
+                    Requisitos de las imágenes:
+                  </div>
+                  <div class="col-12">
+                    <q-icon name="photo" size="16px" class="q-mr-xs" />
+                    <span class="text-caption">Formato: JPG, JPEG o PNG</span>
+                  </div>
+                  <div class="col-12">
+                    <q-icon name="aspect_ratio" size="16px" class="q-mr-xs" />
+                    <span class="text-caption">Medidas: imagen horizontal (ancho mayor que alto)</span>
+                  </div>
+                  <div class="col-12">
+                    <q-icon name="scale" size="16px" class="q-mr-xs" />
+                    <span class="text-caption">Peso: máximo 1 MB por imagen</span>
+                  </div>
+                  <div class="col-12">
+                    <q-icon name="photo_library" size="16px" class="q-mr-xs" />
+                    <span class="text-caption">Cantidad: máximo 5 imágenes en total</span>
+                  </div>
+                </div>
+              </q-banner>
               <q-uploader
                 ref="uploaderCreate"
                 label="Selecciona las imágenes (Máx. 5)"
                 max-files="5"
                 multiple
+                batch
                 accept=".jpg, .jpeg, .png, .jpe"
                 :factory="uploadSubImages"
                 @added="(files) => validateAddedFiles(files, 'uploaderCreate')"
@@ -47,6 +73,7 @@
                 max-file-size="1000000"
                 max-total-size="5000000"
                 lazy-rules
+                class="q-mb-md full-width"
               />
               <q-card-actions align="right" class="text-primary q-mt-md">
                 <q-btn
@@ -129,7 +156,7 @@
     <section>
       <div class="q-pa-md q-gutter-sm">
         <q-dialog v-model="formGalleryEdit" persistent>
-          <q-card style="min-width: 360px; max-width: 760px">
+          <q-card style="min-width: 480px; max-width: 900px; width: 100%">
             <q-card-section class="row items-center q-pb-sm">
               <div class="text-h6">Editar galería de imágenes</div>
               <q-space />
@@ -141,6 +168,29 @@
                 Puedes agregar imágenes nuevas o eliminar las existentes una por una.
                 Máximo 5 imágenes en total.
               </div>
+              <q-banner rounded class="bg-grey-3 q-mb-md text-dark">
+                <div class="row items-start q-gutter-x-sm q-gutter-y-xs">
+                  <div class="col-12 text-caption text-weight-medium text-dark q-mb-xs">
+                    Requisitos de las imágenes:
+                  </div>
+                  <div class="col-12">
+                    <q-icon name="photo" size="16px" class="q-mr-xs" />
+                    <span class="text-caption">Formato: JPG, JPEG o PNG</span>
+                  </div>
+                  <div class="col-12">
+                    <q-icon name="aspect_ratio" size="16px" class="q-mr-xs" />
+                    <span class="text-caption">Medidas: imagen horizontal (ancho mayor que alto)</span>
+                  </div>
+                  <div class="col-12">
+                    <q-icon name="scale" size="16px" class="q-mr-xs" />
+                    <span class="text-caption">Peso: máximo 1 MB por imagen</span>
+                  </div>
+                  <div class="col-12">
+                    <q-icon name="photo_library" size="16px" class="q-mr-xs" />
+                    <span class="text-caption">Cantidad: máximo 5 imágenes en total</span>
+                  </div>
+                </div>
+              </q-banner>
 
               <div class="row q-col-gutter-sm q-mb-md" v-if="imageList.length > 0">
                 <div v-for="img in imageList" :key="img.id" class="col-4 relative-position">
@@ -158,13 +208,14 @@
                 :label="`Agregar imágenes (Max ${5 - imageList.length})`"
                 :max-files="5 - imageList.length"
                 multiple
+                batch
                 accept=".jpg, .jpeg, .png, .jpe"
                 :factory="updateSubImages"
                 @added="(files) => validateAddedFiles(files, 'uploaderEdit')"
                 @rejected="onRejected"
                 color="accent"
-                max-file-size="20971520"
-                max-total-size="104857600"
+                max-file-size="1000000"
+                max-total-size="5000000"
                 class="q-mb-md full-width"
               />
               <div v-else class="text-center text-orange q-pa-md" style="border: 1px dashed orange; border-radius: 8px;">
@@ -483,63 +534,61 @@ export default {
     ...mapActions("galleryArtist", ["deleteGalleryArtist"]),
     ...mapActions("videoArtist", ["getArtistVideos", "createArtistVideo", "deleteArtistVideo"]),
 
-    async uploadSubImages(files) {
+    uploadSubImages(files) {
       this.loadingImages = true;
-      this.formGallery = false;
-      try {
-        this.sub_files_paths = files[0];
-        let InstFormData = new FormData();
-        InstFormData.append("sub_files_paths", this.sub_files_paths);
-        
-        await this.createGalleryArtist(InstFormData);
-        
+      let InstFormData = new FormData();
+      files.forEach((file) => {
+        InstFormData.append("sub_files_paths[]", file);
+      });
+      
+      this.createGalleryArtist(InstFormData).then(async () => {
+        this.formGallery = false;
         await this.gettGalleryArtist();
         await this.waitForContentToLoad();
         this.showGallery = true;
-        notifySuccess("Imagen subida correctamente");
+        notifySuccess(files.length > 1 ? "Imágenes subidas correctamente" : "Imagen subida correctamente");
         this.sub_files_paths = null;
         if (this.$refs.uploaderCreate) {
           this.$refs.uploaderCreate.reset();
         }
         this.showGallery = true;
-      } catch (err) {
-          if (this.$refs.uploaderCreate) {
-            this.$refs.uploaderCreate.reset(); 
-          }
-          notifyError("Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.");
-        } finally {
-          this.loadingImages = false;
+      }).catch((err) => {
+        if (this.$refs.uploaderCreate) {
+          this.$refs.uploaderCreate.reset(); 
         }
+        notifyError(err.response?.data?.message ?? "Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.");
+      }).finally(() => {
+        this.loadingImages = false;
+      });
     },
 
-    async updateSubImages(files) {
+    updateSubImages(files) {
       this.loadingImages = true;
-      this.formGalleryEdit = false;
-      try {
-        this.sub_files_paths = files[0];
-        let InstFormData = new FormData();
-        InstFormData.append("sub_files_paths", files[0]);
-        await this.upDateGalleryArtist(InstFormData);
+      let InstFormData = new FormData();
+      files.forEach((file) => {
+        InstFormData.append("sub_files_paths[]", file);
+      });
+      this.upDateGalleryArtist(InstFormData).then(async () => {
+        this.formGalleryEdit = false;
         await this.gettGalleryArtist();
         await this.waitForContentToLoad();
         this.showGallery = true;
-        notifySuccess("Imagen subida correctamente");
+        notifySuccess(files.length > 1 ? "Imágenes agregadas correctamente" : "Imagen agregada correctamente");
         this.btnDelete = false;
         this.formGalleryShow = true;
         if (this.$refs.uploaderEdit) {
           this.$refs.uploaderEdit.reset();
         }
-      } catch (err) {
+      }).catch((err) => {
         if (this.$refs.uploaderEdit) {
           this.$refs.uploaderEdit.reset();
         }
-
-        notifyError("Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.");
-        this.formGalleryEdit = false;
-        await this.gettGalleryArtist();
-      } finally {
+        notifyError(err.response?.data?.message ?? "Revisa que el formato de la imagen sea el esperado (jpg, png, jpeg, jpe) y que el tamaño no supere lo permitido.");
+        this.formGalleryEdit = true;
+        this.gettGalleryArtist();
+      }).finally(() => {
         this.loadingImages = false;
-      }
+      });
     },
 
     async gettGalleryArtist() {
