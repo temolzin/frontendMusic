@@ -143,6 +143,15 @@
               </q-card-section>
 
               <q-separator />
+              <q-card-actions align="right">
+                <q-btn
+                  flat
+                  round
+                  color="primary"
+                  icon="share"
+                  @click="copyArtistLink(props.row.slug, props.row.musical_genders[0].slug)"
+                />
+              </q-card-actions>
             </q-card>
           </div>
         </template>
@@ -171,6 +180,7 @@
   import { getDiscountBadgeColor } from "src/utils/badgeStyles";
   import { ref } from "vue";
   import { notifyError, notifySuccess, notifyInfo } from "src/utils/notify";
+  import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
 
   let $q;
 
@@ -280,6 +290,10 @@
             slugA: slug,
           },
         });
+      },
+      copyArtistLink(artistSlug, genreSlug) {
+        const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
+        openArtistLinkShareSheet({ q: this.$q, link });
       },
       async getArtistss() {
         try {
