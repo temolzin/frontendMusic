@@ -373,8 +373,9 @@
       Tu última edición fue rechazada{{ latestRequest.rejection_reason ? ': ' + latestRequest.rejection_reason : '.' }} Puedes corregirla y volver a enviarla.
     </q-banner>
     <q-parallax
-      src="https://cdn.pixabay.com/photo/2017/04/10/16/55/live-music-2219036_960_720.jpg"
+      :src="artist.image || 'https://cdn.pixabay.com/photo/2017/04/10/16/55/live-music-2219036_960_720.jpg'"
       :height="430"
+      class="profile-header"
     >
       <div class="barra q-pa-lg">
         <div class="text-h3 text-white text-center title">
@@ -1557,9 +1558,24 @@ input:focus {
   font-family: "Muli", sans-serif;
 }
 .barra {
-  background-color: #14141463;
+  background-color: rgba(0, 0, 0, 0.65);
   border-radius: 10px;
   padding: 50px;
+}
+.profile-header :deep(.q-parallax__content) {
+  overflow: hidden;
+}
+.profile-header :deep(.q-parallax__media) {
+  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.65);
+}
+.profile-header .title {
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+.profile-header .q-badge {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+  font-weight: 700;
 }
 .image {
   width: 90%;
