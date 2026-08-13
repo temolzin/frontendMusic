@@ -104,13 +104,13 @@
         <q-list padding class="text-white text-weight-light">
           <div v-if="isAuthenticated && getMe && getMe.role">
             <q-item v-if="getMe.role[0] == 'administrador'">
-              <q-item-section class="text-weight-bold">PANEL</q-item-section>
+              <q-item-section class="text-weight-bold text-accent">PANEL</q-item-section>
             </q-item>
             <q-item v-if="getMe.role[0] == 'cliente'">
-              <q-item-section class="text-weight-bold">INICIO</q-item-section>
+              <q-item-section class="text-weight-bold text-accent">INICIO</q-item-section>
             </q-item>
             <q-item v-if="getMe.role[0] == 'artista'">
-              <q-item-section class="text-weight-bold">DASHBOARD</q-item-section>
+              <q-item-section class="text-weight-bold text-accent">DASHBOARD</q-item-section>
             </q-item>
             <q-item clickable v-ripple to="/admin/users" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
               <q-item-section avatar><q-icon name="fas fa-solid fa-users" /></q-item-section>
@@ -210,7 +210,7 @@
             </q-item>
           </div>
           <q-item>
-            <q-item-section class="text-weight-bold">CONFIGURACIONES</q-item-section>
+            <q-item-section class="text-weight-bold text-accent">CONFIGURACIONES</q-item-section>
           </q-item>
           <q-item clickable v-ripple class="q-pa-none">
             <q-item-section avatar>

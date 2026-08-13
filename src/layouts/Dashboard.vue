@@ -57,7 +57,7 @@
             active-class="text-accent text-weight-bold"
             v-if="getMe?.role?.[0] == 'administrador'"
           >
-            <q-item-section class="text-weight-bold">
+            <q-item-section class="text-weight-bold text-accent">
               PANEL
             </q-item-section>
           </q-item>
@@ -68,7 +68,7 @@
             active-class="text-accent text-weight-bold"
             v-if="getMe?.role?.[0] == 'cliente'"
           >
-            <q-item-section class="text-weight-bold"> INICIO </q-item-section>
+            <q-item-section class="text-weight-bold text-accent"> INICIO </q-item-section>
           </q-item>
 
           <q-item
@@ -77,7 +77,7 @@
             active-class="text-accent text-weight-bold"
             v-if="getMe?.role?.[0] == 'artista'"
           >
-            <q-item-section class="text-weight-bold">
+            <q-item-section class="text-weight-bold text-accent">
               PANEL
             </q-item-section>
           </q-item>
@@ -511,7 +511,7 @@
           </q-item>
 
           <q-item clickable active-class="text-accent text-weight-bold">
-            <q-item-section class="text-weight-bold"
+            <q-item-section class="text-weight-bold text-accent"
               >CONFIGURACIONES
             </q-item-section>
           </q-item>

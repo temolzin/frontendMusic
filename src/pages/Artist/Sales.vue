@@ -67,8 +67,8 @@
 
       <template v-slot:body-cell-amount="props">
         <q-td :props="props">
-          <span class="text-weight-bold text-positive text-h6">
-            ${{ Number(props.row.amount).toLocaleString('es-MX') }}
+          <span class="text-weight-bold">
+            ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
           </span>
         </q-td>
       </template>
@@ -96,11 +96,6 @@
           >
             <q-tooltip class="bg-secondary text-body2">Ver detalles</q-tooltip>
           </q-btn>
-        </q-td>
-      </template>
-
-      <template v-slot:body-cell-report="props">
-        <q-td :props="props" class="text-center">
           <q-btn
             round
             unelevated
@@ -109,6 +104,7 @@
             :disable="!canReport(props.row)"
             @click="goToReport(props.row)"
             icon="priority_high"
+            class="q-ml-sm"
           >
             <q-tooltip v-if="!canReport(props.row)" class="bg-negative text-body2" anchor="top middle" self="bottom middle">
               {{ reportTooltip(props.row) }}
@@ -149,8 +145,8 @@
                     </q-badge>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'amount'">
-                    <span class="text-weight-bold text-positive text-h6">
-                      ${{ Number(props.row.amount).toLocaleString('es-MX') }}
+                    <span class="text-weight-bold">
+                      ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
                     </span>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'acciones'">
@@ -172,11 +168,10 @@
                       size="sm"
                       @click="openDetailsDialog(props.row)"
                       icon="visibility"
+                      class="q-mr-sm"
                     >
                       <q-tooltip class="bg-secondary text-body2">Ver detalles</q-tooltip>
                     </q-btn>
-                  </q-item-label>
-                  <q-item-label v-if="col.name === 'report'">
                     <q-btn
                       round
                       unelevated
@@ -192,7 +187,7 @@
                       <q-tooltip v-else class="bg-negative text-body2">Reportar</q-tooltip>
                     </q-btn>
                   </q-item-label>
-                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'evento' && col.name !== 'acciones' && col.name !== 'report' && col.name !== 'status' && col.name !== 'amount'">
+                  <q-item-label v-if="col.name !== 'cliente' && col.name !== 'evento' && col.name !== 'acciones' && col.name !== 'status' && col.name !== 'amount'">
                     {{ col.value }}
                   </q-item-label>
                 </q-item-section>
@@ -404,13 +399,6 @@ const columns = [
     label: "Acciones",
     align: "center",
     field: "acciones",
-    sortable: false,
-  },
-  {
-    name: 'report',
-    label: 'Reportar',
-    align: 'center',
-    field: 'report',
     sortable: false,
   },
 ];
