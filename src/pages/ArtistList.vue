@@ -19,7 +19,7 @@
         no-data-label="Sin registros"
         no-results-label="Ningún registro coincide"
         :rows-per-page-label="'Artistas por página:'"
-        :rows-per-page-options="[6, 12 , 18 , 24, 30]"
+        :rows-per-page-options="[10, 20, 30, 0]"
       >
       <template v-slot:top class="template_filters">
 

@@ -38,7 +38,7 @@
               bordered
               no-data-label="Sin tickets registrados"
               rows-per-page-label="Registros por página:"
-              :rows-per-page-options="[10, 20, 50]"
+              :rows-per-page-options="[10, 20, 30, 0]"
             >
               <template v-slot:body-cell-category="props">
                 <q-td :props="props">
@@ -99,7 +99,7 @@
               bordered
               no-data-label="Sin tickets registrados"
               rows-per-page-label="Registros por página:"
-              :rows-per-page-options="[10, 20, 50]"
+              :rows-per-page-options="[10, 20, 30, 0]"
             >
               <template v-slot:body-cell-category="props">
                 <q-td :props="props">

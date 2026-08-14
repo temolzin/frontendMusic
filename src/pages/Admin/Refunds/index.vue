@@ -9,6 +9,7 @@
       bordered
       no-data-label="No hay registros de reembolsos"
       rows-per-page-label="Registros por página:"
+      :rows-per-page-options="[10, 20, 30, 0]"
       class="refunds-table" >
       <template v-slot:top>
         <div class="row q-col-gutter-sm items-center full-width">

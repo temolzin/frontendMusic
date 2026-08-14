@@ -8,6 +8,7 @@
       :filter="filter"
       no-data-label="No tienes ofertas registradas"
       rows-per-page-label="Registros por página"
+      :rows-per-page-options="[10, 20, 30, 0]"
       :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => `${firstRowIndex}-${endRowIndex} de ${totalRowsNumber}`"
       :grid="$q.screen.lt.md"
       bordered

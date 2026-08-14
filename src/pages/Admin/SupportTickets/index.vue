@@ -10,7 +10,7 @@
       no-data-label="Sin tickets registrados"
       no-results-label="No hay tickets que coincidan"
       rows-per-page-label="Tickets por página"
-      :rows-per-page-options="[10, 20, 50]"
+      :rows-per-page-options="[10, 20, 30, 0]"
     >
       <template v-slot:top>
         <b class="text-h5">Tickets de Soporte</b>

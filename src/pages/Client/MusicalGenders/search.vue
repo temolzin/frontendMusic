@@ -66,6 +66,7 @@
         no-data-label="Sin registros"
         no-results-label="Ningún registro coincidente"
         rows-per-page-label="Géneros por página"
+        :rows-per-page-options="[10, 20, 30, 0]"
       >
         <template v-slot:top-left>
           <h5

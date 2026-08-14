@@ -7,7 +7,7 @@
       row-key="id"
       :loading="loading"
       v-model:pagination="pagination"
-      :rows-per-page-options="[5, 10, 20]"
+      :rows-per-page-options="[10, 20, 30, 0]"
       flat
       bordered
       class="sales-table"

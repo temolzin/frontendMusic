@@ -10,6 +10,7 @@
       no-data-label="Sin registros"
       no-results-label="No hay registros que coincidan."
       rows-per-page-label="Usuarios por página"
+      :rows-per-page-options="[10, 20, 30, 0]"
       :grid="$q.screen.lt.md"
       bordered
       flat
