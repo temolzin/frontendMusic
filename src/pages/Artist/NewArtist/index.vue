@@ -326,7 +326,7 @@
                 </div>
                 <q-btn
                   flat
-                  icon-right="fas fa-plus"
+                  icon="fas fa-plus"
                   color="primary"
                   label="Agregar red social"
                   class="q-mt-sm"
@@ -787,7 +787,7 @@
                 </div>
                 <q-btn
                   flat
-                  icon-right="fas fa-plus"
+                  icon="fas fa-plus"
                   color="primary"
                   label="Agregar red social"
                   class="q-mt-sm"

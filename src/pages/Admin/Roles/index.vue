@@ -22,7 +22,7 @@
           :disable="loading"
           style="border-radius: 8px; font-weight: bold;"
           label="Nuevo"
-          icon-right="fas fa-plus"
+          icon="fas fa-plus"
           size="sm"
           @click="formCreate = true"
         />

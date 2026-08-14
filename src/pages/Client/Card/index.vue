@@ -7,7 +7,7 @@
         color="primary"
         style="border-radius: 8px;"
         label="AGREGAR NUEVA TARJETA"
-        icon-right="fas fa-plus"
+        icon="fas fa-plus"
         @click="formCreate = true"
       />
     </h6>

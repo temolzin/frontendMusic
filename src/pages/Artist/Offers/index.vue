@@ -19,7 +19,7 @@
           <q-btn
           color="primary"
           style="border-radius: 8px; font-weight: bold;"
-          icon-right="fas fa-plus"
+          icon="fas fa-plus"
           label="Nueva Oferta"
           size="sm"
           @click="openForm()"
