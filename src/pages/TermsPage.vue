@@ -88,7 +88,7 @@
              <p><strong>Políticas de Cancelación:</strong> Se aplican los siguientes porcentajes según los días restantes antes del evento.</p>
 
               <p class="text-weight-bold q-mt-sm q-mb-xs">Si el artista cancela:</p>
-              <q-markup-table separator="horizontal" flat bordered :dark="$q.dark.isActive">
+              <q-markup-table separator="horizontal" flat bordered :dark="$q.dark.isActive" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
                   <thead>
                     <tr class="text-weight-bold" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2'">
                       <th class="text-left">Días antes del evento</th>
@@ -118,9 +118,9 @@
                     </tr>
                   </tbody>
               </q-markup-table>
-              <p class="text-body2 text-grey q-mt-sm">Nota: Si el artista aún no ha aceptado la solicitud, el cliente puede cancelar sin penalización (0%).</p>
+              <p class="text-body2 q-mt-sm" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Nota: Si el artista aún no ha aceptado la solicitud, el cliente puede cancelar sin penalización (0%).</p>
               <p class="text-weight-bold q-mt-md q-mb-xs">Si el cliente cancela:</p>
-              <q-markup-table separator="horizontal" flat bordered :dark="$q.dark.isActive">
+              <q-markup-table separator="horizontal" flat bordered :dark="$q.dark.isActive" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
                   <thead>
                     <tr class="text-weight-bold" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2'">
                       <th class="text-left">Días antes del evento</th>
