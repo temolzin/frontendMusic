@@ -147,7 +147,7 @@
       row-key="name"
       no-data-label="Sin registros"
       no-results-label="Ningún registro coincide"
-      :rows-per-page-options="[6, 12 , 18 , 24, 30]"
+      :rows-per-page-options="[10, 20, 30, 0]"
     >
       <template v-slot:top-left>
         <p class="q-mt-sm q-mb-sm text-h4" v-if="skeleton == false">

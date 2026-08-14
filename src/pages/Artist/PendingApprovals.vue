@@ -42,7 +42,7 @@
         :pagination="{ rowsPerPage: 10 }"
         no-data-label="No tienes solicitudes pendientes por responder"
         rows-per-page-label="Solicitudes por página"
-        :rows-per-page-options="[5, 10, 20]"
+        :rows-per-page-options="[10, 20, 30, 0]"
         flat
         bordered
         :grid="$q.screen.lt.md"
@@ -193,7 +193,7 @@
         :pagination="{ rowsPerPage: 10 }"
         no-data-label="Aún no tienes solicitudes resueltas"
         rows-per-page-label="Registros por página"
-        :rows-per-page-options="[5, 10, 20]"
+        :rows-per-page-options="[10, 20, 30, 0]"
         flat
         bordered
         :grid="$q.screen.lt.md"

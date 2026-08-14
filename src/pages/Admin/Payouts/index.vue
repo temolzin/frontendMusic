@@ -71,6 +71,7 @@
             flat
             no-data-label="No hay liquidaciones pendientes por pagar"
         rows-per-page-label="Registros por página:"
+        :rows-per-page-options="[10, 20, 30, 0]"
         class="payouts-table"
       >
         <template v-slot:body="props">
@@ -297,6 +298,7 @@
         :pagination="{ rowsPerPage: 10 }"
         no-data-label="Aún no hay registros en el historial de liquidaciones"
         rows-per-page-label="Registros por página:"
+        :rows-per-page-options="[10, 20, 30, 0]"
         flat
         class="payouts-table"
       >

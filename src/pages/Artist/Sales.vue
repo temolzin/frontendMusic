@@ -10,7 +10,7 @@
       no-data-label="Sin ventas registradas"
       no-results-label="Ningún resultado coincide"
       rows-per-page-label="Ventas por página"
-      :rows-per-page-options="[5, 10, 20]"
+      :rows-per-page-options="[10, 20, 30, 0]"
       flat
       bordered
       class="sales-table"

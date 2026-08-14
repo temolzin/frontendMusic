@@ -35,7 +35,7 @@
       flat
       bordered
       no-data-label="No se han recibido códigos de verificación aún"
-      :rows-per-page-options="[10, 25, 50, 0]"
+      :rows-per-page-options="[10, 20, 30, 0]"
       :loading="loading"
     >
       <template v-slot:top>
