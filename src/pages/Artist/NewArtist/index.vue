@@ -413,7 +413,7 @@
         <h3 :class="mode ? 'title-group-white q-mt-sm' : 'title-group q-mt-sm'">
           <small>Acerca de </small>{{ artist.name }}
         </h3>
-        <p class="info q-mt-lg">"{{ artist.history }}"</p>
+        <p class="info q-mt-lg">{{ artist.history }}</p>
       </div>
     </div>
 
