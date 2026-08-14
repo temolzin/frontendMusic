@@ -71,11 +71,11 @@
       <template v-slot:body-cell-faults="props">
         <q-td :props="props" class="text-center">
           <q-badge 
-            v-if="props.row.faults_count > 0"
-            v-bind="getUserSanctionFaultsColor(props.row.faults_count, $q.dark.isActive)"
+            v-if="props.row.total_cancellations_count > 0"
+            v-bind="getUserSanctionFaultsColor(props.row.total_cancellations_count, $q.dark.isActive)"
             class="q-pa-sm text-weight-medium text-uppercase"
           >
-            {{ props.row.faults_count }} {{ props.row.faults_count === 1 ? 'Cancelación' : 'Cancelaciones' }}
+            {{ props.row.total_cancellations_count }} {{ props.row.total_cancellations_count === 1 ? 'Cancelación' : 'Cancelaciones' }}
           </q-badge>
           <span v-else class="text-body2 text-grey-6 text-weight-regular">Sin cancelaciones</span>
         </q-td>
@@ -141,8 +141,8 @@
                   </q-item-label>
                   
                   <q-item-label v-else-if="col.name === 'faults'">
-                    <q-badge v-if="props.row.faults_count > 0" v-bind="getUserSanctionFaultsColor(props.row.faults_count, $q.dark.isActive)" class="q-pa-xs text-weight-medium text-uppercase">
-                      {{ props.row.faults_count }} Cancelaciones
+                    <q-badge v-if="props.row.total_cancellations_count > 0" v-bind="getUserSanctionFaultsColor(props.row.total_cancellations_count, $q.dark.isActive)" class="q-pa-xs text-weight-medium text-uppercase">
+                      {{ props.row.total_cancellations_count }} Cancelaciones
                     </q-badge>
                     <span v-else class="text-body2 text-grey-6">Sin cancelaciones</span>
                   </q-item-label>
@@ -471,7 +471,7 @@
                     <q-avatar color="red-2" text-color="negative" icon="event_busy" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label class="text-weight-bold text-subtitle1 text-negative q-mb-sm">
+                    <q-item-label class="text-weight-bold text-subtitle1 q-mb-sm" :class="fault.titleColor || 'text-negative'">
                       {{ fault.title }}
                     </q-item-label>
                     
@@ -479,7 +479,13 @@
                       <q-icon name="gavel" size="20px" color="grey-6" />
                       <div>
                         <div class="detail-label">Motivo</div>
-                        <div class="detail-value">{{ fault.reason }}</div>
+                        <div class="detail-value">
+                          <div class="q-mb-xs">{{ fault.message }}</div>
+                          <div>
+                            <span class="text-weight-bold">Motivo de cancelación: </span>
+                            <span :class="$q.dark.isActive ? 'text-orange-4' : 'text-orange-9'">{{ fault.original_reason }}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="row q-col-gutter-md">
@@ -555,22 +561,9 @@ const TICKET_CATEGORIES = {
   other: "Otro",
 };
 
-const TICKET_COLORS = {
-  no_show: "negative",
-  delay: "orange",
-  bad_service: "deep-orange",
-  cancellation: "red",
-  other: "grey",
-};
-
 const ACCOUNT_STATUS_MAP = {
   active: "ACTIVO",
   restricted: "RESTRINGIDO",
-};
-
-const ACCOUNT_STATUS_COLORS = {
-  active: "positive",
-  restricted: "warning",
 };
 
 export default {
@@ -665,16 +658,33 @@ export default {
     combinedFaults() {
       if (!this.historyData) return [];
 
-      let cancels = (this.historyData.cancellations || []).map(c => {
+      let cancels = (this.historyData.cancellations || []).map(cancellation => {
         let eventString = 'Fecha desconocida';
-        if (c.artist_sale) eventString = `${c.artist_sale.event_date} a las ${c.artist_sale.event_hour}`;
+        if (cancellation.artist_sale) {
+            eventString = `${cancellation.artist_sale.event_date} a las ${cancellation.artist_sale.event_hour}`;
+        }
+        let titleColor = 'text-red';
+        let customMessage = 'Cancelación de evento';
+        let originalReason = cancellation.cancellation_reason || 'N/A';
+        if (cancellation.is_direct_sanction) {
+            titleColor = 'text-red';
+            customMessage = 'Cancelación y se restringió por cancelar entre el día 0-2 antes del evento.';
+        }
         
+        if (cancellation.is_accumulated_fault) {
+            let faltantes = (cancellation.fault_threshold || 3) - 1;
+            titleColor = 'text-orange';
+            customMessage = `Se acumuló una cancelación, faltan ${faltantes} cancelaciones para que su cuenta sea restringida.`;
+        }
+
         return {
-          id: 'c_' + c.id,
+          id: 'c_' + cancellation.id,
           title: 'Cancelación Tardía',
-          reason: c.cancellation_reason || 'Cancelación de evento',
+          titleColor: titleColor,
+          message: customMessage,
+          original_reason: originalReason,
           event_date: eventString,
-          created_at: c.created_at
+          created_at: cancellation.created_at
         };
       });
 
