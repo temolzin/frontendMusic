@@ -325,7 +325,7 @@ export default {
       },
       columns: [
         { name: "description", label: "Descripción", field: "description", align: "center" },
-        { name: "discount_percentage", label: "Precio (Ahora)", field: "discount_percentage", align: "center" },
+        { name: "discount_percentage", label: "Antes → Ahora", field: "discount_percentage", align: "center" },
         { name: "start_date", label: "Fecha inicio", field: "start_date", align: "center" },
         { name: "end_date", label: "Fecha fin", field: "end_date", align: "center" },
         { name: "is_active", label: "Estado", field: "is_active", align: "center" },
