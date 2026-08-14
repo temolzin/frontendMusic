@@ -64,7 +64,7 @@
           >
             {{ props.row.tickets_against_count }} {{ props.row.tickets_against_count === 1 ? 'Ticket' : 'Tickets' }}
           </q-badge>
-          <span v-else class="text-body2 text-grey-6 text-weight-regular">Sin tickets</span>
+          <span v-else class="text-body2 text-weight-regular" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Sin tickets</span>
         </q-td>
       </template>
 
@@ -77,7 +77,7 @@
           >
             {{ props.row.total_cancellations_count }} {{ props.row.total_cancellations_count === 1 ? 'Cancelación' : 'Cancelaciones' }}
           </q-badge>
-          <span v-else class="text-body2 text-grey-6 text-weight-regular">Sin cancelaciones</span>
+          <span v-else class="text-body2 text-weight-regular" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Sin cancelaciones</span>
         </q-td>
       </template>
 
@@ -137,14 +137,14 @@
                     <q-badge v-if="props.row.tickets_against_count > 0" v-bind="getUserSanctionTicketsColor($q.dark.isActive)" class="q-pa-xs text-weight-medium text-uppercase">
                       {{ props.row.tickets_against_count }} Tickets
                     </q-badge>
-                    <span v-else class="text-body2 text-grey-6">Sin tickets</span>
+                    <span v-else class="text-body2" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Sin tickets</span>
                   </q-item-label>
                   
                   <q-item-label v-else-if="col.name === 'faults'">
                     <q-badge v-if="props.row.total_cancellations_count > 0" v-bind="getUserSanctionFaultsColor(props.row.total_cancellations_count, $q.dark.isActive)" class="q-pa-xs text-weight-medium text-uppercase">
                       {{ props.row.total_cancellations_count }} Cancelaciones
                     </q-badge>
-                    <span v-else class="text-body2 text-grey-6">Sin cancelaciones</span>
+                    <span v-else class="text-body2" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Sin cancelaciones</span>
                   </q-item-label>
                   
                   <q-item-label v-else-if="col.name === 'status'">

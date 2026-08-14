@@ -200,25 +200,25 @@
                     <q-separator />
                     <q-card-section class="row q-col-gutter-sm justify-center">
                       <div class="col-12 text-center q-mb-xs">
-                        <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'" class="text-caption">Titular de la Cuenta</div>
+                        <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'" class="text-caption">Titular de la Cuenta</div>
                         <div class="text-body2 text-weight-medium text-uppercase">
                           {{ props.row.artist.payout_method.account_holder }}
                         </div>
                       </div>
                       <div class="col-12 text-center q-mb-xs">
-                        <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'" class="text-caption">Banco</div>
+                        <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'" class="text-caption">Banco</div>
                         <div class="text-body2 text-weight-medium text-uppercase">
                           {{ props.row.artist.payout_method.bank_name }}
                         </div>
                       </div>
                       <div class="col-12 text-center q-mb-xs">
-                        <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'" class="text-caption">RFC</div>
+                        <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'" class="text-caption">RFC</div>
                         <div class="text-body2 text-weight-medium text-uppercase">
                           {{ props.row.artist.payout_method.rfc || 'No Registrado' }}
                         </div>
                       </div>
                       <div class="col-12 text-center q-mt-md column items-center">
-                        <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-6'" class="text-caption q-mb-xs">Cuenta CLABE (18 dígitos)</div>
+                        <div :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'" class="text-caption q-mb-xs">Cuenta CLABE (18 dígitos)</div>
                         <div :class="['row items-center q-pa-xs rounded-borders q-mx-auto', $q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2']" style="width: 100%; max-width: 320px;">
                           <span class="text-body1 text-mono text-weight-bold q-px-sm">
                             {{ props.row.artist.payout_method.clabe }}
@@ -344,7 +344,7 @@
         v-else-if="!loadingHistory" 
         class="text-center q-py-xl">
         <q-icon name="history" size="4em" color="grey-5" />
-        <p class="text-grey-6 q-mt-md">Aún no hay registros en el historial de liquidaciones.</p>
+        <p class="q-mt-md" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Aún no hay registros en el historial de liquidaciones.</p>
       </div>
     </div>
       </q-card-section>

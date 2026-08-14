@@ -14,7 +14,7 @@
           <q-spinner color="primary" size="2.5em" />
         </div>
 
-        <div v-else-if="logs.length === 0" class="text-center q-py-xl text-grey-6">
+        <div v-else-if="logs.length === 0" class="text-center q-py-xl" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">
           <q-icon name="history" size="3em" color="grey-4" />
           <p class="q-mt-sm">Sin historial de cambios.</p>
         </div>
@@ -200,7 +200,7 @@
             <q-tooltip>Enviar comentario</q-tooltip>
           </q-btn>
         </div>
-        <div class="text-caption text-grey-5 q-mt-xs q-ml-xs">
+        <div class="text-caption q-mt-xs q-ml-xs" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">
           Presiona Enter para enviar
         </div>
       </q-card-section>

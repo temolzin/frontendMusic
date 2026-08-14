@@ -112,7 +112,7 @@
       </q-table>
       <div v-else-if="!loading" class="text-center q-py-xl">
         <q-icon name="check_circle" size="4em" color="positive" />
-        <p class="text-grey-6 q-mt-md">No tienes solicitudes de artistas pendientes por responder.</p>
+        <p class="q-mt-md" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">No tienes solicitudes de artistas pendientes por responder.</p>
       </div>
       <div v-if="loading" class="text-center q-py-xl">
         <q-spinner color="primary" size="3em" />
@@ -187,7 +187,7 @@
       </q-table>
       <div v-else-if="!loadingHistory" class="text-center q-py-xl">
         <q-icon name="history" size="4em" color="grey-5" />
-        <p class="text-grey-6 q-mt-md">Aún no hay solicitudes resueltas.</p>
+        <p class="q-mt-md" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Aún no hay solicitudes resueltas.</p>
       </div>
       <div v-if="loadingHistory" class="text-center q-py-xl">
         <q-spinner color="primary" size="3em" />

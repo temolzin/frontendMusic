@@ -28,7 +28,7 @@
             </div>
             <div v-else-if="myTickets.length === 0" class="text-center q-py-xl">
               <q-icon name="inbox" size="4em" color="grey-4" />
-              <p class="text-grey-6 q-mt-md">No has levantado ningún ticket.</p>
+              <p class="q-mt-md" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">No has levantado ningún ticket.</p>
             </div>
             <q-table
               v-else
@@ -89,7 +89,7 @@
             </div>
             <div v-else-if="artistTickets.length === 0" class="text-center q-py-xl">
               <q-icon name="verified_user" size="4em" color="grey-4" />
-              <p class="text-grey-6 q-mt-md">No tienes reportes en tu contra.</p>
+              <p class="q-mt-md" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">No tienes reportes en tu contra.</p>
             </div>
             <q-table
               v-else

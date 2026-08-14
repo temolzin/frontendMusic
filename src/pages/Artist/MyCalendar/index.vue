@@ -49,11 +49,11 @@
                     </div>
                     <div class="summary-row q-mt-md">
                       <span class="label">Expirados</span>
-                      <span class="value text-grey-6">{{ expiredCount }}</span>
+                      <span class="value" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">{{ expiredCount }}</span>
                     </div>
                     <div class="summary-row q-mt-md">
                       <span class="label">Cancelados</span>
-                      <span class="value text-grey-6">{{ cancelledCount }}</span>
+                      <span class="value" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">{{ cancelledCount }}</span>
                     </div>
                   </div>
                 </div>

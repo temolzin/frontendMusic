@@ -4,9 +4,9 @@
       <div class="text-center q-mb-xl">
         <h1 class="text-h4 text-weight-bold q-ma-none text-primary q-mb-xs">TÉRMINOS Y CONDICIONES DE USO</h1>
         <div class="text-subtitle2 text-grey-7">Estatus: Versión Final de Cumplimiento Legal (México)</div>
-        <div class="text-caption text-grey-6">Fecha de Publicación: 12 de junio de 2026</div>
+        <div class="text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Fecha de Publicación: 12 de junio de 2026</div>
       </div>
-      <q-card flat bordered class="q-pa-md q-mb-lg bg-grey-1 text-grey-9">
+      <q-card flat bordered class="q-pa-md q-mb-lg" :class="$q.dark.isActive ? 'bg-grey-9 text-grey-3' : 'bg-grey-1 text-grey-9'">
         <p class="q-ma-none text-body1 line-height-relaxed">
           Bienvenido a nuestra plataforma digital de contratación musical. Al registrarse, acceder o utilizar nuestros servicios como Cliente o como Artista, usted acepta quedar vinculado por los presentes Términos y Condiciones. Si no está de acuerdo con ellos, deberá abstenerse de utilizar el sistema.
         </p>
@@ -21,7 +21,7 @@
           class="bg-card rounded-borders overflow-hidden "
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <p>La Plataforma opera única y exclusivamente como un Marketplace de intermediación digital que conecta a usuarios que desean contratar servicios de entretenimiento con músicos, bandas o solistas independientes. La Plataforma no es una agencia de representación, no tiene relación laboral, de subordinación ni de sociedad con los Artistas. Cada Artista opera bajo su propio riesgo, cuenta y responsabilidad como contratista independiente.</p>
               <q-banner dense class="bg-warning text-black rounded-borders q-mt-md">
                 <template v-slot:avatar>
@@ -41,7 +41,7 @@
           class="bg-card rounded-borders overflow-hidden"
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <p>Para garantizar la seguridad de las transacciones, todas las operaciones económicas se procesan a través de la pasarela de pagos certificada OpenPay (proveedor externo).</p>
               <p class="text-weight-bold q-mt-sm">CLÁUSULA DE SEGURIDAD CRÍTICA (PCI-DSS):</p>
               <p>La Plataforma NO almacena, NO recopila, NO procesa ni maneja en sus servidores locales ni bases de datos ningún dato financiero sensible, tales como números de tarjeta de crédito/débito, fechas de vencimiento o códigos de seguridad (CVV/CVC). Toda la captura de datos bancarios se realiza mediante un formulario encriptado directamente en los servidores seguros de OpenPay, cumpliendo con los estándares internacionales de seguridad de datos de la industria de tarjetas de pago.</p>
@@ -57,7 +57,7 @@
           class="bg-card rounded-borders overflow-hidden "
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <ul class="q-pl-md q-ma-none">
                 <li class="q-mb-md"><strong>Reserva y Pago:</strong> 
                     El Cliente deberá liquidar el 100% del valor del servicio o paquete seleccionado mediante la plataforma para congelar la fecha en la agenda del Artista.
@@ -88,14 +88,13 @@
           class="bg-card rounded-borders overflow-hidden "
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
              <p><strong>Políticas de Cancelación:</strong> Se aplican los siguientes porcentajes según los días restantes antes del evento.</p>
 
               <p class="text-weight-bold q-mt-sm q-mb-xs">Si el artista cancela:</p>
-              <div class="q-markup-table q-table__container q-table--horizontal-lines">
-                <table class="q-table text-left">
+              <q-markup-table separator="horizontal" flat bordered :dark="$q.dark.isActive" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
                   <thead>
-                    <tr class="text-weight-bold bg-grey-2">
+                    <tr class="text-weight-bold" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2'">
                       <th class="text-left">Días antes del evento</th>
                       <th class="text-left">Penalización para el artista</th>
                       <th class="text-left">Reembolso al cliente</th>
@@ -122,14 +121,12 @@
                       <td colspan="2" class="text-weight-medium text-negative">No se puede cancelar</td>
                     </tr>
                   </tbody>
-                </table>
-              </div>
-              <p class="text-body2 text-grey q-mt-sm">Nota: Si el artista aún no ha aceptado la solicitud, el cliente puede cancelar sin penalización (0%).</p>
+              </q-markup-table>
+              <p class="text-body2 q-mt-sm" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Nota: Si el artista aún no ha aceptado la solicitud, el cliente puede cancelar sin penalización (0%).</p>
               <p class="text-weight-bold q-mt-md q-mb-xs">Si el cliente cancela:</p>
-              <div class="q-markup-table q-table__container q-table--horizontal-lines">
-                <table class="q-table text-left">
+              <q-markup-table separator="horizontal" flat bordered :dark="$q.dark.isActive" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
                   <thead>
-                    <tr class="text-weight-bold bg-grey-2">
+                    <tr class="text-weight-bold" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2'">
                       <th class="text-left">Días antes del evento</th>
                       <th class="text-left">Penalización para el cliente</th>
                       <th class="text-left">Reembolso al cliente</th>
@@ -156,8 +153,7 @@
                       <td colspan="2" class="text-weight-medium text-negative">No se puede cancelar</td>
                     </tr>
                   </tbody>
-                </table>
-              </div>
+              </q-markup-table>
             </q-card-section>
           </q-card>
         </q-expansion-item>
@@ -171,7 +167,7 @@
           class="bg-card rounded-borders overflow-hidden "
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <p>Los Artistas declaran y garantizan ser los autores legítimos o contar con las licencias y derechos de autor necesarios sobre todo el material audiovisual (incluyendo de forma enunciativa más no limitativa: fotografías de portafolio, videos promocionales, logotipos, música, audios y enlaces externos) que suban o almacenen en su perfil de Vibeer.</p>
               <p><strong>Retención de Derechos:</strong> El Artista conserva en todo momento los derechos de propiedad intelectual sobre su contenido original.</p>
               <p><strong>Licencia de Exhibición a Vibeer:</strong> Al publicar contenido en La Plataforma, el Artista otorga a Vibeer una licencia de uso mundial, no exclusiva, gratuita, sublicenciable y transferible únicamente para exhibir, reproducir, adaptar y distribuir dicho material audiovisual dentro de la aplicación web, aplicaciones móviles y canales de marketing digital oficiales de Vibeer, con el único fin de promocionar los servicios del Artista y operar el Marketplace.</p>
@@ -187,7 +183,7 @@
           class="bg-card rounded-borders overflow-hidden "
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <p>Ninguna de las partes (Clientes, Artistas o Vibeer) será responsable por el incumplimiento o retraso en la ejecución de las obligaciones derivadas de una contratación si este es causado por eventos fuera de su control razonable, catalogados como Caso Fortuito o Fuerza Mayor bajo la legislación mexicana.</p>
               <p><strong>Causales Válidas:</strong> Se considerarán causales de fuerza mayor: fenómenos naturales de gravedad (huracanes, sismos, inundaciones), cierres de carreteras o contingencias sanitarias decretadas por el gobierno, así como accidentes graves, enfermedad súbita incapacitante o fallecimiento en primer grado del Artista o del Cliente.</p>
               <p><strong>Procedimiento de Notificación:</strong> La parte afectada deberá notificar el siniestro a través del módulo de soporte de Vibeer de forma inmediata y en un plazo máximo de 12 horas posteriores al evento. El dinero retenido en custodia en OpenPay será reembolsado al 100% al Cliente sin penalización, y la fecha del Artista será liberada en el calendario sin afectar su estatus de verificación.</p>
@@ -203,7 +199,7 @@
           class="bg-card rounded-borders overflow-hidden "
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <p>Vibeer se reserva el derecho absoluto, unilateral y sin necesidad de previo aviso, de suspender temporalmente o eliminar definitivamente las cuentas de Clientes o Artistas, así como de remover cualquier contenido multimedia de los perfiles por las siguientes causas:</p>
               <ul>
                 <li>Violación o sospecha de violación a los presentes Términos y Condiciones.</li>
@@ -223,7 +219,7 @@
           class="bg-card rounded-borders overflow-hidden "
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <p>Conectado con el periodo de retención de fondos de 24 horas posterior al evento:</p>
               <p><strong>Apertura del Ticket y Plazos:</strong> Si el Cliente activa el botón de queja o disputa en las primeras 24 horas post-evento, los fondos se congelarán inmediatamente en OpenPay. A partir de ese momento, el Cliente contará con un plazo de 48 horas naturales para aportar pruebas tangibles (ej. videos de no-asistencia, fotografías, capturas del chat o testimonios).</p>
               <p><strong>Réplica del Artista:</strong> Una vez subidas las pruebas del Cliente, el Artista tendrá una ventana de 48 horas para presentar sus contrapruebas y justificar su postura.</p>
