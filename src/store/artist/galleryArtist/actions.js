@@ -6,14 +6,12 @@ export const getGalleryArtist = async ({ commit }) => {
 };
 
 export const createGalleryArtist = async ({ dispatch }, payload) => {
-  await api.post("/api/artist-new/gallery-artist", payload,
-  {headers : {'content-type': 'multipart/form-data'}});
+  await api.post("/api/artist-new/gallery-artist", payload);
   await dispatch("getGalleryArtist");
 };
 
 export const upDateGalleryArtist = async ({ dispatch }, payload) => {
-  await api.post("/api/artist-new/gallery-artist-update", payload,
-  {headers : {'content-type': 'multipart/form-data'}});
+  await api.post("/api/artist-new/gallery-artist-update", payload);
   await dispatch("getGalleryArtist");
 };
 
