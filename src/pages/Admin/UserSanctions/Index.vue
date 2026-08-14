@@ -479,7 +479,13 @@
                       <q-icon name="gavel" size="20px" color="grey-6" />
                       <div>
                         <div class="detail-label">Motivo</div>
-                        <div class="detail-value">{{ fault.reason }}</div>
+                        <div class="detail-value">
+                          <div class="q-mb-xs">{{ fault.message }}</div>
+                          <div>
+                            <span class="text-weight-bold">Motivo de cancelación: </span>
+                            <span :class="$q.dark.isActive ? 'text-orange-4' : 'text-orange-9'">{{ fault.original_reason }}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="row q-col-gutter-md">
@@ -658,24 +664,25 @@ export default {
             eventString = `${cancellation.artist_sale.event_date} a las ${cancellation.artist_sale.event_hour}`;
         }
         let titleColor = 'text-red';
-        let customReason = cancellation.cancellation_reason || 'Cancelación de evento';
+        let customMessage = 'Cancelación de evento';
+        let originalReason = cancellation.cancellation_reason || 'N/A';
         if (cancellation.is_direct_sanction) {
             titleColor = 'text-red';
-            customReason = `Cancelación y se restringió por cancelar entre el día 0-2 antes del evento.\nMotivo original: ${cancellation.cancellation_reason || 'N/A'}`;
+            customMessage = 'Cancelación y se restringió por cancelar entre el día 0-2 antes del evento.';
         }
         
         if (cancellation.is_accumulated_fault) {
             let faltantes = (cancellation.fault_threshold || 3) - 1;
             titleColor = 'text-orange';
-            customReason = `Se acumuló una cancelación, faltan ${faltantes} cancelaciones para que su cuenta sea restringida.
-            \nMotivo original: ${cancellation.cancellation_reason || 'N/A'}`;
+            customMessage = `Se acumuló una cancelación, faltan ${faltantes} cancelaciones para que su cuenta sea restringida.`;
         }
 
         return {
           id: 'c_' + cancellation.id,
           title: 'Cancelación Tardía',
           titleColor: titleColor,
-          reason: customReason,
+          message: customMessage,
+          original_reason: originalReason,
           event_date: eventString,
           created_at: cancellation.created_at
         };
