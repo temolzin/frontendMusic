@@ -13,7 +13,7 @@
           color="primary" 
           v-model="searchFilter" 
           style="width: 250px"
-          placeholder="Buscar..."
+          placeholder="Buscar en solicitudes..."
         >
           <template v-slot:append>
             <q-icon name="search" />

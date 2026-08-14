@@ -58,7 +58,7 @@
         <q-card-section class="row q-col-gutter-sm">
           <div class="col-6 col-md-2 col-lg-3 filter">
             <q-input rounded outlined borderless  debounce="300" v-model="filterName"
-              placeholder="Buscar por nombre... ">
+              placeholder="Buscar en artistas...">
               <template v-slot:append>
                 <q-icon name="search" />
               </template>

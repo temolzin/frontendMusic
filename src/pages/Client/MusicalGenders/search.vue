@@ -83,7 +83,7 @@
             dense
             debounce="300"
             v-model="filter"
-            placeholder="Buscar por nombre... "
+            placeholder="Buscar en artistas..."
           >
             <template v-slot:append>
               <q-icon name="search" />

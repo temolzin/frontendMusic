@@ -58,7 +58,7 @@
                   dense
                   debounce="100"
                   v-model="searchFilter"
-                  placeholder="Buscar..."
+                  placeholder="Buscar en reembolsos..."
                   color="primary"
                   style="min-width: 280px"
                 >

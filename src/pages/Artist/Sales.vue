@@ -24,7 +24,7 @@
           dense
           debounce="300"
           v-model="filter"
-          placeholder="Buscar..."
+          placeholder="Buscar en ventas..."
           color="primary"
         >
           <template v-slot:append>
