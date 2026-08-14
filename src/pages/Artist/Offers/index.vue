@@ -16,7 +16,14 @@
       <template v-slot:top>
         <b class="text-h5">
           Mis Ofertas
-          <q-btn color="primary" style="border-radius: 8px; font-weight: bold;" icon="add" label="Nueva Oferta" size="sm" @click="openForm()" />
+          <q-btn
+          color="primary"
+          style="border-radius: 8px; font-weight: bold;"
+          icon-right="fas fa-plus"
+          label="Nueva Oferta"
+          size="sm"
+          @click="openForm()"
+        />
         </b>
         <q-space />
         <q-input dense debounce="100" color="primary" v-model="filter">

@@ -18,15 +18,15 @@
         <b class="text-h5">
           Usuarios
           <q-btn
-            color="primary"
-            :disable="loading"
-            style="border-radius: 8px; font-weight: bold;"
-            label="Nuevo"
-            icon="fas fa-plus"
-            size="sm"
-            @click="clearForm(); formCreate = true"
-            v-if="$can('create-users')"
-          />
+          color="primary"
+          :disable="loading"
+          style="border-radius: 8px; font-weight: bold;"
+          label="Nuevo"
+          icon-right="fas fa-plus"
+          size="sm"
+          @click="clearForm(); formCreate = true"
+          v-if="$can('create-users')"
+        />
         </b>
         <q-space />
 

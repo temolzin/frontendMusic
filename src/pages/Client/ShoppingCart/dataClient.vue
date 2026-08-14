@@ -344,7 +344,7 @@
             <div class="q-mt-lg" v-if="paymentMethod === 'card'">
               <div class="row justify-center q-gutter-lg q-mb-md">
                 <q-btn unelevated color="primary" style="border-radius: 8px; font-weight: bold;" :label="selectedCard.id ? 'Cambiar Tarjeta' : 'Seleccionar Tarjeta'" @click="basic = true" />
-                <q-btn unelevated color="primary" style="border-radius: 8px; font-weight: bold;" label="Agregar nueva tarjeta" icon="fas fa-plus" @click="formCreate = true" />
+                <q-btn unelevated color="primary" style="border-radius: 8px; font-weight: bold;" label="Agregar nueva tarjeta" icon-right="fas fa-plus" @click="formCreate = true" />
               </div>
             <q-dialog v-model="basic" transition-show="rotate" transition-hide="rotate">
               <q-card>
