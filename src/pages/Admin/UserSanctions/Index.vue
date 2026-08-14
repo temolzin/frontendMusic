@@ -37,7 +37,7 @@
             debounce="300" 
             color="primary" 
             v-model="searchQuery"
-            placeholder="Buscar..."
+            placeholder="Buscar en sanciones..."
             clearable
             style="min-width: 220px;"
           >

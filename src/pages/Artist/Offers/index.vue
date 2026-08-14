@@ -20,7 +20,7 @@
           <q-btn color="primary" style="border-radius: 8px; font-weight: bold;" icon="add" label="Nueva Oferta" size="sm" @click="openForm()" />
         </b>
         <q-space />
-        <q-input dense debounce="100" color="primary" v-model="filter">
+        <q-input dense debounce="100" color="primary" v-model="filter" placeholder="Buscar en ofertas...">
           <template v-slot:append>
             <q-icon name="search" />
           </template>

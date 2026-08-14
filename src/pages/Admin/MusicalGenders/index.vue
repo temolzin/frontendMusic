@@ -34,7 +34,7 @@
 
         <q-space />
 
-        <q-input dense debounce="100" color="primary" v-model="filter">
+        <q-input dense debounce="100" color="primary" v-model="filter" placeholder="Buscar en géneros musicales...">
           <template v-slot:append>
             <q-icon name="search" />
           </template>

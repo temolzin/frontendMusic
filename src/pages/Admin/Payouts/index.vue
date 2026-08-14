@@ -52,6 +52,7 @@
                   v-model="searchFilter"
                   color="primary"
                   style="min-width: 280px"
+                  placeholder="Buscar en liquidaciones..."
                 >
                   <template v-slot:append>
                     <q-icon name="search" />
