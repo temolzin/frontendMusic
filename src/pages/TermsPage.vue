@@ -62,6 +62,10 @@
                 <li class="q-mb-md"><strong>Reserva y Pago:</strong> 
                     El Cliente deberá liquidar el 100% del valor del servicio o paquete seleccionado mediante la plataforma para congelar la fecha en la agenda del Artista.
                 </li>
+                <li class="q-mb-md"><strong>Cobertura y Cargo por Kilómetros Extra:</strong> 
+                    Cada Artista define en su perfil un radio de cobertura (kilómetros que cubre sin costo adicional) y una tarifa por kilómetro extra. Al realizar la cotización o contratación, la plataforma calcula automáticamente la distancia de traslado entre la zona base del Artista y la ubicación del evento mediante un sistema de geolocalización. 
+                    Si dicha distancia excede el radio de cobertura del Artista, se aplicará un cargo adicional por cada kilómetro excedente, calculado de la siguiente forma: (Distancia total − Radio de cobertura) × Tarifa por kilómetro. Este cargo por kilómetros extra se adiciona al valor total de la contratación, se liquida íntegramente a través de la pasarela de pagos y se dispersa al Artista bajo las mismas reglas de custodia establecidas en la presente cláusula.
+                </li>
                 <li class="q-mb-md"><strong>Retención de Comisión:</strong> 
                     El Artista acepta explícitamente que la plataforma retendrá una comisión fija del 10% sobre el valor total bruto de la contratación por concepto de uso, mantenimiento de la infraestructura digital y publicidad. 
                 </li>
