@@ -56,7 +56,7 @@
     <div class="admin-overview q-pa-md q-mt-lg q-mb-md" :class="{ 'admin-overview--dark': $q.dark.isActive }">
       <div class="row items-end justify-between q-col-gutter-md q-mb-md">
         <div class="col-12 col-md-8">
-          <div class="text-overline text-grey-6">Panel administrativo</div>
+          <div class="text-overline text-grey-8">Panel administrativo</div>
           <div class="text-h4 text-weight-bold">Resumen general del sistema</div>
           <div class="text-body2 text-grey-7 q-mt-sm">
             Revisa la información más relevante de lo que ha pasado últimamente
@@ -64,11 +64,11 @@
         </div>
 
         <div class="col-12 col-md-4 text-left text-md-right">
-          <div class="text-caption text-grey-6">Periodo reportado</div>
+          <div class="text-caption text-grey-8">Periodo reportado</div>
           <div class="text-subtitle1 text-weight-medium">
             {{ overviewMeta.periodDays ? `${overviewMeta.periodDays} días` : "Sin definir" }}
           </div>
-          <div class="text-caption text-grey-6 q-mt-xs">
+          <div class="text-caption text-grey-8 q-mt-xs">
             Actualizado: {{ overviewMeta.generatedAt || "Pendiente" }}
           </div>
         </div>
@@ -108,7 +108,7 @@
             </q-card-section>
 
             <q-card-section class="q-pt-none q-pb-sm">
-              <div class="text-caption text-grey-6">Total histórico</div>
+              <div class="text-caption text-grey-8">Total histórico</div>
               <div class="text-h2 text-weight-bolder q-mt-xs total-value">
                 {{ formatNumber(card.total) }}
               </div>
@@ -117,7 +117,7 @@
             <q-separator inset />
 
             <q-card-section>
-              <div class="text-caption text-grey-6 q-mb-sm">Desglose sutil del estado actual</div>
+              <div class="text-caption text-grey-8 q-mb-sm">Desglose sutil del estado actual</div>
               <div class="column q-gutter-sm">
                 <div
                   v-for="item in card.breakdown || []"
@@ -287,7 +287,7 @@
   .admin-overview--dark .text-subtitle1
     color: #e2e8f0 !important
 
-  .admin-overview--dark .text-grey-6,
+  .admin-overview--dark .text-grey-8,
   .admin-overview--dark .text-grey-7
     color: #94a3b8 !important
 

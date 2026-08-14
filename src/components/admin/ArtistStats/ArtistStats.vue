@@ -37,7 +37,7 @@
             </template>
             <template v-slot:no-option>
               <q-item>
-                <q-item-section class="text-grey-6 text-caption">
+                <q-item-section class="text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">
                   Sin artistas disponibles
                 </q-item-section>
               </q-item>
@@ -129,7 +129,7 @@
                   >
                     {{ genre }}
                   </q-chip>
-                  <span v-if="!artistData.profile.genres || artistData.profile.genres.length === 0" class="text-caption text-grey-6">
+                  <span v-if="!artistData.profile.genres || artistData.profile.genres.length === 0" class="text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">
                     Sin géneros registrados
                   </span>
                 </div>
@@ -160,7 +160,7 @@
                   <q-btn v-if="artistData.profile.socials?.x || artistData.profile.socials?.twitter" type="a" flat round dense icon="fab fa-x-twitter" :href="artistData.profile.socials?.x || artistData.profile.socials?.twitter" target="_blank" rel="noopener noreferrer">
                     <q-tooltip>X / Twitter</q-tooltip>
                   </q-btn>
-                  <span v-if="!hasSocials(artistData.profile.socials)" class="text-caption text-grey-6">
+                  <span v-if="!hasSocials(artistData.profile.socials)" class="text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">
                     Sin redes registradas
                   </span>
                 </div>
@@ -200,7 +200,7 @@
                   </div>
                   <div class="kpi-value text-weight-bolder">
                     {{ artistData.kpis.rating }}
-                    <span class="text-subtitle1 text-grey-6 text-weight-medium">/ 5</span>
+                    <span class="text-subtitle1 text-weight-medium" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">/ 5</span>
                   </div>
                   <div class="q-mt-xs">
                     <q-rating
@@ -236,7 +236,7 @@
                   <div class="kpi-value text-weight-bolder" :title="`$${artistData.kpis.total_income} MXN`">
                     ${{ artistData.kpis.total_income }}
                   </div>
-                  <div class="text-caption text-grey-6">MXN</div>
+                  <div class="text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">MXN</div>
                 </div>
                 <div class="trend-container">
                   <div :class="trendClass(artistData.kpis.income_trend)" class="text-caption text-weight-bold" style="line-height: 1.2;">
@@ -299,7 +299,7 @@
                   <div class="kpi-value text-weight-bolder">{{ artistData.kpis.sanctions_count }}</div>
                 </div>
                 <div class="trend-container">
-                  <div class="text-caption text-grey-6 text-weight-bold" style="line-height: 1.2;">
+                  <div class="text-caption text-weight-bold" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'" style="line-height: 1.2;">
                     <q-icon name="info_outline" /> {{ artistData.kpis.sanctions_trend }} en el período
                   </div>
                 </div>
@@ -332,7 +332,7 @@
                 <div class="col" style="position: relative; width: 100%; margin-top: 10px; min-height: 250px;">
                   <div class="column justify-between absolute-full" style="height: calc(100% - 25px); padding-left: 55px;">
                     <div v-for="(yVal, idx) in artistData.chart.yLabels" :key="idx" style="border-top: 1px dashed #e0e0e0; position: relative;">
-                      <span class="absolute text-caption text-grey-6" style="left: -55px; top: -10px;">{{ yVal }}</span>
+                      <span class="absolute text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'" style="left: -55px; top: -10px;">{{ yVal }}</span>
                     </div>
                   </div>
                   <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 55px; width: calc(100% - 65px); height: calc(100% - 25px); overflow: visible;">
@@ -419,7 +419,7 @@
                   </q-item-section>
                 </q-item>
                 <q-item v-if="!artistData.upcoming_events || artistData.upcoming_events.length === 0">
-                  <q-item-section class="text-center text-grey-6 q-py-md">
+                  <q-item-section class="text-center q-py-md" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">
                     No hay próximos eventos pendientes
                   </q-item-section>
                 </q-item>
@@ -633,10 +633,10 @@ export default {
     },
 
     trendClass(trend) {
-      if (!trend || trend === "Sin datos") return "text-grey-6";
+      if (!trend || trend === "Sin datos") return this.$q.dark.isActive ? 'text-grey-5' : 'text-grey-8';
       if (trend.startsWith("+")) return "text-positive";
       if (trend.startsWith("-")) return "text-negative";
-      return "text-grey-6";
+      return this.$q.dark.isActive ? 'text-grey-5' : 'text-grey-8';
     },
 
     trendIcon(trend) {

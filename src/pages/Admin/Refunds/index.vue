@@ -176,7 +176,7 @@
               size="4em"
               color="grey-5"
             />
-            <p class="text-grey-6 q-mt-md">
+            <p class="q-mt-md" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">
               {{ activeTab === 'history' ? 'Aún no hay registros en el historial de reembolsos.' : 'No hay solicitudes de reembolso pendientes.' }}
             </p>
           </template>

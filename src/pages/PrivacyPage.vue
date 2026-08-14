@@ -4,9 +4,9 @@
       <div class="text-center q-mb-xl">
         <h1 class="text-h4 text-weight-bold q-ma-none text-primary q-mb-xs">AVISO DE PRIVACIDAD</h1>
         <div class="text-subtitle2 text-grey-7">Estatus: Versión Final de Cumplimiento Legal (México)</div>
-        <div class="text-caption text-grey-6">Fecha de Publicación: 12 de junio de 2026</div>
+        <div class="text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">Fecha de Publicación: 12 de junio de 2026</div>
       </div>
-      <q-card flat bordered class="q-pa-md q-mb-lg bg-grey-1 text-grey-9">
+      <q-card flat bordered class="q-pa-md q-mb-lg" :class="$q.dark.isActive ? 'bg-grey-9 text-grey-3' : 'bg-grey-1 text-grey-9'">
         <p class="q-ma-none text-body1 line-height-relaxed">
           En cumplimiento con la <strong>Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP)</strong> en México, se emite el presente Aviso de Privacidad para informar el uso y protección que se dará a sus datos personales.
         </p>
@@ -21,7 +21,7 @@
           class="bg-card rounded-borders overflow-hidden"
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <p>Para las finalidades señaladas en este aviso, recabamos sus datos de forma directa cuando usted se registra en nuestra aplicación. Los datos almacenados en nuestras bases de datos son:</p>
               <p><strong>Para Clientes:</strong> Nombre completo, correo electrónico, número telefónico, dirección del evento y ubicación IP de conexión, entre otros datos básicos que se necesiten para el funcionamiento de la plataforma.</p>
               <p><strong>Para Artistas:</strong> Nombre artístico, nombre del representante, portafolio multimedia (fotos y videos), tarifas de paquetes y coordenadas de geolocalización (Latitud y Longitud) para el cálculo de rutas de cobertura.</p>
@@ -43,7 +43,7 @@
           class="bg-card rounded-borders overflow-hidden"
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <p>Sus datos personales serán utilizados para las siguientes finalidades necesarias para el servicio:</p>
               <ul>
                 <li>Validar e identificar la identidad de los usuarios en el sistema.</li>
@@ -64,7 +64,7 @@
           class="bg-card rounded-borders overflow-hidden"
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9">
+            <q-card-section class="text-body1" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
               <p>Se informa que sus datos personales son compartidos de forma cifrada y segura exclusivamente con los siguientes proveedores de infraestructura tecnológica para el correcto funcionamiento de la aplicación:</p>
               <ul>
                 <li><strong>OpenPay (Pasarela de Pagos):</strong> Para procesar los cargos y transferencias interbancarias.</li>
@@ -81,7 +81,7 @@
           class="bg-card rounded-borders overflow-hidden"
         >
           <q-card>
-            <q-card-section class="text-body1 text-grey-9 q-pa-md">
+            <q-card-section class="text-body1 q-pa-md" :class="$q.dark.isActive ? 'text-grey-3' : 'text-grey-9'">
                 <p class="q-mb-md">
                     Usted tiene derecho a conocer qué datos personales tenemos de usted, para qué los utilizamos y las condiciones del uso que les damos (Acceso). Asimismo, es su derecho solicitar la corrección de su información personal (Rectificación), que la eliminemos de nuestros registros o bases de datos (Cancelación) u oponerse al uso de sus datos para fines específicos (Oposición).
                 </p>

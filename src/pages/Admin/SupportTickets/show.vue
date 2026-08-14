@@ -97,7 +97,7 @@
                 fit="cover"
               >
                 <template v-slot:error>
-                  <div class="absolute-full flex flex-center bg-grey-3 text-grey-6 text-caption">
+                  <div class="absolute-full flex flex-center bg-grey-3 text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">
                     Sin vista previa
                   </div>
                 </template>
