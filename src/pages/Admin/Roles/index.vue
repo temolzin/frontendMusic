@@ -19,14 +19,14 @@
         <b class="text-h5">
           Roles
           <q-btn
-            color="primary"
-            :disable="loading"
-            style="border-radius: 8px; font-weight: bold;"
-            label="Nuevo"
-            icon="fas fa-plus"
-            size="sm"
-            @click="formCreate = true"
-          />
+          color="primary"
+          :disable="loading"
+          style="border-radius: 8px; font-weight: bold;"
+          label="Nuevo"
+          icon="fas fa-plus"
+          size="sm"
+          @click="formCreate = true"
+        />
         </b>
 
         <q-space />
