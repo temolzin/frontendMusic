@@ -43,7 +43,11 @@
 
       <template v-slot:body-cell-discount_percentage="props">
         <q-td :props="props">
-          {{ props.row.discount_percentage }}%
+          <div class="row items-center justify-center q-gutter-sm">
+            <span class="text-negative text-strike">{{ formatMoney(props.row.original_price) }}</span>
+            <q-icon name="arrow_forward" size="xs" class="text-grey-7" />
+            <span class="text-primary text-weight-bold">{{ formatMoney(props.row.discounted_price) }}</span>
+          </div>
         </q-td>
       </template>
 
@@ -102,7 +106,11 @@
                     </q-badge>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'discount_percentage'">
-                    {{ props.row.discount_percentage }}%
+                    <div class="row items-center q-gutter-sm">
+                      <span class="text-negative text-strike">{{ formatMoney(props.row.original_price) }}</span>
+                      <q-icon name="arrow_forward" size="xs" class="text-grey-7" />
+                      <span class="text-primary text-weight-bold">{{ formatMoney(props.row.discounted_price) }}</span>
+                    </div>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'start_date'">
                     {{ formatDate(props.row.start_date) }}
@@ -317,7 +325,7 @@ export default {
       },
       columns: [
         { name: "description", label: "Descripción", field: "description", align: "center" },
-        { name: "discount_percentage", label: "Descuento", field: "discount_percentage", align: "center" },
+        { name: "discount_percentage", label: "Precio (Ahora)", field: "discount_percentage", align: "center" },
         { name: "start_date", label: "Fecha inicio", field: "start_date", align: "center" },
         { name: "end_date", label: "Fecha fin", field: "end_date", align: "center" },
         { name: "is_active", label: "Estado", field: "is_active", align: "center" },
@@ -489,6 +497,12 @@ export default {
     formatDate(date) {
       if (!date) return "-";
       return new Date(date).toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "2-digit" });
+    },
+
+    formatMoney(value) {
+      const num = parseFloat(value);
+      if (isNaN(num)) return "$0.00";
+      return "$" + num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
   },
   mounted() {
