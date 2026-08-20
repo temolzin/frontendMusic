@@ -791,43 +791,45 @@
         </q-stepper>
       </div>
       <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-        <q-card class="no-shadow column" bordered :style="summaryCardStyle">
+        <q-card class="no-shadow column no-wrap" bordered :style="summaryCardStyle">
           <q-card-section class="text-center text-h6 text-white bg-primary">
             <q-icon name="shopping_cart" class="q-mr-sm" />
             Resumen del pedido
           </q-card-section>
           <div class="resumen-scroll">
-          <div class="resumen-inner full-width">
-          <template v-for="(product, index) in shoppingCardDetail" :key="index">
-            <q-card-section class="q-pa-md text-center">
-              <q-img :src="castProduct(product).artist.image" loading="lazy" style="object-fit: cover" height="70px"
-                class="rounded-circle q-mb-sm" width="70px" />
-              <div class="text-subtitle2 text-weight-bold text-primary">
-                {{ castProduct(product).artist.name }}
-              </div>
-              <div class="text-caption text-grey-8">
-                {{ castProduct(product).hours }} hora(s) x ${{ (+castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-              </div>
-              <div v-if="+castProduct(product).price < +castProduct(product).artist.price_hour">
-                <div class="text-body2 text-grey text-strike q-mb-xs">
-                  ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+            <div class="resumen-inner full-width" :class="shoppingCardDetail.length === 2 ? 'resumen-two' : ''">
+              <template v-for="(product, index) in shoppingCardDetail" :key="index">
+                <div class="resumen-item">
+                  <q-card-section class="q-pa-md text-center">
+                    <q-img :src="castProduct(product).artist.image" loading="lazy" style="object-fit: cover" height="70px"
+                      class="rounded-circle q-mb-sm" width="70px" />
+                    <div class="text-subtitle2 text-weight-bold text-primary">
+                      {{ castProduct(product).artist.name }}
+                    </div>
+                    <div class="text-caption text-grey-8">
+                      {{ castProduct(product).hours }} hora(s) x ${{ (+castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                    </div>
+                    <div v-if="+castProduct(product).price < +castProduct(product).artist.price_hour">
+                      <div class="text-body2 text-grey text-strike q-mb-xs">
+                        ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                      </div>
+                      <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase" :label="Math.round((1 - castProduct(product).price / castProduct(product).artist.price_hour) * 100) + '% OFF'" />
+                      <div class="text-weight-bold text-positive" style="font-size: 1.3rem">
+                        ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                      </div>
+                    </div>
+                    <div v-else class="text-weight-bold text-positive" style="font-size: 1.3rem">
+                      ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                    </div>
+                    <div v-if="getExtraKmForProduct(product)" class="text-caption text-grey q-mt-xs">
+                      <q-icon name="directions_car" size="14px" class="q-mr-xs" />
+                      {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km extra: +${{ (+getExtraKmForProduct(product).extra_km_cost || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                    </div>
+                  </q-card-section>
                 </div>
-                <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase" :label="Math.round((1 - castProduct(product).price / castProduct(product).artist.price_hour) * 100) + '% OFF'" />
-                <div class="text-weight-bold text-positive" style="font-size: 1.3rem">
-                  ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-                </div>
-              </div>
-              <div v-else class="text-weight-bold text-positive" style="font-size: 1.3rem">
-                ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-              </div>
-              <div v-if="getExtraKmForProduct(product)" class="text-caption text-grey q-mt-xs">
-                <q-icon name="directions_car" size="14px" class="q-mr-xs" />
-                {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km extra: +${{ (+getExtraKmForProduct(product).extra_km_cost || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
-              </div>
-            </q-card-section>
-            <q-separator v-if="index < shoppingCardDetail.length - 1"></q-separator>
-          </template>
-          </div>
+                <q-separator v-if="index < shoppingCardDetail.length - 1" class="resumen-sep"></q-separator>
+              </template>
+            </div>
           </div>
 
           <q-separator></q-separator>
@@ -2090,7 +2092,7 @@ export default defineComponent({
         }));
     },
     summaryCardStyle() {
-      return this.stepperCardHeight ? { height: this.stepperCardHeight + 'px' } : {};
+      return this.stepperCardHeight ? { 'max-height': this.stepperCardHeight + 'px' } : {};
     },
     artistCardColClass() {
       const count = this.shoppingCardDetail.length;
@@ -2299,7 +2301,7 @@ export default defineComponent({
 }
 
 .resumen-scroll {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   display: flex;
@@ -2309,8 +2311,40 @@ export default defineComponent({
 .resumen-inner {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  min-height: 100%;
+  justify-content: flex-start;
   width: 100%;
+  min-width: 0;
+}
+
+.resumen-item {
+  flex: 0 1 auto;
+}
+
+.resumen-sep {
+  flex-shrink: 0;
+}
+
+@media (min-width: 600px) {
+  .resumen-two {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .resumen-two .resumen-item {
+    flex: 1 1 50%;
+    min-width: 0;
+  }
+
+  .resumen-two .resumen-sep {
+    display: none;
+  }
+
+  .resumen-two .resumen-item + .resumen-item {
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .body--dark .resumen-two .resumen-item + .resumen-item {
+    border-left-color: rgba(255, 255, 255, 0.28);
+  }
 }
 </style>
