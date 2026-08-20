@@ -196,7 +196,19 @@
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
-              <q-icon name="price_check" />
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="price_check" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="pendingRefundsCount > 0" color="red" floating transparent>
+                    {{ pendingRefundsCount }}
+                  </q-badge>
+                </transition>
+              </div>
             </q-item-section>
 
             <q-item-section> Reembolsos </q-item-section>
@@ -586,6 +598,7 @@ export default {
     ...mapGetters("supportTickets", { openAdminTicketsCount: "getOpenAdminTicketsCount" }),
     ...mapGetters("payouts", { pendingPayoutsCount: "getPendingPayoutsCount" }),
     ...mapGetters("userSanctions", { restrictedUsersCount: "getRestrictedUsersCount" }),
+    ...mapGetters("refunds", { pendingRefundsCount: "getPendingRefundsCount" }),
     mode: function () {
       return this.$q.dark.isActive;
     },
@@ -615,6 +628,7 @@ export default {
       this.fetchArtistApprovalCount();
       this.fetchPendingPayoutsCountSafe();
       this.fetchRestrictedUsersCountSafe();
+      this.fetchPendingRefundsCountSafe();
     }
     if (this.getMe?.role?.[0] === 'administrador') {
       this.fetchOpenAdminTicketsCountSafe();
@@ -628,6 +642,7 @@ export default {
     ...mapActions("supportTickets", ["fetchOpenAdminTicketsCount"]),
     ...mapActions("payouts", ["fetchPendingPayouts"]),
     ...mapActions("userSanctions", ["fetchRestrictedUsersCount"]),
+    ...mapActions("refunds", ["fetchPendingRefunds"]),
     async getArtistss() {
       try {
         await this.getArtists();
@@ -679,6 +694,12 @@ export default {
     async fetchRestrictedUsersCountSafe() {
       try {
         await this.fetchRestrictedUsersCount();
+      } catch {
+      }
+    },
+    async fetchPendingRefundsCountSafe() {
+      try {
+        await this.fetchPendingRefunds();
       } catch {
       }
     },
