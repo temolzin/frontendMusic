@@ -10,6 +10,16 @@ export const fetchRefunds = async ({ commit }) => {
   }
 };
 
+export const fetchPendingRefunds = async ({ commit }) => {
+  try {
+    const response = await api.get("/api/admin/client-refunds/pending");
+    commit("setPendingRefunds", response.data.data || []);
+  } catch (error) {
+    console.error("Error al obtener reembolsos pendientes:", error);
+    throw error;
+  }
+};
+
 export const processClientRefund = async ({ dispatch }, refundId) => {
   try {
     await api.post(`/api/admin/client-refunds/${refundId}/process`);
