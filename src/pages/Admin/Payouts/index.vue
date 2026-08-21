@@ -356,7 +356,7 @@
 import { mapActions, mapGetters, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { getEventStatusColor, getPayoutStatusColor } from 'src/utils/badgeStyles';
-import { formatCurrency } from "src/utils/currency";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 const columns = [
   { name: "expand", label: "Detalles", align: "center" },

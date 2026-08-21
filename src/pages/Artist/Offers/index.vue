@@ -306,7 +306,7 @@
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { getOfferStatusColor } from "src/utils/badgeStyles";
-import { formatCurrency } from "src/utils/currency";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 export default {
   name: "ArtistOffers",

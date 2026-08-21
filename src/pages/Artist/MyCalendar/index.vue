@@ -346,7 +346,7 @@ import { mapActions } from 'vuex';
 import { getEventStatusColor } from 'src/utils/badgeStyles';
 import CancellationModal from 'components/CancellationModal.vue';
 import { notifySuccess, notifyError, platformEvents } from 'src/utils/notify';
-import { formatCurrency } from 'src/utils/currency';
+import { formatCurrency } from 'src/utils/moneyFormat';
 
 export default defineComponent({
   name: 'MyCalendar',

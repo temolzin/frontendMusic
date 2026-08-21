@@ -163,7 +163,7 @@
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { notifyError, notifySuccess } from "src/utils/notify";
-import { formatCurrency } from "src/utils/currency";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 let $q;
 export default {

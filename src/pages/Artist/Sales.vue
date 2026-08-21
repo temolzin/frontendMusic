@@ -359,7 +359,7 @@
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useQuasar } from 'quasar';
 import { getEventStatusColor, getPaymentStatusColor } from 'src/utils/badgeStyles';
-import { formatCurrency } from 'src/utils/currency';
+import { formatCurrency } from 'src/utils/moneyFormat';
 import { notifyError } from 'src/utils/notify';
 import NoticeNoSales from 'src/components/Artist/NoticeNoSales.vue';
 import NoticeNotInfo from 'src/components/Artist/NoticeNotInfo.vue';

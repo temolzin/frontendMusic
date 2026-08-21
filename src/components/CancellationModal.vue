@@ -113,7 +113,7 @@
 import { ref, computed, watch } from 'vue'
 import { api } from 'boot/axios'
 import { notifyError } from 'src/utils/notify'
-import { formatCurrency } from 'src/utils/currency'
+import { formatCurrency } from 'src/utils/moneyFormat'
 
 export default {
   name: 'CancellationModal',

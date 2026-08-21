@@ -839,7 +839,7 @@ import { useQuasar } from "quasar";
 import NoticeGallery from "src/components/Artist/NoticeGallery.vue";
 import { api } from "boot/axios";
 import { notifySuccess, notifyError, platformEvents } from "src/utils/notify";
-import { formatCurrency } from "src/utils/currency";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 let $q = useQuasar();
 

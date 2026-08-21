@@ -435,7 +435,7 @@
 import { useQuasar } from "quasar";
 import { mapGetters, mapActions } from "vuex";
 import { notifyError } from "src/utils/notify";
-import { formatCurrency } from "src/utils/currency";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 export default {
   name: "ArtistStats",

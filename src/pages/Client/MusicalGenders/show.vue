@@ -394,7 +394,7 @@ import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
-import { formatCurrency } from "src/utils/currency";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 let $q;
 export default {

@@ -912,7 +912,7 @@ import { api } from "boot/axios";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { notifySuccess, notifyError, notifyWarning, notifyInfo, platformEvents } from "src/utils/notify";
-import { formatCurrency } from "src/utils/currency";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 let $q;
 

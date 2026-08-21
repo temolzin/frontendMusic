@@ -181,7 +181,7 @@
   import { ref } from "vue";
   import { notifyError, notifySuccess, notifyInfo } from "src/utils/notify";
   import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
-  import { formatCurrency } from "src/utils/currency";
+  import { formatCurrency } from "src/utils/moneyFormat";
 
   let $q;
 

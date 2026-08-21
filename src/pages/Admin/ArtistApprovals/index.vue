@@ -302,7 +302,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
 import { getArtistApprovalTypeColor, getArtistApprovalStatusColor } from 'src/utils/badgeStyles';
-import { formatCurrency } from 'src/utils/currency';
+import { formatCurrency } from 'src/utils/moneyFormat';
 
 const columns = [
   { name: 'artista', label: 'Artista', align: 'center', field: (row) => row.proposed_data?.name, sortable: true },

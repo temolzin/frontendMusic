@@ -279,7 +279,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import { getDiscountBadgeColor, getApprovalHistoryStatusColor } from 'src/utils/badgeStyles';
 import { notifyError, platformEvents } from 'src/utils/notify';
-import { formatCurrency, formatMoney } from 'src/utils/currency';
+import { formatCurrency, formatMoney } from 'src/utils/moneyFormat';
 
 const columns = [
   { name: 'cliente', label: 'Cliente', align: 'center', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },

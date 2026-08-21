@@ -200,7 +200,7 @@ import { mapActions, mapGetters } from 'vuex';
 import { api } from 'boot/axios';
 import { notifySuccess, notifyError } from 'src/utils/notify';
 import { getSupportTicketCategoryColor, getSupportTicketStatusColor } from 'src/utils/badgeStyles';
-import { formatCurrency } from 'src/utils/currency';
+import { formatCurrency } from 'src/utils/moneyFormat';
 
 export default {
   name: 'SupportTicketShow',
