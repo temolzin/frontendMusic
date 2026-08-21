@@ -142,9 +142,9 @@
               <q-card-section class="q-pt-none">
                 <div class="text-subtitle1">
                   <span class="text-h5 text-primary text-weight-bold">
-                    ${{ props.row.price_hour }}.00
+                    {{ formatCurrency(props.row.price_hour) }}
                   </span>
-                  <small> pesos por hora</small>
+                  <small> por hora</small>
                 </div>
                 <div class="text-caption text-grey ellipsis">
                   {{ props.row.history }}
@@ -196,6 +196,7 @@ import { mapActions, mapGetters, mapState } from "vuex";
 import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
+import { formatCurrency } from "src/utils/currency";
 
 let $q;
 export default {
@@ -217,6 +218,7 @@ export default {
     };
   },
   methods: {
+    formatCurrency,
     ...mapActions("clientMusicalGenders", ["getMusicalGendersBySlug"]),
     ...mapActions("shoppingCard", ["create_order"]),
     ...mapActions("favouriteArtists", ["createFavouriteArtist", "getFavouriteArtists"]),

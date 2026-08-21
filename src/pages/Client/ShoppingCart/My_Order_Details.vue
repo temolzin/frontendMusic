@@ -63,7 +63,7 @@
                         {{ purchase.artist?.zone || 'N/A' }}
                       </div>
                       <div class="text-subtitle2 text-weight-bold">
-                        Monto: ${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN
+                        Monto: {{ formatCurrency(parseFloat(purchase.amount) || 0) }}
                       </div>
                     </td>
                     <td class="text-center" style="width: 25%;">
@@ -104,7 +104,7 @@
                         </div>
                         <div class="q-mb-sm">
                           <div class="text-caption text-grey">Monto</div>
-                          <div class="text-body2 text-weight-bold">${{ (parseFloat(purchase.amount) || 0).toFixed(2) }} MXN</div>
+                          <div class="text-body2 text-weight-bold">{{ formatCurrency(parseFloat(purchase.amount) || 0) }}</div>
                         </div>
                         <div class="q-mb-sm">
                           <div class="text-caption text-grey">Contacto asignado</div>
@@ -173,7 +173,7 @@
               <q-item>
                 <q-item-section>
                   <q-item-label caption>Monto</q-item-label>
-                  <q-item-label class="text-weight-bold text-primary">${{ (parseFloat(selectedPurchase.amount) || 0).toFixed(2) }} MXN</q-item-label>
+                  <q-item-label class="text-weight-bold text-primary">{{ formatCurrency(parseFloat(selectedPurchase.amount) || 0) }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
@@ -279,7 +279,7 @@
                 <div class="col-6">
                   <div class="text-caption text-grey">Monto</div>
                   <div class="text-subtitle1 text-weight-bold" :class="{ 'text-black': isExporting }">
-                    ${{ (parseFloat(regeneratedRef?.amount) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} MXN
+                    {{ formatCurrency(parseFloat(regeneratedRef?.amount) || 0) }}
                   </div>
                 </div>
                 <div class="col-6">
@@ -444,6 +444,7 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import CancellationModal from "components/CancellationModal.vue";
 import { notifySuccess, notifyError, platformEvents } from "src/utils/notify";
+import { formatCurrency } from "src/utils/currency";
 
 let $q;
 export default {
@@ -473,6 +474,7 @@ export default {
   methods: {
     getEventStatusColor,
     getOrderPaymentStatusColor,
+    formatCurrency,
     ...mapActions("orderDetails", [
       "viewPurchaseHistory",
       "fetchChatMessages",

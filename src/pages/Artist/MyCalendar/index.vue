@@ -128,7 +128,7 @@
                                 </div>
                                 <div class="detail-item q-mb-sm">
                                   <span class="detail-label">Tarifa:</span>
-                                  <span class="detail-value text-positive text-weight-bold">${{ event.rate }}</span>
+                                  <span class="detail-value text-positive text-weight-bold">{{ formatCurrency(event.rate) }}</span>
                                 </div>
                                 <div class="detail-item q-mb-sm">
                                   <span class="detail-label">Contacto:</span>
@@ -254,7 +254,7 @@
                                 </div>
                                 <div class="detail-item q-mb-sm">
                                   <span class="detail-label">Tarifa:</span>
-                                  <span class="detail-value text-positive text-weight-bold">${{ event.rate }}</span>
+                                  <span class="detail-value text-positive text-weight-bold">{{ formatCurrency(event.rate) }}</span>
                                 </div>
                                 <div class="detail-item q-mb-sm">
                                   <span class="detail-label">Contacto:</span>
@@ -346,6 +346,7 @@ import { mapActions } from 'vuex';
 import { getEventStatusColor } from 'src/utils/badgeStyles';
 import CancellationModal from 'components/CancellationModal.vue';
 import { notifySuccess, notifyError, platformEvents } from 'src/utils/notify';
+import { formatCurrency } from 'src/utils/currency';
 
 export default defineComponent({
   name: 'MyCalendar',
@@ -411,6 +412,7 @@ export default defineComponent({
   },
   methods: {
     getEventStatusColor,
+    formatCurrency,
     ...mapActions("userSanctions", [
       "evaluateCancellationSanction"
     ]),

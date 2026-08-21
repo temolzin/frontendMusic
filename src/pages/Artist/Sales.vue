@@ -68,7 +68,7 @@
       <template v-slot:body-cell-amount="props">
         <q-td :props="props">
           <span class="text-weight-bold">
-            ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
+            {{ formatCurrency(props.row.amount) }}
           </span>
         </q-td>
       </template>
@@ -146,7 +146,7 @@
                   </q-item-label>
                   <q-item-label v-if="col.name === 'amount'">
                     <span class="text-weight-bold">
-                      ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
+                      {{ formatCurrency(props.row.amount) }}
                     </span>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'acciones'">
@@ -359,6 +359,7 @@
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useQuasar } from 'quasar';
 import { getEventStatusColor, getPaymentStatusColor } from 'src/utils/badgeStyles';
+import { formatCurrency } from 'src/utils/currency';
 import { notifyError } from 'src/utils/notify';
 import NoticeNoSales from 'src/components/Artist/NoticeNoSales.vue';
 import NoticeNotInfo from 'src/components/Artist/NoticeNotInfo.vue';
@@ -431,6 +432,7 @@ export default {
   methods: {
     getEventStatusColor,
     getPaymentStatusColor,
+    formatCurrency,
     ...mapActions('sales', ['fetchSales', 'fetchSaleDetails']),
     ...mapActions("artistSales", ["getArtistSales"]),
     ...mapActions("artist", ["getArtist"]),

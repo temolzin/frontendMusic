@@ -95,7 +95,7 @@
               {{ props.row.refund_percentage }}%
             </q-td>
             <q-td key="refund_amount" :props="props" class="text-positive">
-              ${{ formatCurrency(props.row.refund_amount) }} MXN
+              {{ formatCurrency(props.row.refund_amount) }}
             </q-td>
             <q-td key="status" :props="props">
               <q-badge v-bind="getRefundStatusColor(props.row.status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
@@ -120,7 +120,7 @@
                       <q-separator class="q-my-xs" />
                       <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold text-positive">
                         <span>Monto Neto a Reembolsar:</span>
-                        <span>${{ formatCurrency(props.row.refund_amount) }} MXN</span>
+                        <span>{{ formatCurrency(props.row.refund_amount) }}</span>
                       </div>
                       <div v-if="props.row.openpay_refund_id" class="q-mt-sm text-caption text-grey-7">
                         <strong>OpenPay Refund ID:</strong> {{ props.row.openpay_refund_id }}
@@ -191,6 +191,7 @@
 import { mapActions, mapGetters } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { getRefundStatusColor } from 'src/utils/badgeStyles';
+import { formatCurrency } from "src/utils/currency";
 
 const columns = [
   { name: "expand", label: "Detalles", align: "center" },
@@ -246,6 +247,7 @@ export default {
 
   methods: {
     getRefundStatusColor,
+    formatCurrency,
     ...mapActions("refunds", ["fetchRefunds", "processClientRefund"]),
 
     async loadData() {
@@ -266,7 +268,7 @@ export default {
       this.$q
         .dialog({
           title: "Confirmar Reembolso en OpenPay",
-          message: `¿Estás seguro de procesar el reembolso de la venta #${saleId} para "${customerName}" por un monto de $${this.formatCurrency(refund.refund_amount)} MXN?\n\nEsta acción enviará la transacción directamente a OpenPay.`,
+          message: `¿Estás seguro de procesar el reembolso de la venta #${saleId} para "${customerName}" por un monto de ${this.formatCurrency(refund.refund_amount)}?\n\nEsta acción enviará la transacción directamente a OpenPay.`,
           cancel: { label: "Cancelar", color: "grey", flat: true },
           ok: { label: "Sí, Procesar Reembolso", color: "primary" },
           persistent: true,
@@ -290,13 +292,6 @@ export default {
       if (status === 'processed') return 'Aprobado';
       if (status === 'failed') return 'Rechazado';
       return 'Pendiente';
-    },
-
-    formatCurrency(value) {
-      return Number(value || 0).toLocaleString("es-MX", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
     },
   },
 };

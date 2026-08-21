@@ -44,7 +44,7 @@
             <q-item-section>
               <q-item-label caption>Monto del evento</q-item-label>
               <q-item-label class="text-weight-medium text-positive">
-                ${{ Number(amount).toLocaleString('es-MX') }}
+                {{ formatCurrency(amount) }}
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -52,7 +52,7 @@
             <q-item-section>
               <q-item-label caption>Penalización</q-item-label>
               <q-item-label class="text-weight-medium text-negative">
-                {{ preview?.penalty_percentage ?? 0 }}% (${{ Number(preview?.penalty_amount ?? 0).toLocaleString('es-MX') }})
+                {{ preview?.penalty_percentage ?? 0 }}% ({{ formatCurrency(preview?.penalty_amount ?? 0) }})
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -66,7 +66,7 @@
             <q-item-section>
               <q-item-label caption>Reembolso al cliente</q-item-label>
               <q-item-label class="text-weight-medium text-primary">
-                100% (${{ Number(amount).toLocaleString('es-MX') }})
+                100% ({{ formatCurrency(amount) }})
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -74,7 +74,7 @@
             <q-item-section>
               <q-item-label caption>Reembolso</q-item-label>
               <q-item-label class="text-weight-medium text-primary">
-                ${{ Number(preview?.refund_amount ?? 0).toLocaleString('es-MX') }}
+                {{ formatCurrency(preview?.refund_amount ?? 0) }}
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -113,6 +113,7 @@
 import { ref, computed, watch } from 'vue'
 import { api } from 'boot/axios'
 import { notifyError } from 'src/utils/notify'
+import { formatCurrency } from 'src/utils/currency'
 
 export default {
   name: 'CancellationModal',
@@ -204,6 +205,7 @@ export default {
       dialogTitle,
       confirmText,
       formattedDate,
+      formatCurrency,
       confirm,
     }
   }

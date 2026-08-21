@@ -119,13 +119,13 @@
                   </q-badge>
                   <div class="text-caption text-grey-7 q-mt-xs">{{ activeOffer.description }}</div>
                   <br />
-                  $ {{ formatMoney(discountedPrice) }}
+                  {{ formatCurrency(discountedPrice) }}
                   <small style="font-size: 20px; text-decoration: line-through" class="text-red q-ml-sm">
-                    $ {{ formatMoney(artist.price_hour) }}
+                    {{ formatCurrency(artist.price_hour) }}
                   </small>
                 </template>
                 <template v-else>
-                  $ {{ formatMoney(artist.price_hour) }}
+                  {{ formatCurrency(artist.price_hour) }}
                 </template>
               </h4>
               <h6 class="q-mt-sm text-weight-bold q-mb-sm">
@@ -146,20 +146,20 @@
                 <q-icon name="money" class="q-mt-none" />
                 <span class="q-ml-sm q-mt-md">
                   <template v-if="activeOffer">
-                    $ {{ formatMoney(discountedPrice) }} por hora
+                    {{ formatCurrency(discountedPrice) }} por hora
                     <small style="text-decoration: line-through" class="text-red q-ml-xs">
-                      $ {{ formatMoney(artist.price_hour) }}
+                      {{ formatCurrency(artist.price_hour) }}
                     </small>
                   </template>
                   <template v-else>
-                    $ {{ formatMoney(artist.price_hour) }} por hora
+                    {{ formatCurrency(artist.price_hour) }} por hora
                   </template>
                 </span>
               </div>
               <div class="q-mt-sm">
                 <q-icon name="money" class="q-mt-none" />
                 <span class="q-ml-sm q-mt-md">
-                  $ {{ formatMoney(artist.extra_kilometre) }} por km extra
+                  {{ formatCurrency(artist.extra_kilometre) }} por km extra
                 </span>
               </div>
 
@@ -394,6 +394,7 @@ import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
+import { formatCurrency } from "src/utils/currency";
 
 let $q;
 export default {
@@ -431,6 +432,7 @@ export default {
   },
   methods: {
     getDiscountBadgeColor,
+    formatCurrency,
     getVideoId(value) {
       if (!value) return '';
       if (/^[a-zA-Z0-9_-]{11}$/.test(value)) return value;
@@ -706,10 +708,6 @@ export default {
     },
 
     onSubmit() {},
-    formatMoney(value) {
-      const num = Number(value || 0);
-      return num.toLocaleString('es-MX');
-    },
     formatDiscount(value) {
       const num = parseFloat(value);
       return num % 1 === 0 ? parseInt(num) : num;

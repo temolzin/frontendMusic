@@ -46,7 +46,7 @@
       <q-card class="text-center shadow-4">
         <q-card-section>
           <q-icon name="payments" color="green" size="40px" />
-          <div class="text-h4 text-weight-bold q-mt-sm">${{ Number(stats.totalSales).toLocaleString('es-MX') }}</div>
+          <div class="text-h4 text-weight-bold q-mt-sm">{{ formatCurrency(stats.totalSales) }}</div>
           <div class="text-subtitle2 text-grey">Generados en {{ stats.totalHires }} contrataciones</div>
         </q-card-section>
       </q-card>
@@ -191,18 +191,18 @@
                     {{ formatDiscount(props.row.artist.offers[0].discount_percentage) }}% de descuento
                   </q-badge><br/>
                   <span class="text-h5 text-positive text-weight-bold">
-                    ${{ Math.round(props.row.artist.price_hour * (1 - props.row.artist.offers[0].discount_percentage / 100)).toLocaleString('es-MX') }}.00
+                    {{ formatCurrency(props.row.artist.price_hour * (1 - props.row.artist.offers[0].discount_percentage / 100)) }}
                   </span>
                   <small style="text-decoration: line-through" class="text-red q-ml-xs">
-                    ${{ props.row.artist.price_hour }}.00
+                    {{ formatCurrency(props.row.artist.price_hour) }}
                   </small>
                 </template>
                 <template v-else>
                   <span class="text-h5 text-primary text-weight-bold">
-                    ${{ props.row.artist.price_hour }}.00
+                    {{ formatCurrency(props.row.artist.price_hour) }}
                   </span>
                 </template>
-                <small> pesos por hora</small>
+                <small> por hora</small>
               </div>
               <div class="text-caption text-grey ellipsis">
                 {{ props.row.artist.history }}
@@ -253,6 +253,7 @@ import NoticeGeneral from "src/components/admin/NoticeGeneral.vue";
 import ArtistStats from "src/components/admin/ArtistStats/ArtistStats.vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
+import { formatCurrency } from "src/utils/currency";
 
 let $q = useQuasar();
 
@@ -289,6 +290,7 @@ export default {
   },
   methods: {
     getDiscountBadgeColor,
+    formatCurrency,
     ...mapActions("favouriteArtists", ["getFavouriteArtists"]),
     async gettFavouriteArtists() {
       try {

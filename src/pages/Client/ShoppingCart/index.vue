@@ -80,7 +80,7 @@
                     />
                   </td>
                   <td class="text-left">
-                    {{"$ " + (+product.hours * +product.price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}}
+                    {{ formatCurrency(+product.hours * +product.price) }}
                   </td>
                 </tr>
               </tbody>
@@ -113,11 +113,10 @@
                         <table style="text-align: center; margin: 0 auto">
                           <tr>
                             <td>
-                              Total (Pesos)
-                                <strong>
-                                  {{"MXN " + shoppingCartTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}}
-                                </strong>
-                                pesos
+                              Total:
+                              <strong>
+                                {{ formatCurrency(shoppingCartTotal) }}
+                              </strong>
                             </td>
                           </tr>
                           <tr>
@@ -164,6 +163,7 @@
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { notifyError, notifySuccess } from "src/utils/notify";
+import { formatCurrency } from "src/utils/currency";
 
 let $q;
 export default {
@@ -176,6 +176,7 @@ export default {
     };
   },
   methods: {
+    formatCurrency,
     ...mapActions("shoppingCard", ["getListShoppingCard"]),
     ...mapActions("shoppingCard", ["deleteItembyId"]),
     ...mapActions("shoppingCard", ["updateItemShoppingCart"]),

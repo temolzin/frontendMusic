@@ -430,10 +430,10 @@
         </p>
         <p class="info q-mb-sm q-mt-md">Zona: {{ artist.zone }}</p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por hora: ${{ Number(artist.price_hour).toLocaleString('es-MX') }} pesos.
+          Precio por hora: {{ formatCurrency(artist.price_hour) }}.
         </p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por kilómetro extra: ${{ Number(artist.extra_kilometre).toLocaleString('es-MX') }} pesos.
+          Precio por kilómetro extra: {{ formatCurrency(artist.extra_kilometre) }}.
         </p>
         <div
           v-if="artist.social_media && artist.social_media.length > 0"
@@ -839,6 +839,7 @@ import { useQuasar } from "quasar";
 import NoticeGallery from "src/components/Artist/NoticeGallery.vue";
 import { api } from "boot/axios";
 import { notifySuccess, notifyError, platformEvents } from "src/utils/notify";
+import { formatCurrency } from "src/utils/currency";
 
 let $q = useQuasar();
 
@@ -902,6 +903,7 @@ export default {
     };
   },
   methods: {
+    formatCurrency,
     ...mapActions("artist", ["getArtist"]),
     ...mapActions("artist", ["createArtist"]),
     ...mapActions("artist", ["updateArtist"]),

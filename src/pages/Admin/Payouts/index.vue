@@ -94,7 +94,7 @@
               {{ props.row.event_date }} a las {{ props.row.event_hour.substring(0, 5) }} hrs
             </q-td>
             <q-td key="net_artist_payout" :props="props" :class="totalPenalties(props.row) > 0 ? 'text-primary' : 'text-positive'">
-              ${{ formatCurrency(computedAdjustedNet(props.row)) }} MXN
+              {{ formatCurrency(computedAdjustedNet(props.row)) }}
             </q-td>
             <q-td key="event_status" :props="props">
               <q-badge v-bind="getEventStatusColor(props.row.event_status, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
@@ -127,18 +127,18 @@
                       </div>
                       <div v-for="penalty in props.row.penalties" :key="penalty.sale_id" class="row justify-between q-py-xs text-negative">
                         <span>Cancelación venta #{{ penalty.sale_id }} ({{ penalty.penalty_percentage }}%)</span>
-                        <span>- ${{ formatCurrency(penalty.penalty_amount) }} MXN</span>
+                        <span>- {{ formatCurrency(penalty.penalty_amount) }}</span>
                       </div>
                       <q-separator class="q-my-xs" />
                       <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold text-negative">
                         <span>Total a descontar:</span>
-                        <span>- ${{ formatCurrency(props.row.total_penalties) }} MXN</span>
+                        <span>- {{ formatCurrency(props.row.total_penalties) }}</span>
                       </div>
                     </q-card-section>
                     <q-card-section v-else class="q-py-sm">
                       <div class="row justify-between q-py-xs">
                         <span :class="$q.dark.isActive ? 'text-grey-4' : 'text-grey-8'">Total pagado por cliente:</span>
-                        <span class="text-weight-medium">${{ formatCurrency(props.row.amount) }} MXN</span>
+                        <span class="text-weight-medium">{{ formatCurrency(props.row.amount) }}</span>
                       </div>
                       <div class="row justify-between q-py-xs text-negative">
                         <span>Comisión OpenPay:</span>
@@ -151,17 +151,17 @@
                             class="q-mr-xs"
                             @update:model-value="onFeeToggle(props.row)"
                           />
-                          - ${{ formatCurrency(computedOpenpayFee(props.row)) }} MXN
+                          - {{ formatCurrency(computedOpenpayFee(props.row)) }}
                         </span>
                       </div>
                       <div class="row justify-between q-py-xs text-negative">
                         <span>Comisión Plataforma (10%):</span>
-                        <span>- ${{ formatCurrency(props.row.platform_fee) }} MXN</span>
+                        <span>- {{ formatCurrency(props.row.platform_fee) }}</span>
                       </div>
                       <q-separator class="q-my-xs" />
                       <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold text-positive">
                         <span>Subtotal a Transferir:</span>
-                        <span>${{ formatCurrency(computedNetPayout(props.row)) }} MXN</span>
+                        <span>{{ formatCurrency(computedNetPayout(props.row)) }}</span>
                       </div>
                       <template v-if="props.row.has_pending_penalties">
                         <q-separator class="q-my-xs" />
@@ -170,24 +170,24 @@
                         </div>
                         <div v-for="penalty in props.row.penalties" :key="penalty.sale_id" class="row justify-between q-py-xs text-negative">
                           <span>Cancelación venta #{{ penalty.sale_id }} ({{ penalty.penalty_percentage }}%)</span>
-                          <span>- ${{ formatCurrency(penalty.penalty_amount) }} MXN</span>
+                          <span>- {{ formatCurrency(penalty.penalty_amount) }}</span>
                         </div>
                         <q-separator class="q-my-xs" />
                         <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold text-negative">
                           <span>Total penalizaciones:</span>
-                          <span>- ${{ formatCurrency(props.row.total_penalties) }} MXN</span>
+                          <span>- {{ formatCurrency(props.row.total_penalties) }}</span>
                         </div>
                         <q-banner v-if="props.row.penalty_exceeds_payout" dense rounded class="bg-red-1 text-negative q-mt-sm text-caption" style="white-space: normal; line-height: 1.4;">
                           <template v-slot:avatar>
                             <q-icon name="warning" color="negative" />
                           </template>
-                          La penalización supera el saldo a favor. Se descontarán <strong>${{ formatCurrency(computedNetPayout(props.row)) }} MXN</strong> y quedará una deuda de <strong>${{ formatCurrency(props.row.remaining_penalty) }} MXN</strong> para el siguiente evento.
+                          La penalización supera el saldo a favor. Se descontarán <strong>{{ formatCurrency(computedNetPayout(props.row)) }}</strong> y quedará una deuda de <strong>{{ formatCurrency(props.row.remaining_penalty) }}</strong> para el siguiente evento.
                         </q-banner>
                       </template>
                       <q-separator class="q-my-xs" />
                       <div class="row justify-between q-py-xs text-subtitle1 text-weight-bold" :class="totalPenalties(props.row) > 0 ? 'text-primary' : 'text-positive'">
                         <span>Monto Neto Final a Transferir:</span>
-                        <span>${{ formatCurrency(computedAdjustedNet(props.row)) }} MXN</span>
+                        <span>{{ formatCurrency(computedAdjustedNet(props.row)) }}</span>
                       </div>
                     </q-card-section>
                   </q-card>
@@ -329,7 +329,7 @@
 
         <template v-slot:body-cell-amount="props">
           <q-td :props="props" class="text-center text-positive">
-            ${{ formatCurrency(props.row.amount) }} MXN
+            {{ formatCurrency(props.row.amount) }}
           </q-td>
         </template>
       </q-table>
@@ -356,6 +356,7 @@
 import { mapActions, mapGetters, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { getEventStatusColor, getPayoutStatusColor } from 'src/utils/badgeStyles';
+import { formatCurrency } from "src/utils/currency";
 
 const columns = [
   { name: "expand", label: "Detalles", align: "center" },
@@ -434,6 +435,7 @@ export default {
   methods: {
     getEventStatusColor,
     getPayoutStatusColor,
+    formatCurrency,
     ...mapActions("payouts", ["fetchPendingPayouts", "releasePayout"]),
     ...mapActions("payoutLogs", ["fetchPayoutHistory"]),
 
@@ -474,8 +476,8 @@ export default {
           title: "Confirmar Liquidación",
           message: `¿Estás seguro de marcar la venta #${payout.sale_id} del artista "${payout.artist.name}" como pagada? 
           Asegúrate de haber realizado primero la transferencia SPEI manual en tu banca por 
-          $${this.formatCurrency(this.computedAdjustedNet(payout))} MXN.${this.totalPenalties(payout) > 0 ? `\n\nNota: 
-          Se descontaron $${this.formatCurrency(this.totalPenalties(payout))} MXN en penalizaciones por cancelaciones previas.` : ""}`,
+          ${this.formatCurrency(this.computedAdjustedNet(payout))}.${this.totalPenalties(payout) > 0 ? `\n\nNota: 
+          Se descontaron ${this.formatCurrency(this.totalPenalties(payout))} en penalizaciones por cancelaciones previas.` : ""}`,
           cancel: { label: "Cancelar", color: "grey", flat: true },
           ok: { label: "Sí, Marcar Pagado", color: "positive" },
           persistent: true,
@@ -518,12 +520,7 @@ export default {
       return `${day}/${month}/${year} ${String(hours12).padStart(2, "0")}:${minutes} ${period}`;
     },
 
-    formatCurrency(value) {
-      return Number(value || 0).toLocaleString("es-MX", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    },
+    formatCurrency,
 
     initFeeMap() {
       const map = {};
