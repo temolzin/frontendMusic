@@ -340,11 +340,10 @@
           <q-tabs
             v-model="historyTab"
             dense
-            class="text-grey"
+            class="history-tabs text-grey"
             active-color="primary"
             indicator-color="primary"
             align="justify"
-            narrow-indicator
           >
             <q-tab name="sanctions" icon="gavel" label="Sanciones" />
             <q-tab name="tickets" icon="feedback" label="Tickets (Historial)" />
@@ -971,5 +970,14 @@ export default {
 .chat-overlay {
   backdrop-filter: blur(4px);
   z-index: 10;
+}
+
+.history-tabs :deep(.q-tab) {
+  flex: 1 1 0;
+  justify-content: center;
+}
+
+.history-tabs :deep(.q-tab__label) {
+  white-space: nowrap;
 }
 </style>
