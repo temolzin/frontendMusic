@@ -430,7 +430,7 @@ export default {
     },
 
     statusIcon(status) {
-      return { open: 'fiber_new', under_review: 'manage_search', resolved: 'check_circle', rejected: 'cancel' }[status] || 'circle';
+      return { under_review: 'manage_search', resolved: 'check_circle', rejected: 'cancel' }[status] || 'circle';
     },
 
     resolutionLabel(type) {
