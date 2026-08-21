@@ -461,7 +461,7 @@
           </q-item>
 
           <q-item v-if="getMe?.role?.[0] == 'cliente'">
-            <q-item-section class="text-weight-bold">
+            <q-item-section class="text-weight-bold text-accent">
               INFORMACIÓN
             </q-item-section>
           </q-item>

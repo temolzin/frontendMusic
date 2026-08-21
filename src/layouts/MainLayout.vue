@@ -177,7 +177,7 @@
               <q-item-section> Favoritos </q-item-section>
             </q-item>
             <q-item v-if="getMe.role[0] == 'cliente'">
-              <q-item-section class="text-weight-bold">
+              <q-item-section class="text-weight-bold text-accent">
                 INFORMACIÓN
               </q-item-section>
             </q-item>
@@ -198,7 +198,7 @@
           </div>
           <div v-else>
             <q-item>
-              <q-item-section class="text-weight-bold">MENÚ</q-item-section>
+              <q-item-section class="text-weight-bold text-accent">MENÚ</q-item-section>
             </q-item>
             <q-item v-for="link in links2" :key="link.text" clickable :to="link.to" active-class="text-accent text-weight-bold">
               <q-item-section avatar><q-icon :name="link.icon" /></q-item-section>
