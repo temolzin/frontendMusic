@@ -118,18 +118,18 @@
                       {{ formatDiscount(props.row.offers[0].discount_percentage) }}% de descuento
                     </q-badge><br/>
                     <span class="text-h5 text-positive text-weight-bold">
-                      ${{ Math.round(props.row.price_hour * (1 - props.row.offers[0].discount_percentage / 100)).toLocaleString('es-MX') }}.00
+                      {{ formatCurrency(props.row.price_hour * (1 - props.row.offers[0].discount_percentage / 100)) }}
                     </span>
                     <small style="text-decoration: line-through" class="text-red q-ml-xs">
-                      ${{ props.row.price_hour }}.00
+                      {{ formatCurrency(props.row.price_hour) }}
                     </small>
                   </template>
                   <template v-else>
                     <span class="text-h5 text-primary text-weight-bold">
-                      ${{ props.row.price_hour }}.00
+                      {{ formatCurrency(props.row.price_hour) }}
                     </span>
                   </template>
-                  <small> pesos por hora</small>
+                  <small> por hora</small>
                 </div>
                 <div class="text-caption text-grey ellipsis">
                   {{ props.row.history }}
@@ -181,6 +181,7 @@
   import { ref } from "vue";
   import { notifyError, notifySuccess, notifyInfo } from "src/utils/notify";
   import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
+  import { formatCurrency } from "src/utils/moneyFormat";
 
   let $q;
 
@@ -220,6 +221,7 @@
     },
     methods: {
       getDiscountBadgeColor,
+      formatCurrency,
       ...mapActions("artistList", ["getArtists"]),
       ...mapActions("shoppingCard", ["create_order"]),
       formatGenres(genres) {

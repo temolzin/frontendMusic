@@ -41,7 +41,7 @@
             <div class="col-12 col-sm-6">
               <div class="text-caption text-grey">Monto de la orden</div>
               <div class="text-weight-bold text-positive">
-                ${{ Number(ticket.artist_sale?.amount || 0).toLocaleString('es-MX') }} MXN
+                {{ formatCurrency(ticket.artist_sale?.amount || 0) }}
               </div>
             </div>
             <div class="col-12">
@@ -200,6 +200,7 @@ import { mapActions, mapGetters } from 'vuex';
 import { api } from 'boot/axios';
 import { notifySuccess, notifyError } from 'src/utils/notify';
 import { getSupportTicketCategoryColor, getSupportTicketStatusColor } from 'src/utils/badgeStyles';
+import { formatCurrency } from 'src/utils/moneyFormat';
 
 export default {
   name: 'SupportTicketShow',
@@ -223,6 +224,7 @@ export default {
     ...mapActions('supportTickets', ['fetchAdminTicketDetail', 'updateTicketStatus']),
     getSupportTicketCategoryColor,
     getSupportTicketStatusColor,
+    formatCurrency,
 
     goBack() {
       const targetRoute = this.$route.query.from === 'sanctions'

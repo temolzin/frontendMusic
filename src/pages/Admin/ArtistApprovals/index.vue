@@ -55,7 +55,7 @@
           <q-td :props="props" class="text-center">
             <div class="cell-center">
               <span class="text-positive">
-                ${{ Number(props.row.proposed_data.price_hour).toLocaleString('es-MX') }} MXN
+                {{ formatCurrency(props.row.proposed_data.price_hour) }}
               </span>
             </div>
           </q-td>
@@ -302,6 +302,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
 import { getArtistApprovalTypeColor, getArtistApprovalStatusColor } from 'src/utils/badgeStyles';
+import { formatCurrency } from 'src/utils/moneyFormat';
 
 const columns = [
   { name: 'artista', label: 'Artista', align: 'center', field: (row) => row.proposed_data?.name, sortable: true },
@@ -350,7 +351,7 @@ export default {
       const p = r.proposed_data || {};
       const current = r.artist;
       const currentManager = current?.manager;
-      const money = (val) => (val || val === 0 ? `$${Number(val).toLocaleString('es-MX')} MXN` : null);
+      const money = (val) => (val || val === 0 ? formatCurrency(val) : null);
 
       const rows = [
         { label: 'Nombre artístico', current: current?.name, proposed: p.name },
@@ -387,6 +388,7 @@ export default {
   methods: {
     getArtistApprovalTypeColor,
     getArtistApprovalStatusColor,
+    formatCurrency,
     ...mapActions('artistApprovals', ['fetchPendingRequests', 'fetchHistory', 'acceptRequest', 'rejectRequest']),
 
     async loadPending() {

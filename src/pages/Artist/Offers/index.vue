@@ -44,9 +44,9 @@
       <template v-slot:body-cell-discount_percentage="props">
         <q-td :props="props">
           <div class="row items-center justify-center q-gutter-sm">
-            <span class="text-negative text-strike">{{ formatMoney(props.row.original_price) }}</span>
+            <span class="text-negative text-strike">{{ formatCurrency(props.row.original_price) }}</span>
             <q-icon name="arrow_forward" size="xs" class="text-grey-7" />
-            <span class="text-primary text-weight-bold">{{ formatMoney(props.row.discounted_price) }}</span>
+            <span class="text-primary text-weight-bold">{{ formatCurrency(props.row.discounted_price) }}</span>
           </div>
         </q-td>
       </template>
@@ -107,9 +107,9 @@
                   </q-item-label>
                   <q-item-label v-if="col.name === 'discount_percentage'">
                     <div class="row items-center q-gutter-sm">
-                      <span class="text-negative text-strike">{{ formatMoney(props.row.original_price) }}</span>
+                      <span class="text-negative text-strike">{{ formatCurrency(props.row.original_price) }}</span>
                       <q-icon name="arrow_forward" size="xs" class="text-grey-7" />
-                      <span class="text-primary text-weight-bold">{{ formatMoney(props.row.discounted_price) }}</span>
+                      <span class="text-primary text-weight-bold">{{ formatCurrency(props.row.discounted_price) }}</span>
                     </div>
                   </q-item-label>
                   <q-item-label v-if="col.name === 'start_date'">
@@ -306,6 +306,7 @@
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { getOfferStatusColor } from "src/utils/badgeStyles";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 export default {
   name: "ArtistOffers",
@@ -339,6 +340,7 @@ export default {
   },
   methods: {
     getOfferStatusColor,
+    formatCurrency,
     ...mapActions("offers", ["getOffers", "createOffer", "updateOffer", "deleteOffer"]),
 
     isValidFutureDateTime(dateTimeStr) {
@@ -497,12 +499,6 @@ export default {
     formatDate(date) {
       if (!date) return "-";
       return new Date(date).toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "2-digit" });
-    },
-
-    formatMoney(value) {
-      const num = parseFloat(value);
-      if (isNaN(num)) return "$0.00";
-      return "$" + num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
   },
   mounted() {

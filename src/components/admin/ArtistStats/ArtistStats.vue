@@ -233,10 +233,9 @@
                     <q-avatar rounded icon="account_balance_wallet" color="blue-8" text-color="white" size="36px" class="q-mr-sm" />
                     <span class="text-body2 text-weight-medium">Ingresos totales</span>
                   </div>
-                  <div class="kpi-value text-weight-bolder" :title="`$${artistData.kpis.total_income} MXN`">
-                    ${{ artistData.kpis.total_income }}
+                  <div class="kpi-value text-weight-bolder" :title="formatCurrency(artistData.kpis.total_income)">
+                    {{ formatCurrency(artistData.kpis.total_income) }}
                   </div>
-                  <div class="text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'">MXN</div>
                 </div>
                 <div class="trend-container">
                   <div :class="trendClass(artistData.kpis.income_trend)" class="text-caption text-weight-bold" style="line-height: 1.2;">
@@ -330,12 +329,12 @@
               </q-item>
               <q-card-section class="col column q-pt-none">
                 <div class="col" style="position: relative; width: 100%; margin-top: 10px; min-height: 250px;">
-                  <div class="column justify-between absolute-full" style="height: calc(100% - 25px); padding-left: 55px;">
+                  <div class="column justify-between absolute-full" style="height: calc(100% - 25px); padding-left: 95px;">
                     <div v-for="(yVal, idx) in artistData.chart.yLabels" :key="idx" style="border-top: 1px dashed #e0e0e0; position: relative;">
-                      <span class="absolute text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'" style="left: -55px; top: -10px;">{{ yVal }}</span>
+                      <span class="absolute text-caption" :class="$q.dark.isActive ? 'text-grey-5' : 'text-grey-8'" style="left: -95px; top: -10px;">{{ yVal }}</span>
                     </div>
                   </div>
-                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 55px; width: calc(100% - 65px); height: calc(100% - 25px); overflow: visible;">
+                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position: absolute; top: 0; left: 95px; width: calc(100% - 105px); height: calc(100% - 25px); overflow: visible;">
                     <defs>
                       <linearGradient id="purpleGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stop-color="#673ab7" stop-opacity="0.4" />
@@ -357,7 +356,7 @@
                     :key="'pt-' + idx"
                     :style="{
                       position: 'absolute',
-                      left: `calc(55px + (100% - 65px) * ${pt.xPercent} / 100)`,
+                      left: `calc(95px + (100% - 105px) * ${pt.xPercent} / 100)`,
                       top: `calc((100% - 25px) * ${pt.yPercent} / 100)`,
                       transform: 'translate(-50%, -50%)',
                       width: '10px',
@@ -369,7 +368,7 @@
                       zIndex: 2
                     }"
                   >
-                    <q-tooltip>{{ pt.label }}: ${{ pt.val?.toLocaleString() }} MXN</q-tooltip>
+                    <q-tooltip>{{ pt.label }}: {{ formatCurrency(pt.val) }}</q-tooltip>
                   </div>
                   <div
                     v-for="(pt, idx) in artistData.chart.points"
@@ -378,7 +377,7 @@
                     :style="{
                       position: 'absolute',
                       bottom: '0px',
-                      left: `calc(55px + (100% - 65px) * ${pt.xPercent} / 100)`,
+                      left: `calc(95px + (100% - 105px) * ${pt.xPercent} / 100)`,
                       transform: idx === 0 ? 'translateX(0%)' : (idx === artistData.chart.points.length - 1 ? 'translateX(-100%)' : 'translateX(-50%)'),
                       whiteSpace: 'nowrap',
                       fontSize: '11px'
@@ -436,6 +435,7 @@
 import { useQuasar } from "quasar";
 import { mapGetters, mapActions } from "vuex";
 import { notifyError } from "src/utils/notify";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 export default {
   name: "ArtistStats",
@@ -530,6 +530,7 @@ export default {
   },
 
   methods: {
+    formatCurrency,
     ...mapActions("statsArtist", ["fetchArtistsList", "fetchArtistAnalytics", "fetchMyArtistAnalytics"]),
 
     async fetchArtists() {
@@ -575,15 +576,16 @@ export default {
 
     generateSvgChart(labels, series) {
       if (!series || series.length === 0) {
-        return { labels: [], yLabels: ["$0", "$0", "$0", "$0", "$0"], svgPathArea: "", svgPathLine: "", points: [] };
+        const zero = formatCurrency(0);
+        return { labels: [], yLabels: [zero, zero, zero, zero, zero], svgPathArea: "", svgPathLine: "", points: [] };
       }
       const maxVal = Math.max(...series, 1000);
       const yLabels = [
-        `$${Math.round(maxVal).toLocaleString()}`,
-        `$${Math.round(maxVal * 0.75).toLocaleString()}`,
-        `$${Math.round(maxVal * 0.5).toLocaleString()}`,
-        `$${Math.round(maxVal * 0.25).toLocaleString()}`,
-        "$0",
+        formatCurrency(Math.round(maxVal)),
+        formatCurrency(Math.round(maxVal * 0.75)),
+        formatCurrency(Math.round(maxVal * 0.5)),
+        formatCurrency(Math.round(maxVal * 0.25)),
+        formatCurrency(0),
       ];
       const points = series.map((val, idx) => {
         const xPercent = series.length > 1 ? (idx / (series.length - 1)) * 100 : 50;

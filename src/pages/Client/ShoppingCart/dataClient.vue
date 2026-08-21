@@ -640,14 +640,14 @@
                       <td class="text-right">
                         <div v-if="+castProduct(product).price < +castProduct(product).artist.price_hour" class="row justify-end items-center no-wrap">
                           <span class="text-positive text-weight-bold">
-                            ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                            {{ formatCurrency(+castProduct(product).hours * +castProduct(product).price) }}
                           </span>
                           <small style="text-decoration: line-through" class="text-red q-ml-xs">
-                            ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                            {{ formatCurrency(+castProduct(product).hours * +castProduct(product).artist.price_hour) }}
                           </small>
                         </div>
                         <div v-else class="text-weight-bold">
-                          {{ "$ " + (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                          {{ formatCurrency(+castProduct(product).hours * +castProduct(product).price) }}
                         </div>
                       </td>
                     </tr>
@@ -657,14 +657,14 @@
                   <div class="text-subtitle2">Costo por cobertura extra:</div>
                   <template v-for="(product, index) in shoppingCardDetail" :key="index">
                     <div v-if="getExtraKmForProduct(product)" class="row justify-between q-py-xs text-caption text-grey q-pl-md">
-                      <span>- {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km x ${{ (+getExtraKmForProduct(product).extra_kilometre || 0).toFixed(2) }}</span>
-                      <span>${{ (+getExtraKmForProduct(product).extra_km_cost || 0).toFixed(2) }}</span>
+                      <span>- {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km x {{ formatCurrency(+getExtraKmForProduct(product).extra_kilometre || 0) }}</span>
+                      <span>{{ formatCurrency(+getExtraKmForProduct(product).extra_km_cost || 0) }}</span>
                     </div>
                   </template>
                   <q-separator class="q-my-xs"></q-separator>
                   <div class="row justify-between q-py-xs text-caption text-weight-medium">
                     <span>Total</span>
-                    <span>${{ totalExtraKmCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
+                    <span>{{ formatCurrency(totalExtraKmCost) }}</span>
                   </div>
                 </div>
                 <q-item class="full-width" style="border-top: 3px dotted blue">
@@ -674,7 +674,7 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    {{ "MXN " + (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                    {{ formatCurrency(shoppingCartTotal + totalExtraKmCost) }}
                   </q-item-section>
                 </q-item>
               </div>
@@ -754,7 +754,7 @@
                     <q-icon name="paid" color="positive" size="xs" class="q-mr-sm" />
                     <span class="text-caption text-grey-7">Total a cobrar</span>
                     <span class="text-caption text-weight-bold text-positive q-ml-sm">
-                      ${{ (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} MXN
+                      {{ formatCurrency(shoppingCartTotal + totalExtraKmCost) }}
                     </span>
                   </div>
                 </div>
@@ -774,7 +774,7 @@
                     <q-icon name="paid" color="positive" size="xs" class="q-mr-sm" />
                     <span class="text-caption text-grey">Total a pagar</span>
                     <span class="text-caption text-weight-bold text-positive q-ml-sm">
-                      ${{ (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} MXN
+                      {{ formatCurrency(shoppingCartTotal + totalExtraKmCost) }}
                     </span>
                   </div>
                 </div>
@@ -807,23 +807,23 @@
                       {{ castProduct(product).artist.name }}
                     </div>
                     <div class="text-caption text-grey-8">
-                      {{ castProduct(product).hours }} hora(s) x ${{ (+castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                      {{ castProduct(product).hours }} hora(s) x {{ formatCurrency(+castProduct(product).price) }}
                     </div>
                     <div v-if="+castProduct(product).price < +castProduct(product).artist.price_hour">
                       <div class="text-body2 text-grey text-strike q-mb-xs">
-                        ${{ (+castProduct(product).hours * +castProduct(product).artist.price_hour).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                        {{ formatCurrency(+castProduct(product).hours * +castProduct(product).artist.price_hour) }}
                       </div>
                       <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase" :label="Math.round((1 - castProduct(product).price / castProduct(product).artist.price_hour) * 100) + '% OFF'" />
                       <div class="text-weight-bold text-positive" style="font-size: 1.3rem">
-                        ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                        {{ formatCurrency(+castProduct(product).hours * +castProduct(product).price) }}
                       </div>
                     </div>
                     <div v-else class="text-weight-bold text-positive" style="font-size: 1.3rem">
-                      ${{ (+castProduct(product).hours * +castProduct(product).price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                      {{ formatCurrency(+castProduct(product).hours * +castProduct(product).price) }}
                     </div>
                     <div v-if="getExtraKmForProduct(product)" class="text-caption text-grey q-mt-xs">
                       <q-icon name="directions_car" size="14px" class="q-mr-xs" />
-                      {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km extra: +${{ (+getExtraKmForProduct(product).extra_km_cost || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+                      {{ (getExtraKmForProduct(product).extra_km_distance || 0).toFixed(1) }} km extra: +{{ formatCurrency(+getExtraKmForProduct(product).extra_km_cost || 0) }}
                     </div>
                   </q-card-section>
                 </div>
@@ -837,8 +837,7 @@
             <div class=" full-width ">
               <div class="col-12 col-sm-3 col-md-4 text-center text-h6">
                 TOTAL:
-                <span class="text-right">{{ "$ " +
-                  (shoppingCartTotal + totalExtraKmCost).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}</span>
+                <span class="text-right">{{ formatCurrency(shoppingCartTotal + totalExtraKmCost) }}</span>
               </div>
             </div>
           </q-card-section>
@@ -866,7 +865,7 @@
             <div class="row q-col-gutter-md q-mt-sm">
               <div class="col-6">
                 <div class="text-caption text-grey">Monto</div>
-                <div class="text-subtitle1 text-weight-bold">${{ (parseFloat(cashReference?.amount) || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} MXN</div>
+                <div class="text-subtitle1 text-weight-bold">{{ formatCurrency(parseFloat(cashReference?.amount) || 0) }}</div>
               </div>
               <div class="col-6">
                 <div class="text-caption text-grey">Vence</div>
@@ -913,6 +912,7 @@ import { api } from "boot/axios";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { notifySuccess, notifyError, notifyWarning, notifyInfo, platformEvents } from "src/utils/notify";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 let $q;
 
@@ -1014,6 +1014,7 @@ export default defineComponent({
   },
   methods: {
     getDiscountBadgeColor,
+    formatCurrency,
     handleStep(stepName) {},
     translateOpenPayClientError(rawMessage) {
       const msg = (rawMessage || "").toLowerCase();
@@ -1658,7 +1659,7 @@ export default defineComponent({
                 event_date: this.formClient.event_date,
                 event_hour: this.formClient.event_hour,
                 artistList: artistList,
-                description: `Compra de servicios musicales - Total: ${this.shoppingCartTotal} MXN`,
+                description: `Compra de servicios musicales - Total: ${this.formatCurrency(this.shoppingCartTotal)}`,
                 deviceSessionId: deviceDataId
               };
 
@@ -1737,7 +1738,7 @@ export default defineComponent({
 
       if (this.shoppingCartTotal + this.totalExtraKmCost > maxLimit) {
         notifyWarning(
-          `El límite máximo para pagos en efectivo en ${selectedStore} es de $${maxLimit.toLocaleString('en-US')} MXN. Por favor, utilice tarjeta.`,
+          `El límite máximo para pagos en efectivo en ${selectedStore} es de ${formatCurrency(maxLimit)}. Por favor, utilice tarjeta.`,
           { timeout: 6000 }
         );
         return;
@@ -2088,7 +2089,7 @@ export default defineComponent({
         .filter(option => totalAmount <= storeMaxLimits[option.value])
         .map(option => ({
           ...option,
-          label: `${option.label} (Max $${storeMaxLimits[option.value].toLocaleString('en-US')})`
+          label: `${option.label} (Max ${formatCurrency(storeMaxLimits[option.value])})`
         }));
     },
     summaryCardStyle() {

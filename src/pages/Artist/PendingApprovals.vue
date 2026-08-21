@@ -69,7 +69,7 @@
         <template v-slot:body-cell-amount="props">
           <q-td :props="props">
             <span class="text-weight-bold text-positive">
-              ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
+              {{ formatCurrency(props.row.amount) }}
             </span>
           </q-td>
         </template>
@@ -138,7 +138,7 @@
                   <div class="col-6">
                     <div class="text-grey">Monto</div>
                     <div class="text-weight-bold text-positive">
-                      ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
+                      {{ formatCurrency(props.row.amount) }}
                     </div>
                   </div>
                 </div>
@@ -214,7 +214,7 @@
         <template v-slot:body-cell-amount="props">
           <q-td :props="props">
             <span class="text-weight-bold">
-              ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
+              {{ formatCurrency(props.row.amount) }}
             </span>
           </q-td>
         </template>
@@ -251,7 +251,7 @@
                   <div class="col-6">
                     <div class="text-grey">Monto</div>
                     <div class="text-weight-bold">
-                      ${{ Number(props.row.amount).toLocaleString('es-MX') }} MXN
+                      {{ formatCurrency(props.row.amount) }}
                     </div>
                   </div>
                   <div class="col-12">
@@ -279,6 +279,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import { getDiscountBadgeColor, getApprovalHistoryStatusColor } from 'src/utils/badgeStyles';
 import { notifyError, platformEvents } from 'src/utils/notify';
+import { formatCurrency, formatMoney } from 'src/utils/moneyFormat';
 
 const columns = [
   { name: 'cliente', label: 'Cliente', align: 'center', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
@@ -325,7 +326,7 @@ export default {
       return this.approvalHistory.filter(row => {
         const fullName = `${row.customer_first_name} ${row.customer_last_name}`.toLowerCase();
         const eventDate = this.formatDate(row.event_date).toLowerCase();
-        const amount = Number(row.amount).toLocaleString('es-MX');
+        const amount = formatMoney(row.amount);
         
         return fullName.includes(filter) || eventDate.includes(filter) || amount.includes(filter);
       });
@@ -352,6 +353,7 @@ export default {
   methods: {
     getDiscountBadgeColor,
     getApprovalHistoryStatusColor,
+    formatCurrency,
     ...mapActions('approvals', ['fetchPendingApprovals', 'fetchApprovalHistory', 'acceptApproval', 'rejectApproval']),
 
     async loadPending() {
