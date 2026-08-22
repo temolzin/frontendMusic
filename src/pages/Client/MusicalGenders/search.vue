@@ -13,7 +13,7 @@
           icon="widgets"
         />
         <q-breadcrumbs-el
-          :label="slug"
+          :label="formatGenreName(slug)"
           class="text-weight-bold"
           :class="mode ? 'text-grey-5' : 'text-dark'"
         />
@@ -25,7 +25,7 @@
         <q-parallax :height="280" :speed="0.5" v-if="skeleton == false">
           <template v-slot:media>
             <img
-              :src="clientMusicalGenders[0].image || 'https://cdn.pixabay.com/photo/2017/03/09/20/53/microphone-2130806_960_720.jpg'"
+              :src="genreImage"
             />
           </template>
 
@@ -40,7 +40,7 @@
               }"
             >
               <div class="parallax-title text-white text-center q-mb-sm">
-                {{ clientMusicalGenders[0].name }}
+                {{ formatGenreName(clientMusicalGenders[0].name) }}
               </div>
               <div class="parallax-desc text-white text-center">
                 {{ clientMusicalGenders[0].description }}
@@ -70,11 +70,11 @@
       >
         <template v-slot:top-left>
           <h5
-            class="q-ma-none q-mt-md"
-            :class="mode ? 'text-grey-5' : 'text-modedark text-weight-medium'"
+            class="q-ma-none q-mt-md uppercase text-weight-bold"
+            :class="mode ? 'text-grey-5' : 'text-dark'"
             v-if="skeleton == false"
           >
-            Resultados relacionados a {{ clientMusicalGenders[0].name }}
+            Resultados relacionados a {{ formatGenreName(clientMusicalGenders[0].name) }}
           </h5>
         </template>
         <template v-slot:top-right>
@@ -197,6 +197,7 @@ import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
 import { formatCurrency } from "src/utils/moneyFormat";
+import { formatGenreName } from "src/utils/formatText";
 
 let $q;
 export default {
@@ -219,7 +220,8 @@ export default {
   },
   methods: {
     formatCurrency,
-    ...mapActions("clientMusicalGenders", ["getMusicalGendersBySlug"]),
+    formatGenreName,
+    ...mapActions("clientMusicalGenders", ["getMusicalGendersBySlug", "getMusicalGenders"]),
     ...mapActions("shoppingCard", ["create_order"]),
     ...mapActions("favouriteArtists", ["createFavouriteArtist", "getFavouriteArtists"]),
     async gettMusicalGendersBySlug() {
@@ -357,6 +359,9 @@ export default {
   created() {
     this.slug = this.$route.params.slug;
     this.gettMusicalGendersBySlug();
+    if (!this.genreList || this.genreList.length === 0) {
+      this.getMusicalGenders();
+    }
     this.loadFavouriteArtists();
   },
   computed: {
@@ -364,12 +369,25 @@ export default {
     ...mapState({
       clientMusicalGenders: (state) =>
         state.clientMusicalGenders.artistsGenders,
+      genreList: (state) => state.clientMusicalGenders.musicalGenders,
     }),
     ...mapState({
       favouriteArtists: (state) => state.favouriteArtists.message,
     }),
     mode: function () {
       return this.$q.dark.isActive;
+    },
+    genreImage() {
+      const current = this.clientMusicalGenders?.[0];
+      if (current && current.image) {
+        return current.image;
+      }
+      const list = Array.isArray(this.genreList) ? this.genreList : [];
+      const match = list.find((g) => g && g.slug === this.slug);
+      return (
+        (match && match.image) ||
+        "https://cdn.pixabay.com/photo/2017/03/09/20/53/microphone-2130806_960_720.jpg"
+      );
     },
   },
   mounted() {
@@ -416,7 +434,6 @@ export default {
 .parallax-title {
   font-size: 2.5rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 3px;
   text-shadow: 0 0 30px rgba(255,255,255,0.3), 0 4px 20px rgba(0,0,0,0.8);
 }

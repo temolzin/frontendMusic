@@ -7,12 +7,12 @@
       </q-breadcrumbs>
     </div>
 
-    <p class="q-mt-sm q-mb-lg text-h4 text-weight-light">
+    <p class="q-mt-sm q-mb-sm text-h4">
       Explora por género musical
       <q-spinner-audio color="accent" class="q-pb-sm" />
     </p>
 
-    <div class="row q-col-gutter-md">
+    <div class="row q-col-gutter-md justify-center">
       <div
         class="col-12 col-sm-6 col-md-4"
         v-for="(gender, index) in clientMusicalGenders"
@@ -44,7 +44,7 @@
                 :style="{ color: colorHex(gender.color) }"
               />
             </div>
-            <span class="gender-card__name">{{ gender.name }}</span>
+            <span class="gender-card__name">{{ formatGenreName(gender.name) }}</span>
           </div>
         </q-card>
       </div>
@@ -57,6 +57,7 @@ import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
 import { onBeforeUnmount } from "vue";
 import { notifyError } from "src/utils/notify";
+import { formatGenreName } from "src/utils/formatText";
 
 let $q;
 export default {
@@ -89,6 +90,7 @@ export default {
   },
   methods: {
     ...mapActions("clientMusicalGenders", ["getMusicalGenders"]),
+    formatGenreName,
     iconMap(slug) {
       const map = {
         'mariachi': 'music_note',
@@ -210,12 +212,14 @@ export default {
 .gender-card__name {
   position: relative;
   z-index: 1;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 2px;
   text-align: center;
   color: #fff;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  max-width: 100%;
+  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 </style>
