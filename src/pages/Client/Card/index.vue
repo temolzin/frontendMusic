@@ -1,5 +1,6 @@
 <template>
   <q-page>
+    <PageBreadcrumbs :items="[{ label: 'Mis Tarjetas', icon: 'fas fa-solid fa-credit-card' }]" />
     <h6 class="q-mb-md q-ml-lg q-mt-lg row items-center">
       <span class="q-mr-md">Tus tarjetas</span>
       <q-btn
@@ -247,12 +248,14 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 export default {
+  components: { PageBreadcrumbs },
   data() {
     return {
       formCreate: false,

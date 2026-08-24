@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    <PageBreadcrumbs :items="[{ label: 'Mi Perfil', icon: 'person' }]" />
     <!-- Inicio de seccion Avatar público-->
     <div class="row q-pa-md">
       <div class="col-12 col-sm-4 col-md-4">
@@ -219,12 +220,14 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { mapGetters, mapActions } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 let $q;
 
 export default {
+  components: { PageBreadcrumbs },
   name: "userProfile",
   data() {
     return {

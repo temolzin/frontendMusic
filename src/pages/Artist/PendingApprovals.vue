@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Solicitudes Pendientes', icon: 'fas fa-solid fa-user-check' }]" />
     <div class="q-mb-md">
       <div class="row items-center q-mb-sm">
         <b class="text-h5">
@@ -276,6 +277,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapGetters } from 'vuex';
 import { getDiscountBadgeColor, getApprovalHistoryStatusColor } from 'src/utils/badgeStyles';
 import { notifyError, platformEvents } from 'src/utils/notify';
@@ -301,6 +303,7 @@ const historyColumns = [
 ];
 
 export default {
+  components: { PageBreadcrumbs },
   name: 'PendingApprovals',
 
   data() {

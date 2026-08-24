@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md" style="max-width: 800px; margin: 0 auto">
+    <PageBreadcrumbs :items="[{ label: 'Tickets de Soporte', icon: 'support_agent', to: '/admin/support-tickets' }, { label: ticket ? 'Ticket #' + ticket.id : 'Detalle' }]" />
     <q-btn
       flat
       rounded
@@ -201,9 +202,11 @@ import { api } from 'boot/axios';
 import { notifySuccess, notifyError } from 'src/utils/notify';
 import { getSupportTicketCategoryColor, getSupportTicketStatusColor } from 'src/utils/badgeStyles';
 import { formatCurrency } from 'src/utils/moneyFormat';
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 
 export default {
   name: 'SupportTicketShow',
+  components: { PageBreadcrumbs },
 
   data() {
     return {

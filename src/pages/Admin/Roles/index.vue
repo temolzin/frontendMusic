@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Roles', icon: 'fas fa-solid fa-street-view' }]" />
     <!-- Inicio de Tabla -->
     <q-table
       :rows="rows"
@@ -271,6 +272,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
@@ -317,6 +319,7 @@ const columns = [
 let rows = [];
 
 export default {
+  components: { PageBreadcrumbs },
   data() {
     return {
       loading: true,

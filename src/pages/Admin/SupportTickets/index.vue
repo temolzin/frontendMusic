@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Tickets de Soporte', icon: 'support_agent' }]" />
     <q-table
       :rows="tickets"
       :columns="columns"
@@ -113,6 +114,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapGetters } from 'vuex';
 import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
 import { notifyError } from 'src/utils/notify';
@@ -120,7 +122,7 @@ import { getSupportTicketCategoryColor, getSupportTicketStatusColor } from 'src/
 
 export default {
   name: 'SupportTicketsIndex',
-  components: { TicketLogsModal },
+  components: { PageBreadcrumbs, TicketLogsModal },
   data() {
     return {
       loading: false,

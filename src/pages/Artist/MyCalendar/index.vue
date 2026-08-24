@@ -1,5 +1,6 @@
 <template>
   <div class="calendar-container" :class="{ 'calendar-dark': mode }">
+    <PageBreadcrumbs :items="[{ label: 'Mi Calendario', icon: 'calendar_month' }]" />
 
     <q-card class="shadow-1">
       <q-card-section class="page-header q-pb-none">
@@ -338,6 +339,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
 import langEs from 'quasar/lang/es';
@@ -350,7 +352,7 @@ import { formatCurrency } from 'src/utils/moneyFormat';
 
 export default defineComponent({
   name: 'MyCalendar',
-  components: { CancellationModal },
+  components: { PageBreadcrumbs, CancellationModal },
 
   setup() {
     const $q = useQuasar();

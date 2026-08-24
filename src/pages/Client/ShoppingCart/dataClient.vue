@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-sm">
+    <PageBreadcrumbs :items="[{ label: 'Mi Carrito', icon: 'shopping_cart', to: '/client/shopping-cart' }, { label: 'Finalizar compra' }]" />
     <div class="row q-col-gutter-sm">
       <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
         <q-stepper v-model="step" header-nav ref="stepper" class="no-shadow" bordered animated>
@@ -903,6 +904,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { defineComponent } from "vue";
 import { getDiscountBadgeColor } from "src/utils/badgeStyles";
 import { useQuasar } from "quasar";
@@ -917,6 +919,7 @@ import { formatCurrency } from "src/utils/moneyFormat";
 let $q;
 
 export default defineComponent({
+  components: { PageBreadcrumbs },
   setup() {
     const formClient = ref({
       first_name: "",

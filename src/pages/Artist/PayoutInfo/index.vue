@@ -1,5 +1,6 @@
 <template>
   <q-page padding class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Datos de Cobro', icon: 'account_balance' }]" />
     <div class="row q-col-gutter-md justify-center">
       <div class="col-12 col-md-8">
         <q-banner 
@@ -149,12 +150,14 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { ref, onMounted, watch } from "vue";
 import { useQuasar } from "quasar";
 import { useStore } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 
 export default {
+  components: { PageBreadcrumbs },
   name: "PayoutInfoPage",
   setup() {
     const $q = useQuasar();

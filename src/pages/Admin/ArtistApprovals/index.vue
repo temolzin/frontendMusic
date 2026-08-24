@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Solicitudes de Artistas', icon: 'fas fa-solid fa-user-check' }]" />
     <q-card flat bordered class="q-pa-md">
       <div class="q-mb-md">
         <b class="text-h5">Solicitudes de Artistas</b>
@@ -299,6 +300,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapGetters } from 'vuex';
 import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
 import { getArtistApprovalTypeColor, getArtistApprovalStatusColor } from 'src/utils/badgeStyles';
@@ -323,6 +325,7 @@ const historyColumns = [
 ];
 
 export default {
+  components: { PageBreadcrumbs },
   name: 'ArtistApprovals',
 
   data() {

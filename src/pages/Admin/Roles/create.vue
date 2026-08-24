@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md row">
+    <PageBreadcrumbs :items="[{ label: 'Roles', icon: 'fas fa-solid fa-street-view', to: '/admin/roles' }, { label: 'Crear rol' }]" />
     <div class="col-12">
       <p class="text-h4 text-center">Crear nuevo rol</p>
     </div>
@@ -70,12 +71,14 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 let $q;
 export default {
+  components: { PageBreadcrumbs },
   data() {
     return {
       form: {

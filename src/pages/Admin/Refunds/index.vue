@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Reembolsos', icon: 'price_check' }]" />
     <q-table
       :rows="displayedRefunds"
       :columns="columns"
@@ -188,6 +189,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapGetters } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { getRefundStatusColor } from 'src/utils/badgeStyles';
@@ -204,6 +206,7 @@ const columns = [
 ];
 
 export default {
+  components: { PageBreadcrumbs },
   name: "AdminRefundsIndex",
 
   data() {
