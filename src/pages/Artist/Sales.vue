@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Mis Ventas', icon: 'fas fa-solid fa-cart-arrow-down' }]" />
 
     <q-table
       v-if="artist != null && stateArtistSales && stateArtistSales.length > 0"
@@ -356,6 +357,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { useQuasar } from 'quasar';
 import { getEventStatusColor, getPaymentStatusColor } from 'src/utils/badgeStyles';
@@ -406,7 +408,7 @@ const columns = [
 
 export default {
   name: 'ArtistSales',
-  components: { NoticeNoSales, NoticeNotInfo },
+  components: { PageBreadcrumbs, NoticeNoSales, NoticeNotInfo },
 
   data() {
     return {

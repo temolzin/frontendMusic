@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    <PageBreadcrumbs :items="[{ label: 'Mis Compras', icon: 'fas fa-solid fa-cart-arrow-down' }]" />
     <q-container>
       <div class="q-pa-md">
         <q-card-group>
@@ -436,6 +437,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { api } from "boot/axios";
@@ -448,7 +450,7 @@ import { formatCurrency } from "src/utils/moneyFormat";
 
 let $q;
 export default {
-  components: { CancellationModal },
+  components: { PageBreadcrumbs, CancellationModal },
   data() {
     return {
       filterName: "",

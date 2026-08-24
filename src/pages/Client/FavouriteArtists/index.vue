@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    <PageBreadcrumbs :items="[{ label: 'Favoritos', icon: 'fas fa-solid fa-heart' }]" />
     <div v-if="stateFavouriteArtists[0]">
       <q-table
         grid
@@ -119,6 +120,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
@@ -129,6 +131,7 @@ import { formatCurrency } from "src/utils/moneyFormat";
 let $q;
 
 export default {
+  components: { PageBreadcrumbs },
   name: "FavouriteArtists",
   data() {
     const columns = [{ name: "name", field: "artist.name", sortable: true }];

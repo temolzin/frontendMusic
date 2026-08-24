@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Liquidaciones', icon: 'payments' }]" />
     <q-card flat bordered>
       <q-card-section class="q-pa-md">
         <div class="row q-col-gutter-sm items-center q-mb-md">
@@ -353,6 +354,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapGetters, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { getEventStatusColor, getPayoutStatusColor } from 'src/utils/badgeStyles';
@@ -377,6 +379,7 @@ const historyColumns = [
 ];
 
 export default {
+  components: { PageBreadcrumbs },
   name: "AdminPayoutsIndex",
 
   data() {

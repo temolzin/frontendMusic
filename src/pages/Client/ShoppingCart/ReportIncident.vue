@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    <PageBreadcrumbs :items="[{ label: 'Reportar Incidente', icon: 'report_problem' }]" />
     <div class="q-pa-md" style="max-width: 600px; margin: 0 auto">
       <div class="text-h5 text-primary text-weight-bold q-mb-sm">Reportar Incidente</div>
       <div class="text-caption text-grey q-mb-lg">
@@ -66,10 +67,12 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions } from 'vuex';
 import { notifyError, platformEvents } from 'src/utils/notify';
 
 export default {
+  components: { PageBreadcrumbs },
   name: 'ReportIncident',
 
   props: {

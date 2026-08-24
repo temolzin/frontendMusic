@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Configuración OpenPay', icon: 'vpn_key' }]" />
     <q-card flat bordered class="q-mt-md">
       <q-card-section class="q-pa-md">
         <b class="text-h5 q-mb-md d-block">Configuración OpenPay</b>
@@ -75,12 +76,14 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { defineComponent, ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 import { notifySuccess, notifyError } from 'src/utils/notify';
 
 export default defineComponent({
+  components: { PageBreadcrumbs },
   name: 'OpenpayKeysIndex',
   setup() {
     const $q = useQuasar()

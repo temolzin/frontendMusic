@@ -1,4 +1,5 @@
 <template>
+  <PageBreadcrumbs :items="[{ label: 'Perfil de Artista', icon: 'fas fa-solid fa-microphone' }]" />
   <div
     v-if="showInfo == 'true' && isPendingReview"
     class="col-12 flex flex-center q-pa-xl"
@@ -834,6 +835,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapState } from "vuex";
 import { useQuasar } from "quasar";
 import NoticeGallery from "src/components/Artist/NoticeGallery.vue";
@@ -844,7 +846,7 @@ import { formatCurrency } from "src/utils/moneyFormat";
 let $q = useQuasar();
 
 export default {
-  components: { NoticeGallery },
+  components: { PageBreadcrumbs, NoticeGallery },
   name: "Index",
   data() {
     return {

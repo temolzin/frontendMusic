@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Envío de Correos', icon: 'fas fa-newspaper' }]" />
     <q-card flat bordered class="q-mt-md">
       <q-card-section>
         <b class="text-h5 q-mb-md d-block">Envío de Correos</b>
@@ -57,12 +58,14 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 export default {
+  components: { PageBreadcrumbs },
     data() {
         return {
             emailSubject: '',

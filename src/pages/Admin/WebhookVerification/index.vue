@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Códigos de Verificación Webhook', icon: 'verified' }]" />
     <q-card flat bordered class="q-mb-md">
       <q-card-section>
         <b class="text-h5 q-mb-md d-block">Códigos de Verificación Webhook</b>
@@ -114,6 +115,7 @@
   </div>
 </template>
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { defineComponent, ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
@@ -121,6 +123,7 @@ import { getWebhookTimeColor } from 'src/utils/badgeStyles'
 import { notifySuccess, notifyError } from 'src/utils/notify';
 
 export default defineComponent({
+  components: { PageBreadcrumbs },
   name: 'WebhookVerificationIndex',
   setup() {
     const $q = useQuasar()

@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Géneros Musicales', icon: 'fas fa-solid fa-icons' }]" />
     <!-- Inicio de tabla -->
     <q-table
       :rows="rows"
@@ -358,6 +359,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
@@ -402,6 +404,7 @@ const columns = [
 let rows = [];
 
 export default {
+  components: { PageBreadcrumbs },
   name: "Index",
   data() {
     return {

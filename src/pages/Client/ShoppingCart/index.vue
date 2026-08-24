@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    <PageBreadcrumbs :items="[{ label: 'Mi Carrito', icon: 'shopping_cart' }]" />
     <q-container v-if="hasCartItems">
       <div class="q-pa-md">
         <q-card-group>
@@ -160,6 +161,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { notifyError, notifySuccess } from "src/utils/notify";
@@ -167,6 +169,7 @@ import { formatCurrency } from "src/utils/moneyFormat";
 
 let $q;
 export default {
+  components: { PageBreadcrumbs },
   data() {
     return {
       item: {

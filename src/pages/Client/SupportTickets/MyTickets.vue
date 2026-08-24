@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    <PageBreadcrumbs :items="[{ label: 'Mis Reportes', icon: 'support_agent' }]" />
     <div class="q-pa-md">
       <q-card class="shadow-1">
         <q-card-section>
@@ -155,6 +156,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapGetters } from 'vuex';
 import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
 import { notifyError } from 'src/utils/notify';
@@ -162,7 +164,7 @@ import { getSupportTicketCategoryColor, getSupportTicketStatusColor } from 'src/
 
 export default {
   name: 'MyTickets',
-  components: { TicketLogsModal },
+  components: { PageBreadcrumbs, TicketLogsModal },
 
   data() {
     return {

@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-lg">
+    <PageBreadcrumbs :items="[{ label: 'Mis Ofertas', icon: 'local_offer' }]" />
     <q-table
       :rows="offers"
       :columns="columns"
@@ -303,12 +304,14 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { getOfferStatusColor } from "src/utils/badgeStyles";
 import { formatCurrency } from "src/utils/moneyFormat";
 
 export default {
+  components: { PageBreadcrumbs },
   name: "ArtistOffers",
   data() {
     return {

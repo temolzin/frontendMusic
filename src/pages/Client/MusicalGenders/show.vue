@@ -1,5 +1,8 @@
 <template>
   <q-page>
+    <div class="q-pa-md">
+      <PageBreadcrumbs :items="[{ label: 'Géneros Musicales', icon: 'widgets', to: '/client/musical-genders' }, { label: artist.name || 'Artista' }]" />
+    </div>
     <q-card flat style="max-width: 300vw" v-if="loadInformation == true">
       <q-skeleton height="55vh" square />
 
@@ -395,10 +398,12 @@ import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
 import { formatCurrency } from "src/utils/moneyFormat";
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 
 let $q;
 export default {
   name: "Slug",
+  components: { PageBreadcrumbs },
   data() {
     return {
       slug: "",

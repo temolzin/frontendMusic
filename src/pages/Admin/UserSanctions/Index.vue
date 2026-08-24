@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Monitoreo de Sanciones', icon: 'gavel' }]" />
 
     <q-table
       :rows="filteredUsers"
@@ -519,6 +520,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapGetters } from "vuex";
 import { api } from 'boot/axios';
 import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
@@ -566,6 +568,7 @@ const ACCOUNT_STATUS_MAP = {
 };
 
 export default {
+  components: { PageBreadcrumbs },
   data() {
     return {
       columns,

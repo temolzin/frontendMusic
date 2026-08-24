@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-sm">
+    <PageBreadcrumbs :items="[{ label: 'Tienda', icon: 'fas fa-solid fa-store' }]" />
     <q-carousel v-model="slide" transition-prev="scale" transition-next="scale" swipeable animated control-color="white"
       navigation padding arrows height="300px" class="bg-primary text-white shadow-1 rounded-borders"
       :autoplay="autoplay">
@@ -173,6 +174,7 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapGetters, mapState } from "vuex";
 import { ref } from "vue";
@@ -183,6 +185,7 @@ import { formatCurrency } from "src/utils/moneyFormat";
 
 let $q;
 export default {
+  components: { PageBreadcrumbs },
   data() {
     const columns = [{ name: "name", field: "name", sortable: true }];
     return {
