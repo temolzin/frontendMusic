@@ -39,6 +39,19 @@
           label="Categoría"
           clearable
           style="min-width: 200px"
+          class="q-mr-sm"
+          @update:model-value="fetchTickets"
+        />
+        <q-select
+          v-model="filterRole"
+          :options="roleOptions"
+          emit-value
+          map-options
+          outlined
+          dense
+          label="Rol del reportador"
+          clearable
+          style="min-width: 180px"
           @update:model-value="fetchTickets"
         />
       </template>
@@ -128,6 +141,7 @@ export default {
       loading: false,
       filterStatus: null,
       filterCategory: null,
+      filterRole: null,
       showLogsModal: false,
       selectedTicketId: null,
       selectedTicket: null,
@@ -152,6 +166,10 @@ export default {
         { label: 'Cancelación', value: 'cancellation' },
         { label: 'Otro', value: 'other' },
       ],
+      roleOptions: [
+        { label: 'Artista', value: 'artista' },
+        { label: 'Cliente', value: 'cliente' },
+      ],
     };
   },
 
@@ -175,6 +193,7 @@ export default {
         const filters = {};
         if (this.filterStatus) filters.status = this.filterStatus;
         if (this.filterCategory) filters.category = this.filterCategory;
+        if (this.filterRole) filters.reporter_role = this.filterRole;
         await this.fetchAdminTickets(filters);
       } catch {
         notifyError('Error al cargar los tickets.');
