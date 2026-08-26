@@ -44,7 +44,7 @@
               <template v-slot:body-cell-category="props">
                 <q-td :props="props">
                   <q-badge v-bind="getSupportTicketCategoryColor(props.row.category, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
-                    {{ categoryLabel(props.row.category) }}
+                    {{ categoryLabel(props.row.category, props.row.reporter?.role?.[0]) }}
                   </q-badge>
                 </q-td>
               </template>
@@ -105,7 +105,7 @@
               <template v-slot:body-cell-category="props">
                 <q-td :props="props">
                   <q-badge v-bind="getSupportTicketCategoryColor(props.row.category, $q.dark.isActive)" class="q-px-sm q-py-xs text-weight-medium text-uppercase">
-                    {{ categoryLabel(props.row.category) }}
+                    {{ categoryLabel(props.row.category, props.row.reporter?.role?.[0]) }}
                   </q-badge>
                 </q-td>
               </template>
@@ -161,7 +161,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
 import { notifyError } from 'src/utils/notify';
-import { getSupportTicketCategoryColor, getSupportTicketStatusColor } from 'src/utils/badgeStyles';
+import { getSupportTicketCategoryColor, getSupportTicketStatusColor, categoryLabel } from 'src/utils/badgeStyles';
 
 export default {
   name: 'MyArtistTickets',
@@ -216,6 +216,7 @@ export default {
   methods: {
     getSupportTicketCategoryColor,
     getSupportTicketStatusColor,
+    categoryLabel,
     ...mapActions('artistSupport', ['fetchTickets', 'createTicket']),
     ...mapActions('supportTickets', ['fetchMyArtistTickets', 'fetchMyTickets']),
 
@@ -251,17 +252,6 @@ export default {
       if (!raw) return '';
       const d = new Date(raw);
       return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
-    },
-
-    categoryLabel(cat) {
-      const map = {
-        no_show: 'El artista no se presentó',
-        delay: 'Retraso o cancelación de último minuto',
-        bad_service: 'Mal servicio o comportamiento inadecuado',
-        cancellation: 'Cancelación',
-        other: 'Otro',
-      };
-      return map[cat] || cat;
     },
 
     statusLabel(status) {

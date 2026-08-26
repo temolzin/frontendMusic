@@ -31,6 +31,26 @@ export function getSupportTicketCategoryColor(category, isDark) {
   return map[category] || { color: 'blue-1', 'text-color': 'blue-9' };
 }
 
+export function categoryLabel(cat, reporterRole = 'artista') {
+  const labels = {
+    artista: {
+      no_show: 'El cliente no se presentó',
+      bad_service: 'Mal comportamiento del cliente',
+      cancellation: 'Cancelación del cliente',
+      other: 'Otro (reportado por artista)',
+    },
+    cliente: {
+      no_show: 'El artista no se presentó',
+      delay: 'Retraso o cancelación de último minuto',
+      bad_service: 'Mal servicio o comportamiento inadecuado',
+      cancellation: 'Cancelación',
+      other: 'Otro',
+    },
+  };
+  const role = reporterRole === 'artista' ? 'artista' : 'cliente';
+  return labels[role][cat] || cat;
+}
+
 export function getSupportTicketStatusColor(status, isDark) {
   if (isDark) {
     const map = {

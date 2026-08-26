@@ -477,17 +477,6 @@ const routes = [
           title: 'Reportar Incidente',
           middleware: [Middlewares.checkPermissions],
           requireLogin: true,
-          permissions: ['view-my-order-details'],
-        },
-      },
-      {
-        name: 'client.report-incident',
-        path: '/client/report-incident/:saleId',
-        component: import('src/pages/Client/ShoppingCart/ReportIncident.vue'),
-        meta: {
-          title: 'Reportar Incidente',
-          middleware: [Middlewares.checkPermissions],
-          requireLogin: true,
           permissions: ['view-my-order-details', 'view-profile-artist'],
         },
       },
