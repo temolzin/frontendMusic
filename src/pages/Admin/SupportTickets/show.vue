@@ -66,7 +66,7 @@
             <div class="col-12 col-sm-6">
               <div class="text-caption text-grey">Categoría</div>
               <q-badge v-bind="getSupportTicketCategoryColor(ticket.category, $q.dark.isActive)" class="q-px-sm q-py-xs q-mt-xs text-weight-medium text-uppercase">
-                {{ categoryLabel(ticket.category) }}
+                {{ categoryLabel(ticket.category, ticket.reporter?.role?.[0]) }}
               </q-badge>
             </div>
             <div class="col-12">
@@ -200,7 +200,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import { api } from 'boot/axios';
 import { notifySuccess, notifyError } from 'src/utils/notify';
-import { getSupportTicketCategoryColor, getSupportTicketStatusColor } from 'src/utils/badgeStyles';
+import { getSupportTicketCategoryColor, getSupportTicketStatusColor, categoryLabel } from 'src/utils/badgeStyles';
 import { formatCurrency } from 'src/utils/moneyFormat';
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 
@@ -227,6 +227,7 @@ export default {
     ...mapActions('supportTickets', ['fetchAdminTicketDetail', 'updateTicketStatus']),
     getSupportTicketCategoryColor,
     getSupportTicketStatusColor,
+    categoryLabel,
     formatCurrency,
 
     goBack() {
@@ -283,17 +284,6 @@ export default {
       if (!raw) return 'N/A';
       const d = new Date(raw);
       return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
-    },
-
-    categoryLabel(cat) {
-      const map = {
-        no_show: 'No se presentó',
-        delay: 'Retraso / Cancelación',
-        bad_service: 'Mal servicio',
-        cancellation: 'Cancelación',
-        other: 'Otro',
-      };
-      return map[cat] || cat;
     },
 
     statusLabel(status) {
