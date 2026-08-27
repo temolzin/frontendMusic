@@ -1,5 +1,7 @@
 <template>
-  <PageBreadcrumbs :items="[{ label: 'Perfil de Artista', icon: 'fas fa-solid fa-microphone' }]" />
+  <div class="q-pa-md q-pb-none">
+    <PageBreadcrumbs :items="[{ label: 'Perfil de Artista', icon: 'fas fa-solid fa-microphone' }]" />
+  </div>
   <div
     v-if="showInfo == 'true' && isPendingReview"
     class="col-12 flex flex-center q-pa-xl"

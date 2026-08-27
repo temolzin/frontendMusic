@@ -1,6 +1,8 @@
 <template>
   <q-page>
-    <PageBreadcrumbs :items="[{ label: 'Mis Tarjetas', icon: 'fas fa-solid fa-credit-card' }]" />
+    <div class="q-pa-md q-pb-none">
+      <PageBreadcrumbs :items="[{ label: 'Mis Tarjetas', icon: 'fas fa-solid fa-credit-card' }]" />
+    </div>
     <h6 class="q-mb-md q-ml-lg q-mt-lg row items-center">
       <span class="q-mr-md">Tus tarjetas</span>
       <q-btn

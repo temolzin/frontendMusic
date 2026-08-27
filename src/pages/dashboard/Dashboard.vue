@@ -138,8 +138,8 @@
     </q-card>
   </q-dialog>
 
-  <q-page padding>
-    <q-table v-if="getMe.role[0] === 'cliente' && skeleton == false && stateFavouriteArtists && stateFavouriteArtists.length > 0"
+  <q-page padding v-if="getMe.role[0] === 'cliente'">
+    <q-table v-if="skeleton == false && stateFavouriteArtists && stateFavouriteArtists.length > 0"
       grid
       card-class="bg-primary text-white"
       :rows="stateFavouriteArtists"
