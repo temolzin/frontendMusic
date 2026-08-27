@@ -207,6 +207,19 @@
       </div>
     </div>
     <div v-if="activeTab === 'history'">
+      <q-banner
+        dense
+        inline-actions
+        rounded
+        :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-py-sm q-px-md q-mb-md']"
+      >
+        <template v-slot:avatar>
+          <q-icon name="info" color="blue" size="sm" />
+        </template>
+        <div class="text-body2">
+          El <strong>monto neto a recibir</strong> se muestra descontando la <strong>comisión de la plataforma (10%)</strong> sobre el monto de la venta. Ten en cuenta que las <strong>tarifas operativas de OpenPay</strong> pueden descontarse adicionalmente de tu liquidación según el método de pago (tarjeta o efectivo tipo Oxxo).
+        </div>
+      </q-banner>
       <q-table
         v-if="approvalHistory && approvalHistory.length > 0"
         :rows="filteredHistory"
@@ -235,9 +248,14 @@
         </template>
         <template v-slot:body-cell-amount="props">
           <q-td :props="props">
-            <span class="text-weight-bold">
-              {{ formatCurrency(props.row.amount) }}
-            </span>
+            <div>
+              <span class="text-weight-bold text-positive">
+                {{ formatCurrency(props.row.amount) }}
+              </span>
+            </div>
+            <div class="text-caption text-grey">
+              Neto a recibir: {{ formatCurrency(netAmount(props.row)) }}
+            </div>
           </q-td>
         </template>
         <template v-slot:body-cell-resultado="props">
@@ -274,6 +292,9 @@
                     <div class="text-grey">Monto</div>
                     <div class="text-weight-bold">
                       {{ formatCurrency(props.row.amount) }}
+                    </div>
+                    <div class="text-caption text-grey">
+                      Neto a recibir: {{ formatCurrency(netAmount(props.row)) }}
                     </div>
                   </div>
                   <div class="col-12">
