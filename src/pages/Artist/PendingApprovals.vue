@@ -35,6 +35,19 @@
       <q-separator />
     </div>
     <div v-if="activeTab === 'pending'">
+      <q-banner
+        dense
+        inline-actions
+        rounded
+        :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-py-sm q-px-md q-mb-md']"
+      >
+        <template v-slot:avatar>
+          <q-icon name="info" color="blue" size="sm" />
+        </template>
+        <div class="text-body2">
+          El <strong>monto neto a recibir</strong> se muestra descontando la <strong>comisión de la plataforma (10%)</strong> sobre el monto de la venta. Ten en cuenta que las <strong>tarifas operativas de OpenPay</strong> pueden descontarse adicionalmente de tu liquidación según el método de pago (tarjeta o efectivo tipo Oxxo).
+        </div>
+      </q-banner>
       <q-table
         v-if="pendingApprovals && pendingApprovals.length > 0"
         :rows="pendingApprovals"
@@ -69,9 +82,14 @@
         </template>
         <template v-slot:body-cell-amount="props">
           <q-td :props="props">
-            <span class="text-weight-bold text-positive">
-              {{ formatCurrency(props.row.amount) }}
-            </span>
+            <div>
+              <span class="text-weight-bold text-positive">
+                {{ formatCurrency(props.row.amount) }}
+              </span>
+            </div>
+            <div class="text-caption text-grey">
+              Neto a recibir: {{ formatCurrency(netAmount(props.row)) }}
+            </div>
           </q-td>
         </template>
         <template v-slot:body-cell-tiempo="props">
@@ -140,6 +158,9 @@
                     <div class="text-grey">Monto</div>
                     <div class="text-weight-bold text-positive">
                       {{ formatCurrency(props.row.amount) }}
+                    </div>
+                    <div class="text-caption text-grey">
+                      Neto a recibir: {{ formatCurrency(netAmount(props.row)) }}
                     </div>
                   </div>
                 </div>
@@ -439,6 +460,13 @@ export default {
       const m = Math.floor((seconds % 3600) / 60);
       const s = seconds % 60;
       return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    },
+
+    netAmount(sale) {
+      const amount = Number(sale.amount) || 0;
+      const openpayFee = Number(sale.openpay_fee) || 0;
+      const platformFee = amount * 0.10;
+      return Math.max(0, amount - openpayFee - platformFee);
     },
   },
 };
