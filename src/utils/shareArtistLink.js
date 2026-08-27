@@ -4,21 +4,25 @@ const SHARE_ACTIONS = [
   {
     label: 'WhatsApp',
     icon: 'fab fa-whatsapp',
+    color: '#25D366',
     id: 'whatsapp'
   },
   {
     label: 'Messenger',
     icon: 'fab fa-facebook-messenger',
+    color: '#0084FF',
     id: 'messenger'
   },
   {
     label: 'Instagram',
     icon: 'fab fa-instagram',
+    color: '#E4405F',
     id: 'instagram'
   },
   {
     label: 'Facebook',
     icon: 'fab fa-facebook',
+    color: '#1877F2',
     id: 'facebook'
   },
   {
