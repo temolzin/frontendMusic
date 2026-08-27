@@ -1,4 +1,9 @@
-// app global css in SCSS form
+.q-page-container .q-page {
+  box-sizing: border-box;
+  width: 100%;
+  padding-bottom: 24px;
+}
+
 .body--dark {
     .q-field--outlined .q-field__control {
         border-color: #718096 !important;
