@@ -4,30 +4,31 @@ const SHARE_ACTIONS = [
   {
     label: 'WhatsApp',
     icon: 'fab fa-whatsapp',
-    color: '#25D366',
+    classes: ['share-action-whatsapp'],
     id: 'whatsapp'
   },
   {
     label: 'Messenger',
     icon: 'fab fa-facebook-messenger',
-    color: '#0084FF',
+    classes: ['share-action-messenger'],
     id: 'messenger'
   },
   {
     label: 'Instagram',
     icon: 'fab fa-instagram',
-    color: '#E4405F',
+    classes: ['share-action-instagram'],
     id: 'instagram'
   },
   {
     label: 'Facebook',
     icon: 'fab fa-facebook',
-    color: '#1877F2',
+    classes: ['share-action-facebook'],
     id: 'facebook'
   },
   {
     label: 'Copiar enlace',
     icon: 'content_copy',
+    classes: ['share-action-copy'],
     id: 'copy'
   }
 ];
