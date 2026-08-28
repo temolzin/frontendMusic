@@ -305,6 +305,7 @@ import { mapActions, mapGetters } from 'vuex';
 import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
 import { getArtistApprovalTypeColor, getArtistApprovalStatusColor } from 'src/utils/badgeStyles';
 import { formatCurrency } from 'src/utils/moneyFormat';
+import { formatDate } from 'src/utils/formatDate';
 
 const columns = [
   { name: 'artista', label: 'Artista', align: 'center', field: (row) => row.proposed_data?.name, sortable: true },
@@ -470,13 +471,7 @@ export default {
     },
 
     formatDate(raw) {
-      if (!raw) return '';
-      if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
-        const [y, m, d] = raw.split('-');
-        return new Date(Number(y), Number(m) - 1, Number(d)).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
-      }
-      const d = new Date(raw);
-      return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+      return formatDate(raw);
     },
   },
 };

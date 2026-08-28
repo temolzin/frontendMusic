@@ -114,6 +114,7 @@ import { ref, computed, watch } from 'vue'
 import { api } from 'boot/axios'
 import { notifyError } from 'src/utils/notify'
 import { formatCurrency } from 'src/utils/moneyFormat'
+import { formatDate } from 'src/utils/formatDate'
 
 export default {
   name: 'CancellationModal',
@@ -158,7 +159,7 @@ export default {
     const formattedDate = computed(() => {
       const ed = eventDate.value
       if (!ed) return ''
-      return ed.toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' })
+      return formatDate(ed)
     })
 
     watch(() => props.modelValue, async (open) => {

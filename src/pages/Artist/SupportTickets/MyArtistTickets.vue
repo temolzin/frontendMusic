@@ -162,6 +162,7 @@ import { mapActions, mapGetters } from 'vuex';
 import TicketLogsModal from 'src/components/admin/SupportTickets/TicketLogsModal.vue';
 import { notifyError } from 'src/utils/notify';
 import { getSupportTicketCategoryColor, getSupportTicketStatusColor, categoryLabel } from 'src/utils/badgeStyles';
+import { formatDate } from 'src/utils/formatDate';
 
 export default {
   name: 'MyArtistTickets',
@@ -249,9 +250,7 @@ export default {
     },
 
     formatDate(raw) {
-      if (!raw) return '';
-      const d = new Date(raw);
-      return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
+      return formatDate(raw);
     },
 
     statusLabel(status) {

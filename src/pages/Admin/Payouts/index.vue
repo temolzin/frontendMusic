@@ -92,7 +92,7 @@
               {{ props.row.artist.name }}
             </q-td>
             <q-td key="event_date" :props="props">
-              {{ props.row.event_date }} a las {{ props.row.event_hour.substring(0, 5) }} hrs
+              {{ formatDateShort(props.row.event_date) }} a las {{ props.row.event_hour.substring(0, 5) }} hrs
             </q-td>
             <q-td key="net_artist_payout" :props="props" :class="totalPenalties(props.row) > 0 ? 'text-primary' : 'text-positive'">
               {{ formatCurrency(computedAdjustedNet(props.row)) }}
@@ -244,8 +244,8 @@
                           </template>
                           <div class="text-caption">
                             <strong>Liquidación en periodo de aclaración (3 días):</strong><br />
-                            El evento concluyó el <b>{{ props.row.event_date }}</b>.<br />
-                            Podrás liberar este pago a partir del <b>{{ formatDate(props.row.available_at) }}</b>.
+                            El evento concluyó el <b>{{ formatDateShort(props.row.event_date) }}</b>.<br />
+                            Podrás liberar este pago a partir del <b>{{ formatDateShort(props.row.available_at) }}</b>.
                           </div>
                         </q-banner>
                       </div>
@@ -521,6 +521,30 @@ export default {
       const period = hours24 >= 12 ? "PM" : "AM";
 
       return `${day}/${month}/${year} ${String(hours12).padStart(2, "0")}:${minutes} ${period}`;
+    },
+
+    formatDateShort(raw) {
+      if (!raw) {
+        return "";
+      }
+
+      const dateOnly = String(raw).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (dateOnly) {
+        return `${dateOnly[3]}/${dateOnly[2]}/${dateOnly[1]}`;
+      }
+
+      const normalized = String(raw).replace(" ", "T");
+      const date = new Date(normalized);
+
+      if (Number.isNaN(date.getTime())) {
+        return String(raw);
+      }
+
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      return `${day}/${month}/${year}`;
     },
 
     formatCurrency,

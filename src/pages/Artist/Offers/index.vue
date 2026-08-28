@@ -309,6 +309,7 @@ import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { getOfferStatusColor } from "src/utils/badgeStyles";
 import { formatCurrency } from "src/utils/moneyFormat";
+import { formatDate } from "src/utils/formatDate";
 
 export default {
   components: { PageBreadcrumbs },
@@ -501,7 +502,7 @@ export default {
 
     formatDate(date) {
       if (!date) return "-";
-      return new Date(date).toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "2-digit" });
+      return formatDate(date);
     },
   },
   mounted() {

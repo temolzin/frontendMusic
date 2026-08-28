@@ -86,7 +86,7 @@
       </template>
       <template v-slot:body-cell-event_date="props">
         <q-td :props="props">
-          {{ formatDate(props.row.event_date) }}
+          {{ formatDateTime(props.row.event_date, true) }}
         </q-td>
       </template>
       <template v-slot:body-cell-created_at="props">
@@ -121,6 +121,7 @@ import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 import { getWebhookTimeColor } from 'src/utils/badgeStyles'
 import { notifySuccess, notifyError } from 'src/utils/notify';
+import { formatDate, formatDateTime } from 'src/utils/formatDate';
 
 export default defineComponent({
   components: { PageBreadcrumbs },
@@ -203,19 +204,6 @@ export default defineComponent({
       })
     }
 
-    const formatDate = (date) => {
-      if (!date) return '-'
-      const d = new Date(date)
-      return d.toLocaleString('es-MX', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
-    }
-
     const timeAgo = (date) => {
       if (!date) return '-'
       const now = new Date()
@@ -250,6 +238,7 @@ export default defineComponent({
       confirmDelete,
       confirmClearAll,
       formatDate,
+      formatDateTime,
       timeAgo,
       getWebhookTimeColor
     }

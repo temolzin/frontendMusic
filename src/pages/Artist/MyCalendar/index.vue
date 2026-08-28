@@ -349,6 +349,7 @@ import { getEventStatusColor } from 'src/utils/badgeStyles';
 import CancellationModal from 'components/CancellationModal.vue';
 import { notifySuccess, notifyError, platformEvents } from 'src/utils/notify';
 import { formatCurrency } from 'src/utils/moneyFormat';
+import { formatDate } from 'src/utils/formatDate';
 
 export default defineComponent({
   name: 'MyCalendar',
@@ -580,12 +581,7 @@ export default defineComponent({
     },
 
     formatDateDisplay(dateStr) {
-      try {
-        const [year, month, day] = dateStr.split('/');
-        return new Date(Number(year), Number(month) - 1, Number(day)).toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' });
-      } catch {
-        return dateStr;
-      }
+      return formatDate(dateStr);
     },
 
     getEventsCountByDate(dateStr) {
