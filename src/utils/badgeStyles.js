@@ -241,3 +241,7 @@ export function getArtistApprovalStatusColor(status, isDark) {
   if (isDark) return darkGrey;
   return { color: 'grey-2', 'text-color': 'grey-8' };
 }
+
+export function genreTextColor(color) {
+  return color === 'yellow' ? 'dark' : 'white';
+}
