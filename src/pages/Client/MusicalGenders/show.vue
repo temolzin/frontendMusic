@@ -33,6 +33,7 @@
                 v-for="(musicalGender, id) in artist.musical_genders"
                 :key="id"
                 :color="musicalGender.color"
+                :text-color="genreTextColor(musicalGender.color)"
                 size="xs"
                 class="q-mr-sm q-mt-md outline"
                 :label="musicalGender.name"
@@ -393,7 +394,7 @@
 <script>
 import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
 import { mapActions, mapGetters, mapState } from "vuex";
-import { getDiscountBadgeColor } from "src/utils/badgeStyles";
+import { getDiscountBadgeColor, genreTextColor } from "src/utils/badgeStyles";
 import { ref } from "vue";
 import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
@@ -437,6 +438,7 @@ export default {
   },
   methods: {
     getDiscountBadgeColor,
+    genreTextColor,
     formatCurrency,
     getVideoId(value) {
       if (!value) return '';
