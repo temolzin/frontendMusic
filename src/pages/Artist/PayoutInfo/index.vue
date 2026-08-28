@@ -3,14 +3,16 @@
     <PageBreadcrumbs :items="[{ label: 'Datos de Cobro', icon: 'account_balance' }]" />
     <div class="row q-col-gutter-md justify-center">
       <div class="col-12 col-md-8">
-        <q-banner 
-          rounded 
-          class="q-mb-md q-pa-md"
-          :class="$q.dark.isActive ? 'bg-grey-9 text-grey-3' : 'bg-blue-1 text-blue-9'" >
+        <q-banner
+          dense
+          inline-actions
+          rounded
+          :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-mb-md q-py-sm q-px-md']"
+        >
           <template v-slot:avatar>
-            <q-icon name="info" :color="$q.dark.isActive ? 'accent' : 'primary'" size="sm" />
+            <q-icon name="info" color="blue" size="sm" />
           </template>
-          <div class="text-weight-medium">
+          <div class="text-body2">
             ¡Registra la cuenta donde recibirás tus ganancias! Al completar tus eventos, utilizaremos esta información para transferirte tus fondos de manera segura a través de OpenPay. Asegúrate de verificar que todos tus datos sean correctos.
           </div>
         </q-banner>
@@ -18,10 +20,10 @@
           dense
           inline-actions
           rounded
-          class="q-mb-md q-py-sm q-px-md"
-          :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-orange-1 text-orange-9']" >
+          :class="[$q.dark.isActive ? 'bg-blue-10 text-blue-1' : 'bg-blue-1 text-blue-9', 'q-mb-md q-py-sm q-px-md']"
+        >
           <template v-slot:avatar>
-            <q-icon name="info" :color="$q.dark.isActive ? 'accent' : 'orange'" size="sm" />
+            <q-icon name="info" color="blue" size="sm" />
           </template>
           <div class="text-body2">
             <strong>Importante sobre tu cuenta bancaria:</strong>
