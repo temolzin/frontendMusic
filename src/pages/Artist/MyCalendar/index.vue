@@ -71,7 +71,7 @@
                   indicator-color="primary"
                 >
                   <q-tab name="today" label="Hoy" />
-                  <q-tab name="all" label="Todas" />
+                  <q-tab name="all" label="Todos" />
                 </q-tabs>
 
                 <q-tab-panels v-model="activeTab" animated class="tab-content">
