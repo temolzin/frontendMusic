@@ -153,6 +153,7 @@
 <script>
   import { ref, onMounted } from "vue";
   import { api } from "boot/axios";
+  import { formatDateTime } from "src/utils/formatDate";
 
   const CARD_ORDER = ["users", "musical_genders", "artists", "quotations"];
 
@@ -188,19 +189,6 @@
         const number = Number(value);
 
         return new Intl.NumberFormat("es-ES").format(Number.isFinite(number) ? number : 0);
-      };
-
-      const formatDateTime = (value) => {
-        if (!value) return "";
-
-        const date = new Date(value);
-
-        if (Number.isNaN(date.getTime())) return String(value);
-
-        return new Intl.DateTimeFormat("es-ES", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        }).format(date);
       };
 
       const breakdownProgress = (breakdown, value) => {

@@ -503,7 +503,7 @@
                           <q-icon name="schedule" size="20px" color="grey-6" />
                           <div>
                             <div class="detail-label">Evento Afectado</div>
-                            <div class="detail-value">{{ fault.event_date }}</div>
+                            <div class="detail-value">{{ formatDate(fault.event_date) }}</div>
                           </div>
                         </div>
                       </div>
@@ -525,6 +525,7 @@ import { mapActions, mapGetters } from "vuex";
 import { api } from 'boot/axios';
 import { notifySuccess, notifyError, notifyWarning } from 'src/utils/notify';
 import { getUserSanctionStatusColor, getUserSanctionCategoryColor, getUserSanctionTicketsColor, getUserSanctionFaultsColor } from 'src/utils/badgeStyles';
+import { formatDate, formatDateTime } from 'src/utils/formatDate';
 
 let $q;
 
@@ -908,8 +909,7 @@ export default {
 
     formatDate(dateStr) {
       if (!dateStr) return "N/A";
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+      return formatDateTime(dateStr);
     },
     
     goToTicket(ticketId) {

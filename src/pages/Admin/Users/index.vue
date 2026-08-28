@@ -269,6 +269,7 @@
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
+import { formatDate } from "src/utils/formatDate";
 
 let $q;
 const columns = [
@@ -348,12 +349,7 @@ export default {
     ...mapActions("users", ["updateUser"]),
     ...mapActions("roles", ["getRoles"]),
     formatDate(date) {
-      if (!date) return "";
-      const d = new Date(date);
-      const day = String(d.getDate()).padStart(2, "0");
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      const year = String(d.getFullYear()).slice(-2);
-      return `${day}/${month}/${year}`;
+      return formatDate(date);
     },
     async gettUsers() {
       try {

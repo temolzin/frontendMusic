@@ -230,6 +230,7 @@
 import { mapActions } from 'vuex';
 import { api } from 'boot/axios';
 import { notifyError, notifySuccess } from 'src/utils/notify';
+import { formatDate } from 'src/utils/formatDate';
 const POLLING_INTERVAL = 5000;
 
 export default {
@@ -408,10 +409,7 @@ export default {
     },
 
     formatDate(raw) {
-      if (!raw) return '';
-      return new Date(raw).toLocaleDateString('es-MX', {
-        day: '2-digit', month: 'short', year: 'numeric',
-      });
+      return formatDate(raw);
     },
 
     formatTime(raw) {

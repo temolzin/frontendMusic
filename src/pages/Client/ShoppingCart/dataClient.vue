@@ -915,6 +915,7 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { notifySuccess, notifyError, notifyWarning, notifyInfo, platformEvents } from "src/utils/notify";
 import { formatCurrency } from "src/utils/moneyFormat";
+import { formatDate, formatDateTime } from "src/utils/formatDate";
 
 let $q;
 
@@ -1060,21 +1061,7 @@ export default defineComponent({
         .replace(/\bthe\b/gi, "el");
     },
     formatDueDate(dateStr) {
-      if (!dateStr) return '';
-      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-        const [y, m, d] = dateStr.split('-');
-        const date = new Date(Number(y), Number(m) - 1, Number(d));
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-      }
-      const date = new Date(dateStr.replace(' ', 'T'));
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = date.getFullYear();
-      const time = date.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
-      return `${day}/${month}/${year} ${time}`;
+      return formatDateTime(dateStr);
     },
     castCard(card) {
       return card;
