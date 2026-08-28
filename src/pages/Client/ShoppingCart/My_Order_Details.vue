@@ -9,17 +9,17 @@
               Mis Compras
             </div>
           </div>
-          <div class="row justify-end q-col-gutter-sm q-mb-md">
-            <div class="col-12 col-sm-4 col-md-4">
-              <q-input dense outlined v-model="filterName" placeholder="Buscar por nombre...">
+          <div class="row q-col-gutter-md q-mb-md items-center">
+            <div class="col-12 col-sm-6 col-md-7">
+              <q-input outlined v-model="filterName" label="Buscar por nombre" clearable>
                 <template v-slot:append>
                   <q-icon name="search" />
                 </template>
               </q-input>
             </div>
 
-            <div class="col-12 col-sm-4 col-md-3">
-              <q-select dense outlined class="text-left" v-model="filterDate" :options="dateOptions" label="Filtrar por fecha">
+            <div class="col-12 col-sm-6 col-md-5">
+              <q-select outlined class="text-left" v-model="filterDate" :options="dateOptions" label="Filtrar por fecha">
                 <img class="bf-ui-icon bf-ui-icon--filter"
                   src="https://http2.mlstatic.com/frontend-assets/bf-ui-library/3.5.0/assets/icons/filter.svg" style="
                     width: 30px;
