@@ -1,7 +1,7 @@
 <template>
   <q-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)">
     <q-card style="width: 700px; max-width: 95vw">
-      <q-card-section class="row items-center q-pb-sm">
+      <q-card-section class="row items-center text-white q-pb-md" :class="$q.dark.isActive ? 'bg-dark' : 'bg-primary'">
         <div class="text-h6 text-weight-bold">Historial del Ticket #{{ ticketId }}</div>
         <q-space />
         <q-btn icon="close" flat round dense @click="$emit('update:modelValue', false)" />
