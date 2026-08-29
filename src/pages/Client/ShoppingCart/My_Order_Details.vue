@@ -214,7 +214,11 @@
               style="border-radius: 8px"
               :disable="selectedPurchase.status === 'completed'"
               @click="viewReference(selectedPurchase)"
-            />
+            >
+<q-tooltip v-if="selectedPurchase.status === 'completed'" class="bg-warning text-dark text-body2">
+  La transacción ya fue completada. La referencia de pago ya no está disponible.
+</q-tooltip>
+            </q-btn>
             <div v-else-if="selectedPurchase.payment_method === 'cash' && selectedPurchase.approval_status === 'pending_approval'" class="text-caption text-grey q-mt-md text-center">
               La referencia de pago estará disponible cuando el artista acepte tu solicitud.
             </div>
