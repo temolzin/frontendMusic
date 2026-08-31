@@ -18,24 +18,23 @@
             @update:model-value="(v) => setExpanded(mod.key, v)"
           >
             <template v-slot:header>
-              <q-item-section avatar class="q-pr-sm">
+              <div class="row no-wrap items-start full-width q-gutter-sm">
                 <q-checkbox
+                  class="q-pt-xs"
                   :model-value="mod.checkedAll"
                   :indeterminate="mod.indeterminate"
                   color="primary"
                   @update:model-value="setModule(mod, $event)"
                 />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-weight-medium">
-                  <q-icon :name="mod.icon" size="sm" class="q-mr-xs text-primary" />
-                  {{ mod.label }}
-                </q-item-label>
-                <q-item-label caption>
-                  {{ mod.checkedCount }}/{{ mod.permissions.length }} seleccionados
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
+                <div class="col q-pt-xs">
+                  <div class="text-weight-medium text-body2">
+                    <q-icon :name="mod.icon" size="sm" class="q-mr-xs text-primary" />
+                    {{ mod.label }}
+                  </div>
+                  <div class="text-caption text-grey-7">
+                    {{ mod.checkedCount }}/{{ mod.permissions.length }} seleccionados
+                  </div>
+                </div>
                 <q-btn
                   flat
                   round
@@ -49,7 +48,7 @@
                     {{ expandedMap[mod.key] ? 'Ocultar permisos' : 'Ver permisos' }}
                   </q-tooltip>
                 </q-btn>
-              </q-item-section>
+              </div>
             </template>
 
             <q-separator />
