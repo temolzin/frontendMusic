@@ -168,7 +168,7 @@ export default {
       return this.modelValue.includes(id);
     },
     setExpanded(key, value) {
-      this.$set(this.expandedMap, key, value);
+      this.expandedMap[key] = value;
     },
     setModule(mod, value) {
       const ids = mod.permissions.map((p) => p.permission_id);
