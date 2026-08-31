@@ -10,61 +10,58 @@
         class="col-12 col-sm-6 col-md-4"
       >
         <q-card flat bordered class="full-height">
-          <q-expansion-item
-            :key="mod.key"
-            :model-value="expandedMap[mod.key]"
-            expand-icon="none"
-            collapse-icon="none"
-            @update:model-value="(v) => setExpanded(mod.key, v)"
-          >
-            <template v-slot:header>
-              <div class="row no-wrap items-start full-width q-gutter-sm">
-                <q-checkbox
-                  class="q-pt-xs"
-                  :model-value="mod.checkedAll"
-                  :indeterminate="mod.indeterminate"
-                  color="primary"
-                  @update:model-value="setModule(mod, $event)"
-                />
-                <div class="col q-pt-xs">
-                  <div class="text-weight-medium text-body2">
-                    <q-icon :name="mod.icon" size="sm" class="q-mr-xs text-primary" />
-                    {{ mod.label }}
-                  </div>
-                  <div class="text-caption text-grey-7">
-                    {{ mod.checkedCount }}/{{ mod.permissions.length }} seleccionados
-                  </div>
-                </div>
-                <q-btn
-                  flat
-                  round
-                  dense
-                  size="sm"
-                  color="primary"
-                  :icon="expandedMap[mod.key] ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-                  @click="setExpanded(mod.key, !expandedMap[mod.key])"
-                >
-                  <q-tooltip>
-                    {{ expandedMap[mod.key] ? 'Ocultar permisos' : 'Ver permisos' }}
-                  </q-tooltip>
-                </q-btn>
+          <div class="row no-wrap items-start full-width q-pa-sm q-gutter-sm">
+            <q-checkbox
+              class="q-pt-xs"
+              :model-value="mod.checkedAll"
+              :indeterminate="mod.indeterminate"
+              color="primary"
+              @update:model-value="setModule(mod, $event)"
+            />
+            <div class="col q-pt-xs">
+              <div class="text-weight-medium text-body2">
+                <q-icon :name="mod.icon" size="sm" class="q-mr-xs text-primary" />
+                {{ mod.label }}
               </div>
-            </template>
+              <div class="text-caption text-grey-7">
+                {{ mod.checkedCount }}/{{ mod.permissions.length }} seleccionados
+              </div>
+            </div>
+            <q-btn
+              flat
+              round
+              dense
+              size="sm"
+              color="primary"
+              :icon="expandedMap[mod.key] ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+              @click.stop="setExpanded(mod.key, !expandedMap[mod.key])"
+            >
+              <q-tooltip>
+                {{ expandedMap[mod.key] ? 'Ocultar permisos' : 'Ver permisos' }}
+              </q-tooltip>
+            </q-btn>
+          </div>
 
-            <q-separator />
-            <q-card-section class="q-pt-xs q-pb-xs" style="max-height: 220px; overflow-y: auto">
-              <q-checkbox
-                v-for="perm in mod.permissions"
-                :key="perm.permission_id"
-                :model-value="isSelected(perm.permission_id)"
-                dense
-                color="primary"
-                :label="perm.name"
-                class="q-my-xs"
-                @update:model-value="togglePermission(perm)"
-              />
-            </q-card-section>
-          </q-expansion-item>
+          <q-separator />
+          <q-slide-transition>
+            <div v-show="expandedMap[mod.key]">
+              <q-card-section
+                class="q-pt-xs q-pb-xs"
+                style="max-height: 220px; overflow-y: auto"
+              >
+                <q-checkbox
+                  v-for="perm in mod.permissions"
+                  :key="perm.permission_id"
+                  :model-value="isSelected(perm.permission_id)"
+                  dense
+                  color="primary"
+                  :label="perm.name"
+                  class="q-my-xs"
+                  @update:model-value="togglePermission(perm)"
+                />
+              </q-card-section>
+            </div>
+          </q-slide-transition>
         </q-card>
       </div>
     </div>
