@@ -12,10 +12,10 @@
         <q-card flat bordered class="full-height">
           <q-expansion-item
             :key="mod.key"
-            :default-opened="false"
-            :title="mod.label"
-            :caption="mod.checkedCount + '/' + mod.permissions.length + ' seleccionados'"
-            header-class="q-py-sm"
+            :model-value="expandedMap[mod.key]"
+            expand-icon="none"
+            collapse-icon="none"
+            @update:model-value="(v) => setExpanded(mod.key, v)"
           >
             <template v-slot:header>
               <q-item-section avatar class="q-pr-sm">
@@ -34,6 +34,21 @@
                 <q-item-label caption>
                   {{ mod.checkedCount }}/{{ mod.permissions.length }} seleccionados
                 </q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-btn
+                  flat
+                  round
+                  dense
+                  size="sm"
+                  color="primary"
+                  :icon="expandedMap[mod.key] ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+                  @click="setExpanded(mod.key, !expandedMap[mod.key])"
+                >
+                  <q-tooltip>
+                    {{ expandedMap[mod.key] ? 'Ocultar permisos' : 'Ver permisos' }}
+                  </q-tooltip>
+                </q-btn>
               </q-item-section>
             </template>
 
@@ -76,6 +91,11 @@ export default {
     permissions: { type: Array, default: () => [] },
   },
   emits: ['update:modelValue'],
+  data() {
+    return {
+      expandedMap: {},
+    };
+  },
   computed: {
     modules() {
       const list = this.permissions || [];
@@ -150,6 +170,9 @@ export default {
   methods: {
     isSelected(id) {
       return this.modelValue.includes(id);
+    },
+    setExpanded(key, value) {
+      this.$set(this.expandedMap, key, value);
     },
     setModule(mod, value) {
       const ids = mod.permissions.map((p) => p.permission_id);
