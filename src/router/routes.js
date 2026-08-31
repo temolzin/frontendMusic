@@ -66,7 +66,6 @@ const routes = [
         component: ResetPassword,
         meta: {
           title: "Nueva Contraseña",
-          middleware: [Middlewares.guest],
           requireLogin: false,
         },
       },
