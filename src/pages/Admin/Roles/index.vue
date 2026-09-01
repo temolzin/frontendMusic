@@ -147,41 +147,10 @@
                 ]"
               />
 
-              <div>
-                <q-select
-                  v-model="form.selection"
-                  for="permission"
-                  :option-value="
-                    (opt) =>
-                      Object(opt) === opt && 'permission_id' in opt
-                        ? opt.permission_id
-                        : null
-                  "
-                  :option-label="
-                    (opt) =>
-                      Object(opt) === opt && 'name' in opt
-                        ? opt.name
-                        : 'Seleccionar'
-                  "
-                  emit-value
-                  map-options
-                  multiple
-                  options-dense
-                  use-chips
-                  filled
-                  hint="Selecciona los permisos que tendrá el rol"
-                  color="primary"
-                  :loading="false"
-                  clear-icon
-                  counter
-                  :rules="[
-                    (val) =>
-                      val.length > 1 ||
-                      'Por favor selecciona al menos 2 opciones',
-                  ]"
-                  :options="permissions"
-                />
-              </div>
+              <permission-modules
+                v-model="form.selection"
+                :permissions="permissions"
+              />
 
               <q-card-actions align="right" class="text-primary">
                 <q-btn
@@ -227,37 +196,9 @@
                 label="Descripción del rol"
                 :rules="[(val) => (val && val.length >= 10) || 'Mín. 10 caracteres']"
               />
-              <q-select
-                lazy-rules
+              <permission-modules
                 v-model="form.selection"
-                for="permission"
-                :option-value="
-                  (opt) =>
-                    Object(opt) === opt && 'permission_id' in opt
-                      ? opt.permission_id
-                      : null
-                "
-                :option-label="
-                  (opt) =>
-                    Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'
-                "
-                emit-value
-                map-options
-                multiple
-                options-dense
-                use-chips
-                filled
-                hint="Selecciona los permisos que tendrá el rol"
-                color="primary"
-                :loading="false"
-                clear-icon
-                counter
-                :rules="[
-                  (val) =>
-                    (val && val.length > 1) ||
-                    'Por favor selecciona al menos 2 permisos',
-                ]"
-                :options="permissions"
+                :permissions="permissions"
               />
               <q-card-actions align="right" class="text-primary">
                 <q-btn flat label="Cancelar" v-close-popup @click="onReset" />
@@ -273,6 +214,7 @@
 
 <script>
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
+import PermissionModules from "src/components/admin/PermissionModules.vue";
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
@@ -320,7 +262,7 @@ const columns = [
 let rows = [];
 
 export default {
-  components: { PageBreadcrumbs },
+  components: { PageBreadcrumbs, PermissionModules },
   data() {
     return {
       loading: true,
