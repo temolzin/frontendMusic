@@ -1,52 +1,48 @@
 <template>
   <section class="system-comments q-py-lg" :class="mode ? 'bg-dark-4' : 'bg-grey-3'">
-    <div class="comments-header q-mx-auto">
-      <div>
-        <div
-          class="text-subtitle1 text-primary text-weight-medium"
-          style="letter-spacing: 2px"
-        >
-          LA OPINIÓN DE NUESTROS
-        </div>
-        <div
-          class="text-h5 text-weight-bolder q-mt-none"
-          :class="mode ? 'text-white' : 'text-dark'"
-        >
-          USUARIOS
-        </div>
-      </div>
+    <div class="text-center col-12 q-mt-lg q-mb-none">
+      <h6 class="q-mt-xl q-mb-sm" style="letter-spacing: 3px">
+        <small class="text-primary">LA OPINIÓN DE NUESTROS</small>
+      </h6>
+      <h4
+        class="q-mt-none text-weight-bolder q-mb-sm"
+        :class="mode ? 'text-white' : ''"
+        style="letter-spacing: 3px"
+      >
+        USUARIOS
+      </h4>
+    </div>
 
-      <div class="row items-center q-gutter-sm no-wrap header-controls">
-        <div class="btn-group" :class="mode ? 'bg-grey-8' : 'bg-white'">
-          <button
-            v-for="option in filterOptions"
-            :key="option.value"
-            type="button"
-            class="pill"
-            :class="[
-              'cursor-pointer non-selectable',
-              selectedFilter === option.value
-                ? 'pill--active'
-                : mode
-                ? 'pill--idle-dark'
-                : 'pill--idle-light',
-            ]"
-            @click="setFilter(option.value)"
-          >
-            {{ option.label }}
-          </button>
-        </div>
+    <div class="row items-center justify-center q-gutter-sm q-mt-lg no-wrap header-controls">
+      <div class="btn-group" :class="mode ? 'bg-grey-8' : 'bg-white'">
         <button
+          v-for="option in filterOptions"
+          :key="option.value"
           type="button"
-          class="pill pill--comment cursor-pointer non-selectable"
-          @click="openDialog"
+          class="pill"
+          :class="[
+            'cursor-pointer non-selectable',
+            selectedFilter === option.value
+              ? 'pill--active'
+              : mode
+              ? 'pill--idle-dark'
+              : 'pill--idle-light',
+          ]"
+          @click="setFilter(option.value)"
         >
-          <i class="q-icon notranslate material-icons" aria-hidden="true">
-            edit
-          </i>
-          <span>Comentar</span>
+          {{ option.label }}
         </button>
       </div>
+      <button
+        type="button"
+        class="pill pill--comment cursor-pointer non-selectable"
+        @click="openDialog"
+      >
+        <i class="q-icon notranslate material-icons" aria-hidden="true">
+          edit
+        </i>
+        <span>Comentar</span>
+      </button>
     </div>
 
     <div
@@ -423,15 +419,6 @@ export default {
 </script>
 
 <style scoped>
-.comments-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  max-width: 1120px;
-  padding: 0 16px;
-}
 .header-controls {
   flex-shrink: 0;
 }
@@ -472,12 +459,6 @@ export default {
 }
 .pill--comment i {
   font-size: 18px;
-}
-@media (max-width: 640px) {
-  .comments-header {
-    justify-content: center;
-    text-align: center;
-  }
 }
 .carousel-window {
   position: relative;
