@@ -131,6 +131,8 @@
   </div>
   <!-- Fin de Últimos Registrados -->
 
+  <system-comments />
+
   <!-- Inicio de aviso -->
   <div class="row justify-center">
     <div class="col-12 col-xs-12 col-sm-6 col-md-9 q-ma-md">
@@ -208,9 +210,13 @@
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
+import SystemComments from "src/components/SystemComments/SystemComments";
 
 let $q;
 export default {
+  components: {
+    SystemComments,
+  },
   data() {
     return {
       options: ["Google", "Facebook", "Twitter", "Apple", "Oracle"],
