@@ -17,9 +17,9 @@
         :columns="columns"
         row-key="name"
         no-data-label="Sin registros"
-        no-results-label="Ningún registro coincidente"
+        no-results-label="Ningún registro coincide"
         :rows-per-page-label="'Artistas por página:'"
-        :rows-per-page-options="[6, 12 , 18 , 24, 30]"
+        :rows-per-page-options="[10, 20, 30, 0]"
       >
       <template v-slot:top class="template_filters">
 
@@ -55,7 +55,7 @@
               dense
               debounce="300"
               v-model="filterName"
-              placeholder="Buscar por nombre... "
+              placeholder="Buscar en artistas..."
             >
               <template v-slot:append>
                 <q-icon name="search" />
@@ -68,10 +68,21 @@
         <template v-slot:item="props">
           <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
             
-            <q-card class="my-card q-ma-sm" v-if="skeleton == false">
+            <q-skeleton class="q-ma-sm" height="350px" v-show="skeleton" />
+            
+            <q-card class="my-card q-ma-sm" v-show="!skeleton">
               <q-img :src="props.row.image" class="imageArtist" />
 
               <q-card-section>
+                <q-btn
+                  fab
+                  color="primary"
+                  icon="fas fa-solid fa-cart-plus"
+                  class="absolute"
+                  style="top: 0; right: 12px; transform: translateY(-50%)"
+                  v-on:click="onSendOrder(props.row)"
+                />
+
                 <div class="row no-wrap items-center">
                   <div
                     class="col text-h6 ellipsis search text-weight-regular"
@@ -88,9 +99,13 @@
                 </div>
 
                 <q-rating
-                  v-model="starts"
+                  :model-value="parseFloat(props.row?.ratings_avg_rating || 0)"
                   :max="5"
                   size="32px"
+                  color="yellow"
+                  icon="star_border"
+                  icon-selected="star"
+                  icon-half="star_half"
                   no-dimming
                   readonly
                 />
@@ -98,10 +113,23 @@
 
               <q-card-section class="q-pt-none">
                 <div class="text-subtitle1">
-                  <span class="text-h5 text-primary text-weight-bold">
-                    ${{ props.row.price_hour }}.00
-                  </span>
-                  <small> pesos por hora</small>
+                  <template v-if="props.row.offers && props.row.offers.length > 0">
+                    <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase">
+                      {{ formatDiscount(props.row.offers[0].discount_percentage) }}% de descuento
+                    </q-badge><br/>
+                    <span class="text-h5 text-positive text-weight-bold">
+                      {{ formatCurrency(props.row.price_hour * (1 - props.row.offers[0].discount_percentage / 100)) }}
+                    </span>
+                    <small style="text-decoration: line-through" class="text-red q-ml-xs">
+                      {{ formatCurrency(props.row.price_hour) }}
+                    </small>
+                  </template>
+                  <template v-else>
+                    <span class="text-h5 text-primary text-weight-bold">
+                      {{ formatCurrency(props.row.price_hour) }}
+                    </span>
+                  </template>
+                  <small> por hora</small>
                 </div>
                 <div class="text-caption text-grey ellipsis">
                   {{ props.row.history }}
@@ -109,12 +137,21 @@
               </q-card-section>
 
               <q-card-section class="q-pt-none">
-                <div class="text-caption text-black ellipsis">
+                <div class="text-caption ">
                   {{ formatGenres(props.row.musical_genders) }}
                 </div>
               </q-card-section>
 
               <q-separator />
+              <q-card-actions align="right">
+                <q-btn
+                  flat
+                  round
+                  color="primary"
+                  icon="share"
+                  @click="copyArtistLink(props.row.slug, props.row.musical_genders[0].slug)"
+                />
+              </q-card-actions>
             </q-card>
           </div>
         </template>
@@ -138,9 +175,13 @@
 </template>
   
   <script>
-  import { useQuasar, QSelect } from "quasar";
+  import { useQuasar, QSelect, QSpinnerGears, QSpinnerAudio } from "quasar";
   import { mapActions, mapGetters } from "vuex";
+  import { getDiscountBadgeColor } from "src/utils/badgeStyles";
   import { ref } from "vue";
+  import { notifyError, notifySuccess, notifyInfo } from "src/utils/notify";
+  import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
+  import { formatCurrency } from "src/utils/moneyFormat";
 
   let $q;
 
@@ -164,8 +205,13 @@
         }),
       };
     },
-    created() {
-      this.getArtistss();
+    watch: {
+      '$route.query': {
+        immediate: true,
+        handler() {
+          this.getArtistss();
+        }
+      }
     },
     computed: {
       ...mapGetters("artistList", ["stateArtistList"]),
@@ -174,7 +220,10 @@
       },
     },
     methods: {
+      getDiscountBadgeColor,
+      formatCurrency,
       ...mapActions("artistList", ["getArtists"]),
+      ...mapActions("shoppingCard", ["create_order"]),
       formatGenres(genres) {
       return genres.map(genre => genre.name).join(', ');
     },
@@ -206,7 +255,11 @@
       filteredData() {
         let filtered = this.stateArtistList;
 
-        if (this.filterName ) {
+        if (this.$route.query.offers === 'true') {
+          filtered = filtered.filter(a => a.offers && a.offers.length > 0);
+        }
+
+        if (this.filterName) {
           filtered = filtered.filter(item =>
             item.name.toLowerCase().includes(this.filterName.toLowerCase())
           );
@@ -240,6 +293,10 @@
           },
         });
       },
+      copyArtistLink(artistSlug, genreSlug) {
+        const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
+        openArtistLinkShareSheet({ q: this.$q, link });
+      },
       async getArtistss() {
         try {
           await this.getArtists().then(() => {
@@ -247,14 +304,54 @@
         });
         } catch (err) {
           if (err.response.data.message) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.message,
-            });
+            notifyError(err.response.data.message);
           }
         }
       },
-      
+      formatDiscount(value) {
+        const num = parseFloat(value);
+        return num % 1 === 0 ? parseInt(num) : num;
+      },
+      onSendOrder(artist) {
+        notifyInfo("Agregando al carrito...", { spinner: QSpinnerGears, timeout: 200 });
+        const formData = new FormData();
+        formData.append("service_id", artist.id);
+        formData.append("name", artist.name);
+        const offer = artist.offers && artist.offers.length > 0 ? artist.offers[0] : null;
+        const finalPrice = Math.round((offer ? artist.price_hour * (1 - offer.discount_percentage / 100) : artist.price_hour) * 100) / 100;
+        formData.append("price", finalPrice);
+        formData.append("order_date_start", this.printDateStart());
+        formData.append("order_date_finish", this.printDateFinish());
+        this.create_order(formData).then(() => {
+          notifySuccess("Artista agregado", { spinner: QSpinnerAudio, timeout: 1000 });
+        }).catch((err) => {
+          notifyError(err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo agregar el artista al carrito", { timeout: 3000 });
+        });
+      },
+      printDateStart: function () {
+        return this.formatCartDate(new Date());
+      },
+      printDateFinish: function () {
+        var d = new Date();
+        return this.sumarDias(d, 2);
+      },
+      sumarDias(fecha, dias) {
+        fecha.setDate(fecha.getDate() + dias);
+        return this.formatCartDate(fecha);
+      },
+      padCartDatePart(value) {
+        return String(value).padStart(2, "0");
+      },
+      formatCartDate(date) {
+        const year = date.getFullYear();
+        const month = this.padCartDatePart(date.getMonth() + 1);
+        const day = this.padCartDatePart(date.getDate());
+        const hours = this.padCartDatePart(date.getHours());
+        const minutes = this.padCartDatePart(date.getMinutes());
+        const seconds = this.padCartDatePart(date.getSeconds());
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      },
     },
     mounted() {
       $q = useQuasar();

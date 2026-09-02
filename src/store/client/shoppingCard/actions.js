@@ -14,6 +14,10 @@ export const getCountListShoppingCard = async ({ commit }) => {
   });
 };
 
+export const resetShoppingCard = ({ commit }) => {
+  commit("resetShoppingCard");
+};
+
 export const create_order = async ({ dispatch }, payload) => {
   await api.post("/api/cliente/shopping_card/create", payload).then((response) => {
       dispatch("getListShoppingCard");
@@ -32,9 +36,34 @@ export const deleteItembyId= async ({ dispatch }, artist_id) => {
   });
 };
 
-export const createPayment= async ({ dispatch },  payload) => {
-  await api.post("/api/process-payment", payload).then((response) => {
+export const createPayment = async ({ dispatch }, payload) => {
+  try {
+    const response = await api.post('/api/process-payment', payload);
     return response;
-  });
+  } catch (err) {
+    if (err.response && err.response.data) {
+      const customError = new Error(err.response.data.error || err.response.data.message || "Error en el servidor");
+      customError.response = err.response; 
+      throw customError;
+    }
+    throw err;
+  }
+};
+
+export const clearCart = async ({ state, dispatch }) => {
+  try {
+    const shoppingCardDetail = state.listShopingCard?.[0]?.shopping_card_detail || [];
+    
+    for (const item of shoppingCardDetail) {
+      if (item.artist_id) {
+        await api.delete(`/api/cliente/shopping_card/deleteItemShoppingCardDetails/${item.artist_id}`);
+      }
+    }
+    
+    await dispatch("getListShoppingCard");
+  } catch (error) {
+    console.error("Error al limpiar el carrito:", error);
+    throw error;
+  }
 };
 

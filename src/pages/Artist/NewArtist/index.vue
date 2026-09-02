@@ -1,6 +1,22 @@
 <template>
+  <div class="q-pa-md q-pb-none">
+    <PageBreadcrumbs :items="[{ label: 'Perfil de Artista', icon: 'fas fa-solid fa-microphone' }]" />
+  </div>
   <div
-    v-if="showInfo == 'true'"
+    v-if="showInfo == 'true' && isPendingReview"
+    class="col-12 flex flex-center q-pa-xl"
+  >
+    <q-card flat bordered class="q-pa-lg text-center" style="max-width: 480px">
+      <q-icon name="hourglass_top" size="3em" color="warning" />
+      <p class="text-h6 q-mt-md q-mb-sm">Tu solicitud está en revisión</p>
+      <p class="text-grey-7">
+        Vibeer está revisando tus datos. En cuanto sea aprobada, tu perfil será visible en la tienda.
+      </p>
+    </q-card>
+  </div>
+
+  <div
+    v-if="showInfo == 'true' && !isPendingReview"
     v-bind:class="{
       'justify-center': $q.screen.md || $q.screen.sm || $q.screen.xs,
     }"
@@ -21,63 +37,84 @@
             @reset="onReset"
             class="q-gutter-md q-px-sm q-py-sm"
           >
+            <q-banner
+              v-if="latestRequest && latestRequest.approval_status === 'rejected'"
+              class="bg-negative text-white q-mb-md"
+              rounded
+            >
+              Tu solicitud anterior fue rechazada{{ latestRequest.rejection_reason ? ': ' + latestRequest.rejection_reason : '.' }} Corrige tus datos y vuelve a enviarla.
+            </q-banner>
             <p class="text-center q-mb-lg text-weight-light text-h3">
               Registra a tu banda o a tí como solista
             </p>
             <p class="text-center q-mb-sm text-weight-bold">
               Disfruta la nueva experiencia de contratación de servicios
-              musicales rapida y segura.
+              musicales rápida y segura.
             </p>
 
             <div class="row content-center">
               <q-input
                 v-model="formCreate.name"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Nombre del grupo o artistico"
+                label="Nombre del grupo o del artista"
                 hint="Nombre completo del grupo o del artista"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu nombre artístico o del grupo',
                 ]"
               />
               <q-input
                 v-model="formCreate.members"
                 class="col-12 col-sm-5 q-ma-sm"
                 label="Integrantes"
-                hint="Numero de integrantes"
+                hint="Número de integrantes"
                 type="number"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Please type something',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el número de integrantes',
                 ]"
               />
 
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="higth: 50px"
+                autogrow
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
-                hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
+                hint="Describe la historia de tu grupo o tú como solista. Esto se mostrará al usuario."
                 lazy-rules
                 counter
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu historia',
                   (val) =>
                     (val && val.length < 250) ||
-                    'Exediste del maxímo de carácteres ',
+                    'Excediste el número máximo de caracteres',
                 ]"
               />
-              <q-input
-                v-model="formCreate.zone"
-                class="col-12 col-sm-10 q-ma-sm"
-                label="Zona donde te ubicas"
-                hint="Ingresa la colonia, municipio, estado donde te ubicas"
-                lazy-rules
-                :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
-                ]"
-              />
+              <div class="col-12 col-sm-10 q-ma-sm">
+                <q-input
+                  v-model="formCreate.zone"
+                  class="col-12 q-mb-sm"
+                  label="Zona donde te ubicas"
+                  hint="Ingresa la colonia, municipio, estado donde te ubicas"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
+                  ]"
+                />
+                <q-toggle
+                  v-model="googleMapsEnabled"
+                  label="Usar mapa para ubicación"
+                  color="primary"
+                  @click="onGoogleMapsToggle"
+                />
+                <div
+                  v-show="googleMapsEnabled"
+                  ref="mapContainer"
+                  class="q-mt-sm"
+                  style="width: 100%; height: 300px; border-radius: 8px;"
+                ></div>
+              </div>
               <q-input
                 v-model="formCreate.price_hour"
                 class="col-12 col-sm-5 q-ma-sm"
@@ -88,27 +125,39 @@
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor, ingresa un número válido',
                 ]"
               />
 
               <q-input
                 v-model="formCreate.extra_kilometre"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Precio por kilometro extra"
-                hint="Ingresa el precio extra por kilometro"
+                label="Precio por kilómetro extra"
+                hint="Ingresa el precio extra por kilómetro"
                 type="number"
                 lazy-rules
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor, ingresa número válido',
+                ]"
+              />
+
+              <q-input
+                v-model.number="formCreate.coverage_radius"
+                class="col-12 col-sm-5 q-ma-sm"
+                label="Radio de cobertura (km)"
+                hint="Distancia en km que cubres sin costo extra"
+                type="number"
+                lazy-rules
+                :rules="[
+                  (val) => val >= 0 || 'El radio debe ser 0 o mayor',
                 ]"
               />
 
               <div class="col-12 col-sm-12 col-md-12 q-pa-md">
                 <p class="q-mb-sm">
-                  Ingresa una foto del grupo o tu como solista
+                  Ingresa una foto del grupo o tú como solista
                 </p>
                 <small class="text-center q-mt-sm q-mb-sm">
                   Esta imagen será visualizada cuando las personas ingresen a tu
@@ -121,7 +170,7 @@
                   filled
                   class="q-mt-sm"
                   style="max-width: 200px"
-                  max-file-size="1000000"
+                  max-file-size="20971520"
                   counter
                   @rejected="onRejected"
                   lazy-rules
@@ -129,13 +178,13 @@
                   <template v-slot:prepend>
                     <q-icon name="attach_file" />
                   </template>
-                  <template v-slot:hint>Máximo 1MG</template>
+                  <template v-slot:hint>Máximo 20 MB</template>
                 </q-file>
               </div>
 
               <div class="col-11">
                 <p class="q-mb-sm">
-                  Selecciona los generos musicales a los que entras
+                  Selecciona los géneros musicales a los que perteneces
                 </p>
                 <small class="text-center q-mt-sm q-mb-sm">
                   Por medio de estas etiquetas, los usuarios también podrán
@@ -152,7 +201,7 @@
                     (opt) =>
                       Object(opt) === opt && 'name' in opt
                         ? opt.name
-                        : '- Null -'
+                        : 'Seleccionar'
                   "
                   emit-value
                   map-options
@@ -160,7 +209,7 @@
                   options-dense
                   use-chips
                   filled
-                  hint="Selecciona los generos musicales que perteneces"
+                  hint="Selecciona los géneros musicales a los que perteneces"
                   color="primary"
                   :loading="false"
                   clear-icon
@@ -168,14 +217,14 @@
                   :rules="[
                     (val) =>
                       val.length > 0 ||
-                      'Por favor selecciona al menos 1 opcion',
+                      'Por favor selecciona al menos 1 opción',
                   ]"
                   :options="musicalGenders"
                 />
               </div>
 
               <p class="text-center q-mb-sm text-weight-bold q-mt-lg col-12">
-                La siguiente información es acerca de manager para la
+                La siguiente información es acerca de tu manager para la
                 comunicación entre el cliente y él.
               </p>
 
@@ -195,7 +244,7 @@
                 hint="Ingresa el nombre completo del manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el nombre del manager',
                 ]"
               />
 
@@ -205,7 +254,7 @@
                 label="Teléfono del Manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, un número telefónico válido',
                 ]"
                 mask="## ## ## ## ##"
                 hint="Ingresa el teléfono del manager"
@@ -218,7 +267,7 @@
                 lazy-rules
                 type="email"
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el email del manager',
                 ]"
                 hint="Ingresa el correo frecuente del manager"
               />
@@ -236,7 +285,7 @@
                   filled
                   class="q-mt-sm"
                   style="max-width: 200px"
-                  max-file-size="1000000"
+                  max-file-size="20971520"
                   counter
                   @rejected="onRejected"
                   lazy-rules
@@ -244,10 +293,49 @@
                   <template v-slot:prepend>
                     <q-icon name="attach_file" />
                   </template>
-                  <template v-slot:hint>Máximo 1MG</template>
+                  <template v-slot:hint>Máximo 20MB</template>
                 </q-file>
               </div>
 
+              <div class="col-12 q-pa-sm">
+                <p class="q-mb-sm text-weight-bold">Redes Sociales</p>
+                <small>Agrega los links de tus redes sociales</small>
+                <div
+                  v-for="(red, index) in formCreate.social_media"
+                  :key="index"
+                  class="row q-mt-sm"
+                >
+                  <q-select
+                    v-model="formCreate.social_media[index].name"
+                    class="col-5 q-mr-sm"
+                    label="Red Social"
+                    :options="socialMediaOptions"
+                    dense
+                    filled
+                  />
+                  <q-input
+                    v-model="formCreate.social_media[index].url"
+                    class="col-6"
+                    label="Link"
+                    dense
+                  />
+                  <q-btn
+                    flat
+                    round
+                    icon="delete"
+                    color="red"
+                    @click="formCreate.social_media.splice(index, 1)"
+                  />
+                </div>
+                <q-btn
+                  flat
+                  icon="fas fa-plus"
+                  color="primary"
+                  label="Agregar red social"
+                  class="q-mt-sm"
+                  @click="formCreate.social_media.push({ name: '', url: '' })"
+                />
+              </div>
               <div class="q-pt-lg col-12">
                 <q-btn
                   class="full-width"
@@ -273,9 +361,24 @@
     </div>
   </div>
   <div v-if="showInfo == 'false'">
+    <q-banner
+      v-if="latestRequest && latestRequest.approval_status === 'pending_approval'"
+      class="bg-warning text-white"
+      rounded
+    >
+      Tu perfil está en revisión. No puedes editarlo hasta que sea aprobado.
+    </q-banner>
+    <q-banner
+      v-else-if="latestRequest && latestRequest.approval_status === 'rejected'"
+      class="bg-negative text-white"
+      rounded
+    >
+      Tu última edición fue rechazada{{ latestRequest.rejection_reason ? ': ' + latestRequest.rejection_reason : '.' }} Puedes corregirla y volver a enviarla.
+    </q-banner>
     <q-parallax
-      src="https://cdn.pixabay.com/photo/2017/04/10/16/55/live-music-2219036_960_720.jpg"
+      :src="artist.image || 'https://cdn.pixabay.com/photo/2017/04/10/16/55/live-music-2219036_960_720.jpg'"
       :height="430"
+      class="profile-header"
     >
       <div class="barra q-pa-lg">
         <div class="text-h3 text-white text-center title">
@@ -288,7 +391,7 @@
             outline
             align="middle"
             :color="musicalGender.color"
-            class="q-ma-sm q-mt-none"
+            class="q-ma-sm q-mt-none text-weight-medium text-uppercase"
           >
             {{ musicalGender.name }}
           </q-badge>
@@ -313,7 +416,7 @@
         <h3 :class="mode ? 'title-group-white q-mt-sm' : 'title-group q-mt-sm'">
           <small>Acerca de </small>{{ artist.name }}
         </h3>
-        <p class="info q-mt-lg">"{{ artist.history }}"</p>
+        <p class="info q-mt-lg">{{ artist.history }}</p>
       </div>
     </div>
 
@@ -321,7 +424,7 @@
 
     <div class="row tipogra">
       <div
-        :class="mode ? 'title-group-white' : 'title-group'"
+        :class="mode ? 'title-group-white text-white' : 'title-group'"
         class="col-12 text-center"
       >
         <h3 class="q-mb-md">Información de Contratación</h3>
@@ -330,14 +433,35 @@
         </p>
         <p class="info q-mb-sm q-mt-md">Zona: {{ artist.zone }}</p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por hora: ${{ artist.price_hour }} pesos.
+          Precio por hora: {{ formatCurrency(artist.price_hour) }}.
         </p>
         <p class="info q-mb-sm q-mt-md">
-          Precio por kilometro extra: ${{ artist.extra_kilometre }} pesos.
+          Precio por kilómetro extra: {{ formatCurrency(artist.extra_kilometre) }}.
         </p>
+        <div
+          v-if="artist.social_media && artist.social_media.length > 0"
+          class="q-mt-lg"
+        >
+          <p class="info q-mb-md text-weight-bold">
+            Redes Sociales
+          </p>
+
+          <div class="social-container">
+            <a
+              v-for="(red, index) in artist.social_media"
+              :key="index"
+              :href="red.url"
+              target="_blank"
+              class="social-link"
+            >
+              <q-icon :name="socialIconMap[red.name] || 'fas fa-link'" size="20px" class="q-mr-xs" />
+              {{ red.name }}
+            </a>
+          </div>
+        </div>
       </div>
       <div
-        :class="mode ? 'title-group-white' : 'title-group'"
+        :class="mode ? 'title-group-white text-white' : 'title-group'"
         class="col-12 text-center"
       >
         <h3 class="q-mb-md">Información del manager</h3>
@@ -356,7 +480,11 @@
           <a :href="linkCorreo"> {{ artist.manager.email }}</a>
         </p>
       </div>
-      <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-page-sticky
+        v-if="!isPendingReview"
+        position="bottom-right"
+        :offset="[18, 18]"
+      >
         <q-btn fab icon="edit" color="accent" @click="showInfoArtist" />
       </q-page-sticky>
     </div>
@@ -385,60 +513,74 @@
             class="q-gutter-md q-px-sm q-py-sm"
           >
             <p class="text-center q-mb-lg text-weight-light text-h3">
-              Editar '{{ artist.name }}'
+              Editar Perfil
             </p>
             <p class="text-center q-mb-sm text-weight-bold">
               Disfruta la nueva experiencia de contratación de servicios
-              musicales rapida y segura.
+              musicales rápida y segura.
             </p>
 
             <div class="row content-center">
               <q-input
                 v-model="formCreate.name"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Nombre del grupo o artistico"
+                label="Nombre del grupo o artista"
                 hint="Nombre completo del grupo o del artista"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu nombre artístico o del grupo',
                 ]"
               />
               <q-input
                 v-model="formCreate.members"
                 class="col-12 col-sm-5 q-ma-sm"
                 label="Integrantes"
-                hint="Numero de integrantes"
+                hint="Número de integrantes"
                 type="number"
                 lazy-rules
-                :rules="[(val) => (val && val > 0) || 'Por favor ingresa algo']"
+                :rules="[(val) => (val && val > 0) || 'Por favor, ingresa el número de integrantes']"
               />
 
               <q-input
                 v-model="formCreate.history"
                 type="textarea"
-                style="higth: 50px"
+                autogrow
                 class="col-12 col-sm-10 q-ma-sm"
                 label="Historia del grupo"
-                hint="Describe las historia de tu grupo o tu como solista, esto se le muestra al usuario "
+                hint="Describe la historia de tu grupo o tú como solista, esto se le muestra al usuario"
                 lazy-rules
                 counter
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa tu historia',
                   (val) =>
                     (val && val.length < 250) ||
-                    'Exediste del maxímo de carácteres ',
+                    'Excediste el número máximo de caracteres',
                 ]"
               />
-              <q-input
-                v-model="formCreate.zone"
-                class="col-12 col-sm-10 q-ma-sm"
-                label="Zona donde te ubicas"
-                hint="Ingresa la colonia, municipio, estado donde te ubicas"
-                lazy-rules
-                :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
-                ]"
-              />
+              <div class="col-12 col-sm-10 q-ma-sm">
+                <q-input
+                  v-model="formCreate.zone"
+                  class="col-12 q-mb-sm"
+                  label="Zona donde te ubicas"
+                  hint="Ingresa la colonia, municipio, estado donde te ubicas"
+                  lazy-rules
+                  :rules="[
+                    (val) => (val && val.length > 0) || 'Por favor, ingresa la zona donde te ubicas',
+                  ]"
+                />
+                <q-toggle
+                  v-model="googleMapsEnabled"
+                  label="Usar mapa para ubicación"
+                  color="primary"
+                  @click="onGoogleMapsToggle"
+                />
+                <div
+                  v-show="googleMapsEnabled"
+                  ref="mapContainer"
+                  class="q-mt-sm"
+                  style="width: 100%; height: 300px; border-radius: 8px;"
+                ></div>
+              </div>
               <q-input
                 v-model="formCreate.price_hour"
                 class="col-12 col-sm-5 q-ma-sm"
@@ -449,21 +591,33 @@
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor ingresa un número válido',
                 ]"
               />
 
               <q-input
                 v-model="formCreate.extra_kilometre"
                 class="col-12 col-sm-5 q-ma-sm"
-                label="Precio por kilometro extra"
-                hint="Ingresa el precio extra por kilometro"
+                label="Precio por kilómetro extra"
+                hint="Ingresa el precio extra por kilómetro"
                 type="number"
                 lazy-rules
                 :rules="[
                   (val) =>
                     (val && val.length > 0) ||
-                    'Por favor ingresa un dato valido',
+                    'Por favor ingresa un número válido',
+                ]"
+              />
+
+              <q-input
+                v-model.number="formCreate.coverage_radius"
+                class="col-12 col-sm-5 q-ma-sm"
+                label="Radio de cobertura (km)"
+                hint="Distancia en km que cubres sin costo extra"
+                type="number"
+                lazy-rules
+                :rules="[
+                  (val) => val >= 0 || 'El radio debe ser 0 o mayor',
                 ]"
               />
               <div class="col-12 col-sm-12 col-md-12 q-pa-md">
@@ -479,7 +633,7 @@
                   filled
                   class="q-mt-sm"
                   style="max-width: 200px"
-                  max-file-size="1000000"
+                  max-file-size="20971520"
                   counter
                   @rejected="onRejectedArtists"
                   lazy-rules
@@ -487,12 +641,12 @@
                   <template v-slot:prepend>
                     <q-icon name="attach_file" />
                   </template>
-                  <template v-slot:hint>Máximo 1MG</template>
+                  <template v-slot:hint>Máximo 20 MB</template>
                 </q-file>
               </div>
               <div class="col-11">
                 <p class="q-mb-sm">
-                  Selecciona los generos musicales a los que entras
+                  Selecciona los géneros musicales a los que perteneces
                 </p>
                 <small class="text-center q-mt-sm q-mb-sm">
                   Por medio de estas etiquetas, los usuarios también podrán
@@ -509,7 +663,7 @@
                     (opt) =>
                       Object(opt) === opt && 'name' in opt
                         ? opt.name
-                        : '- Null -'
+                        : 'Seleccionar'
                   "
                   emit-value
                   map-options
@@ -517,7 +671,7 @@
                   options-dense
                   use-chips
                   filled
-                  hint="Selecciona los generos musicales que perteneces"
+                  hint="Selecciona los géneros musicales a los que perteneces"
                   :color="mode ? 'info' : 'primary'"
                   :loading="false"
                   clear-icon
@@ -525,7 +679,7 @@
                   :rules="[
                     (val) =>
                       val.length > 0 ||
-                      'Por favor selecciona al menos 1 opcion',
+                      'Por favor selecciona al menos 1 opción',
                   ]"
                   :options="musicalGenders"
                 />
@@ -552,7 +706,7 @@
                 hint="Ingresa el nombre completo del manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el nombre del manager',
                 ]"
               />
 
@@ -562,7 +716,7 @@
                 label="Teléfono del Manager"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el número telefónico del manager',
                 ]"
                 mask="## ## ## ## ##"
                 hint="Ingresa el teléfono del manager"
@@ -575,7 +729,7 @@
                 lazy-rules
                 type="email"
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Por favor ingresa algo',
+                  (val) => (val && val.length > 0) || 'Por favor, ingresa el email del manager',
                 ]"
                 hint="Ingresa el correo frecuente del manager"
               />
@@ -592,7 +746,7 @@
                   filled
                   class="q-mt-sm"
                   style="max-width: 200px"
-                  max-file-size="1000000"
+                  max-file-size="20971520"
                   counter
                   @rejected="onRejected"
                   lazy-rules
@@ -600,19 +754,60 @@
                   <template v-slot:prepend>
                     <q-icon name="attach_file" />
                   </template>
-                  <template v-slot:hint>Máximo 1MG</template>
+                  <template v-slot:hint>Máximo 20 MB</template>
                 </q-file>
               </div>
               <p></p>
+              <div class="col-12 q-pa-sm">
+                <p class="q-mb-sm text-weight-bold">Redes Sociales</p>
+                <small>Agrega los links de tus redes sociales</small>
+                <div
+                  v-for="(red, index) in formCreate.social_media"
+                  :key="index"
+                  class="row q-mt-sm"
+                >
+                  <q-select
+                    v-model="formCreate.social_media[index].name"
+                    class="col-5 q-mr-sm"
+                    label="Nombre"
+                    :options="socialMediaOptions"
+                    dense
+                    filled
+                  />
+                  <q-input
+                    v-model="formCreate.social_media[index].url"
+                    class="col-6"
+                    label="Link"
+                    dense
+                  />
+                  <q-btn
+                    flat
+                    round
+                    icon="delete"
+                    color="red"
+                    @click="formCreate.social_media.splice(index, 1)"
+                  />
+                </div>
+                <q-btn
+                  flat
+                  icon="fas fa-plus"
+                  color="primary"
+                  label="Agregar red social"
+                  class="q-mt-sm"
+                  @click="formCreate.social_media.push({ name: '', url: '' })"
+                />
+              </div>
               <div class="q-pt-lg col-12">
                 <q-btn
                   class="q-mr-md"
                   color="red"
+                  style="border-radius: 8px; font-weight: bold;"
                   label="Cancelar"
                   @click="cancel"
                 ></q-btn>
                 <q-btn
                   color="primary"
+                  style="border-radius: 8px; font-weight: bold;"
                   label="Actualizar"
                   type="submit"
                   v-if="btnE == true"
@@ -635,20 +830,25 @@
   </div>
   <center>
     <q-inner-loading :showing="visible" class="text-center">
-      <q-spinner-ball  size="70px"  />
+      <q-spinner size="50px" color="accent" />
+      <div class="q-mt-sm text-weight-bold" style="color: #FF78A5;">Cargando</div>
     </q-inner-loading>
   </center>
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { mapActions, mapState } from "vuex";
 import { useQuasar } from "quasar";
 import NoticeGallery from "src/components/Artist/NoticeGallery.vue";
+import { api } from "boot/axios";
+import { notifySuccess, notifyError, platformEvents } from "src/utils/notify";
+import { formatCurrency } from "src/utils/moneyFormat";
 
 let $q = useQuasar();
 
 export default {
-  components: { NoticeGallery },
+  components: { PageBreadcrumbs, NoticeGallery },
   name: "Index",
   data() {
     return {
@@ -666,17 +866,48 @@ export default {
         price_hour: "",
         image_artist: [],
         extra_kilometre: "",
+        coverage_radius: 0,
         name_manager: "",
         phone_manager: "",
         email_manager: "",
         image_manager: [],
         selection: [],
+        social_media: [{ name: "", url: "" }],
       },
+      googleMapsEnabled: false,
+      googleMapsLoaded: false,
+      latitude: null,
+      longitude: null,
       linkWhatsApp: "",
       linkCorreo: "",
+      socialMediaOptions: [
+        "Instagram",
+        "X (Twitter)",
+        "YouTube",
+        "Facebook",
+        "TikTok",
+        "Spotify",
+        "Apple Music",
+        "SoundCloud",
+        "Bandcamp",
+        "LinkedIn",
+      ],
+      socialIconMap: {
+        Instagram: 'fab fa-instagram',
+        'X (Twitter)': 'fab fa-x-twitter',
+        YouTube: 'fab fa-youtube',
+        Facebook: 'fab fa-facebook',
+        TikTok: 'fab fa-tiktok',
+        Spotify: 'fab fa-spotify',
+        'Apple Music': 'fab fa-apple',
+        SoundCloud: 'fab fa-soundcloud',
+        Bandcamp: 'fab fa-bandcamp',
+        LinkedIn: 'fab fa-linkedin',
+      },
     };
   },
   methods: {
+    formatCurrency,
     ...mapActions("artist", ["getArtist"]),
     ...mapActions("artist", ["createArtist"]),
     ...mapActions("artist", ["updateArtist"]),
@@ -697,10 +928,7 @@ export default {
         }
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.message,
-          });
+          notifyError(err.message);
         }
       }
     },
@@ -709,73 +937,94 @@ export default {
         await this.getMusicalGenders();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
     async createNewArtist() {
       try {
         this.btnE = false;
-        if (this.formCreate.image_artist.length == 0) {
-          this.$q.notify({
-            type: "negative",
-            message: `Ingresa una foto de grupo o artista`,
-          });
-        } else if (this.formCreate.image_manager.length == 0) {
-          this.$q.notify({
-            type: "negative",
-            message: `Ingresa una foto del manager`,
-          });
-        } else {
-          if (this.formCreate.image_artist.size > 1000000) {
-            this.$q.notify({
-              type: "negative",
-              message: `El tamaño de la imagen del grupo excede de lo permitido`,
-            });
-          } else if (this.formCreate.image_manager.size > 1000000) {
-            this.$q.notify({
-              type: "negative",
-              message: `El tamaño de la imagen del manager excede de lo permitido`,
-            });
-          } else {
-            let InstFormData = new FormData();
-            InstFormData.append("name", this.formCreate.name);
-            InstFormData.append("members", this.formCreate.members);
-            InstFormData.append("history", this.formCreate.history);
-            InstFormData.append("zone", this.formCreate.zone);
-            InstFormData.append("price_hour", this.formCreate.price_hour);
-            InstFormData.append("image_artist", this.formCreate.image_artist);
-            InstFormData.append(
-              "extra_kilometre",
-              this.formCreate.extra_kilometre
-            );
-            InstFormData.append("name_manager", this.formCreate.name_manager);
-            InstFormData.append("phone_manager", this.formCreate.phone_manager);
-            InstFormData.append("email_manager", this.formCreate.email_manager);
-            InstFormData.append("image_manager", this.formCreate.image_manager);
-            const selection = JSON.stringify(this.formCreate.selection);
-            InstFormData.append("selection", selection);
 
-            // console.log(InstFormData);
-            await this.createArtist(InstFormData);
-            this.gettArtist();
-            this.$q.notify({
-              type: "positive",
-              message: `Infromación guardada correctamente`,
-            });
-            //this.onReset();
+        switch (true) {
+          case this.formCreate.image_artist.length == 0:
+            notifyError(`Ingresa una foto de grupo o artista`);
+            return;
+          case this.formCreate.image_manager.length == 0:
+            notifyError(`Ingresa una foto del manager`);
+            return;
+          case this.formCreate.image_artist.size > 20971520:
+            notifyError(`El tamaño de la imagen del grupo excede de lo permitido`);
+            return;
+          case this.formCreate.image_manager.size > 20971520:
+            notifyError(`El tamaño de la imagen del manager excede de lo permitido`);
+            return;
+        }
+
+        let InstFormData = new FormData();
+        InstFormData.append("name", this.formCreate.name);
+        InstFormData.append("members", this.formCreate.members);
+        InstFormData.append("history", this.formCreate.history);
+        InstFormData.append("zone", this.formCreate.zone);
+        InstFormData.append("price_hour", this.formCreate.price_hour);
+        InstFormData.append("image_artist", this.formCreate.image_artist);
+        InstFormData.append("extra_kilometre", this.formCreate.extra_kilometre);
+        InstFormData.append("coverage_radius", parseInt(this.formCreate.coverage_radius) || 0);
+        InstFormData.append("name_manager", this.formCreate.name_manager);
+        InstFormData.append("phone_manager", this.formCreate.phone_manager);
+        InstFormData.append("email_manager", this.formCreate.email_manager);
+        InstFormData.append("image_manager", this.formCreate.image_manager);
+        const selection = JSON.stringify(this.formCreate.selection);
+        InstFormData.append("selection", selection);
+
+        const socialDomainMap = {
+          Instagram: 'instagram.com',
+          'X (Twitter)': 'twitter.com',
+          YouTube: 'youtube.com',
+          Facebook: 'facebook.com',
+          TikTok: 'tiktok.com',
+          Spotify: 'spotify.com',
+          'Apple Music': 'music.apple.com',
+          SoundCloud: 'soundcloud.com',
+          Bandcamp: 'bandcamp.com',
+          LinkedIn: 'linkedin.com',
+        };
+
+        for (const red of this.formCreate.social_media) {
+          if (!red.name || !red.url) {
+            notifyError('Cada red social debe tener nombre y URL.');
+            return;
+          }
+
+          try {
+            new URL(red.url);
+          } catch {
+            notifyError(`La URL de ${red.name} no es válida.`);
+            return;
+          }
+
+          const expectedDomain = socialDomainMap[red.name];
+          const actualHost = new URL(red.url).hostname.replace('www.', '');
+
+          if (expectedDomain && !actualHost.includes(expectedDomain)) {
+            notifyError(`La URL de ${red.name} debe pertenecer a ${expectedDomain}.`);
+            return;
           }
         }
+
+        const social_media = JSON.stringify(this.formCreate.social_media);
+        InstFormData.append("social_media", social_media);
+
+        const response = await this.createArtist(InstFormData);
+        this.gettArtist();
+        response?.message ? notifySuccess(response.message) : platformEvents.profileRequestSubmitted();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data,
-          });
-        }
+        err.response?.data?.errors
+          ? notifyError(Object.values(err.response.data.errors).flat().join('<br>'), { html: true })
+          : err.response?.data?.message
+            ? notifyError(err.response.data.message)
+            : notifyError('Error al guardar el artista');
+      } finally {
+        this.btnE = true;
       }
     },
     onReset() {
@@ -786,6 +1035,7 @@ export default {
       this.formCreate.price_hour = null;
       this.formCreate.image_manager = [];
       this.formCreate.extra_kilometre = null;
+      this.formCreate.coverage_radius = 0;
       this.formCreate.name_manager = null;
       this.formCreate.phone_manager = [];
       this.formCreate.email_manager = null;
@@ -801,6 +1051,10 @@ export default {
       }
     },
     showInfoArtist() {
+      if (this.isPendingReview) {
+        platformEvents.profileUnderReview();
+        return;
+      }
       this.showInfo = "none";
       this.showEdit = "true";
       this.formCreate.id = this.artist.id;
@@ -810,6 +1064,8 @@ export default {
       this.formCreate.zone = this.artist.zone;
       this.formCreate.price_hour = this.artist.price_hour;
       this.formCreate.extra_kilometre = this.artist.extra_kilometre;
+      this.formCreate.coverage_radius = this.artist.coverage_radius || 0;
+      this.formCreate.social_media = this.artist.social_media ? [...this.artist.social_media] : [];
 
       let selected = [this.artist];
 
@@ -832,79 +1088,100 @@ export default {
 
     async editArtist() {
       try {
-        if (this.formCreate.image_artist.size > 1000000) {
-          this.$q.notify({
-            type: "negative",
-            message: `El tamaño de la imagen del grupo excede de lo permitido`,
-          });
-        } else if (this.formCreate.image_manager.size > 1000000) {
-          this.$q.notify({
-            type: "negative",
-            message: `El tamaño de la imagen del manager excede de lo permitido`,
-          });
-        } else {
-          let InstFormData = new FormData();
-          InstFormData.append("id", this.formCreate.id);
-          InstFormData.append("name", this.formCreate.name);
-          InstFormData.append("members", this.formCreate.members);
-          InstFormData.append("history", this.formCreate.history);
-          InstFormData.append("zone", this.formCreate.zone);
-          InstFormData.append("price_hour", this.formCreate.price_hour);
-          if (this.formCreate.image_artist.size > 1) {
-            console.log("Entro 1");
-            InstFormData.append("image_artist", this.formCreate.image_artist);
-          }
-          if (this.formCreate.image_manager.size > 1) {
-            console.log("Entro 2");
-            InstFormData.append("image_manager", this.formCreate.image_manager);
-          }
-          InstFormData.append(
-            "extra_kilometre",
-            this.formCreate.extra_kilometre
-          );
-          InstFormData.append("name_manager", this.formCreate.name_manager);
-          InstFormData.append("phone_manager", this.formCreate.phone_manager);
-          InstFormData.append("email_manager", this.formCreate.email_manager);
-          const selection = JSON.stringify(this.formCreate.selection);
-          InstFormData.append("selection", selection);
-
-          // console.log(InstFormData);
-
-          let formUpdate = {
-            id: this.formCreate.id,
-            form: InstFormData,
-          };
-          await this.updateArtist(formUpdate);
-          this.gettArtist();
-          this.showEdit = "false";
-          this.showInfo = "false";
-          this.$q.notify({
-            type: "positive",
-            message: `Infromación guardada correctamente`,
-          });
-          this.onReset();
+        switch (true) {
+          case this.formCreate.image_artist.size > 20971520:
+            notifyError(`El tamaño de la imagen del grupo excede de lo permitido`);
+            return;
+          case this.formCreate.image_manager.size > 20971520:
+            notifyError(`El tamaño de la imagen del manager excede de lo permitido`);
+            return;
         }
+
+        let InstFormData = new FormData();
+        InstFormData.append("id", this.formCreate.id);
+        InstFormData.append("name", this.formCreate.name);
+        InstFormData.append("members", this.formCreate.members);
+        InstFormData.append("history", this.formCreate.history);
+        InstFormData.append("zone", this.formCreate.zone);
+        InstFormData.append("price_hour", this.formCreate.price_hour);
+        if (this.formCreate.image_artist.size > 1) {
+          console.log("Entro 1");
+          InstFormData.append("image_artist", this.formCreate.image_artist);
+        }
+        if (this.formCreate.image_manager.size > 1) {
+          console.log("Entro 2");
+          InstFormData.append("image_manager", this.formCreate.image_manager);
+        }
+        InstFormData.append("extra_kilometre", this.formCreate.extra_kilometre);
+        InstFormData.append("coverage_radius", parseInt(this.formCreate.coverage_radius) || 0);
+        InstFormData.append("name_manager", this.formCreate.name_manager);
+        InstFormData.append("phone_manager", this.formCreate.phone_manager);
+        InstFormData.append("email_manager", this.formCreate.email_manager);
+        const selection = JSON.stringify(this.formCreate.selection);
+        InstFormData.append("selection", selection);
+
+        const socialDomainMap = {
+          Instagram: 'instagram.com',
+          'X (Twitter)': 'twitter.com',
+          YouTube: 'youtube.com',
+          Facebook: 'facebook.com',
+          TikTok: 'tiktok.com',
+          Spotify: 'spotify.com',
+          'Apple Music': 'music.apple.com',
+          SoundCloud: 'soundcloud.com',
+          Bandcamp: 'bandcamp.com',
+          LinkedIn: 'linkedin.com',
+        };
+
+        for (const red of this.formCreate.social_media) {
+          if (!red.name || !red.url) {
+            notifyError('Cada red social debe tener nombre y URL.');
+            return;
+          }
+
+          try {
+            new URL(red.url);
+          } catch {
+            notifyError(`La URL de ${red.name} no es válida.`);
+            return;
+          }
+
+          const expectedDomain = socialDomainMap[red.name];
+          const actualHost = new URL(red.url).hostname.replace('www.', '');
+
+          if (expectedDomain && !actualHost.includes(expectedDomain)) {
+            notifyError(`La URL de ${red.name} debe pertenecer a ${expectedDomain}.`);
+            return;
+          }
+        }
+
+        const social_media = JSON.stringify(this.formCreate.social_media);
+        InstFormData.append("social_media", social_media);
+
+        let formUpdate = {
+          id: this.formCreate.id,
+          form: InstFormData,
+        };
+        const response = await this.updateArtist(formUpdate);
+        await this.gettArtist();
+        this.showEdit = "false";
+        this.showInfo = "false";
+        response?.message ? notifySuccess(response.message) : platformEvents.profileRequestSubmitted();
+        this.onReset();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data,
-          });
-        }
+        err.response?.data?.errors
+          ? notifyError(Object.values(err.response.data.errors).flat().join('<br>'), { html: true })
+          : err.response?.data?.message
+            ? notifyError(err.response.data.message)
+            : null;
       }
     },
     onRejected() {
-      $q.notify({
-        type: "negative",
-        message: `El archivo no ha superado las restricciones de validación`,
-      });
+      notifyError(`El archivo no ha superado las restricciones de validación`);
       this.formCreate.image_manager = [];
     },
     onRejectedArtists() {
-      $q.notify({
-        type: "negative",
-        message: `El archivo no ha superado las restricciones de validación`,
-      });
+      notifyError(`El archivo no ha superado las restricciones de validación`);
       this.formCreate.image_artist = [];
     },
     cancel() {
@@ -914,10 +1191,95 @@ export default {
       this.showInfo = "false";
       this.onReset();
     },
+
+    async loadGoogleMapsApi() {
+      if (window.google && window.google.maps) {
+        this.googleMapsLoaded = true;
+        return;
+      }
+      try {
+        const resp = await api.get('/api/google-maps-key');
+        const key = resp.data?.data?.google_maps_api_key;
+        if (!key) return;
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places&language=es&v=3`;
+          script.async = true;
+          script.defer = true;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+        this.googleMapsLoaded = true;
+      } catch (e) {
+        console.error('Error loading Google Maps:', e);
+      }
+    },
+
+    async onGoogleMapsToggle() {
+      if (!this.googleMapsEnabled) return;
+      await this.loadGoogleMapsApi();
+      if (!this.googleMapsLoaded) return;
+      setTimeout(() => this.initMap(), 500);
+    },
+
+    initMap() {
+      if (!this.$refs.mapContainer || !window.google) return;
+      const pos = { lat: 19.4326, lng: -99.1332 };
+      this.initMapAtPosition(pos);
+    },
+
+    initMapAtPosition(position) {
+      if (!this.$refs.mapContainer || !window.google) return;
+      this.mapInstance = new google.maps.Map(this.$refs.mapContainer, {
+        center: position,
+        zoom: 15,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        clickableIcons: false,
+      });
+      this.markerInstance = new google.maps.Marker({
+        map: this.mapInstance,
+        position: position,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+      });
+
+      const onMarkerMoved = (latLng) => {
+        this.latitude = latLng.lat();
+        this.longitude = latLng.lng();
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: { lat: this.latitude, lng: this.longitude } }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            const components = {};
+            for (const comp of results[0].address_components) {
+              components[comp.types[0]] = comp.long_name;
+            }
+            const city = components['locality'] || components['sublocality'] || components['postal_town'] || '';
+            const state = components['administrative_area_level_1'] || '';
+            this.formCreate.zone = city ? `${city}, ${state}` : state || results[0].formatted_address;
+          }
+        });
+      };
+
+      this.markerInstance.addListener('dragend', () => {
+        onMarkerMoved(this.markerInstance.getPosition());
+      });
+
+      this.mapInstance.addListener('click', (e) => {
+        this.markerInstance.setPosition(e.latLng);
+        this.mapInstance.panTo(e.latLng);
+        onMarkerMoved(e.latLng);
+      });
+    },
   },
   computed: {
     ...mapState({
       artist: (state) => state.artist.artist,
+    }),
+    ...mapState({
+      latestRequest: (state) => state.artist.latestRequest,
     }),
     ...mapState({
       getMe: (state) => state.auth.me,
@@ -927,6 +1289,9 @@ export default {
     }),
     mode: function () {
       return this.$q.dark.isActive;
+    },
+    isPendingReview: function () {
+      return this.latestRequest?.approval_status === "pending_approval";
     },
   },
   mounted() {
@@ -1195,13 +1560,28 @@ input:focus {
   font-size: 16px;
   line-height: 28px;
   font-weight: 300;
-  color: #727272;
+  color: var(--q-text-color);
   font-family: "Muli", sans-serif;
 }
 .barra {
-  background-color: #14141463;
+  background-color: rgba(0, 0, 0, 0.65);
   border-radius: 10px;
   padding: 50px;
+}
+.profile-header :deep(.q-parallax__content) {
+  overflow: hidden;
+}
+.profile-header :deep(.q-parallax__media) {
+  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.65);
+}
+.profile-header .title {
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+.profile-header .q-badge {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+  font-weight: 700;
 }
 .image {
   width: 90%;
@@ -1214,5 +1594,32 @@ input:focus {
 }
 .avatar {
   object-fit: cover;
+}
+
+.social-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.social-link {
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: #f5f5f5;
+  color: #001d38;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: 0.3s;
+  border: 1px solid #e0e0e0;
+}
+
+.social-link:hover {
+  background: #001d38;
+  color: white;
+  transform: translateY(-2px);
 }
 </style>

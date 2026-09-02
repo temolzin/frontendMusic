@@ -3,6 +3,7 @@ import { api } from "boot/axios";
 export const doLogin = async ({ commit, dispatch }, payload) => {
   await api.post("/api/login", payload).then((response) => {
     const token = response.data;
+    commit("shoppingCard/resetShoppingCard", null, { root: true });
     commit("setToken", token);
   
   });
@@ -15,10 +16,13 @@ export const registerUser = async ({ commit, dispatch }, payload) => {
 };
 
 export const signOut = async ({ commit }) => {
-  await api.get("/api/logout").then((response) => {
+  try {
+    await api.get("/api/logout");
+  } finally {
+    commit("shoppingCard/resetShoppingCard", null, { root: true });
     commit("removeToken");
     commit("setMe", "");
-  });
+  }
 };
 
 export const getMeUser = async ({ commit }) => {
@@ -32,8 +36,9 @@ export const init = async ({ commit, dispatch }) => {
   if (token) {
     await commit("setToken", JSON.parse(token));
     api.defaults.headers.common.Authorization = "Bearer " + JSON.parse(token).access_token;
-    dispatch("getMeUser", JSON.parse(token));
+    await dispatch("getMeUser");
   } else {
+    commit("shoppingCard/resetShoppingCard", null, { root: true });
     commit("removeToken");
   }
 };
@@ -49,8 +54,9 @@ export const doLoginGmail = async () => {
 export const doLoginGmailCallback = async ({ commit, dispatch }, payload) => {
   await api.get("/api/authorize/google/callback" , { params: payload }).then((response) => {
     const token = response.data;
-    dispatch("getMeUser", token);
+    commit("shoppingCard/resetShoppingCard", null, { root: true });
     commit("setToken", token);
+    dispatch("getMeUser", token);
   });
 };
 
@@ -65,8 +71,9 @@ export const doLoginFacebook = async () => {
 export const doLoginFacebookCallback = async ({ commit, dispatch }, payload) => {
   await api.get("/api/authorize/facebook/callback" , { params: payload }).then((response) => {
     const token = response.data;
-    dispatch("getMeUser", token);
+    commit("shoppingCard/resetShoppingCard", null, { root: true });
     commit("setToken", token);
+    dispatch("getMeUser", token);
   });
 };
 
@@ -87,4 +94,14 @@ export const updateImageProfile = async ({ dispatch }, payload) => {
   {headers : {'content-type': 'multipart/form-data'}}).then((response) => {
    dispatch("getMeUser");
   });
+};
+
+export const recoverPassword = async (_, payload) => {
+  const { data } = await api.post("/api/password/email", payload);
+  return data;
+};
+
+export const resetPassword = async (_, payload) => {
+  const { data } = await api.post("/api/password/reset", payload);
+  return data;
 };

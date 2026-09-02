@@ -9,7 +9,7 @@
         />
       </template>
       <div class="text-h1 text-grey-2 text-center text-weight-bold">
-        Música GSM
+        vibeer
       </div>
       <div
         class="line"
@@ -37,7 +37,7 @@
         style="width: 550px; justify-content: center"
       >
         <h6 class="q-ma-none" style="justify-content: center">
-          ¿Necesitas una Cotizacion de tu evento?
+          ¿Necesitas una cotización de tu evento?
         </h6>
 
         <q-btn
@@ -118,7 +118,7 @@
               </div>
             </q-img>
             <q-btn
-              :to="'/client/musical-genders/'+ stateArtist.musical_genders[0].name + '/' + stateArtist.slug"
+              :to="getArtistRoute(stateArtist)"
               color="primary"
               icon="arrow_forward"
               class="absolute"
@@ -131,6 +131,8 @@
   </div>
   <!-- Fin de Últimos Registrados -->
 
+  <system-comments />
+
   <!-- Inicio de aviso -->
   <div class="row justify-center">
     <div class="col-12 col-xs-12 col-sm-6 col-md-9 q-ma-md">
@@ -139,7 +141,7 @@
           <q-icon name="health_and_safety" color="primary" />
         </template>
         <span class="text-weight-bold text-info">Reserva con Seguridad</span>,
-        si cancelas por COVID-19 te devolvemos el dinero. Musica GSM vela por
+        si cancelas por COVID-19 te devolvemos el dinero. Vibeer vela por
         <span class="text-weight-bold"> tu seguridad y la de los tuyos</span>
       </q-banner>
     </div>
@@ -190,15 +192,14 @@
           Política de privacidad
         </p>
         <p class="text-weight-regular" style="font-size: 12px">
-          The Ticket Factory es un nombre comercial del Grupo NEC . El Grupo NEC
-          desea enviarle boletines informativos y otros correos electrónicos
-          sobre nuestros gares y eventos que creemos que pueden interesarle . Al
-          registrarse , acepta recibirlos .
+          Vibeer recopila tu correo electrónico únicamente para enviarte 
+          información relevante sobre artistas y eventos. Al registrarte, 
+          aceptas recibir estas comunicaciones. Puedes cancelar tu suscripción 
+          en cualquier momento.
         </p>
         <p class="text-weight-regular" style="font-size: 12px">
-          Para obtener más información sobre las empresas de The NEC Group y
-          cómo utilizamos su información , consulte nuestra Política de
-          privacidad .
+          Para más información sobre cómo manejamos tus datos, consulta nuestra 
+          Política de privacidad.
         </p>
       </div>
     </div>
@@ -208,9 +209,14 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
+import SystemComments from "src/components/SystemComments/SystemComments";
 
 let $q;
 export default {
+  components: {
+    SystemComments,
+  },
   data() {
     return {
       options: ["Google", "Facebook", "Twitter", "Apple", "Oracle"],
@@ -221,16 +227,33 @@ export default {
   methods: {
     ...mapActions("lastArtist", ["getLatestArtists"]),
     ...mapActions("UsersSuscribe", ["setEmail"]),
+    getArtistRoute(stateArtist) {
+      const isLoggedIn = Boolean(this.getToken);
+      const role = this.userRole;
+
+      if (!isLoggedIn) {
+        return "/artist-list";
+      }
+
+      if (role !== "cliente") {
+        return "/artist-list";
+      }
+
+      const musicalGender = stateArtist?.musical_genders?.[0]?.slug;
+
+      if (!musicalGender || !stateArtist?.slug) {
+        return "/artist-list";
+      }
+
+      return `/client/musical-genders/${musicalGender}/${stateArtist.slug}`;
+    },
     async gettLatestArtists() {
       try {
         await this.getLatestArtists().then(() => {
           this.showLatestArtist = true;
         });
       } catch (err) {
-        $q.notify({
-          type: "negative",
-          message: err,
-        });
+        notifyError(err);
       }
     },
     async subscribeUser() {
@@ -240,16 +263,10 @@ export default {
         };
         await this.setEmail(jsonData);
         this.email = '';
-        this.$q.notify({
-          type: "positive",
-          message: `Suscrito correctamente`,
-        });
+        notifySuccess(`Suscrito correctamente`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: `Algo salió mal, vuelve a intentarlo más tarde`
-          });
+          notifyError(`Algo salió mal, vuelve a intentarlo más tarde`);
         }
       }
     },
@@ -258,10 +275,16 @@ export default {
     this.gettLatestArtists();
   },
   computed: {
+    ...mapGetters("auth", ["getMe", "getToken"]),
     ...mapGetters("lastArtist", ["stateArtists"]),
     ...mapGetters("UsersSuscribe", ["stateEmails"]),
     mode: function () {
       return this.$q.dark.isActive;
+    },
+    userRole() {
+      return this.getMe?.role?.[0]
+        ? String(this.getMe.role[0]).trim().toLowerCase()
+        : "";
     },
   },
   mounted() {

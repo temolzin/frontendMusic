@@ -5,3 +5,67 @@ export const viewShoppingCardDetails = async ({ commit }) => {
     commit("setListShopingCard", response.data.list_shoping_card_details);
   });
 };
+
+export const viewPurchaseHistory = async ({ commit }) => {
+  try {
+    const response = await api.get("/api/cliente/shopping_card/purchaseHistory");
+    console.log("Purchase History Response:", response.data);
+    commit("setListShopingCard", response.data.purchases);
+  } catch (error) {
+    console.error("Error fetching purchase history:", error);
+  }
+};
+
+export const fetchChatMessages = async ({ commit }, artistSaleId) => {
+  try {
+    const response = await api.get(`/api/chat/messages/${artistSaleId}`);
+    const messages = Array.isArray(response.data?.messages) ? response.data.messages : [];
+    commit("setChatMessages", messages);
+    commit("setChatActive", response.data?.is_chat_active ?? true); 
+    return messages;
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    commit("setChatMessages", []);
+    return [];
+  }
+};
+
+export const sendChatMessage = async ({ commit }, payload) => {
+  try {
+    const response = await api.post('/api/chat/messages', payload);
+    const message = response.data?.message || null;
+    if (message) {
+      commit("addChatMessage", message);
+    }
+    return message;
+  } catch (error) {
+    console.error("Error sending message:", error);
+    throw error;
+  }
+};
+
+export const fetchArtistRating = async ({ commit }, payload) => {
+  try {
+    const response = await api.get(`/api/client/sales/${payload.purchaseId}/my-rating`);
+    if (response.data && response.data.rating) {
+      commit("setArtistRating", { purchaseId: payload.purchaseId, rating: response.data.rating });
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching artist rating:", error);
+    throw error;
+  }
+};
+
+export const submitArtistRating = async ({ commit }, payload) => {
+  try {
+    const response = await api.post(`/api/client/sales/${payload.purchaseId}/rate`, {
+      rating: payload.rating
+    });
+    commit("setArtistRating", { purchaseId: payload.purchaseId, rating: payload.rating });
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting artist rating:", error);
+    throw error;
+  }
+};
