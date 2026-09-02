@@ -247,8 +247,7 @@ import { formatDate } from "src/utils/formatDate";
 import { notifySuccess, notifyError, notifyWarning } from "src/utils/notify";
 
 const CAROUSEL_CARD_COUNT = 5;
-const CARD_WIDTH = 346; // 330px card + 16px margin
-const CARD_GAP = 8; // margin-right (10px) minus flex gap
+const CARD_WIDTH = 346;
 
 export default {
   name: "SystemComments",
@@ -301,22 +300,19 @@ export default {
       return [...list, ...list];
     },
     stepCarousel(direction) {
-      if (!this.baseComments.length) {
-        return;
-      }
-      this.pauseCarousel = true;
+      const isEmpty = !this.baseComments.length;
       const from = this.manualIndex === null ? 0 : this.manualIndex;
       const step = this.stepSize;
-      const maxShift = Math.max(
-        0,
-        this.trackWidth - this.windowWidth
-      );
+      const maxShift = Math.max(0, this.trackWidth - this.windowWidth);
       const next = from + direction * step;
-      if (from === 0 && direction < 0) {
-        this.manualIndex = maxShift;
-        return;
-      }
-      this.manualIndex = next >= maxShift ? 0 : next;
+      this.pauseCarousel = isEmpty ? this.pauseCarousel : true;
+      this.manualIndex = isEmpty
+        ? this.manualIndex
+        : from === 0 && direction < 0
+        ? maxShift
+        : next >= maxShift
+        ? 0
+        : next;
     },
     openReader(comment) {
       this.readerComment = comment;
@@ -400,10 +396,9 @@ export default {
       return this.$q.screen.lt.md ? 360 : 540;
     },
     manualOffset() {
-      if (this.manualIndex === null || !this.baseComments.length) {
-        return null;
-      }
-      return `transform: translateX(-${this.manualIndex}px); animation: none;`;
+      return this.manualIndex === null || !this.baseComments.length
+        ? null
+        : `transform: translateX(-${this.manualIndex}px); animation: none;`;
     },
     trackKey() {
       return `${this.stateFilter}-${this.visibleComments.length}`;
@@ -417,11 +412,7 @@ export default {
   },
   watch: {
     isAuthenticated(loggedIn) {
-      if (loggedIn) {
-        this.checkCanComment();
-      } else {
-        this.setCanComment(false);
-      }
+      loggedIn ? this.checkCanComment() : this.setCanComment(false);
     },
     selectedFilter() {
       this.manualIndex = null;
