@@ -100,14 +100,17 @@
                       {{ stateArtist.name }}
                     </div>
                     <div class="q-gutter-md q-mb-md">
-                      <q-badge
+                      <q-btn
                         v-for="(
                           musicalGender, index
                         ) in stateArtist.musical_genders"
                         :key="index"
                         :color="musicalGender.color"
+                        :text-color="genreTextColor(musicalGender.color)"
+                        size="xs"
+                        class="q-mr-sm q-mt-md outline"
                         :label="musicalGender.name"
-                        class="q-pa-xs"
+                        @click.stop="$router.push({ name: 'client.view-groups-by-genders-search', params: { slug: musicalGender.slug } })"
                       />
                     </div>
                     <div class="text-subtitle2 text-weight-light text-grey-5">
@@ -210,6 +213,7 @@
 import { useQuasar } from "quasar";
 import { mapActions, mapGetters } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
+import { genreTextColor } from "src/utils/badgeStyles";
 import SystemComments from "src/components/SystemComments/SystemComments";
 
 let $q;
@@ -225,6 +229,7 @@ export default {
     };
   },
   methods: {
+    genreTextColor,
     ...mapActions("lastArtist", ["getLatestArtists"]),
     ...mapActions("UsersSuscribe", ["setEmail"]),
     getArtistRoute(stateArtist) {
