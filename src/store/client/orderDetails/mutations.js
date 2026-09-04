@@ -17,6 +17,9 @@ export const setChatActive = (state, value) => {
 export const setArtistRating = (state, payload) => {
   state.artistRatings = {
     ...state.artistRatings,
-    [payload.purchaseId]: payload.rating
+    [payload.purchaseId]: {
+      rating: payload.rating,
+      comment: payload.comment
+    }
   };
 };

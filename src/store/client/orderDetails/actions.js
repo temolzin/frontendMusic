@@ -48,7 +48,11 @@ export const fetchArtistRating = async ({ commit }, payload) => {
   try {
     const response = await api.get(`/api/client/sales/${payload.purchaseId}/my-rating`);
     if (response.data && response.data.rating) {
-      commit("setArtistRating", { purchaseId: payload.purchaseId, rating: response.data.rating });
+      commit("setArtistRating", {
+        purchaseId: payload.purchaseId,
+        rating: response.data.rating,
+        comment: response.data.comment
+      });
     }
     return response.data;
   } catch (error) {
@@ -60,9 +64,14 @@ export const fetchArtistRating = async ({ commit }, payload) => {
 export const submitArtistRating = async ({ commit }, payload) => {
   try {
     const response = await api.post(`/api/client/sales/${payload.purchaseId}/rate`, {
-      rating: payload.rating
+      rating: payload.rating,
+      comment: payload.comment
     });
-    commit("setArtistRating", { purchaseId: payload.purchaseId, rating: payload.rating });
+    commit("setArtistRating", {
+      purchaseId: payload.purchaseId,
+      rating: payload.rating,
+      comment: payload.comment
+    });
     return response.data;
   } catch (error) {
     console.error("Error submitting artist rating:", error);

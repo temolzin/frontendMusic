@@ -388,6 +388,7 @@
         </div>
       </div>
     </div>
+    <artist-comments v-if="loadInformation == false" :artist-id="artist.id" />
   </q-page>
 </template>
 
@@ -400,11 +401,12 @@ import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
 import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
 import { formatCurrency } from "src/utils/moneyFormat";
 import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
+import ArtistComments from "src/components/ArtistComments/ArtistComments.vue";
 
 let $q;
 export default {
   name: "Slug",
-  components: { PageBreadcrumbs },
+  components: { PageBreadcrumbs, ArtistComments },
   data() {
     return {
       slug: "",

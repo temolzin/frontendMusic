@@ -353,7 +353,44 @@
                 icon="star_border"
                 icon-selected="star"
                 no-reset
-                @update:model-value="submitTransactionRating"
+                :disable="hasSavedRating"
+              />
+              <q-input
+                v-model="commentValue"
+                type="textarea"
+                outlined
+                dense
+                rounded
+                maxlength="1000"
+                label="Cuéntanos tu experiencia (opcional)"
+                class="q-mt-md"
+                style="min-width: 300px"
+                :bg-color="$q.dark.isActive ? 'dark' : 'white'"
+                :label-color="$q.dark.isActive ? 'white' : 'dark'"
+                :readonly="hasSavedRating"
+              />
+              <q-btn
+                v-if="hasSavedRating"
+                label="Calificación guardada"
+                color="primary"
+                outline
+                unelevated
+                rounded
+                icon="lock"
+                class="q-mt-lg"
+                disable
+              />
+              <q-btn
+                v-else
+                label="Guardar calificación"
+                color="primary"
+                outline
+                unelevated
+                rounded
+                icon="send"
+                class="q-mt-lg"
+                :loading="isLoadingRating"
+                @click="submitTransactionRating(ratingValue)"
               />
             </template>
           </q-card-section>
@@ -469,6 +506,7 @@ export default {
       isRatingModalOpen: false,
       transactionToRate: null,
       ratingValue: 0,
+      commentValue: "",
       isLoadingRating: false,
       showRegeneratedRefDialog: false,
       regeneratedRef: null,
@@ -570,7 +608,8 @@ export default {
     },
     async openRatingModal(purchase) {
       this.transactionToRate = purchase;
-      this.ratingValue = this.getArtistRatings[purchase.id] || 0;
+      this.ratingValue = this.getArtistRatings[purchase.id]?.rating || 0;
+      this.commentValue = this.getArtistRatings[purchase.id]?.comment || "";
       this.isRatingModalOpen = true;
       this.isLoadingRating = true;
 
@@ -579,7 +618,8 @@ export default {
           artistId: purchase.artist.id,
           purchaseId: purchase.id
         });
-        this.ratingValue = this.getArtistRatings[purchase.id] || 0;
+        this.ratingValue = this.getArtistRatings[purchase.id]?.rating || 0;
+        this.commentValue = this.getArtistRatings[purchase.id]?.comment || "";
       } catch (e) {
         console.error("No se pudo cargar la calificación previa", e);
       } finally {
@@ -587,13 +627,15 @@ export default {
       }
     },
     async submitTransactionRating(val) {
-      if (!val || val === 0) return;
-
+      val && val !== 0 ? await this.persistRating(val) : null;
+    },
+    async persistRating(val) {
       try {
         await this.submitArtistRating({
           artistId: this.transactionToRate.artist.id,
           purchaseId: this.transactionToRate.id,
-          rating: val
+          rating: val,
+          comment: this.commentValue.trim()
         });
 
         notifySuccess("Calificación guardada correctamente");
@@ -881,6 +923,9 @@ export default {
   computed: {
     ...mapGetters("auth", ["getMe"]),
     ...mapGetters("orderDetails", ["stateListShopingCard", "getChatMessages", "getArtistRatings", "getIsChatActive"]),
+    hasSavedRating() {
+      return !!(this.transactionToRate && this.getArtistRatings[this.transactionToRate.id]?.rating);
+    },
     dateOptions() {
       const currentYear = new Date().getFullYear();
       return [
