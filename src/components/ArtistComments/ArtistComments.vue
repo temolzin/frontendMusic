@@ -184,6 +184,7 @@ export default {
       selectedFilter: "todos",
       pauseCarousel: false,
       manualIndex: null,
+      manualTimeout: null,
       readerDialog: false,
       readerComment: null,
       filterOptions: [
@@ -268,6 +269,15 @@ export default {
         : next >= maxShift
         ? 0
         : next;
+      isEmpty ? null : this.scheduleResume();
+    },
+    scheduleResume() {
+      this.manualTimeout ? clearTimeout(this.manualTimeout) : null;
+      this.manualTimeout = setTimeout(() => {
+        this.manualIndex = null;
+        this.pauseCarousel = false;
+        this.manualTimeout = null;
+      }, 3000);
     },
     openReader(comment) {
       this.readerComment = comment;
@@ -280,6 +290,15 @@ export default {
       this.pauseCarousel = false;
       this.init();
     },
+    selectedFilter() {
+      this.manualTimeout ? clearTimeout(this.manualTimeout) : null;
+      this.manualTimeout = null;
+      this.manualIndex = null;
+      this.pauseCarousel = false;
+    },
+  },
+  beforeDestroy() {
+    this.manualTimeout ? clearTimeout(this.manualTimeout) : null;
   },
   created() {
     this.init();
