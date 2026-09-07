@@ -33,16 +33,20 @@
           {{ option.label }}
         </button>
       </div>
-      <button
-        type="button"
-        class="pill pill--comment cursor-pointer non-selectable"
-        @click="openDialog"
-      >
-        <i class="q-icon notranslate material-icons" aria-hidden="true">
-          edit
-        </i>
-        <span>Comentar</span>
-      </button>
+      <span class="comment-btn-wrap" :class="isAuthenticated ? '' : 'comment-btn-wrap--disabled'">
+        <button
+          type="button"
+          class="pill pill--comment cursor-pointer non-selectable"
+          :disabled="!isAuthenticated"
+          @click="openDialog"
+        >
+          <i class="q-icon notranslate material-icons" aria-hidden="true">
+            edit
+          </i>
+          <span>Comentar</span>
+        </button>
+        <span v-if="!isAuthenticated" class="comment-btn-tip">Inicia sesión para comentar</span>
+      </span>
     </div>
 
     <div
@@ -480,6 +484,47 @@ export default {
 }
 .pill--comment i {
   font-size: 18px;
+}
+.comment-btn-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.comment-btn-wrap--disabled .pill--comment {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.comment-btn-wrap--disabled .pill--comment:hover {
+  background: var(--q-primary);
+}
+.comment-btn-tip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #212121;
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.comment-btn-tip::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #212121;
+}
+.comment-btn-wrap--disabled:hover .comment-btn-tip {
+  opacity: 1;
 }
 .carousel-window {
   position: relative;
