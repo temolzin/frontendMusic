@@ -34,9 +34,14 @@ export const getMeUser = async ({ commit }) => {
 export const init = async ({ commit, dispatch }) => {
   const token = localStorage.getItem("token");
   if (token) {
-    await commit("setToken", JSON.parse(token));
+    commit("setToken", JSON.parse(token));
     api.defaults.headers.common.Authorization = "Bearer " + JSON.parse(token).access_token;
-    await dispatch("getMeUser");
+    try {
+      await dispatch("getMeUser");
+    } catch (err) {
+      commit("removeToken");
+      api.defaults.headers.common.Authorization = "";
+    }
   } else {
     commit("shoppingCard/resetShoppingCard", null, { root: true });
     commit("removeToken");
