@@ -274,9 +274,15 @@ export default {
     async init() {
       try {
         await this.fetchComments();
-        this.isAuthenticated ? await this.checkCanComment() : null;
       } catch (err) {
         notifyError("No se pudieron cargar los comentarios.");
+      }
+      if (this.isAuthenticated) {
+        try {
+          await this.checkCanComment();
+        } catch (err) {
+          this.setCanComment(false);
+        }
       }
     },
     getBackendImageUrl(image) {
