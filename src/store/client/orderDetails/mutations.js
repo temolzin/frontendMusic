@@ -19,7 +19,8 @@ export const setArtistRating = (state, payload) => {
     ...state.artistRatings,
     [payload.purchaseId]: {
       rating: payload.rating,
-      comment: payload.comment
+      comment: payload.comment,
+      deadline_passed: payload.deadline_passed
     }
   };
 };

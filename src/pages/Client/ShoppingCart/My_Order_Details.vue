@@ -342,7 +342,16 @@
               <q-spinner color="primary" size="3em" />
               <div class="text-subtitle2 q-mt-md text-grey">Cargando calificación...</div>
             </template>
-            <template v-if="!isLoadingRating">
+            <template v-if="!isLoadingRating && hasRatingDeadlinePassed">
+              <q-icon name="lock" size="3em" color="negative" />
+              <div class="text-subtitle1 q-mt-md text-center text-weight-medium">
+                Ya no puedes calificar a este artista
+              </div>
+              <div class="text-caption text-grey q-mt-xs text-center">
+                El tiempo para calificar terminó 24 horas después del evento.
+              </div>
+            </template>
+            <template v-else-if="!isLoadingRating">
               <div class="text-subtitle1 q-mb-md text-center">
                 ¿Qué te pareció el servicio de <strong>{{ transactionToRate?.artist?.name || 'este artista' }}</strong>?
               </div>
@@ -925,6 +934,9 @@ export default {
     ...mapGetters("orderDetails", ["stateListShopingCard", "getChatMessages", "getArtistRatings", "getIsChatActive"]),
     hasSavedRating() {
       return !!(this.transactionToRate && this.getArtistRatings[this.transactionToRate.id]?.rating);
+    },
+    hasRatingDeadlinePassed() {
+      return !!(this.transactionToRate && this.getArtistRatings[this.transactionToRate.id]?.deadline_passed);
     },
     dateOptions() {
       const currentYear = new Date().getFullYear();

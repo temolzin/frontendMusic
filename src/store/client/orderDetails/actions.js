@@ -47,13 +47,12 @@ export const sendChatMessage = async ({ commit }, payload) => {
 export const fetchArtistRating = async ({ commit }, payload) => {
   try {
     const response = await api.get(`/api/client/sales/${payload.purchaseId}/my-rating`);
-    if (response.data && response.data.rating) {
-      commit("setArtistRating", {
-        purchaseId: payload.purchaseId,
-        rating: response.data.rating,
-        comment: response.data.comment
-      });
-    }
+    commit("setArtistRating", {
+      purchaseId: payload.purchaseId,
+      rating: response.data.rating,
+      comment: response.data.comment,
+      deadline_passed: response.data.deadline_passed
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching artist rating:", error);
