@@ -37,7 +37,7 @@
               :options="generosMusicales()"
             />
           </div>
-          <div class="col-8 col-md-2 col-lg-2 filter" v-if="showFilters">
+          <div class="col-8 col-md-2 col-lg-2 filter" v-if="showFilters && isAuthenticated">
             <q-range
               v-model="filterPrice"
               :min="0"
@@ -75,6 +75,7 @@
 
               <q-card-section>
                 <q-btn
+                  v-if="isAuthenticated"
                   fab
                   color="primary"
                   icon="fas fa-solid fa-cart-plus"
@@ -113,7 +114,7 @@
 
               <q-card-section class="q-pt-none">
                 <div class="text-subtitle1">
-                  <template v-if="props.row.offers && props.row.offers.length > 0">
+                  <template v-if="isAuthenticated && props.row.offers && props.row.offers.length > 0">
                     <q-badge v-bind="getDiscountBadgeColor($q.dark.isActive)" class="q-mb-xs text-weight-medium text-uppercase">
                       {{ formatDiscount(props.row.offers[0].discount_percentage) }}% de descuento
                     </q-badge><br/>
@@ -124,12 +125,15 @@
                       {{ formatCurrency(props.row.price_hour) }}
                     </small>
                   </template>
-                  <template v-else>
+                  <template v-else-if="isAuthenticated && props.row.price_hour">
                     <span class="text-h5 text-primary text-weight-bold">
                       {{ formatCurrency(props.row.price_hour) }}
                     </span>
+                    <small> por hora</small>
                   </template>
-                  <small> por hora</small>
+                  <template v-else>
+                    <span class="text-caption text-grey">Inicia sesión para ver los precios</span>
+                  </template>
                 </div>
                 <div class="text-caption text-grey ellipsis">
                   {{ props.row.history }}
@@ -215,6 +219,7 @@
     },
     computed: {
       ...mapGetters("artistList", ["stateArtistList"]),
+      ...mapGetters("auth", ["isAuthenticated"]),
       mode: function () {
       return this.$q.dark.isActive;
       },
@@ -275,9 +280,11 @@
           });
         }
 
-        filtered = filtered.filter(item =>
-          item.price_hour >= this.filterPrice.min && item.price_hour <= this.filterPrice.max
-        );
+        filtered = this.isAuthenticated
+          ? filtered.filter(item =>
+            item.price_hour >= this.filterPrice.min && item.price_hour <= this.filterPrice.max
+          )
+          : filtered;
 
         return filtered;
       },
