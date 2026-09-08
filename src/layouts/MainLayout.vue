@@ -4,7 +4,7 @@
     <q-header
       elevated
       :class="mode ? 'bg-dark text-white-8' : 'bg-white text-grey-8'"
-      height-hint="64"
+      height-hint="90"
     >
       <q-toolbar class="GPL__toolbar" style="height: 64px">
         <!-- Inicion de botón Hamburguesa Small -->
@@ -26,19 +26,7 @@
           class="row items-center no-wrap q-ml-md"
           v-if="$q.screen.gt.sm"
         >
-          <q-icon
-            name="fas fa-solid fa-cloud-moon"
-            color="primary"
-            size="40px"
-          />
-
-          <transition
-            appear
-            enter-active-class="animated rubberBand"
-            :duration="1000"
-          >
-            <span class="q-ml-sm">Música GSM</span>
-          </transition>
+          <img :src="mode ? '/logovibeer.ico' : '/logovibeer-black.png'" style="height: 64px; transform: scale(1.4); transform-origin: left center;">
         </q-toolbar-title>
         <!-- Fin icono y nombre lado izquierdo -->
 
@@ -52,11 +40,11 @@
         <q-tabs v-if="$q.screen.gt.xs">
           <q-route-tab to="/" label="Inicio" />
           <q-route-tab to="/artist-list" label="Artistas" />
-          <q-route-tab to="/about" label="More" />
+          <q-route-tab to="/about" label="Más" />
+          <q-route-tab to="/dashboard/home" label="Panel" v-if="isAuthenticated == true" />
         </q-tabs>
         <!-- Fin de Links para navegar entre paginas -->
 
-        <q-space />
 
         <div class="q-gutter-sm row items-center no-wrap">
           <!-- Inicio Botones de inicio de sesion y dashboard -->
@@ -67,23 +55,17 @@
               class="q-mr-sm"
               v-if="isAuthenticated == false"
             />
+          </q-tabs>
 
-            <q-route-tab
-              to="/dashboard/home"
-              label="Dashboard"
-              v-if="isAuthenticated == true"
-            />
-          </q-tabs>
-          <q-tabs>
-            <q-btn
-              outline
-              to="/login"
-              color="primary"
-              label="Ingresar"
-              v-if="isAuthenticated == false"
-              class="q-mr-md"
-            />
-          </q-tabs>
+          <q-btn
+            outline
+            to="/login"
+            color="primary"
+            label="Ingresar"
+            v-if="isAuthenticated == false"
+            class="q-mr-md"
+          />
+
           <q-toggle
             v-if="$q.screen.gt.xs"
             v-model="isActiveDarkMode"
@@ -103,87 +85,145 @@
     <!-- Fin del header -->
 
     <!-- Inicio del Menú lateral izquierdo -->
-    <q-drawer
+   <q-drawer
       v-model="leftDrawerOpen"
       bordered
       behavior="mobile"
+      :class="mode ? 'bg-modedark' : 'bg-primary'"
       @click="leftDrawerOpen = false"
     >
-      <q-scroll-area class="fit">
-        <q-toolbar class="GPL__toolbar">
-          <q-toolbar-title class="row items-center q-mt-md q-ml-md">
-            <q-icon
-              name="fas fa-solid fa-cloud-moon"
-              color="primary"
-              size="40px"
-            ></q-icon>
-            <span class="q-ml-sm">Música GSM</span>
-          </q-toolbar-title>
-        </q-toolbar>
+      <div style="height: 120px; position: relative;">
+        <q-img class="absolute-top bg-transparent" style="height: 120px;">
+          <div class="bg-transparent" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img src="/logovibeer.ico" style="height: 50px; transform: scale(2.4);">
+          </div>
+        </q-img>
+      </div>
 
-        <q-list padding>
-          <div v-if="isAuthenticated == true">
-            <q-separator class="q-my-md" />
-
-            <q-item clickable class="q-ml-md" to="/dashboard/home">
+      <q-scroll-area style="height: calc(100% - 120px);">
+        <q-list padding class="text-white text-weight-light">
+          <div v-if="isAuthenticated && getMe && getMe.role">
+            <q-item v-if="getMe.role[0] == 'administrador'">
+              <q-item-section class="text-weight-bold text-accent">PANEL</q-item-section>
+            </q-item>
+            <q-item v-if="getMe.role[0] == 'cliente'">
+              <q-item-section class="text-weight-bold text-accent">INICIO</q-item-section>
+            </q-item>
+            <q-item v-if="getMe.role[0] == 'artista'">
+              <q-item-section class="text-weight-bold text-accent">DASHBOARD</q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/admin/users" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-users" /></q-item-section>
+              <q-item-section> Usuarios </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/admin/roles" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-street-view" /></q-item-section>
+              <q-item-section> Roles </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/admin/musical-genders/index" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-icons" /></q-item-section>
+              <q-item-section> Géneros Musicales </q-item-section>
+            </q-item>
+             <q-item clickable v-ripple to="/admin/newsletter/index" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-newspaper" /></q-item-section>
+              <q-item-section> Envío de Correos </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/admin/payouts" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="payments" /></q-item-section>
+              <q-item-section> Liquidaciones </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/admin/client-refunds" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="price_check" /></q-item-section>
+              <q-item-section> Reembolsos </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/admin/artist-approvals" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-user-check" /></q-item-section>
+              <q-item-section> Solicitudes de Artistas </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/artist/index" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-microphone" /></q-item-section>
+              <q-item-section> Perfil de Artista </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/artist/artistSales" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-cart-arrow-down" /></q-item-section>
+              <q-item-section> Mis ventas </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/artist/payout-info" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="account_balance" /></q-item-section>
+              <q-item-section> Datos de Cobro </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/artist/artistSales" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-calendar" /></q-item-section>
+              <q-item-section> Mi calendario </q-item-section>
+            </q-item>
+             <q-item clickable v-ripple to="/artist/artistSales" v-if="getMe.role[0] == 'artista'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="local_offer" /></q-item-section>
+              <q-item-section> Mis ofertas </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/store" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-store" /></q-item-section>
+              <q-item-section> Tienda </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/musical-genders" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-list-ul" /></q-item-section>
+              <q-item-section> Géneros musicales </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/artist-list" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-tags" /></q-item-section>
+              <q-item-section> Ofertas </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/favourite-artist" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-heart" /></q-item-section>
+              <q-item-section> Favoritos </q-item-section>
+            </q-item>
+            <q-item v-if="getMe.role[0] == 'cliente'">
+              <q-item-section class="text-weight-bold text-accent">
+                INFORMACIÓN
+              </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/shopping-cart" v-if="getMe.role[0] == 'cliente'" active-class="text-accent   text-weight-bold">
               <q-item-section avatar>
-                <q-icon name="dashboard" />
+                <icon-cart compact :fetch-on-create="false"></icon-cart>
               </q-item-section>
-              <q-item-section>
-                <q-item-label>Dashboard</q-item-label>
-              </q-item-section>
+                <q-item-section> Mi carrito </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/shopping-cart/view-my-order-details" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-cart-arrow-down" /></q-item-section>
+              <q-item-section> Mis compras </q-item-section>
+            </q-item>
+            <q-item clickable v-ripple to="/client/card" v-if="getMe.role[0] == 'cliente'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="fas fa-solid fa-credit-card" /></q-item-section>
+              <q-item-section> Mis tarjetas </q-item-section>
             </q-item>
           </div>
-
-          <q-separator class="q-my-md" />
-
-          <q-item
-            v-for="link in links2"
-            :key="link.text"
-            clickable
-            :to="link.to"
-            class="q-ml-md"
-          >
-            <q-item-section avatar>
-              <q-icon :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-my-md" />
-          <div v-if="isAuthenticated == false">
-            <q-item
-              class="q-ml-md"
-              v-for="link in links3"
-              :key="link.text"
-              clickable
-              :to="link.to"
-            >
-              <q-item-section avatar>
-                <q-icon :name="link.icon" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ link.text }}</q-item-label>
-              </q-item-section>
+          <div v-else>
+            <q-item>
+              <q-item-section class="text-weight-bold text-accent">MENÚ</q-item-section>
             </q-item>
-
-            <q-separator class="q-my-md" />
+            <q-item v-for="link in links2" :key="link.text" clickable :to="link.to" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon :name="link.icon" /></q-item-section>
+              <q-item-section>{{ link.text }}</q-item-section>
+            </q-item>
+            <q-item v-for="link in links3" :key="link.text" clickable :to="link.to" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon :name="link.icon" /></q-item-section>
+              <q-item-section>{{ link.text }}</q-item-section>
+            </q-item>
           </div>
           <q-item>
-            <q-item-section avatar class="q-ml-md">
-              Modo Obscuro
-            </q-item-section>
-            <q-item-section>
+            <q-item-section class="text-weight-bold text-accent">CONFIGURACIONES</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple class="q-pa-none">
+            <q-item-section avatar>
               <q-toggle
+                class="q-ma-none"
                 v-model="isActiveDarkMode"
                 checked-icon="nightlight"
-                color="primary"
+                color="accent"
                 unchecked-icon="nightlight"
                 @update:model-value="darkMode(isActiveDarkMode)"
               />
             </q-item-section>
+            <q-item-section> Modo Oscuro </q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
@@ -193,16 +233,21 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
     <q-footer>
       <q-toolbar class="row bg-primary text-white">
         <q-toolbar-title class="q-ml-md" style="font-size: 15px">
-          Conocenos a traves de nuestras redes sociales
+          Conócenos a través de nuestras redes sociales
         </q-toolbar-title>
-        <div class="q-col-gutter-md q-mr-md">
-          <q-icon name="fab fa-brands fa-facebook-f" size="20px" />
-          <q-icon name="fab fa-brands fa-twitter" size="20px" />
-          <q-icon name="fab fa-brands fa-instagram" size="20px" />
+        <div class="row items-center q-col-gutter-md q-mr-md">
+          <a href="https://www.facebook.com/RootHeim" target="_blank" class="text-white">
+            <q-icon name="fab fa-brands fa-facebook-f" size="20px" />
+          </a>
+          <a href="https://mx.linkedin.com/company/rootheim" target="_blank" class="text-white">
+            <q-icon name="fab fa-brands fa-linkedin-in" size="20px" />
+          </a>
+          <a href="https://www.instagram.com/rootheimcompany/" target="_blank" class="text-white">
+            <q-icon name="fab fa-brands fa-instagram" size="20px" />
+          </a>
         </div>
       </q-toolbar>
 
@@ -210,62 +255,57 @@
         class="my-card text-grey-5 bg-modedark"
         style="border-radius: 0px"
       >
-        <div class="row items-center justify-center">
-          <div class="col-12">
-            <div class="row items-center q-ma-lg justify-center">
-              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
-                <p class="text-weight-bold">Música GSM</p>
+        <div class="row justify-center q-pa-lg">
+          <div class="col-12" style="max-width: 1200px">
+            <div class="row q-col-gutter-lg justify-between">
+              <div class="col-12 col-sm-auto" style="max-width: 280px">
+                <p class="text-weight-bold">Vibeer</p>
                 <p>
-                  Here you can use rows and columns to organize your footer
-                  content. Lorem ipsum dolor sit amet, consectetur adipisicing
-                  elit.
+                  Plataforma dedicada a conectar artistas musicales con clientes
+                  que buscan el mejor talento para sus eventos.
                 </p>
               </div>
 
-              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+              <div class="col-12 col-sm-auto">
                 <p class="text-weight-bold">Legal</p>
-                <q-list class="text-white text-weight-light">
-                  <q-item clickable class="q-pa-none">
-                    <q-item-section class="text-weight-regular text-grey-5">
-                      Términos y condiciones
-                    </q-item-section>
-                  </q-item>
-                  <q-item clickable class="q-pa-none">
-                    <q-item-section class="text-weight-regular text-grey-5">
-                      Política de privacidad
-                    </q-item-section>
-                  </q-item>
-                </q-list>
+                <div class="column footer-links">
+                  <router-link to="/terms-conditions" class="text-weight-regular text-grey-5 footer-link">
+                    Términos y condiciones
+                  </router-link>
+                  <router-link to="/policy-privacity" class="text-weight-regular text-grey-5 footer-link">
+                    Política de privacidad
+                  </router-link>
+                </div>
               </div>
 
-              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
-                <p class="text-weight-bold">Contacto</p>
-                <p>
-                  <q-icon name="home" size="15px" class="q-mb-xs" /> México,
-                  Méx.
-                </p>
-                <p>
-                  <q-icon name="email" size="15px" class="q-mb-xs" />
-                  prueba@email.com
-                </p>
-                <p>
-                  <q-icon name="phone" size="15px" class="q-mb-xs" />
-                  +52 55 34 13 13
-                </p>
+              <div class="col-12 col-sm-auto">
+                <p class="text-weight-bold">Explora</p>
+                <div class="column footer-links">
+                  <router-link to="/" class="text-weight-regular text-grey-5 footer-link">
+                    Inicio
+                  </router-link>
+                  <router-link to="/artist-list" class="text-weight-regular text-grey-5 footer-link">
+                    Artistas
+                  </router-link>
+                  <router-link to="/quotations" class="text-weight-regular text-grey-5 footer-link">
+                    Cotizaciones
+                  </router-link>
+                </div>
               </div>
-              <div class="col-12 col-xs-12 col-sm-3 col-md-3">
+
+              <div class="col-12 col-sm-auto" style="max-width: 280px">
                 <p class="text-weight-bold">Contacto</p>
                 <p>
-                  <q-icon name="home" size="15px" class="q-mb-xs" /> México,
-                  Méx.
+                  <q-icon name="home" size="15px" class="q-mb-xs" /> Calle la Palma,
+                  Núm. Ext. 9, Col. Purificación, Teotihuacán, Méx. 55804
                 </p>
                 <p>
                   <q-icon name="email" size="15px" class="q-mb-xs" />
-                  prueba@email.com
+                  <a href="mailto:info@rootheim.com" class="text-grey-5"> info@rootheim.com </a>
                 </p>
                 <p>
                   <q-icon name="phone" size="15px" class="q-mb-xs" />
-                  +52 55 34 13 13
+                  +52 56 1966 0990
                 </p>
               </div>
             </div>
@@ -277,7 +317,7 @@
           class="justify-center"
           style="background-color: rgba(0, 0, 0, 0.2)"
         >
-          <div class="text-center">2022 © Copyright MusicaGSM.com</div>
+          <div class="text-center">2022 © Copyright Vibeer.com</div>
         </q-card-actions>
       </q-card>
     </q-footer>
@@ -289,10 +329,12 @@ import { ref } from "vue";
 import { mapGetters, mapActions } from "vuex";
 import SearchBar from "src/components/SearchBar/SearchBar.vue";
 import ProfilePhoto from "src/components/ProfilePhoto.vue";
+import iconCart from "src/components/ShoppingCart/iconCart.vue";
+import { notifyError, notifyInfo } from "src/utils/notify";
 
 export default {
   name: "GooglePhotosLayout",
-  components: { SearchBar, ProfilePhoto },
+  components: { SearchBar, ProfilePhoto , iconCart},
   setup() {
     const leftDrawerOpen = ref(false);
 
@@ -321,20 +363,37 @@ export default {
 
   methods: {
     ...mapActions("artistList", ["getArtists"]),
+    ...mapActions("shoppingCard", ["getCountListShoppingCard"]),
     async getArtistss() {
       try {
         await this.getArtists();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
+async fetchShoppingCartCount() {
+  try {
+    if (this.isAuthenticated) {
+      await this.getCountListShoppingCard();
+    }
+  } catch (err) {
+    const message = err?.response?.data?.message || "No se pudo cargar el carrito.";
+    if (message === 'Unauthenticated.' || err?.response?.status === 401) {
+      notifyInfo('¡Hasta luego!', { color: "primary", textColor: "white", icon: "sentiment_satisfied_alt", timeout: 2000 });
+      return; 
+    }
+    notifyError(message);
+  }
+},
     darkMode(val) {
       this.$q.dark.set(val);
+      const user = this.getMe;
+      if (user?.id) {
+        localStorage.setItem(`darkMode_${user.id}`, val);
+        this.$api.put('/api/user/dark-mode', { dark_mode: val });
+      }
     },
     redirectToRoute(value) {
       this.$router.push(value);      
@@ -376,9 +435,14 @@ export default {
       })
     },
   },
-  created() {
+  async created() {
     this.getArtistss();
-    this.isActiveDarkMode = this.mode;
+    this.fetchShoppingCartCount();
+    const user = this.getMe;
+    const saved = user?.id ? localStorage.getItem(`darkMode_${user.id}`) : null;
+    const isDark = saved === 'true';
+    this.$q.dark.set(isDark);
+    this.isActiveDarkMode = isDark;
   },
   computed: {
     ...mapGetters("auth", ["isAuthenticated"]),
@@ -389,10 +453,28 @@ export default {
       return this.$q.dark.isActive;
     },
   },
+  watch: {
+    getMe(user) {
+      const saved = user?.id ? localStorage.getItem(`darkMode_${user.id}`) : null;
+      const isDark = saved === 'true';
+      this.$q.dark.set(isDark);
+      this.isActiveDarkMode = isDark;
+      this.fetchShoppingCartCount();
+    },
+  },
 };
 </script>
 
 <style lang="sass">
+.footer-link
+  display: block
+  text-decoration: none
+  margin-bottom: 12px
+  cursor: pointer
+
+  &:hover
+    text-decoration: underline
+
 .GPL
 
   &__toolbar

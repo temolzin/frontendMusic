@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    <PageBreadcrumbs :items="[{ label: 'Mi Perfil', icon: 'person' }]" />
     <!-- Inicio de seccion Avatar público-->
     <div class="row q-pa-md">
       <div class="col-12 col-sm-4 col-md-4">
@@ -50,7 +51,7 @@
                   </q-file>
                 </div>
                 <div class="text-caption text-grey">
-                  El tamaño máximo de archivo permitido es de 1MB.
+                  El tamaño máximo del archivo permitido es de 1MB.
                 </div>
                 <div class="float-right">
                   <q-btn color="primary" label="Actualizar" type="submit" />
@@ -82,7 +83,7 @@
               hint="Introduce tu nombre completo, para que la gente pueda reconocerte"
               lazy-rules
               :rules="[
-                (val) => (val && val.length > 0) || 'Por favor, escriba algo',
+                (val) => (val && val.length > 0) || 'Por favor, ingresa tu nombre',
               ]"
             />
 
@@ -94,7 +95,7 @@
               lazy-rules
               :rules="[
                 (val) =>
-                  (val !== null && val !== '') || 'Por favor, escriba algo',
+                  (val !== null && val !== '') || 'Por favor, ingresa tu correo electrónico',
               ]"
             />
 
@@ -130,6 +131,7 @@
       <div class="col-12 col-sm-8 col-md-8 q-pa-md"  :class="mode?'bg-dark':'bg-white'"  style="border-radius: 5px;">
         <div class="q-pa-md">
           <q-form
+            ref="passwordForm"
             @submit="onSubmitPassword"
             @reset="onResetPassword"
             class="q-gutter-md"
@@ -141,7 +143,7 @@
               hint="Recuerda usar caracteres especiales"
               lazy-rules
               :rules="[
-                (val) => (val && val.length > 0) || 'Por favor, escriba algo',
+                (val) => (val && val.length > 0) || 'Por favor, ingresa la nueva contraseña',
               ]"
             >
               <template v-slot:append>
@@ -160,7 +162,7 @@
               hint="Ingresa la misma contraseña"
               lazy-rules
               :rules="[
-                (val) => (val && val.length > 0) || 'Por favor, escriba algo',
+                (val) => (val && val.length > 0) || 'Por favor, confirma la contraseña',
                 (val) =>
                   (val && val == formUpdatePassword.newPassword) ||
                   'Las contraseñas no coinciden',
@@ -182,7 +184,7 @@
               hint="Ingresa la contraseña actual"
               lazy-rules
               :rules="[
-                (val) => (val && val.length > 0) || 'Por favor, escriba algo',
+                (val) => (val && val.length > 0) || 'Por favor, ingresa la contraseña actual',
               ]"
             >
               <template v-slot:append>
@@ -218,11 +220,14 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { mapGetters, mapActions } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 let $q;
 
 export default {
+  components: { PageBreadcrumbs },
   name: "userProfile",
   data() {
     return {
@@ -249,66 +254,43 @@ export default {
     async onSubmitDetails() {
       try {
         await this.updateDetails(this.formUpdateMain);
-        this.$q.notify({
-          type: "positive",
-          message: `Información actualizada`,
-        });
+        notifySuccess(`Información actualizada`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
     async onSubmitPassword() {
       try {
         await this.updatePassword(this.formUpdatePassword);
-        this.$q.notify({
-          type: "positive",
-          message: `Contraseña actualizada`,
-        });
+        notifySuccess(`Contraseña actualizada`);
+        this.clearPasswordForm();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
     async onSubmitImageProfle() {
       try {
         if (this.image_profile.length == 0) {
-          this.$q.notify({
-            type: "negative",
-            message: `Ningún archivo seleccionado`,
-          });
+          notifyError(`Ningún archivo seleccionado`);
         } else {
           if (this.image_profile.size > 1000000) {
-            this.$q.notify({
-              type: "negative",
-              message: `El tamaño de la imagen excede de lo permitido`,
-            });
+            notifyError(`La imagen excede el tamaño permitido`);
           } else {
             let InstFormData = new FormData();
             InstFormData.append("image_profile", this.image_profile);
 
             await this.updateImageProfile(InstFormData);
             this.image_profile = null;
-            this.$q.notify({
-              type: "positive",
-              message: `Información actualizada`,
-            });
+            notifySuccess(`Información actualizada`);
           }
         }
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -317,26 +299,31 @@ export default {
       this.formUpdateMain.email = this.getMe.email;
     },
     onResetPassword() {
-      this.formUpdatePassword.newPassword = null;
-      this.formUpdatePassword.confirmPassword = null;
-      this.formUpdatePassword.currentPassword = null;
+      this.formUpdatePassword.newPassword = "";
+      this.formUpdatePassword.confirmPassword = "";
+      this.formUpdatePassword.currentPassword = "";
+    },
+    clearPasswordForm() {
+      this.onResetPassword();
+      this.$nextTick(() => {
+        if (this.$refs.passwordForm) {
+          this.$refs.passwordForm.resetValidation();
+        }
+      });
     },
     onResetImageProfile() {
       this.image_profile = null;
     },
     onRejected() {
-      $q.notify({
-        type: "negative",
-        message: `El archivo no ha superado las restricciones de validación`,
-      });
+      notifyError(`El archivo no ha superado las restricciones de validación`);
       this.image_profile = [];
     },
     getBackendImageUrl(image) {
       const baseURL = this.$q.config.backendUrl;
 
-      if (image) {
-        return baseURL + image;
-      }
+      if (!image) return null;
+
+      return /^https?:\/\//.test(image) ? image : `${baseURL}${image}`;
     }
   },
   computed: {

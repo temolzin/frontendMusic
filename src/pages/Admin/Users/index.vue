@@ -8,24 +8,30 @@
       row-key="id"
       :filter="filter"
       no-data-label="Sin registros"
-      no-results-label="Ningún registro coincidente"
+      no-results-label="No hay registros que coincidan."
+      rows-per-page-label="Usuarios por página"
+      :rows-per-page-options="[10, 20, 30, 0]"
+      :grid="$q.screen.lt.md"
+      bordered
+      flat
     >
       <template v-slot:top>
         <b class="text-h5">
           Usuarios
           <q-btn
-            color="primary"
-            :disable="loading"
-            label="Nuevo"
-            icon-right="fas fa-plus"
-            size="sm"
-            @click="formCreate = true"
-            v-if="$can('create-users')"
-          />
+          color="primary"
+          :disable="loading"
+          style="border-radius: 8px; font-weight: bold;"
+          label="Nuevo"
+          icon="fas fa-plus"
+          size="sm"
+          @click="clearForm(); formCreate = true"
+          v-if="$can('create-users')"
+        />
         </b>
         <q-space />
 
-        <q-input dense debounce="100" color="primary" v-model="filter">
+        <q-input dense debounce="100" color="primary" v-model="filter" placeholder="Buscar en usuarios...">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -47,27 +53,58 @@
             {{ props.row.role_name }}
           </q-td>
           <q-td key="created_at" :props="props">
-            {{ props.row.created_at }}
+            {{ formatDate(props.row.created_at) }}
           </q-td>
-          <q-td key="options" :props="props">
+          <q-td key="options" :props="props" class="text-center">
             <q-btn
-              dense
               round
-              flat
+              unelevated
               color="primary"
+              size="sm"
               @click="showUser(props)"
               icon="edit"
-            ></q-btn>
+              class="q-mr-sm"
+            >
+              <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+            </q-btn>
             <q-btn
-              dense
               round
-              flat
-              color="red"
+              unelevated
+              color="negative"
+              size="sm"
               @click="removeUser(props)"
               icon="delete"
-            ></q-btn>
+            >
+              <q-tooltip class="bg-negative text-body2">Eliminar</q-tooltip>
+            </q-btn>
           </q-td>
         </q-tr>
+      </template>
+
+      <template v-slot:item="props">
+        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+          <q-card class="q-pa-sm">
+            <q-list dense>
+              <q-item v-for="col in props.cols" :key="col.name">
+                <q-item-section>
+                  <q-item-label caption>{{ col.label }}</q-item-label>
+                  <q-item-label v-if="col.name === 'options'">
+                    <q-btn round unelevated color="primary" size="sm" @click="showUser(props)" icon="edit" class="q-mr-sm">
+                      <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+                    </q-btn>
+                    <q-btn round unelevated color="negative" size="sm" @click="removeUser(props)" icon="delete">
+                      <q-tooltip class="bg-negative text-body2">Eliminar</q-tooltip>
+                    </q-btn>
+                  </q-item-label>
+                  <q-item-label v-else-if="col.name === 'created_at'">
+                    {{ formatDate(props.row.created_at) }}
+                  </q-item-label>
+                  <q-item-label v-else>{{ col.value }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
       </template>
 
       <template v-slot:loading>
@@ -82,7 +119,7 @@
   <!-- Inicio de Formulario nuevo usuario -->
   <section>
     <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="formCreate" persistent>
+      <q-dialog v-model="formCreate" persistent @hide="clearForm">
         <q-card style="min-width: 350px">
           <q-card-section>
             <div class="text-h6">
@@ -107,6 +144,7 @@
                 label="Correo electrónico"
                 :rules="[
                   (val) => !!val || 'El campo correo electrónico es requerido',
+                  (val) => /.+@.+\..+/.test(val) || 'Ingresa un correo válido',
                 ]"
               />
               <q-input
@@ -114,7 +152,11 @@
                 lazy-rules
                 v-model="form.password"
                 label="Contraseña"
-                :rules="[(val) => !!val || 'El campo contraseña es requerido']"
+                type="password"
+                :rules="[
+                  (val) => !!val || 'El campo contraseña es requerido',
+                  (val) => val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
+                ]"
               />
 
               <!-- Select -->
@@ -128,22 +170,22 @@
                 "
                 :option-label="
                   (opt) =>
-                    Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'
+                    Object(opt) === opt && 'name' in opt ? opt.name : 'Seleccionar'
                 "
                 emit-value
                 map-options
                 options-dense
                 filled
-                hint="Selecciona los permisos que tendra el rol"
+                hint="Selecciona los permisos que tendrá el rol"
                 color="green"
                 :loading="false"
                 :options="roles"
-                :rules="[(val) => !!val || 'Field is required']"
+                :rules="[(val) => !!val || 'Campo obligatorio']"
               />
               <!-- Fin Select -->
               <q-card-actions align="right" class="text-primary">
-                <q-btn flat label="Cancel" v-close-popup color="red" />
-                <q-btn flat label="Submit" type="submit" color="primary" />
+                <q-btn flat label="Cancelar" v-close-popup color="red" />
+                <q-btn flat label="Crear" type="submit" color="primary" />
               </q-card-actions>
             </q-form>
           </q-card-section>
@@ -159,7 +201,7 @@
       <q-dialog v-model="formEdit" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Editar usuario {{ form.name }}</div>
+            <div class="text-h6">Editar usuario</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -175,9 +217,19 @@
                 dense
                 v-model="form.email"
                 label="Correo electrónico"
-                :rules="[(val) => !!val || 'Field is required']"
+                :rules="[
+                  (val) => !!val || 'El campo correo electrónico es requerido',
+                  (val) => /.+@.+\..+/.test(val) || 'Ingresa un correo válido',
+                ]"
               />
-              <q-input dense v-model="form.password" label="Contraseña" />
+              <q-input dense 
+              v-model="form.password" 
+              label="Contraseña"
+              type="password"
+              hint="Déjalo vacío si no deseas cambiarla"
+                :rules="[
+                  (val) => !val || val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
+                ]" />
               <!-- Select -->
               <q-select
                 v-model="form.role_id"
@@ -193,16 +245,16 @@
                 map-options
                 options-dense
                 filled
-                hint="Selecciona los permisos que tendra el rol"
+                hint="Selecciona los permisos que tendrá el rol"
                 color="green"
                 :loading="false"
                 :options="roles"
-                :rules="[(val) => !!val || 'Field is required']"
+                :rules="[(val) => !!val || 'Por favor, selecciona un rol']"
               />
               <!-- Fin Select -->
               <q-card-actions align="right" class="text-primary">
-                <q-btn flat label="Cancel" v-close-popup color="red" />
-                <q-btn flat label="Submit" type="submit" color="primary" />
+                <q-btn flat label="Cancelar" v-close-popup color="red" />
+                <q-btn flat label="Guardar" type="submit" color="primary" />
               </q-card-actions>
             </q-form>
           </q-card-section>
@@ -216,41 +268,43 @@
 <script>
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
+import { formatDate } from "src/utils/formatDate";
 
 let $q;
 const columns = [
   {
     name: "id",
     label: "ID",
-    align: "left",
+    align: "center",
     field: "id",
     sortable: true,
   },
   {
     name: "name",
     label: "Nombre",
-    align: "left",
+    align: "center",
     field: "name",
     sortable: true,
   },
   {
     name: "email",
     label: "Correo electrónico",
-    align: "left",
+    align: "center",
     field: "email",
     sortable: true,
   },
   {
     name: "role_name",
     label: "Rol",
-    align: "left",
+    align: "center",
     field: "role_name",
     sortable: true,
   },
   {
     name: "created_at",
     label: "Creado desde",
-    align: "left",
+    align: "center",
     field: "created_at",
     sortable: true,
   },
@@ -259,7 +313,7 @@ const columns = [
     align: "center",
     label: "Acciones",
     field: "options",
-    sortable: true,
+    sortable: false,
   },
 ];
 
@@ -273,6 +327,11 @@ export default {
       rows,
       filter: "",
       formCreate: false,
+      pagination: {
+        sortBy: "created_at",
+        descending: true,
+        rowsPerPage: 10,
+      },
       formEdit: false,
       form: {
         id: "",
@@ -289,15 +348,15 @@ export default {
     ...mapActions("users", ["deleteUser"]),
     ...mapActions("users", ["updateUser"]),
     ...mapActions("roles", ["getRoles"]),
+    formatDate(date) {
+      return formatDate(date);
+    },
     async gettUsers() {
       try {
         await this.getUsers();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -306,32 +365,17 @@ export default {
         await this.createUser(this.form);
         this.formCreate = false;
         this.clearForm();
-        this.$q.notify({
-          type: "positive",
-          message: `Usuario creado correctamente`,
-        });
+        notifySuccess(`Usuario creado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
           if (err.response.data.errors.name) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.name,
-            });
+            notifyError(err.response.data.errors.name);
           } else if (err.response.data.errors.email) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.email,
-            });
+            notifyError(err.response.data.errors.email);
           } else if (err.response.data.errors.password) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.password,
-            });
+            notifyError(err.response.data.errors.password);
           } else if (err.response.data.errors.role_id) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.role_id,
-            });
+            notifyError(err.response.data.errors.role_id);
           }
         }
       }
@@ -341,27 +385,22 @@ export default {
       this.$q
         .dialog({
           title: "Mensaje de confirmación",
-          message: `¿Estas seguro de eliminar el registro de ${props.row.name}`,
-          cancel: true,
+          message: `¿Estás seguro de eliminar al usuario ${props.row.name}?`,
+          cancel: "Cancelar",
+          ok: "Confirmar",
           persistent: true,
         })
         .onOk(() => {
           try {
             this.deleteUser(props.row.id);
-            this.$q.notify({
-              type: "positive",
-              message: `Usuario ${props.row.name} eliminado correctamente`,
-            });
+            notifySuccess(`Usuario ${props.row.name} eliminado correctamente`);
           } catch (err) {
             if (err.response.data.message) {
-              $q.notify({
-                type: "negative",
-                message: err.response.data.message,
-              });
+              notifyError(err.response.data.message);
             }
           }
         });
-    },
+      },
 
     showUser(props) {
       try {
@@ -373,10 +412,7 @@ export default {
         this.form.role_id = props.row.role_id;
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -386,32 +422,17 @@ export default {
         await this.updateUser(this.form);
         this.formEdit = false;
         this.clearForm();
-        this.$q.notify({
-          type: "positive",
-          message: `Usuario modificado correctamente`,
-        });
+        notifySuccess(`Usuario modificado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
           if (err.response.data.errors.name) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.name,
-            });
+            notifyError(err.response.data.errors.name);
           } else if (err.response.data.errors.email) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.email,
-            });
+            notifyError(err.response.data.errors.email);
           } else if (err.response.data.errors.password) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.password,
-            });
+            notifyError(err.response.data.errors.password);
           } else if (err.response.data.errors.role_id) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.errors.role_id,
-            });
+            notifyError(err.response.data.errors.role_id);
           }
         }
       }
@@ -422,10 +443,7 @@ export default {
         await this.getRoles();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -455,7 +473,7 @@ export default {
     $q = useQuasar();
   },
   beforeUpdate() {
-    this.rows = this.users;
+    this.rows = [...this.users].sort((a, b) => b.id - a.id);
     this.loading = false;
   },
 };

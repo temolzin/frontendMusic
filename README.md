@@ -1,46 +1,81 @@
-# Quasar App(proyecto-musica)
+## Welcome to the Vibeer Repository 🎵
 
-Proyecto FRONT-END del Sistema Gestión de Música, es un sistema híbrido que pueda ser usado en aplicación web como en una aplicación para teléfonos inteligentes Android, su finalidad es una aplicación que de publicidad a grupos musicales y puedan ser contratados por cualquier persona a través del sistema, obteniendo ganancias por cada contratación.
+## Vibeer
+Frontend application for the musical artist hiring platform. Built with Quasar Framework (SPA, PWA & Android).
 
-Para su ejecutación se deben de crear las siguientes dependencias:
+### Prerequisites 📋
+To run this project, you will need:
 
-## Configuración de OpenPay
+- Node.js 18+
+- npm 6+
+- Quasar CLI 1.x (`npm i -g @quasar/cli`)
+- [kool](https://kool.dev/) (for Docker) or run locally
 
-En el archivo quasar.conf.js configurar con sus llaves propias las credenciales de OpenPay, las cuales se obtienen registrandote en OpenPay y scrolleando.
-Las variables a rellenar son:
-    - OpenPayID: 'tu-openpay-id',
-    - OpenPayKey: 'tu-openpay-key(la que inicia con pk)', 
-    - OpenPaySanboxMode: true(Si se usa el ambiente de pruebas o el de producción)
+> **Windows users**: kool runs Linux-based Docker containers, so it requires WSL with a Linux distribution installed, plus Docker Desktop with WSL2 backend.
 
-## npm install
+### Docker Installation (kool) 🐳🔧
 
-Este comando nos sirve para instalar paquetes. Los paquetes se descargarán y se meterán automáticamente en una carpeta llamada node_modules.
+1. Clone the repository:
+    ```bash
+    git clone <repo-url> frontendMusic
+    ```
 
-## quasar dev
+2. Enter the project folder:
+    ```bash
+    cd frontendMusic
+    ```
 
-Nos ayuda a compilar y se abrirá el proyecto en el navegador predeterminado.
+3. Run setup — this starts the container and exposes the app:
+    ```bash
+    kool run setup
+    ```
 
-## Configuración de Axios
+    The app will be available at http://localhost:8080.
 
-1. Entrar a la carpeta src.
-2. Dirigirse a la subcarpeta boot.
-3. Abrir el archivo axios.js.
-4. Cambiar el parametro "const api = axios.create({ baseURL: "http://127.0.0.1:8000/" });", al nuevo servidor.
+### Local Installation 💻🔧
 
-## - curl -fsSL https://kool.dev/install | bash
+1. Clone the repository:
+    ```bash
+    git clone <repo-url> frontendMusic
+    ```
 
-Para ejecutar correctamente el proyecto correctamente se necesita tener instalado kool, el cual se instala con el comando.
+2. Enter the project folder:
+    ```bash
+    cd frontendMusic
+    ```
 
-Este comando solo sirve en linux, por lo que para usarse en windows necesitamos instalar Windows Subsistem Linux(WSL) e instalar una versión de Linux, además tenemos que tener Docker instalado en nuestro subsistema de linux y docker compose.
+3. Install dependencies:
+    ```bash
+    npm install
+    ```
 
-## kool run setup
+4. Start the development server:
+    ```bash
+    quasar dev
+    ```
 
-Este comando ejecutará la creación del contenedor de docker, instalación de dependencias e inicialización del proyecto.
+    The app will open at http://localhost:8080.
 
-## kool start
+### Configuration ⚙️
 
-Enciende el contenedor
+- **Backend API URL**: Edit `src/boot/axios.js` and change the base URL:
+    ```js
+    const api = axios.create({ baseURL: "http://localhost:8000/" });
+    ```
 
-## kool stop
+### Additional Commands
 
-Apaga el contenedor
+- **Build for Production**:
+    ```bash
+    quasar build
+    ```
+- **Build Android App**:
+    ```bash
+    quasar dev -m cordova -T android
+    ```
+- **Run npm inside Docker**:
+    ```bash
+    kool run npm install
+    ```
+
+© Vibeer

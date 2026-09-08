@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md">
+    <PageBreadcrumbs :items="[{ label: 'Roles', icon: 'fas fa-solid fa-street-view' }]" />
     <!-- Inicio de Tabla -->
     <q-table
       :rows="rows"
@@ -8,26 +9,32 @@
       row-key="id"
       :filter="filter"
       no-data-label="Sin registros"
-      no-results-label="Ningún registro coincidente"
+      no-results-label="No se encontraron registros"
+      rows-per-page-label="Roles por página"
+      :rows-per-page-options="[10, 20, 30, 0]"
+      :grid="$q.screen.lt.md"
+      bordered
+      flat
     >
       <template v-slot:top>
         <b class="text-h5">
           Roles
           <q-btn
-            color="primary"
-            :disable="loading"
-            label="Nuevo"
-            icon-right="fas fa-plus"
-            size="sm"
-            @click="formCreate = true"
-          />
+          color="primary"
+          :disable="loading"
+          style="border-radius: 8px; font-weight: bold;"
+          label="Nuevo"
+          icon="fas fa-plus"
+          size="sm"
+          @click="formCreate = true"
+        />
         </b>
 
         <q-space />
 
         <q-space />
 
-        <q-input dense debounce="100" color="primary" v-model="filter">
+        <q-input dense debounce="100" color="primary" v-model="filter" placeholder="Buscar en roles...">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -46,27 +53,58 @@
             {{ props.row.description }}
           </q-td>
           <q-td key="created_at" :props="props">
-            {{ props.row.created_at }}
+            {{ formatDate(props.row.created_at) }}
           </q-td>
-          <q-td key="options" :props="props">
+          <q-td key="options" :props="props" class="text-center">
             <q-btn
-              dense
               round
-              flat
+              unelevated
               color="primary"
+              size="sm"
               @click="showRole(props)"
               icon="edit"
-            ></q-btn>
+              class="q-mr-sm"
+            >
+              <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+            </q-btn>
             <q-btn
-              dense
               round
-              flat
-              color="red"
+              unelevated
+              color="negative"
+              size="sm"
               @click="removeRole(props)"
               icon="delete"
-            ></q-btn>
+            >
+              <q-tooltip class="bg-negative text-body2">Eliminar</q-tooltip>
+            </q-btn>
           </q-td>
         </q-tr>
+      </template>
+
+      <template v-slot:item="props">
+        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+          <q-card class="q-pa-sm">
+            <q-list dense>
+              <q-item v-for="col in props.cols" :key="col.name">
+                <q-item-section>
+                  <q-item-label caption>{{ col.label }}</q-item-label>
+                  <q-item-label v-if="col.name === 'options'">
+                    <q-btn round unelevated color="primary" size="sm" @click="showRole(props)" icon="edit" class="q-mr-sm">
+                      <q-tooltip class="bg-primary text-body2">Editar</q-tooltip>
+                    </q-btn>
+                    <q-btn round unelevated color="negative" size="sm" @click="removeRole(props)" icon="delete">
+                      <q-tooltip class="bg-negative text-body2">Eliminar</q-tooltip>
+                    </q-btn>
+                  </q-item-label>
+                  <q-item-label v-else-if="col.name === 'created_at'">
+                    {{ formatDate(props.row.created_at) }}
+                  </q-item-label>
+                  <q-item-label v-else>{{ col.value }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card>
+        </div>
       </template>
 
       <template v-slot:loading>
@@ -81,10 +119,10 @@
   <!-- Inicio de Formulario nuevo rol -->
   <section>
     <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="formCreate" persistent>
+      <q-dialog v-model="formCreate" persistent @hide="onReset">
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Crear rol "{{ form.name }}"</div>
+            <div class="text-h6">Crear rol</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -105,45 +143,14 @@
                 hint="Se recomiendo una sola palabra"
                 lazy-rules
                 :rules="[
-                  (val) => (val && val.length > 0) || 'Ingresa una descripción',
+                  (val) => (val && val.length >= 10) || 'Ingresa una descripción (mín. 10 caracteres)',
                 ]"
               />
 
-              <div>
-                <q-select
-                  v-model="form.selection"
-                  for="permission"
-                  :option-value="
-                    (opt) =>
-                      Object(opt) === opt && 'permission_id' in opt
-                        ? opt.permission_id
-                        : null
-                  "
-                  :option-label="
-                    (opt) =>
-                      Object(opt) === opt && 'name' in opt
-                        ? opt.name
-                        : '- Null -'
-                  "
-                  emit-value
-                  map-options
-                  multiple
-                  options-dense
-                  use-chips
-                  filled
-                  hint="Selecciona los permisos que tendra el rol"
-                  color="primary"
-                  :loading="false"
-                  clear-icon
-                  counter
-                  :rules="[
-                    (val) =>
-                      val.length > 1 ||
-                      'Por favor selecciona al menos 2 opciones',
-                  ]"
-                  :options="permissions"
-                />
-              </div>
+              <permission-modules
+                v-model="form.selection"
+                :permissions="permissions"
+              />
 
               <q-card-actions align="right" class="text-primary">
                 <q-btn
@@ -170,123 +177,92 @@
       <q-dialog v-model="formEdit" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Editar rol "{{ form.name }}"</div>
+            <div class="text-h6">Editar rol</div>
           </q-card-section>
-
           <q-card-section class="q-pt-none">
-            <form class="q-gutter-md">
+            <q-form @submit="editRole" class="q-gutter-md">
               <q-input
                 dense
+                lazy-rules
                 v-model="form.name"
                 autofocus
-                label="Nombre completo"
-                :rules="[(val) => !!val || 'Field is required']"
+                label="Nombre del rol"
+                :rules="[(val) => !!val || 'El campo nombre es requerido']"
               />
               <q-input
                 dense
+                lazy-rules
                 v-model="form.description"
-                label="Correo electrónico"
-                :rules="[(val) => !!val || 'Field is required']"
+                label="Descripción del rol"
+                :rules="[(val) => (val && val.length >= 10) || 'Mín. 10 caracteres']"
               />
-              <!-- Select -->
-              <q-select
+              <permission-modules
                 v-model="form.selection"
-                for="permission"
-                :option-value="
-                  (opt) =>
-                    Object(opt) === opt && 'permission_id' in opt
-                      ? opt.permission_id
-                      : null
-                "
-                :option-label="
-                  (opt) =>
-                    Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'
-                "
-                emit-value
-                map-options
-                multiple
-                options-dense
-                use-chips
-                filled
-                hint="Selecciona los permisos que tendra el rol"
-                color="primary"
-                :loading="false"
-                clear-icon
-                counter
-                :rules="[
-                  (val) =>
-                    val.length > 1 ||
-                    'Por favor selecciona al menos 2 opciones',
-                ]"
-                :options="permissions"
+                :permissions="permissions"
               />
-              <!-- Fin Select -->
-            </form>
+              <q-card-actions align="right" class="text-primary">
+                <q-btn flat label="Cancelar" v-close-popup @click="onReset" />
+                <q-btn flat label="Guardar" type="submit" />
+              </q-card-actions>
+            </q-form>
           </q-card-section>
-
-          <q-card-actions align="right" class="text-primary">
-            <q-btn flat label="Cancel" v-close-popup @click="onReset" />
-            <q-btn
-              flat
-              label="Submit"
-              type="submit"
-              v-close-popup
-              v-on:click="editRole"
-            />
-          </q-card-actions>
         </q-card>
       </q-dialog>
     </div>
   </section>
-  <!-- Fin de Formulario editar rol -->
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
+import PermissionModules from "src/components/admin/PermissionModules.vue";
 import { useQuasar } from "quasar";
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
+import { formatDate } from "src/utils/formatDate";
 
 let $q;
 const columns = [
   {
     name: "id",
     label: "ID",
-    align: "left",
+    align: "center",
     field: "id",
     sortable: true,
   },
   {
     name: "name",
     label: "Nombre",
-    align: "left",
+    align: "center",
     field: "name",
     sortable: true,
   },
   {
     name: "description",
     label: "Descripción",
-    align: "left",
+    align: "center",
     field: "description",
     sortable: true,
   },
   {
     name: "created_at",
     label: "Creado desde",
-    align: "left",
+    align: "center",
     field: "created_at",
     sortable: true,
   },
   {
     name: "options",
     label: "Acciones",
-    align: "left",
+    align: "center",
     field: "options",
-    sortable: true,
+    sortable: false,
   },
 ];
 
 let rows = [];
 
 export default {
+  components: { PageBreadcrumbs, PermissionModules },
   data() {
     return {
       loading: true,
@@ -295,6 +271,11 @@ export default {
       filter: "",
       formEdit: false,
       formCreate: false,
+      pagination: {
+        sortBy: "created_at",
+        descending: true,
+        rowsPerPage: 10,
+      },
       form: {
         id: "",
         name: "",
@@ -309,15 +290,15 @@ export default {
     ...mapActions("roles", ["getPermissions"]),
     ...mapActions("roles", ["updateRole"]),
     ...mapActions("roles", ["createRole"]),
+    formatDate(date) {
+      return formatDate(date);
+    },
     async gettRoles() {
       try {
         await this.getRoles();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -325,34 +306,29 @@ export default {
       try {
         let id = props.row.id;
         let name = props.row.name;
-
+        
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
-            message: `¿Estas seguro de eliminar el registro de ${name}`,
-            cancel: true,
+            message: `¿Estás seguro de eliminar el rol ${name}?`,
+            cancel: "Cancelar",
+            ok: "Confirmar",
             persistent: true,
           })
           .onOk(() => {
             try {
               this.deleteRole(id);
-              this.$q.notify({
-                type: "positive",
-                message: `Rol ${name} eliminado correctamente`,
-              });
+              notifySuccess(`Rol ${name} eliminado correctamente`);
             } catch (err) {
               if (err.response.data.message) {
-                $q.notify({
-                  type: "negative",
-                  message: err.response.data.message,
-                });
+                notifyError(err.response.data.message);
               }
             }
           });
-      } catch (error) {
-        console.error(error);
-      }
-    },
+        } catch (error) {
+          console.error(error);
+        }
+      },
     showRole(props) {
       let selected = [props.row];
       try {
@@ -368,27 +344,19 @@ export default {
         }
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
     async editRole() {
       try {
         await this.updateRole(this.form);
+        this.formEdit = false;
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: `Rol modificado correctamente`,
-        });
+        notifySuccess(`Rol modificado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -397,10 +365,7 @@ export default {
         await this.getPermissions();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -411,16 +376,10 @@ export default {
         await this.createRole(this.form);
         this.formCreate = false;
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: `Rol creado correctamente`,
-        });
+        notifySuccess(`Rol creado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -449,7 +408,7 @@ export default {
     $q = useQuasar();
   },
   beforeUpdate() {
-    this.rows = this.roles;
+    this.rows = [...this.roles].sort((a, b) => b.id - a.id);
     this.loading = false;
   },
 };

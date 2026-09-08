@@ -4,51 +4,51 @@
       <q-breadcrumbs>
         <q-breadcrumbs-el
           to="/dashboard/home"
-          label="Inico"
-          class="text-weight-bold text-h6 uppercase"
-          :class="mode ? 'text-grey-5' : 'text-dark'"
+          label="Inicio"
+          icon="home"
         />
         <q-breadcrumbs-el
           to="/client/musical-genders"
-          label="Generos Musicales"
-          class="text-weight-bold text-h6 uppercase"
-          :class="mode ? 'text-grey-5' : 'text-dark'"
+          label="Géneros Musicales"
+          icon="widgets"
         />
         <q-breadcrumbs-el
-          :label="slug"
-          class="text-weight-bold text-h6 uppercase"
+          :label="formatGenreName(slug)"
+          class="text-weight-bold"
           :class="mode ? 'text-grey-5' : 'text-dark'"
         />
       </q-breadcrumbs>
     </div>
     <div v-if="clientMusicalGenders[0]">
       <!-- Inicio de Parallax de nobre del grupo y descripción -->
-      <q-parallax :height="250" :speed="0.5" v-if="skeleton == false">
-        <template v-slot:media>
-          <img
-            src="https://cdn.pixabay.com/photo/2017/03/09/20/53/microphone-2130806_960_720.jpg"
-          />
-        </template>
+      <div class="parallax-wrapper">
+        <q-parallax :height="280" :speed="0.5" v-if="skeleton == false">
+          <template v-slot:media>
+            <img
+              :src="genreImage"
+            />
+          </template>
 
-        <template v-slot:content="scope">
-          <div
-            class="absolute column items-center"
-            :style="{
-              opacity: 0.45 + (1 - scope.percentScrolled) * 0.75,
-              top: scope.percentScrolled * 50 + '%',
-              left: 0,
-              right: 0,
-            }"
-          >
-            <div class="text-h3 text-white text-center q-mb-sm uppercase">
-              {{ clientMusicalGenders[0].name }}
+          <template v-slot:content="scope">
+            <div
+              class="absolute column items-center parallax-content"
+              :style="{
+                opacity: 0.45 + (1 - scope.percentScrolled) * 0.75,
+                top: scope.percentScrolled * 50 + '%',
+                left: 0,
+                right: 0,
+              }"
+            >
+              <div class="parallax-title text-white text-center q-mb-sm">
+                {{ formatGenreName(clientMusicalGenders[0].name) }}
+              </div>
+              <div class="parallax-desc text-white text-center">
+                {{ clientMusicalGenders[0].description }}
+              </div>
             </div>
-            <div class="text-white text-center">
-              {{ clientMusicalGenders[0].description }}
-            </div>
-          </div>
-        </template>
-      </q-parallax>
+          </template>
+        </q-parallax>
+      </div>
       <!-- Fin de Parallax de nobre del grupo y descripción -->
       <!-- Inico de carga de Parallax -->
       <div class="q-gutter-y-md" v-if="skeleton == true">
@@ -65,16 +65,17 @@
         hide-header
         no-data-label="Sin registros"
         no-results-label="Ningún registro coincidente"
+        rows-per-page-label="Géneros por página"
+        :rows-per-page-options="[10, 20, 30, 0]"
       >
         <template v-slot:top-left>
           <h5
-            class="q-ma-none q-mt-md"
-            :class="mode ? 'text-grey-5' : 'text-modedark text-weight-medium'"
+            class="q-ma-none q-mt-md uppercase text-weight-bold"
+            :class="mode ? 'text-grey-5' : 'text-dark'"
             v-if="skeleton == false"
           >
-            Resultados relacionados a {{ clientMusicalGenders[0].name }}
+            Resultados relacionados a {{ formatGenreName(clientMusicalGenders[0].name) }}
           </h5>
-          <q-skeleton width="400px" v-if="skeleton == true" />
         </template>
         <template v-slot:top-right>
           <q-input
@@ -82,7 +83,7 @@
             dense
             debounce="300"
             v-model="filter"
-            placeholder="Buscar por nombre... "
+            placeholder="Buscar en artistas..."
           >
             <template v-slot:append>
               <q-icon name="search" />
@@ -96,7 +97,7 @@
               height="350px"
               v-if="skeleton == true"
             />
-            <q-card class="my-card q-ma-sm" v-if="skeleton == false">
+            <q-card class="my-card q-ma-sm" v-show="!skeleton">
               <q-img :src="props.row.image" class="imageArtist" />
 
               <q-card-section>
@@ -126,9 +127,13 @@
                 </div>
 
                 <q-rating
-                  v-model="starts"
+                  :model-value="parseFloat(props.row?.ratings_avg_rating || 0)"
                   :max="5"
                   size="32px"
+                  color="yellow"
+                  icon="star_border"
+                  icon-selected="star"
+                  icon-half="star_half"
                   no-dimming
                   readonly
                 />
@@ -137,9 +142,9 @@
               <q-card-section class="q-pt-none">
                 <div class="text-subtitle1">
                   <span class="text-h5 text-primary text-weight-bold">
-                    ${{ props.row.price_hour }}.00
+                    {{ formatCurrency(props.row.price_hour) }}
                   </span>
-                  <small> pesos por hora</small>
+                  <small> por hora</small>
                 </div>
                 <div class="text-caption text-grey ellipsis">
                   {{ props.row.history }}
@@ -152,11 +157,11 @@
                 <q-btn
                   flat
                   round
-                  :color="colorHeart"
-                  icon="fas fa-solid fa-heart"
+                  :color="isFavoriteArtist(props.row.id) ? 'red' : 'black'"
+                  :icon="isFavoriteArtist(props.row.id) ? 'fas fa-solid fa-heart' : 'far fa-heart'"
                   @click="addFavouriteArtist(props.row.id)"
                 />
-                <q-btn flat round color="primary" icon="share" />
+                <q-btn flat round color="primary" icon="share" @click="copyArtistLink(props.row.slug, this.slug)" />
               </q-card-actions>
             </q-card>
           </div>
@@ -187,8 +192,12 @@
 
 <script>
 import { useQuasar, QSpinnerGears, QSpinnerAudio } from "quasar";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import { ref } from "vue";
+import { notifySuccess, notifyError, notifyInfo } from "src/utils/notify";
+import { openArtistLinkShareSheet } from "src/utils/shareArtistLink";
+import { formatCurrency } from "src/utils/moneyFormat";
+import { formatGenreName } from "src/utils/formatText";
 
 let $q;
 export default {
@@ -202,18 +211,19 @@ export default {
       slug: null,
       skeleton: true,
       showResult: null,
-      starts: 4,
       listCarrito: [],
-      colorHeart: "red",
+      favoriteArtistIds: [],
       addFavourite: {
         artist_id: "",
       },
     };
   },
   methods: {
-    ...mapActions("clientMusicalGenders", ["getMusicalGendersBySlug"]),
+    formatCurrency,
+    formatGenreName,
+    ...mapActions("clientMusicalGenders", ["getMusicalGendersBySlug", "getMusicalGenders"]),
     ...mapActions("shoppingCard", ["create_order"]),
-    ...mapActions("favouriteArtists", ["createFavouriteArtist"]),
+    ...mapActions("favouriteArtists", ["createFavouriteArtist", "getFavouriteArtists"]),
     async gettMusicalGendersBySlug() {
       try {
         await this.getMusicalGendersBySlug(this.slug).then(() => {
@@ -221,10 +231,7 @@ export default {
         });
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -236,6 +243,11 @@ export default {
           slugA: slug,
         },
       });
+    },
+
+    copyArtistLink(artistSlug, genreSlug) {
+      const link = `${window.location.origin}/client/musical-genders/${genreSlug}/${artistSlug}`;
+      openArtistLinkShareSheet({ q: this.$q, link });
     },
 
     addCart(item) {
@@ -263,11 +275,7 @@ export default {
       //alert(JSON.stringify(item));
     },
     onSendOrder(artist) {
-      $q.notify({
-        spinner: QSpinnerGears,
-        message: "Agregando al carrito...",
-        timeout: 200,
-      });
+      notifyInfo("Agregando al carrito...", { spinner: QSpinnerGears, timeout: 200 });
       const formData = new FormData();
       formData.append("service_id", artist.id);
       formData.append("name", artist.name);
@@ -276,16 +284,13 @@ export default {
       formData.append("order_date_finish", this.printDateFinish());
       //formData.append("total", total);
       this.create_order(formData).then(() => {
-        $q.notify({
-          type: "positive",
-          spinner: QSpinnerAudio,
-          message: "Artista agregado",
-          timeout: 1000,
-        });
+        notifySuccess("Artista agregado", { spinner: QSpinnerAudio, timeout: 1000 });
+      }).catch((err) => {
+        notifyError(err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo agregar el artista al carrito", { timeout: 3000 });
       });
     },
     printDateStart: function () {
-      return new Date().toLocaleString();
+      return this.formatCartDate(new Date());
     },
     printDateFinish: function () {
       var d = new Date();
@@ -293,24 +298,60 @@ export default {
     },
     sumarDias(fecha, dias) {
       fecha.setDate(fecha.getDate() + dias);
-      return fecha.toLocaleString();
+      return this.formatCartDate(fecha);
+    },
+    formatCartDate(date) {
+      const pad = (value) => String(value).padStart(2, "0");
+      const year = date.getFullYear();
+      const month = pad(date.getMonth() + 1);
+      const day = pad(date.getDate());
+      const hours = pad(date.getHours());
+      const minutes = pad(date.getMinutes());
+      const seconds = pad(date.getSeconds());
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     },
     async addFavouriteArtist(id) {
       this.addFavourite.artist_id = id;
       try {
         await this.createFavouriteArtist(this.addFavourite).then(() => {
-          this.$q.notify({
-            type: "positive",
-            message: this.favouriteArtists,
-          });
+          this.toggleFavoriteArtist(id);
+          notifySuccess(this.favouriteArtists);
         });
         this.addFavourite.artist_id = "";
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
+        }
+      }
+    },
+    isFavoriteArtist(id) {
+      return this.favoriteArtistIds.includes(id);
+    },
+    toggleFavoriteArtist(id) {
+      if (this.favoriteArtistIds.includes(id)) {
+        this.favoriteArtistIds = this.favoriteArtistIds.filter((itemId) => itemId !== id);
+        return;
+      }
+      this.favoriteArtistIds.push(id);
+    },
+    syncFavoriteArtistIds() {
+      if (!Array.isArray(this.stateFavouriteArtists)) {
+        this.favoriteArtistIds = [];
+        return;
+      }
+
+      this.favoriteArtistIds = this.stateFavouriteArtists
+        .map((item) => (item && item.artist ? item.artist.id : null))
+        .filter((id) => id !== null && id !== undefined);
+    },
+    async loadFavouriteArtists() {
+      try {
+        await this.getFavouriteArtists();
+        this.syncFavoriteArtistIds();
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.message) {
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -318,17 +359,35 @@ export default {
   created() {
     this.slug = this.$route.params.slug;
     this.gettMusicalGendersBySlug();
+    if (!this.genreList || this.genreList.length === 0) {
+      this.getMusicalGenders();
+    }
+    this.loadFavouriteArtists();
   },
   computed: {
+    ...mapGetters("favouriteArtists", ["stateFavouriteArtists"]),
     ...mapState({
       clientMusicalGenders: (state) =>
         state.clientMusicalGenders.artistsGenders,
+      genreList: (state) => state.clientMusicalGenders.musicalGenders,
     }),
     ...mapState({
       favouriteArtists: (state) => state.favouriteArtists.message,
     }),
     mode: function () {
       return this.$q.dark.isActive;
+    },
+    genreImage() {
+      const current = this.clientMusicalGenders?.[0];
+      if (current && current.image) {
+        return current.image;
+      }
+      const list = Array.isArray(this.genreList) ? this.genreList : [];
+      const match = list.find((g) => g && g.slug === this.slug);
+      return (
+        (match && match.image) ||
+        "https://cdn.pixabay.com/photo/2017/03/09/20/53/microphone-2130806_960_720.jpg"
+      );
     },
   },
   mounted() {
@@ -350,5 +409,37 @@ export default {
 }
 .uppercase {
   text-transform: uppercase;
+}
+.parallax-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+  z-index: 1;
+}
+.parallax-wrapper {
+  position: relative;
+  height: 280px;
+}
+.parallax-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.65));
+  z-index: 1;
+  pointer-events: none;
+}
+.parallax-content {
+  z-index: 2;
+}
+.parallax-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-shadow: 0 0 30px rgba(255,255,255,0.3), 0 4px 20px rgba(0,0,0,0.8);
+}
+.parallax-desc {
+  font-size: 1.1rem;
+  max-width: 600px;
+  text-shadow: 0 0 20px rgba(255,255,255,0.2), 0 2px 10px rgba(0,0,0,0.7);
 }
 </style>

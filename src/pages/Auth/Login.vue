@@ -26,12 +26,11 @@
               <q-btn round flat icon="fas fa-arrow-left" to="/" />
             </div>
             <div class="col-6 text-right q-px-md" style="font-size: 2em">
-              <q-btn
-                round
-                color="primary"
-                icon="fas fa-solid fa-cloud-moon"
-                to="/"
-              />
+              <img 
+                :src="$q.dark.isActive ? '/vibeerlogowithouttext.png' : '/viberlogowithouttext-black.png'" 
+                @click="$router.push('/')" 
+                style="height: 64px; cursor: pointer; vertical-align: middle;"
+              >
             </div>
           </div>
 
@@ -44,7 +43,7 @@
             </p>
             <p class="text-center q-mb-sm text-weight-light">
               Disfruta la nueva experiencia de contratación de servicios
-              musicales rapida y segura.
+              musicales rápida y segura.
             </p>
 
             <q-input label="Correo electrónico" v-model="login.email">
@@ -147,21 +146,28 @@
                 </div>
               </div>
 
-              <p class="text-center q-mt-lg">
-                Al continuar, estás aceptando los
-                <u>Términos y condiciones de uso</u>. Consulta nuestra
-                <u>Política de privacidad</u>.
-              </p>
+              <div class="row items-center q-pt-sm">
+                <div class="text-body2 q-ml-sm" style="flex: 1;">
+                  Al continuar estas aceptando los 
+                  <router-link :to="{ name: 'legal.terms' }" class="text-primary text-weight-medium" target="_blank">
+                    Términos y condiciones de uso
+                  </router-link> 
+                  y la 
+                  <router-link :to="{ name: 'legal.privacy' }" class="text-primary text-weight-medium" target="_blank">
+                    Política de privacidad
+                  </router-link>.
+                </div>
+              </div>
               <div class="q-mt-md q-mb-lg q-gutter-md">
                 <div class="text-center">
                   ¿Olvidaste tu contraseña?
-                  <router-link class="text-primary" to="/register">
+                  <router-link class="text-primary" to="/recover">
                     Recupérala
                   </router-link>
                 </div>
 
                 <div class="text-center q-mt-sm">
-                  ¿Primera vez en GSM?
+                  ¿Primera vez en vibeer?
                   <router-link class="text-primary" to="/register">
                     Regístrate
                   </router-link>
@@ -178,6 +184,7 @@
 import { useQuasar } from "quasar";
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
+import { notifyError } from "src/utils/notify";
 
 let $q;
 
@@ -201,16 +208,10 @@ export default {
     async submitForm() {
       this.loading = false;
       if (!this.login.email || !this.login.password) {
-        $q.notify({
-          type: "negative",
-          message: "Los datos no son validos.",
-        });
+        notifyError("Los datos no son validos.");
         this.loading = true;
       } else if (this.login.password.length < 4) {
-        $q.notify({
-          type: "negative",
-          message: "La contraseña debe de ser mayor a 6 carácteres.",
-        });
+        notifyError("La contraseña debe de ser mayor a 6 carácteres.");
         this.loading = true;
       } else {
         try {
@@ -220,10 +221,7 @@ export default {
           });
         } catch (err) {
           if (err.response.data.error) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.error,
-            });
+            notifyError(err.response.data.error);
           }
           this.loading = true;
         }
@@ -231,13 +229,23 @@ export default {
     },
     async loginGmail() {
       this.loadingGmail = false;
-      await this.doLoginGmail();
-      this.loadingGmail = true;
+      try {
+        await this.doLoginGmail();
+      } catch (err) {
+        notifyError(err.response?.data?.message ?? "No se pudo iniciar sesión con Google");
+      } finally {
+        this.loadingGmail = true;
+      }
     },
     async loginFacebook() {
       this.loadingFacebook = false;
-      await this.doLoginFacebook();
-      this.loadingFacebook = true;
+      try {
+        await this.doLoginFacebook();
+      } catch (err) {
+        notifyError(err.response?.data?.message ?? "No se pudo iniciar sesión con Facebook");
+      } finally {
+        this.loadingFacebook = true;
+      }
     },
   },
   mounted() {

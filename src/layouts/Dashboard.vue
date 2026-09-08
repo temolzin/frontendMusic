@@ -10,7 +10,7 @@
         <!-- Bottom Serach -->
         <q-toolbar-title>
           <div class="row q-ma-md">
-            <SearchBar></SearchBar>
+            <SearchBar v-if="getMe?.role?.[0] == 'cliente'"></SearchBar>
           </div>
         </q-toolbar-title>
         <!-- Fin Bottom Serach -->
@@ -18,19 +18,26 @@
         <!-- bottom dropdown  -->
         <div class="text-right" style="color: gray">
           <!-- Icons bell and wrench -->
-          <small v-if="getMe.role[0] == 'cliente'">
-            <router-link to="/client/shopping-cart">
-              <icon-cart></icon-cart>
+          <small v-if="getMe?.role?.[0] == 'cliente'">
+            <router-link to="/client/shopping-cart"
+              v-if="getMe?.account_status !== 'restricted'"
+            >
+              <icon-cart :fetch-on-create="false"></icon-cart>
             </router-link>
+            <icon-cart
+              v-else
+              :fetch-on-create="false"
+              style="opacity: 0.5; pointer-events: none;"
+            ></icon-cart>
           </small>
           <!-- FinIcons bell and wrench -->
 
           <!-- Card info profile -->
           <ProfilePhoto></ProfilePhoto>
           <!-- Card info profile -->
-        </div>
+          </div>
         <!-- Fin bottom dropdown  -->
-      </q-toolbar>
+        </q-toolbar>
     </q-header>
     <!-- fin de header -->
 
@@ -48,10 +55,10 @@
             to="/dashboard/home"
             clickable
             active-class="text-accent text-weight-bold"
-            v-if="getMe.role[0] == 'administrador'"
+            v-if="getMe?.role?.[0] == 'administrador'"
           >
-            <q-item-section class="text-weight-bold">
-              DASHBOARD
+            <q-item-section class="text-weight-bold text-accent">
+              PANEL
             </q-item-section>
           </q-item>
 
@@ -59,19 +66,19 @@
             to="/dashboard/home"
             clickable
             active-class="text-accent text-weight-bold"
-            v-if="getMe.role[0] == 'cliente'"
+            v-if="getMe?.role?.[0] == 'cliente'"
           >
-            <q-item-section class="text-weight-bold"> INICIO </q-item-section>
+            <q-item-section class="text-weight-bold text-accent"> INICIO </q-item-section>
           </q-item>
 
           <q-item
             to="/dashboard/home"
             clickable
             active-class="text-accent text-weight-bold"
-            v-if="getMe.role[0] == 'artista'"
+            v-if="getMe?.role?.[0] == 'artista'"
           >
-            <q-item-section class="text-weight-bold">
-              DASHBOARD
+            <q-item-section class="text-weight-bold text-accent">
+              PANEL
             </q-item-section>
           </q-item>
 
@@ -106,29 +113,189 @@
             clickable
             v-ripple
             to="/admin/musical-genders/index"
-            v-if="getMe.role[0] == 'administrador'"
+            v-if="getMe?.role?.[0] == 'administrador'"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-icons" />
             </q-item-section>
 
-            <q-item-section> Generos Musicales </q-item-section>
+            <q-item-section> Géneros Musicales </q-item-section>
           </q-item>
 
           <q-item
             clickable
             v-ripple
             to="/admin/newsletter/index"
-            v-if="getMe.role[0] == 'administrador'"
+            v-if="getMe?.role?.[0] == 'administrador'"
             active-class="text-accent text-weight-bold"
           >
             <q-item-section avatar>
               <q-icon name="fas fa-newspaper" />
             </q-item-section>
 
-            <q-item-section> Newsletter </q-item-section>
+            <q-item-section> Envío de Correos </q-item-section>
           </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            to="/admin/support-tickets"
+            v-if="getMe?.role?.[0] == 'administrador'"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="report_problem" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="openAdminTicketsCount > 0" color="red" floating transparent>
+                    {{ openAdminTicketsCount }}
+                  </q-badge>
+                </transition>
+              </div>
+            </q-item-section>
+
+            <q-item-section> Tickets de Soporte </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            to="/admin/payouts"
+            v-if="getMe?.role?.[0] == 'administrador' && $can('view-users')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="payments" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="pendingPayoutsCount > 0" color="red" floating transparent>
+                    {{ pendingPayoutsCount }}
+                  </q-badge>
+                </transition>
+              </div>
+            </q-item-section>
+
+            <q-item-section> Liquidaciones </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            v-ripple
+            to="/admin/client-refunds"
+            v-if="getMe?.role?.[0] == 'administrador' && $can('view-users')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="price_check" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="pendingRefundsCount > 0" color="red" floating transparent>
+                    {{ pendingRefundsCount }}
+                  </q-badge>
+                </transition>
+              </div>
+            </q-item-section>
+
+            <q-item-section> Reembolsos </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            v-ripple
+            to="/admin/user-sanctions"
+            v-if="getMe?.role?.[0] == 'administrador' && $can('view-users')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="gavel" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="restrictedUsersCount > 0" color="red" floating transparent>
+                    {{ restrictedUsersCount }}
+                  </q-badge>
+                </transition>
+              </div>
+            </q-item-section>
+            <q-item-section> Sanciones </q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            to="/admin/artist-approvals"
+            v-if="getMe?.role?.[0] == 'administrador' && $can('view-users')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="fas fa-solid fa-user-check" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="pendingArtistApprovalsCount > 0" color="red" floating transparent>
+                    {{ pendingArtistApprovalsCount }}
+                  </q-badge>
+                </transition>
+              </div>
+            </q-item-section>
+
+            <q-item-section> Solicitudes de Artistas </q-item-section>
+          </q-item>
+
+          <q-expansion-item
+            v-if="getMe?.role?.[0] == 'administrador'"
+            icon="payment"
+            label="Configuración OpenPay"
+            header-class="text-white"
+            expand-icon-class="text-white"
+          >
+          <q-item
+            clickable
+            v-ripple
+            to="/admin/webhook-verification"
+            active-class="text-accent text-weight-bold"
+              class="q-pl-xl"
+          >
+            <q-item-section avatar>
+                <q-icon name="verified" size="sm" />
+            </q-item-section>
+              <q-item-section> Webhook </q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              v-ripple
+              to="/admin/openpay-keys"
+              active-class="text-accent text-weight-bold"
+              class="q-pl-xl"
+            >
+              <q-item-section avatar>
+                <q-icon name="key" size="sm" />
+              </q-item-section>
+              <q-item-section> Llaves </q-item-section>
+          </q-item>
+          </q-expansion-item>
 
           <q-item
             clickable
@@ -161,6 +328,80 @@
           <q-item
             clickable
             v-ripple
+            to="/artist/pending-approvals"
+            v-if="$can('view-profile-artist')"
+            active-class="text-accent text-weight-bold"
+            :disable="getMe?.account_status === 'restricted'"
+          >
+            <q-item-section avatar>
+              <div class="approvals-icon-wrap flex flex-center">
+                <q-icon name="pending_actions" size="sm" />
+                <transition
+                  appear
+                  enter-active-class="animated rubberBand"
+                  leave-active-class="animated fadeOut"
+                  :duration="6000"
+                >
+                  <q-badge v-if="pendingApprovalsCount > 0" color="red" floating transparent>
+                    {{ pendingApprovalsCount }}
+                  </q-badge>
+                </transition>
+              </div>
+            </q-item-section>
+            <q-item-section>Solicitudes</q-item-section>
+          </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            to="/artist/my-calendar"
+            v-if="$can('view-profile-artist')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="fas fa-solid fa-calendar" />
+            </q-item-section>
+
+            <q-item-section>Mi Calendario</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple to="/artist/offers" v-if="$can('view-profile-artist')" active-class="text-accent text-weight-bold"
+            :disable="getMe?.account_status === 'restricted'"
+          >
+            <q-item-section avatar>
+              <q-icon name="local_offer" />
+            </q-item-section>
+            <q-item-section>Mis Ofertas</q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            v-ripple
+            to="/artist/payout-info"
+            v-if="getMe?.role?.[0] == 'artista'"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="account_balance" />
+            </q-item-section>
+            <q-item-section> Datos de Cobro </q-item-section>
+          </q-item>
+          <q-item
+            clickable
+            v-ripple
+            to="/artist/my-tickets"
+            v-if="$can('view-profile-artist')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="report_problem" />
+            </q-item-section>
+            <q-item-section>Mis Reportes</q-item-section>
+          </q-item>
+
+          <q-item
+            v-show="false"
+            clickable
+            v-ripple
             to="/"
             v-if="$can('view-profile-artist')"
             active-class="text-accent text-weight-bold"
@@ -169,64 +410,8 @@
               <q-icon name="fas fa-solid fa-address-card" />
             </q-item-section>
 
-            <q-item-section> Mi Membrecía </q-item-section>
+            <q-item-section> Mi Membresía </q-item-section>
           </q-item>
-
-          <q-item
-            to="/dashboard/home"
-            clickable
-            active-class="text-accent text-weight-bold"
-            v-if="getMe.role[0] == 'artista'"
-          >
-            <q-item-section class="text-weight-bold">
-              OTRAS CONFIGURACIONES
-            </q-item-section>
-          </q-item>
-
-          <q-item
-            clickable
-            v-ripple
-            to="/"
-            v-if="$can('view-profile-artist')"
-            active-class="text-accent text-weight-bold"
-          >
-            <q-item-section avatar>
-              <q-icon name="fas fa-solid fa-microphone" />
-            </q-item-section>
-
-            <q-item-section> Perfil de Artista </q-item-section>
-          </q-item>
-
-          <q-item
-            clickable
-            v-ripple
-            to="/"
-            v-if="$can('view-profile-artist')"
-            active-class="text-accent text-weight-bold"
-          >
-            <q-item-section avatar>
-              <q-icon name="fas fa-solid fa-cart-arrow-down" />
-            </q-item-section>
-
-            <q-item-section> Mis ventas</q-item-section>
-          </q-item>
-
-          <q-item
-            clickable
-            v-ripple
-            to="/"
-            v-if="$can('view-profile-artist')"
-            active-class="text-accent text-weight-bold"
-          >
-            <q-item-section avatar>
-              <q-icon name="fas fa-solid fa-address-card" />
-            </q-item-section>
-
-            <q-item-section> Mi Membrecía </q-item-section>
-          </q-item>
-          <!-- <q-item >
-              <q-item-section class="text-weight-bold" v-if="$can('create-card')"> COMPRAS </q-item-section>
-            </q-item> -->
 
             <q-item
             clickable
@@ -234,6 +419,7 @@
             to="/client/store"
             v-if="$can('view-store')"
             active-class="text-accent"
+            :disable="getMe?.account_status === 'restricted'"
           >
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-store" />
@@ -248,15 +434,17 @@
             to="/client/musical-genders"
             v-if="$can('view-all-musicals-genders')"
             active-class="text-accent"
+            :disable="getMe?.account_status === 'restricted'"
           >
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-list-ul" />
             </q-item-section>
 
-            <q-item-section> Generos Musicales</q-item-section>
+            <q-item-section> Géneros Musicales</q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple to="/" v-if="$can('create-card')">
+          <q-item clickable v-ripple to="/artist-list?offers=true" v-if="$can('create-card')" active-class="text-accent text-weight-bold"
+            :disable="getMe?.account_status === 'restricted'">
             <q-item-section avatar>
               <q-icon name="fas fa-solid fa-tags" />
             </q-item-section>
@@ -272,8 +460,8 @@
             <q-item-section> Favoritos </q-item-section>
           </q-item>
 
-          <q-item v-if="getMe.role[0] == 'cliente'">
-            <q-item-section class="text-weight-bold">
+          <q-item v-if="getMe?.role?.[0] == 'cliente'">
+            <q-item-section class="text-weight-bold text-accent">
               INFORMACIÓN
             </q-item-section>
           </q-item>
@@ -284,31 +472,10 @@
             v-ripple
             v-if="$can('view-shopping-cart')"
             active-class="text-accent text-weight-bold"
+            :disable="getMe?.account_status === 'restricted'"
           >
             <q-item-section avatar>
-              <q-btn
-                dense
-                round
-                flat
-                icon="shopping_cart"
-                class="q-ma-none"
-                v-if="stateCountListShopingCard[0] != null"
-              >
-                <q-badge color="red" floating transparent>
-                  {{ stateCountListShopingCard[0].shopping_card_detail.length }}
-                </q-badge>
-              </q-btn>
-
-              <q-btn
-                dense
-                round
-                flat
-                icon="shopping_cart"
-                class="q-ma-none"
-                v-else
-              >
-                <q-badge color="red" floating transparent> 0 </q-badge>
-              </q-btn>
+              <icon-cart compact :fetch-on-create="false"></icon-cart>
             </q-item-section>
 
             <q-item-section> Mi Carrito </q-item-section>
@@ -327,6 +494,19 @@
 
             <q-item-section> Mis Compras </q-item-section>
           </q-item>
+
+          <q-item
+            clickable
+            v-ripple
+            to="/client/my-tickets"
+            v-if="$can('view-my-order-details')"
+            active-class="text-accent text-weight-bold"
+          >
+            <q-item-section avatar>
+              <q-icon name="report_problem" />
+            </q-item-section>
+            <q-item-section>Mis Reportes</q-item-section>
+          </q-item>
           
           <q-item
             clickable
@@ -343,7 +523,7 @@
           </q-item>
 
           <q-item clickable active-class="text-accent text-weight-bold">
-            <q-item-section class="text-weight-bold"
+            <q-item-section class="text-weight-bold text-accent"
               >CONFIGURACIONES
             </q-item-section>
           </q-item>
@@ -360,21 +540,19 @@
               />
             </q-item-section>
 
-            <q-item-section> Modo Obscuro </q-item-section>
+            <q-item-section> Modo Oscuro </q-item-section>
           </q-item>
         </q-list>
       </q-scroll-area>
 
       <!-- Inicio Icono de la marca -->
-      <q-img class="absolute-top bg-transparent" style="height: 140px">
-        <div class="absolute-center bg-transparent">
-          <q-avatar size="140px" @click="redirect" style="cursor: pointer">
-            <q-icon name="fas fa-solid fa-cloud-moon" />
-          </q-avatar>
-        </div>
-      </q-img>
+      <q-img class="absolute-top bg-transparent" style="height: 140px;">
+            <div class="bg-transparent" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;" @click="redirect">
+              <img src="/logovibeer.ico" style="height: 50px; transform: scale(2.4); cursor: pointer;">
+            </div>
+          </q-img>
       <!-- Fin Icono de la marca -->
-    </q-drawer>
+      </q-drawer>
     <!-- Fin Menu left -->
 
     <q-page-container>
@@ -389,6 +567,7 @@ import { mapGetters, mapActions } from "vuex";
 import iconCart from "src/components/ShoppingCart/iconCart.vue";
 import SearchBar from "src/components/SearchBar/SearchBar.vue";
 import ProfilePhoto from "src/components/ProfilePhoto.vue";
+import { notifyError } from "src/utils/notify";
 
 export default {
   components: { iconCart, SearchBar, ProfilePhoto },
@@ -398,6 +577,7 @@ export default {
     return {
       isActiveDarkMode: ref(false),
       leftDrawerOpen,
+      ticketCount: ref(0),
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
@@ -412,37 +592,134 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["getMe"]),
-    ...mapGetters("shoppingCard", ["stateCountListShopingCard"]),
     ...mapGetters("artistList", ["stateArtistList"]),
+    ...mapGetters("approvals", { pendingApprovalsCount: "getPendingApprovalsCount" }),
+    ...mapGetters("artistApprovals", { pendingArtistApprovalsCount: "getPendingRequestsCount" }),
+    ...mapGetters("supportTickets", { openAdminTicketsCount: "getOpenAdminTicketsCount" }),
+    ...mapGetters("payouts", { pendingPayoutsCount: "getPendingPayoutsCount" }),
+    ...mapGetters("userSanctions", { restrictedUsersCount: "getRestrictedUsersCount" }),
+    ...mapGetters("refunds", { pendingRefundsCount: "getPendingRefundsCount" }),
     mode: function () {
       return this.$q.dark.isActive;
     },
   },
+  watch: {
+    getMe(user) {
+      const saved = user?.id ? localStorage.getItem(`darkMode_${user.id}`) : null;
+      const isDark = saved === 'true';
+      this.$q.dark.set(isDark);
+      this.isActiveDarkMode = isDark;
+    },
+},
+
   created() {
     this.getArtistss();
-    this.isActiveDarkMode = this.mode;
+    this.fetchShoppingCartCount();
+    const user = this.getMe;
+    const saved = user?.id ? localStorage.getItem(`darkMode_${user.id}`) : null;
+    const isDark = saved === 'true';
+    this.$q.dark.set(isDark);
+    this.isActiveDarkMode = isDark;
+    this.fetchTicketCount();
+    if (this.$can('view-profile-artist')) {
+      this.fetchApprovalCount();
+    }
+    if (this.getMe?.role?.[0] === 'administrador' && this.$can('view-users')) {
+      this.fetchArtistApprovalCount();
+      this.fetchPendingPayoutsCountSafe();
+      this.fetchRestrictedUsersCountSafe();
+      this.fetchPendingRefundsCountSafe();
+    }
+    if (this.getMe?.role?.[0] === 'administrador') {
+      this.fetchOpenAdminTicketsCountSafe();
+    }
   },
   methods: {
     ...mapActions("artistList", ["getArtists"]),
+    ...mapActions("shoppingCard", ["getCountListShoppingCard"]),
+    ...mapActions("approvals", ["fetchPendingApprovals"]),
+    ...mapActions("artistApprovals", ["fetchPendingRequests"]),
+    ...mapActions("supportTickets", ["fetchOpenAdminTicketsCount"]),
+    ...mapActions("payouts", ["fetchPendingPayouts"]),
+    ...mapActions("userSanctions", ["fetchRestrictedUsersCount"]),
+    ...mapActions("refunds", ["fetchPendingRefunds"]),
     async getArtistss() {
       try {
         await this.getArtists();
       } catch (err) {
-        if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
-        }
+        const message = err?.response?.data?.message || "No se pudieron cargar los artistas.";
+        notifyError(message);
       }
     },
+    async fetchShoppingCartCount() {
+      try {
+        await this.getCountListShoppingCard();
+      } catch (err) {
+        const message = err?.response?.data?.message || "No se pudo cargar el carrito.";
+        notifyError(message);
+      }
+    },
+    async fetchTicketCount() {
+      try {
+        const { data } = await this.$api.get('/api/support-tickets/my');
+        this.ticketCount = (data.data || []).filter(t => t.status === 'open').length;
+      } catch {
+        this.ticketCount = 0;
+      }
+    },
+    async fetchApprovalCount() {
+      try {
+        await this.fetchPendingApprovals();
+      } catch {
+      }
+    },
+    async fetchArtistApprovalCount() {
+      try {
+        await this.fetchPendingRequests();
+      } catch {
+      }
+    },
+    async fetchOpenAdminTicketsCountSafe() {
+      try {
+        await this.fetchOpenAdminTicketsCount();
+      } catch {
+      }
+    },
+    async fetchPendingPayoutsCountSafe() {
+      try {
+        await this.fetchPendingPayouts();
+      } catch {
+      }
+    },
+    async fetchRestrictedUsersCountSafe() {
+      try {
+        await this.fetchRestrictedUsersCount();
+      } catch {
+      }
+    },
+    async fetchPendingRefundsCountSafe() {
+      try {
+        await this.fetchPendingRefunds();
+      } catch {
+      }
+    },
+    hasPermission(permission) {
+      return this.$can(permission);
+    },
     logout() {
+      this.$q.dark.set(false);
+      this.isActiveDarkMode = false;
       this.$store.dispatch("auth/signOut");
       const toPath = this.$route.query.to || "/";
       this.$router.push(toPath);
     },
     darkMode(val) {
       this.$q.dark.set(val);
+      const user = this.getMe;
+      if (user?.id) {
+        localStorage.setItem(`darkMode_${user.id}`, val);
+        this.$api.put('/api/user/dark-mode', { dark_mode: val });
+      }
     },
     redirect() {
       const toPath = this.$route.query.to || "/";
@@ -491,3 +768,19 @@ export default {
   
 };
 </script>
+
+<style scoped>
+.approvals-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  width: 24px;   
+  height: 24px;  
+}
+
+.approvals-icon-wrap :deep(.q-badge) {
+  top: -4px;
+  right: -6px;
+  padding: 2px 4px;
+  font-size: 10px;
+}
+</style>

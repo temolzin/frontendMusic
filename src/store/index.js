@@ -9,6 +9,7 @@ import artist from "./artist/information";
 import artistSales from "./artist/artistSales";
 import artistList from "./artistList";
 import quotations from "./quotations"
+import userSanctions from "./admin/userSanctions";
 import musicalGenders from "./admin/musicalGenders";
 import galleryArtist from "./artist/galleryArtist";
 import clientMusicalGenders from "./client/clientMusicalGenders";
@@ -17,6 +18,17 @@ import shoppingCard from "./client/shoppingCard";
 import orderDetails from "./client/orderDetails";
 import favouriteArtists from "./client/favouriteArtists";
 import UsersSuscribe from "./general/UsersSuscribe";
+import videoArtist from "./artist/videoArtist";
+import offers from "./artist/offers";
+import payoutMethod from './artist/payoutMethod'
+import supportTickets from "./supportTickets";
+import payouts from "./admin/payouts";
+import payoutLogs from "./admin/payout-logs";
+import approvals from './artist/approvals';
+import artistApprovals from './admin/artistApprovals';
+import refunds from "./admin/refunds";
+import statsArtist from "./admin/statsArtist";
+import systemComments from "./general/systemComments";
 
 const Store = createStore({
   modules: {
@@ -28,6 +40,7 @@ const Store = createStore({
     artist,
     artistList,
     quotations,
+    userSanctions,
     musicalGenders,
     galleryArtist,
     clientMusicalGenders,
@@ -37,6 +50,17 @@ const Store = createStore({
     favouriteArtists,
     UsersSuscribe,
     artistSales,
+    videoArtist,
+    offers,
+    payoutMethod,
+    supportTickets,
+    payouts,
+    payoutLogs,
+    approvals,
+    artistApprovals,
+    refunds,
+    statsArtist,
+    systemComments,
   },
   strict: process.env.DEBUGGING,
 });

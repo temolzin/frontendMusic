@@ -19,7 +19,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
-    boot: ["axios", "canBoot"],
+    boot: ["axios", "canBoot", "quasarLang"],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ["app.scss"],
@@ -81,8 +81,8 @@ module.exports = configure(function (ctx) {
       config: {
         dark: 'auto',
         backendUrl: 'http://127.0.0.1:8000',
-        OpenPayID: 'moe7dmj3v9h6zthgntqg',
-        OpenPayKey: 'pk_1c6cf0acf7c14b67ab93dd3ea055892f', 
+        OpenPayID: '',
+        OpenPayKey: '', 
         OpenPaySanboxMode: true
       },
 
@@ -97,7 +97,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ["Notify", "Dialog","Loading"],
+      plugins: ["Notify", "Dialog","Loading", "BottomSheet"],
     },
 
     // animations: 'all', // --- includes all animations
