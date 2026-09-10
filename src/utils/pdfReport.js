@@ -1,5 +1,5 @@
 const BRAND = {
-  logo: "/logovibeer.png",
+  logo: "/logovibeer-light.png",
   gradient: "linear-gradient(135deg,#1c2331 0%,#094FAB 58%,#26A69A 100%)",
   footer: "Vibeer powered by Root Heim Company",
 };
