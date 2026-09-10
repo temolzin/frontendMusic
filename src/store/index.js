@@ -28,6 +28,7 @@ import approvals from './artist/approvals';
 import artistApprovals from './admin/artistApprovals';
 import refunds from "./admin/refunds";
 import statsArtist from "./admin/statsArtist";
+import adminReports from "./admin/reports";
 import systemComments from "./general/systemComments";
 
 const Store = createStore({
@@ -60,6 +61,7 @@ const Store = createStore({
     artistApprovals,
     refunds,
     statsArtist,
+    adminReports,
     systemComments,
   },
   strict: process.env.DEBUGGING,

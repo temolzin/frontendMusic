@@ -135,6 +135,17 @@ const routes = [
       },
       // Rutas del admin
       {
+        name: "admin.reports",
+        path: "/admin/reports",
+        component: import('pages/Admin/Reports/index.vue'),
+        meta: {
+          title: 'Reportes de Ganancias',
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ['view-users'],
+        },
+      },
+      {
         name: "admin.view-users",
         path: "/admin/users",
         component: import("pages/Admin/Users/index.vue"),
