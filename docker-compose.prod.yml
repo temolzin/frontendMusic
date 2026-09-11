@@ -1,0 +1,19 @@
+# Frontend en producción. En el mismo VPS que el backend, 80/443 se disputan:
+# ver "coordinación" en PDP_Frontend.md (§6). Para acceso local de prueba
+# se pueden usar 4443:443 / 8088:80 (sin tocar el nginx).
+name: vibeer-frontend-prod
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      args:
+        VUE_APP_API_URL: https://api.vibeer.com
+    image: vibeer-frontend:prod
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./Docker/certs:/certs:ro
+    restart: unless-stopped

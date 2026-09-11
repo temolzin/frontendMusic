@@ -1,15 +1,21 @@
-FROM node:14
+FROM node:14 AS build
 
 WORKDIR /app
 
 COPY package*.json ./
-
 RUN npm install
 
 RUN npm install -g @quasar/cli@1
 
 COPY . .
 
-EXPOSE 8080
+RUN quasar build
 
-CMD [ "quasar", "dev" ]
+
+FROM nginx:alpine
+
+COPY --from=build /app/dist/spa /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
