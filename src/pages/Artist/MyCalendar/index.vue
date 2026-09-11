@@ -128,6 +128,13 @@
                                   <span class="detail-value">{{ event.eventHours ? event.eventHours + ' hrs' : 'N/A' }}</span>
                                 </div>
                                 <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Tipo de evento:</span>
+                                  <span class="detail-value">
+                                    {{ event.eventTypeName || 'N/A' }}
+                                    <template v-if="event.eventTypeDetail"> - {{ event.eventTypeDetail }}</template>
+                                  </span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
                                   <span class="detail-label">Tarifa:</span>
                                   <span class="detail-value text-positive text-weight-bold">{{ formatCurrency(event.rate) }}</span>
                                 </div>
@@ -252,6 +259,13 @@
                                 <div class="detail-item q-mb-sm">
                                   <span class="detail-label">Duración:</span>
                                   <span class="detail-value">{{ event.eventHours ? event.eventHours + ' hrs' : 'N/A' }}</span>
+                                </div>
+                                <div class="detail-item q-mb-sm">
+                                  <span class="detail-label">Tipo de evento:</span>
+                                  <span class="detail-value">
+                                    {{ event.eventTypeName || 'N/A' }}
+                                    <template v-if="event.eventTypeDetail"> - {{ event.eventTypeDetail }}</template>
+                                  </span>
                                 </div>
                                 <div class="detail-item q-mb-sm">
                                   <span class="detail-label">Tarifa:</span>
@@ -450,6 +464,8 @@ export default defineComponent({
               contact: sale.customer_phone,
               status: sale.event_status || 'pending',
               canComplete: sale.can_complete || false,
+              eventTypeName: sale.event_type?.name || '',
+              eventTypeDetail: sale.event_type_detail || '',
               customerFirstName: sale.customer_first_name || '',
               customerLastName: sale.customer_last_name || '',
               customerEmail: sale.customer_email || '',

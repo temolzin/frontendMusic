@@ -25,6 +25,9 @@
                   <li class="q-mb-xs">
                     Selecciona la <strong>fecha</strong> y la <strong>hora</strong> del evento.
                   </li>
+                  <li class="q-mb-xs">
+                    Selecciona el <strong>tipo de evento</strong> para que el artista llegue preparado.
+                  </li>
                   <li v-if="shoppingCardDetail.length > 1">
                     Asigna la <strong>hora de presentación</strong> de cada artista para que se presenten uno tras otro.
                   </li>
@@ -72,6 +75,44 @@
                         (val) => val.toString().length === 10 || 'El teléfono debe tener exactamente 10 dígitos',
                         (val) => /^[0-9]+$/.test(val) || 'Solo se permiten números'
                       ]" required />
+                  </q-item>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <q-item>
+                    <q-select
+                      dense
+                      outlined
+                      class="full-width"
+                      v-model="formClient.event_type_id"
+                      :options="eventTypeOptions"
+                      emit-value
+                      map-options
+                      label="Tipo de evento *"
+                      :rules="[
+                        (val) => !!val || 'Selecciona el tipo de evento'
+                      ]"
+                      required
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="celebration" />
+                      </template>
+                    </q-select>
+                  </q-item>
+                </div>
+                <div v-if="isOtherEventType" class="col-12">
+                  <q-item>
+                    <q-input
+                      dense
+                      outlined
+                      type="text"
+                      v-model="formClient.event_type_detail"
+                      class="full-width"
+                      label="Describe el tipo de evento *"
+                      :rules="[
+                        (val) => !!val && val.trim().length >= 3 || 'Describe tu evento (mínimo 3 caracteres)'
+                      ]"
+                      required
+                    />
                   </q-item>
                 </div>
                 <div class="col-12">
@@ -720,6 +761,15 @@
                       </template>
                     </span>
                   </div>
+                  <div class="row items-center q-mb-sm q-mt-sm">
+                    <q-icon name="celebration" color="deep-orange" size="xs" class="q-mr-sm" />
+                    <span class="text-caption text-weight-medium">
+                      {{ selectedEventTypeName }}
+                      <template v-if="isOtherEventType && formClient.event_type_detail">
+                        - {{ formClient.event_type_detail }}
+                      </template>
+                    </span>
+                  </div>
                   <q-separator class="q-my-sm" />
                   <div class="row items-center q-mb-sm">
                     <q-icon name="person" color="primary" size="xs" class="q-mr-sm" />
@@ -934,6 +984,8 @@ export default defineComponent({
       country: "",
       event_date: "",
       event_hour: "",
+      event_type_id: "",
+      event_type_detail: "",
     });
 
     const form = ref({
@@ -994,6 +1046,7 @@ export default defineComponent({
       extraKmDataList: ref({}),
       artistHours: ref({}),
       stepperCardHeight: ref(null),
+      eventTypes: ref([]),
     };
   },
   watch: {
@@ -1356,6 +1409,17 @@ export default defineComponent({
         this.$router.push("/client/musical-genders");
       }
     },
+    loadEventTypes() {
+      return api
+        .get('/api/event-types')
+        .then((response) => {
+          this.eventTypes = response.data?.eventTypes || [];
+        })
+        .catch(() => {
+          notifyWarning('No se pudieron cargar los tipos de evento.');
+        });
+    },
+
     async initializeCheckout() {
       const isQuickBuy = this.$route.query.quickBuy === 'true';
       const artistDataEncoded = this.$route.query.artistData;
@@ -1642,6 +1706,8 @@ export default defineComponent({
                   latitude: this.latitude,
                   longitude: this.longitude,
                   google_place_id: this.googlePlaceId,
+                  event_type_id: this.formClient.event_type_id,
+                  event_type_detail: this.isOtherEventType ? this.formClient.event_type_detail : null,
                 },
                 latitude: this.latitude,
                 longitude: this.longitude,
@@ -1761,6 +1827,8 @@ export default defineComponent({
             latitude: this.latitude,
             longitude: this.longitude,
             google_place_id: this.googlePlaceId,
+            event_type_id: this.formClient.event_type_id,
+            event_type_detail: this.isOtherEventType ? this.formClient.event_type_detail : null,
           },
           latitude: this.latitude,
           longitude: this.longitude,
@@ -2090,7 +2158,25 @@ export default defineComponent({
       if (count === 2) return 'col-12 col-sm-6';
       if (count === 3) return 'col-12 col-sm-6 col-md-4';
       return 'col-12 col-sm-6 col-md-4';
-    }
+    },
+    eventTypeOptions() {
+      return (this.eventTypes || []).map((type) => ({
+        label: type.name,
+        value: type.id,
+      }));
+    },
+    selectedEventTypeName() {
+      const selected = (this.eventTypes || []).find(
+        (type) => type.id === this.formClient.event_type_id
+      );
+      return selected ? selected.name : '';
+    },
+    isOtherEventType() {
+      const selected = (this.eventTypes || []).find(
+        (type) => type.id === this.formClient.event_type_id
+      );
+      return !!(selected && selected.slug === 'otros');
+    },
   },
   watch: {
     'form.number_card': {
@@ -2115,6 +2201,7 @@ export default defineComponent({
     },
   },
   async created() {
+    await this.loadEventTypes();
     await this.initializeCheckout();
   },
   mounted() {
