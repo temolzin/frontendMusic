@@ -28,19 +28,15 @@
             @click="formCreate = true"
             v-if="auth.role[0] == 'administrador'"
           />
-        </b>
-
+</b>
         <q-space />
-
         <q-space />
-
         <q-input dense debounce="100" color="primary" v-model="filter" placeholder="Buscar en tipos de evento...">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-      </template>
-
+</template>
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="id" :props="props">
@@ -81,8 +77,7 @@
             </q-btn>
           </q-td>
         </q-tr>
-      </template>
-
+</template>
       <template v-slot:item="props">
         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
           <q-card class="q-pa-sm">
@@ -124,21 +119,18 @@
             </q-list>
           </q-card>
         </div>
-      </template>
-
+</template>
       <template v-slot:loading>
         <q-inner-loading showing color="primary" />
       </template>
-    </q-table>
-
+</q-table>
     <section>
       <div class="q-pa-md q-gutter-sm">
         <q-dialog v-model="formCreate" persistent>
           <q-card style="min-width: 350px">
             <q-card-section>
               <div class="text-h6">Crear Nuevo Tipo de Evento</div>
-            </q-card-section>
-
+</q-card-section>
             <q-card-section class="q-pt-none">
               <q-form @submit="createNewEventType" @reset="onReset" class="q-gutter-md col-6">
                 <q-input
@@ -148,9 +140,8 @@
                   autofocus
                   :rules="[
                     (val) => (val && val.trim().length > 0) || 'Ingresa el nombre',
-                  ]"
+]"
                 />
-
                 <q-card-actions align="right" class="text-primary">
                   <q-btn label="Cancelar" type="reset" color="primary" flat v-close-popup class="q-ml-sm" />
                   <q-btn label="Crear" type="submit" color="primary" />
@@ -160,16 +151,14 @@
           </q-card>
         </q-dialog>
       </div>
-    </section>
-
+</section>
     <section>
       <div class="q-pa-md q-gutter-sm">
         <q-dialog v-model="formEdit" persistent>
           <q-card style="min-width: 350px">
             <q-card-section>
               <div class="text-h6">Editar Tipo de Evento</div>
-            </q-card-section>
-
+</q-card-section>
             <q-card-section class="q-pt-none">
               <q-form @submit="editEventType" @reset="onReset" class="q-gutter-md col-6">
                 <q-input
@@ -178,9 +167,8 @@
                   lazy-rules
                   :rules="[
                     (val) => (val && val.trim().length > 0) || 'Ingresa el nombre',
-                  ]"
+]"
                 />
-
                 <q-card-actions align="right" class="text-primary">
                   <q-btn label="Cancelar" type="reset" color="primary" flat v-close-popup class="q-ml-sm" />
                   <q-btn label="Guardar" type="submit" color="primary" />
