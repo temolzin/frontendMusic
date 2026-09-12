@@ -193,6 +193,18 @@ const routes = [
       },
 
       {
+        name: "admin.view-event-types",
+        path: "/admin/event-types",
+        component: import("pages/Admin/EventTypes/index.vue"),
+        meta: {
+          title: "Tipos de Evento",
+          middleware: [Middlewares.checkPermissions],
+          requireLogin: true,
+          permissions: ["view-users"],
+        },
+      },
+
+      {
         name: "admin.create-newsletters",
         path: "/admin/newsletter/index",
         component: import("pages/Admin/EmailSubscribedUsers/index.vue"),

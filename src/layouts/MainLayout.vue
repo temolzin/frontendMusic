@@ -124,6 +124,10 @@
               <q-item-section avatar><q-icon name="fas fa-solid fa-icons" /></q-item-section>
               <q-item-section> Géneros Musicales </q-item-section>
             </q-item>
+            <q-item clickable v-ripple to="/admin/event-types" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
+              <q-item-section avatar><q-icon name="celebration" /></q-item-section>
+              <q-item-section> Tipos de Evento </q-item-section>
+            </q-item>
              <q-item clickable v-ripple to="/admin/newsletter/index" v-if="getMe.role[0] == 'administrador'" active-class="text-accent text-weight-bold">
               <q-item-section avatar><q-icon name="fas fa-newspaper" /></q-item-section>
               <q-item-section> Envío de Correos </q-item-section>
