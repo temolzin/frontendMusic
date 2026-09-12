@@ -54,6 +54,12 @@
           <span v-if="!props.row.event_date" class="text-grey text-caption">Sin fecha</span>
         </q-td>
       </template>
+      <template v-slot:body-cell-tipo_evento="props">
+        <q-td :props="props">
+          <div class="text-weight-medium">{{ props.row.event_type?.name || '—' }}</div>
+          <div v-if="props.row.event_type_detail" class="text-caption text-grey">{{ props.row.event_type_detail }}</div>
+        </q-td>
+      </template>
 
       <template v-slot:body-cell-status="props">
         <q-td :props="props" class="text-center">
@@ -382,6 +388,13 @@ const columns = [
     label: "Fecha del evento",
     align: "center",
     field: "event_date",
+    sortable: true,
+  },
+  {
+    name: "tipo_evento",
+    label: "Tipo de evento",
+    align: "center",
+    field: (row) => row.event_type?.name || '',
     sortable: true,
   },
   {

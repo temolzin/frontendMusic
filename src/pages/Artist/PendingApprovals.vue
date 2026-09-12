@@ -74,6 +74,12 @@
             <div class="text-caption text-grey">{{ props.row.event_hour }} hrs</div>
           </q-td>
         </template>
+        <template v-slot:body-cell-tipo_evento="props">
+          <q-td :props="props">
+            <div class="text-weight-medium">{{ props.row.event_type?.name || '—' }}</div>
+            <div v-if="props.row.event_type_detail" class="text-caption text-grey">{{ props.row.event_type_detail }}</div>
+          </q-td>
+        </template>
         <template v-slot:body-cell-lugar="props">
           <q-td :props="props">
             <div class="text-weight-medium">{{ props.row.customer_city }}</div>
@@ -163,6 +169,13 @@
                       Neto a recibir: {{ formatCurrency(netAmount(props.row)) }}
                     </div>
                   </div>
+                  <div class="col-12">
+                    <div class="text-grey">Tipo de evento</div>
+                    <div class="text-weight-medium">
+                      {{ props.row.event_type?.name || '—' }}
+                      <template v-if="props.row.event_type_detail"> - {{ props.row.event_type_detail }}</template>
+                    </div>
+                  </div>
                 </div>
               </q-card-section>
               <q-separator />
@@ -246,6 +259,12 @@
             <div class="text-caption text-grey">{{ props.row.event_hour }} hrs</div>
           </q-td>
         </template>
+        <template v-slot:body-cell-tipo_evento="props">
+          <q-td :props="props">
+            <div class="text-weight-medium">{{ props.row.event_type?.name || '—' }}</div>
+            <div v-if="props.row.event_type_detail" class="text-caption text-grey">{{ props.row.event_type_detail }}</div>
+          </q-td>
+        </template>
         <template v-slot:body-cell-amount="props">
           <q-td :props="props">
             <div>
@@ -298,6 +317,13 @@
                     </div>
                   </div>
                   <div class="col-12">
+                    <div class="text-grey">Tipo de evento</div>
+                    <div class="text-weight-medium">
+                      {{ props.row.event_type?.name || '—' }}
+                      <template v-if="props.row.event_type_detail"> - {{ props.row.event_type_detail }}</template>
+                    </div>
+                  </div>
+                  <div class="col-12">
                     <div class="text-grey">Resuelto el</div>
                     <div class="text-weight-medium">{{ formatDate(props.row.approval_responded_at) }}</div>
                   </div>
@@ -329,6 +355,7 @@ import { formatDate } from 'src/utils/formatDate';
 const columns = [
   { name: 'cliente', label: 'Cliente', align: 'center', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
   { name: 'evento', label: 'Fecha del evento', align: 'center', field: 'event_date', sortable: true },
+  { name: 'tipo_evento', label: 'Tipo de evento', align: 'center', field: (row) => row.event_type?.name || '', sortable: true },
   { name: 'lugar', label: 'Lugar', align: 'center', field: 'customer_city', sortable: true },
   { name: 'amount', label: 'Monto', align: 'center', field: 'amount', sortable: true },
   { name: 'payment_method', label: 'Método de pago', align: 'center', field: (row) => row.payment_method === 'card' ? 'Tarjeta' : 'Efectivo', sortable: true },
@@ -340,6 +367,7 @@ const columns = [
 const historyColumns = [
   { name: 'cliente', label: 'Cliente', align: 'center', field: (row) => `${row.customer_first_name} ${row.customer_last_name}`, sortable: true },
   { name: 'evento', label: 'Fecha del evento', align: 'center', field: 'event_date', sortable: true },
+  { name: 'tipo_evento', label: 'Tipo de evento', align: 'center', field: (row) => row.event_type?.name || '', sortable: true },
   { name: 'amount', label: 'Monto', align: 'center', field: 'amount', sortable: true },
   { name: 'resultado', label: 'Resultado', align: 'center', field: 'approval_status', sortable: true },
   { name: 'fecha_respuesta', label: 'Resuelto el', align: 'center', field: 'approval_responded_at', sortable: true },

@@ -173,6 +173,15 @@
               </q-item>
               <q-item>
                 <q-item-section>
+                  <q-item-label caption>Tipo de evento</q-item-label>
+                  <q-item-label>
+                    {{ selectedPurchase.event_type?.name || 'N/A' }}
+                    <template v-if="selectedPurchase.event_type_detail"> - {{ selectedPurchase.event_type_detail }}</template>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
                   <q-item-label caption>Monto</q-item-label>
                   <q-item-label class="text-weight-bold text-primary">{{ formatCurrency(parseFloat(selectedPurchase.amount) || 0) }}</q-item-label>
                 </q-item-section>

@@ -281,6 +281,21 @@
 </q-card>
 </div>
       </div>
+      <div class="row q-col-gutter-md q-mt-md">
+        <div class="col-12 col-lg-5">
+          <q-card flat bordered>
+            <q-item>
+              <q-item-section>
+                <q-item-label class="text-h6 text-weight-bolder">Distribución por tipo de evento</q-item-label>
+                <q-item-label caption>Ventas netas agrupadas por tipo de evento</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-card-section>
+              <apexchart type="donut" height="300" :options="eventTypeDonutChartOptions" :series="eventTypeDonutChartSeries" />
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -437,10 +452,37 @@ export default {
       return this.reportData?.genres.map((g) => g.net_sales) || [];
     },
 
+    eventTypeDonutChartSeries() {
+      return (this.reportData?.event_types || []).map((g) => g.net_sales);
+    },
+
     donutChartOptions() {
       return {
         chart: { fontFamily: "inherit" },
         labels: this.reportData?.genres.map((g) => g.name) || [],
+        legend: { position: "bottom" },
+        tooltip: { y: { formatter: (value) => formatCurrency(value) } },
+        plotOptions: {
+          pie: {
+            donut: {
+              labels: {
+                show: true,
+                total: {
+                  show: true,
+                  label: "Total",
+                  formatter: (w) => this.formatCompact(w.globals.seriesTotals.reduce((a, b) => a + b, 0)),
+                },
+              },
+            },
+          },
+        },
+      };
+    },
+
+    eventTypeDonutChartOptions() {
+      return {
+        chart: { fontFamily: "inherit" },
+        labels: (this.reportData?.event_types || []).map((g) => g.name),
         legend: { position: "bottom" },
         tooltip: { y: { formatter: (value) => formatCurrency(value) } },
         plotOptions: {
