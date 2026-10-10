@@ -5,6 +5,7 @@ import { mapActions, mapGetters } from "vuex";
 
 import { QSpinnerFacebook } from "quasar";
 import { onBeforeUnmount } from "vue";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 let $q;
 export default {
@@ -48,17 +49,11 @@ export default {
           code: this.$route.query.code,
         })
           .then(() => {
-            $q.notify({
-              type: "positive",
-              message: this.getToken.acction,
-            });
+            notifySuccess(this.getToken.acction);
             this.$router.push({ name: "dashboardH" });
           })
           .catch((err) => {
-            $q.notify({
-              type: "negative",
-              message: err.message,
-            });
+            notifyError(err.message);
             const toPath = this.$route.query.to || "/login";
             this.$router.push(toPath);
           });

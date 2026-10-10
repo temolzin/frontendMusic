@@ -1,6 +1,9 @@
 export default function () {
   return {
     artists: {},
-    artist: {},
+    artist: {
+      social_media: [],
+    },
+    latestRequest: null,
   };
 }

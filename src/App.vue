@@ -15,13 +15,10 @@ export default defineComponent({
     //console.log(token)
     if (token) {
       api.defaults.headers.common.Authorization =
-        "Bearer " + token.access_token;
+        "Bearer " + JSON.parse(token).access_token;
     } else {
       api.defaults.headers.common.Authorization = "";
     }
-  },
-  created() {
-    this.$q.dark.set(false);
   },
 });
 </script>

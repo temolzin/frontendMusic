@@ -42,6 +42,11 @@ export default route(function ({ store, ssrContext }) {
   }
 
   Router.beforeEach((to, from, next) => {
+
+    const systemName = 'Vibeer';
+    const pageTitle = to.meta.title || 'Inicio';
+    document.title = `${systemName} | ${pageTitle}`;
+
     if(to.meta.middleware){
       const middleware = Array.isArray(to.meta.middleware)  ? to.meta.middleware : [to.meta.middleware];
         const context = {
