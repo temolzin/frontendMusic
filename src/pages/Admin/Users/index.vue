@@ -362,17 +362,17 @@ export default {
         this.clearForm();
         notifySuccess(`Usuario creado correctamente`);
       } catch (err) {
-        if (err.response.data.message) {
-          if (err.response.data.errors.name) {
-            notifyError(err.response.data.errors.name);
-          } else if (err.response.data.errors.email) {
-            notifyError(err.response.data.errors.email);
-          } else if (err.response.data.errors.password) {
-            notifyError(err.response.data.errors.password);
-          } else if (err.response.data.errors.role_id) {
-            notifyError(err.response.data.errors.role_id);
-          }
-        }
+        const responseData = err && err.response && err.response.data;
+        const validationErrors = responseData && responseData.errors;
+        const firstValidationError = validationErrors
+          ? Object.values(validationErrors).flat()[0]
+          : null;
+
+        notifyError(
+          firstValidationError ||
+            (responseData && responseData.message) ||
+            "No fue posible crear el usuario. Verifica tu sesión e inténtalo de nuevo."
+        );
       }
     },
 
@@ -419,17 +419,17 @@ export default {
         this.clearForm();
         notifySuccess(`Usuario modificado correctamente`);
       } catch (err) {
-        if (err.response.data.message) {
-          if (err.response.data.errors.name) {
-            notifyError(err.response.data.errors.name);
-          } else if (err.response.data.errors.email) {
-            notifyError(err.response.data.errors.email);
-          } else if (err.response.data.errors.password) {
-            notifyError(err.response.data.errors.password);
-          } else if (err.response.data.errors.role_id) {
-            notifyError(err.response.data.errors.role_id);
-          }
-        }
+        const responseData = err && err.response && err.response.data;
+        const validationErrors = responseData && responseData.errors;
+        const firstValidationError = validationErrors
+          ? Object.values(validationErrors).flat()[0]
+          : null;
+
+        notifyError(
+          firstValidationError ||
+            (responseData && responseData.message) ||
+            "No fue posible actualizar el usuario. Verifica tu sesión e inténtalo de nuevo."
+        );
       }
     },
 
