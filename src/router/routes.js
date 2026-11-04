@@ -125,7 +125,7 @@ const routes = [
       {
         name: "edit-profile",
         path: "/dashboard/user/profile",
-        component: import("pages/dashboard/User/userProfile.vue"),
+        component: () => import("pages/dashboard/User/userProfile.vue"),
         meta: {
           title: "Mi Perfil",
           middleware: [Middlewares.checkPermissions],
@@ -137,7 +137,7 @@ const routes = [
       {
         name: "admin.reports",
         path: "/admin/reports",
-        component: import('pages/Admin/Reports/index.vue'),
+        component: () => import('pages/Admin/Reports/index.vue'),
         meta: {
           title: 'Reportes de Ganancias',
           middleware: [Middlewares.checkPermissions],
@@ -148,7 +148,7 @@ const routes = [
       {
         name: "admin.view-users",
         path: "/admin/users",
-        component: import("pages/Admin/Users/index.vue"),
+        component: () => import("pages/Admin/Users/index.vue"),
         meta: {
           title: "Gestión de Usuarios",
           middleware: [Middlewares.checkPermissions],
@@ -159,7 +159,7 @@ const routes = [
       {
         name: "admin.view-roles",
         path: "/admin/roles",
-        component: import("pages/Admin/Roles/index.vue"),
+        component: () => import("pages/Admin/Roles/index.vue"),
         meta: {
           title: "Gestión de Roles",
           middleware: [Middlewares.checkPermissions],
@@ -171,7 +171,7 @@ const routes = [
       {
         name: "admin.created-roles",
         path: "/admin/roles/create",
-        component: import("pages/Admin/Roles/create.vue"),
+        component: () => import("pages/Admin/Roles/create.vue"),
         meta: {
           title: "Crear Rol",
           middleware: [Middlewares.checkPermissions],
@@ -183,7 +183,7 @@ const routes = [
       {
         name: "admin.view-musicals-genders",
         path: "/admin/musical-genders/index",
-        component: import("pages/Admin/MusicalGenders/index.vue"),
+        component: () => import("pages/Admin/MusicalGenders/index.vue"),
         meta: {
           title: "Géneros Musicales",
           middleware: [Middlewares.checkPermissions],
@@ -195,7 +195,7 @@ const routes = [
       {
         name: "admin.view-event-types",
         path: "/admin/event-types",
-        component: import("pages/Admin/EventTypes/index.vue"),
+        component: () => import("pages/Admin/EventTypes/index.vue"),
         meta: {
           title: "Tipos de Evento",
           middleware: [Middlewares.checkPermissions],
@@ -207,7 +207,7 @@ const routes = [
       {
         name: "admin.create-newsletters",
         path: "/admin/newsletter/index",
-        component: import("pages/Admin/EmailSubscribedUsers/index.vue"),
+        component: () => import("pages/Admin/EmailSubscribedUsers/index.vue"),
         meta: {
           title: "Envío de Correos",
           requireLogin: true,
@@ -218,7 +218,7 @@ const routes = [
       {
         name: 'admin.support-tickets',
         path: '/admin/support-tickets',
-        component: import('src/pages/Admin/SupportTickets/index.vue'),
+        component: () => import('src/pages/Admin/SupportTickets/index.vue'),
         meta: {
           title: 'Tickets de Soporte',
           middleware: [Middlewares.checkPermissions],
@@ -229,7 +229,7 @@ const routes = [
       {
         name: 'admin.support-tickets-show',
         path: '/admin/support-tickets/:id',
-        component: import('src/pages/Admin/SupportTickets/show.vue'),
+        component: () => import('src/pages/Admin/SupportTickets/show.vue'),
         meta: {
           title: 'Detalle Ticket',
           middleware: [Middlewares.checkPermissions],
@@ -240,7 +240,7 @@ const routes = [
       {
         name: 'admin.payouts-management',
         path: '/admin/payouts',
-        component: import('pages/Admin/Payouts/index.vue'),
+        component: () => import('pages/Admin/Payouts/index.vue'),
         meta: {
           title: 'Liquidaciones por Pagar',
           middleware: [Middlewares.checkPermissions],
@@ -273,7 +273,7 @@ const routes = [
       {
         name: 'admin.artist-approvals',
         path: '/admin/artist-approvals',
-        component: import('pages/Admin/ArtistApprovals/index.vue'),
+        component: () => import('pages/Admin/ArtistApprovals/index.vue'),
         meta: {
           title: 'Solicitudes de Artistas',
           middleware: [Middlewares.checkPermissions],
@@ -284,7 +284,7 @@ const routes = [
       {
         name: 'admin.webhook-verification',
         path: '/admin/webhook-verification',
-        component: import('pages/Admin/WebhookVerification/index.vue'),
+        component: () => import('pages/Admin/WebhookVerification/index.vue'),
         meta: {
           title: 'Verificación Webhook',
           middleware: [Middlewares.checkPermissions],
@@ -295,7 +295,7 @@ const routes = [
       {
         name: 'admin.openpay-keys',
         path: '/admin/openpay-keys',
-        component: import('pages/Admin/OpenpayKeys/index.vue'),
+        component: () => import('pages/Admin/OpenpayKeys/index.vue'),
         meta: {
           title: 'Llaves OpenPay',
           middleware: [Middlewares.checkPermissions],
@@ -309,7 +309,7 @@ const routes = [
       {
         name: "artist.view-profile-artist",
         path: "/artist/index",
-        component: import("pages/Artist/NewArtist/index.vue"),
+        component: () => import("pages/Artist/NewArtist/index.vue"),
         meta: {
           title: "Perfil Artista",
           middleware: [Middlewares.checkPermissions],
@@ -331,7 +331,7 @@ const routes = [
       {
         name: 'artist.pending-approvals',
         path: '/artist/pending-approvals',
-        component: import('src/pages/Artist/PendingApprovals.vue'),
+        component: () => import('src/pages/Artist/PendingApprovals.vue'),
         meta: {
           title: 'Solicitudes Pendientes',
           middleware: [Middlewares.checkPermissions],
@@ -389,7 +389,7 @@ const routes = [
       {
         name: "client.view-card",
         path: "/client/card",
-        component: import("pages/Client/Card/index.vue"),
+        component: () => import("pages/Client/Card/index.vue"),
         meta: {
           title: "Mis Tarjetas",
           middleware: [Middlewares.checkPermissions],
@@ -400,7 +400,7 @@ const routes = [
       {
         name: "client.view-all-musicals-genders",
         path: "/client/musical-genders",
-        component: import("src/pages/Client/MusicalGenders/index.vue"),
+        component: () => import("src/pages/Client/MusicalGenders/index.vue"),
         meta: {
           title: "Todos los Géneros",
           middleware: [Middlewares.checkPermissions],
@@ -411,7 +411,7 @@ const routes = [
       {
         name: "client.view-groups-by-genders-search",
         path: "/client/musical-genders/:slug",
-        component: import("src/pages/Client/MusicalGenders/search.vue"),
+        component: () => import("src/pages/Client/MusicalGenders/search.vue"),
         meta: {
           title: "Búsqueda de Grupos",
           middleware: [Middlewares.checkPermissions],
@@ -422,7 +422,7 @@ const routes = [
       {
         name: "client.view-group-by-gender-slug",
         path: "/client/musical-genders/:slugMG/:slugA",
-        component: import("src/pages/Client/MusicalGenders/show.vue"),
+        component: () => import("src/pages/Client/MusicalGenders/show.vue"),
         meta: {
           title: "Detalle del Grupo",
           middleware: [Middlewares.checkPermissions],
@@ -434,7 +434,7 @@ const routes = [
       {
         name: "client.view-shopping-cart",
         path: "/client/shopping-cart",
-        component: import("src/pages/Client/ShoppingCart/index.vue"),
+        component: () => import("src/pages/Client/ShoppingCart/index.vue"),
         meta: {
           title: "Carrito",
           middleware: [Middlewares.checkPermissions],
@@ -446,7 +446,7 @@ const routes = [
       {
         name: "client.view-my-order-details",
         path: "/client/shopping-cart/view-my-order-details",
-        component: import("src/pages/Client/ShoppingCart/My_Order_Details.vue"),
+        component: () => import("src/pages/Client/ShoppingCart/My_Order_Details.vue"),
         meta: {
           title: "Mis compras",
           middleware: [Middlewares.checkPermissions],
@@ -458,7 +458,7 @@ const routes = [
       {
         name: "client.dataClient",
         path: "/client/shopping-cart/dataClient",
-        component: import("src/pages/Client/ShoppingCart/dataClient.vue"),
+        component: () => import("src/pages/Client/ShoppingCart/dataClient.vue"),
         meta: {
           title: "Datos del Cliente",
           middleware: [Middlewares.checkPermissions],
@@ -470,7 +470,7 @@ const routes = [
       {
         name: "client.view-favourite-artist",
         path: "/client/favourite-artist",
-        component: import("src/pages/Client/FavouriteArtists/index.vue"),
+        component: () => import("src/pages/Client/FavouriteArtists/index.vue"),
         meta: {
           title: "Artistas Favoritos",
           middleware: [Middlewares.checkPermissions],
@@ -482,7 +482,7 @@ const routes = [
       {
         name: "client.view-store",
         path: "/client/store",
-        component: import("src/pages/Client/Store/index.vue"),
+        component: () => import("src/pages/Client/Store/index.vue"),
         meta: {
           title: "Tienda",
           middleware: [Middlewares.checkPermissions],
@@ -494,7 +494,7 @@ const routes = [
       {
         name: 'client.report-incident',
         path: '/client/report-incident/:saleId',
-        component: import('src/pages/Client/ShoppingCart/ReportIncident.vue'),
+        component: () => import('src/pages/Client/ShoppingCart/ReportIncident.vue'),
         meta: {
           title: 'Reportar Incidente',
           middleware: [Middlewares.checkPermissions],
