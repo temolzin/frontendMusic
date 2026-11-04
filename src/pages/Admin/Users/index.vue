@@ -113,9 +113,6 @@
     </q-table>
     <!-- Fin de Tabla -->
   </div>
-  <p style="display: none">
-    {{ users.name }}
-  </p>
   <!-- Inicio de Formulario nuevo usuario -->
   <section>
     <div class="q-pa-md q-gutter-sm">
@@ -317,14 +314,11 @@ const columns = [
   },
 ];
 
-let rows = [];
-
 export default {
   data() {
     return {
       loading: true,
       columns,
-      rows,
       filter: "",
       formCreate: false,
       pagination: {
@@ -355,9 +349,10 @@ export default {
       try {
         await this.getUsers();
       } catch (err) {
-        if (err.response.data.message) {
-          notifyError(err.response.data.message);
-        }
+        const message = err && err.response && err.response.data && err.response.data.message;
+        notifyError(message || "No fue posible cargar los usuarios.");
+      } finally {
+        this.loading = false;
       }
     },
     async createUserNew() {
@@ -462,6 +457,11 @@ export default {
     this.gettRoles();
   },
   computed: {
+    rows() {
+      return Array.isArray(this.users)
+        ? [...this.users].sort((a, b) => b.id - a.id)
+        : [];
+    },
     ...mapState({
       users: (state) => state.users.users,
     }),
@@ -471,10 +471,6 @@ export default {
   },
   mounted() {
     $q = useQuasar();
-  },
-  beforeUpdate() {
-    this.rows = [...this.users].sort((a, b) => b.id - a.id);
-    this.loading = false;
   },
 };
 </script>
