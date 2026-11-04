@@ -1,9 +1,14 @@
 import { api } from "boot/axios";
 
 export const getUsers = async ({ commit }) => {
-  await api.get("/api/admin/users").then((response) => {
-    commit("setUsers", response.data.users);
-  });
+  const response = await api.get("/api/admin/users");
+  const users = response.data && response.data.users;
+
+  if (!Array.isArray(users)) {
+    throw new Error("La respuesta de usuarios no tiene el formato esperado.");
+  }
+
+  commit("setUsers", users);
 };
 
 export const createUser = async ({ dispatch }, payload) => {

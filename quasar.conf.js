@@ -80,7 +80,7 @@ module.exports = configure(function (ctx) {
       plugins: [],
       config: {
         dark: 'auto',
-        backendUrl: 'http://127.0.0.1:8000',
+        backendUrl: 'https://sgmback.rootheim.com',
         OpenPayID: '',
         OpenPayKey: '', 
         OpenPaySanboxMode: true
