@@ -3,6 +3,7 @@
 import { mapActions } from "vuex";
 import { useQuasar, QSpinnerFacebook } from "quasar";
 import { onBeforeUnmount } from "vue";
+import { notifyError } from "src/utils/notify";
 
 let $q;
 export default {
@@ -45,18 +46,11 @@ export default {
       try {
         this.getMeUser()
           .then(() => {
-            $q.notify({
-              type: "positive",
-              message: "Usuario encontrado",
-            });
             //const toPath = this.$route.query.to || "/dashboard/home";
             this.$router.push({ name: "dashboardH" });
           })
           .catch(() => {
-            $q.notify({
-              type: "negative",
-              message: "Error inesperado por parte del servidor",
-            });
+            notifyError("Error inesperado por parte del servidor");
             this.$router.push({ name: "LoginIn" });
           });
       } catch (err) {

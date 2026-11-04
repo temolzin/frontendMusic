@@ -1,1 +1,72 @@
-// app global css in SCSS form
+.q-page-container .q-page {
+  box-sizing: border-box;
+  width: 100%;
+  padding-bottom: 24px;
+}
+
+.body--dark {
+    .q-field--outlined .q-field__control {
+        border-color: #718096 !important;
+    }
+    .q-field--outlined:hover .q-field__control {
+        border-color: #a0aec0 !important;
+    }
+    .q-field__label {
+        color: #a0aec0 !important;
+    }
+    .q-field__native, .q-field__input {
+        color: #e2e8f0 !important;
+    }
+    .q-field__bottom {
+        color: #718096 !important;
+    }
+    .my-card {
+        background: #1e2a45 !important;
+    }
+    .q-card.shadow-4 {
+        background: #1e2a45 !important;
+    }
+    .my-card .text-primary {
+        color: #ffffff !important;
+    }
+}
+
+.q-bottom-sheet .share-action-whatsapp .q-icon,
+.q-bottom-sheet .share-action-messenger .q-icon,
+.q-bottom-sheet .share-action-instagram .q-icon,
+.q-bottom-sheet .share-action-facebook .q-icon,
+.q-bottom-sheet .share-action-copy .q-icon {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    color: #fff;
+    border-radius: 50%;
+}
+
+.q-bottom-sheet .share-action-whatsapp .q-icon {
+    font-size: 15px;
+    background: #25D366;
+}
+
+.q-bottom-sheet .share-action-messenger .q-icon {
+    font-size: 15px;
+    background: #0084FF;
+}
+
+.q-bottom-sheet .share-action-instagram .q-icon {
+    font-size: 14px;
+    background: #E4405F;
+}
+
+.q-bottom-sheet .share-action-facebook .q-icon {
+    font-size: 16px;
+    background: #1877F2;
+}
+
+.q-bottom-sheet .share-action-copy .q-icon {
+    font-size: 15px;
+    background: #546E7A;
+}

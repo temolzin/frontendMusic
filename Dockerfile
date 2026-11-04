@@ -1,12 +1,12 @@
-FROM node:14
+FROM node:22
 
 WORKDIR /app
 
-COPY package*.json ./|
+COPY package*.json ./
 
 RUN npm install
 
-RUN npm install -g @quasar/cli
+RUN npm install -g @quasar/cli@1
 
 COPY . .
 

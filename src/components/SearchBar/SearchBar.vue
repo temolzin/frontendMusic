@@ -14,7 +14,6 @@
         option-value="url"
         hide-dropdown-icon
         :loading="loading"
-        @virtual-scroll="onScroll"
     >
         <template v-slot:option="scope">
         <q-item v-bind="scope.itemProps" @click="redirectToRoute(scope.opt.url)">
@@ -29,7 +28,7 @@
         <template v-slot:no-option>
         <q-item>
             <q-item-section class="text-grey">
-            No se encontró la busqueda
+            No se encontró la búsqueda
             </q-item-section>
         </q-item>
         </template>
@@ -41,6 +40,7 @@
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { mapGetters, mapActions } from "vuex";
+import { notifyError } from "src/utils/notify";
 
 let $q;
 export default {
@@ -50,6 +50,8 @@ export default {
       isActiveDarkMode: ref(false),
       options: ref(),
       allOptions: [],
+      searchBar: ref(null),
+      loading: ref(false),
     };
   },
   computed: {
@@ -65,18 +67,20 @@ export default {
   methods: {
     ...mapActions("artistList", ["getArtists"]),
     async getArtistss() {
+      this.loading = true;
       try {
         await this.getArtists();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
+      } finally {
+          this.loading = false;
       }
     },
     redirectToRoute(value) {
+      this.searchBar = null;
+      this.options = [];
       this.$router.push(value);      
     },
     removeDuplicates(arr) {
@@ -90,15 +94,17 @@ export default {
       let artists = [];
       
       this.stateArtistList.forEach(artist => {
-        artist.musical_genders.forEach(genre => {
-          const obj = {name : genre.name, url: `/client/musical-genders/${genre.slug}`};
-          genres.push(obj);
-        });
+        if (artist.musical_genders && artist.musical_genders.length > 0) {
+          artist.musical_genders.forEach(genre => {
+            genres.push({ name: genre.name, url: `/client/musical-genders/${genre.slug}` });
+          });
+        }
       });
 
       this.stateArtistList.forEach(artist => {
-        const obj = {name : artist.name, url: `/client/musical-genders/${artist.musical_genders[0].name}/${artist.slug}`};
-        artists.push(obj);
+        if (artist.musical_genders && artist.musical_genders[0]) {
+          artists.push({ name: artist.name, url: `/client/musical-genders/${artist.musical_genders[0].slug}/${artist.slug}` });
+        }
       });
 
       this.allOptions = this.removeDuplicates([...genres, ...artists]);

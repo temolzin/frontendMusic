@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md row">
+    <PageBreadcrumbs :items="[{ label: 'Roles', icon: 'fas fa-solid fa-street-view', to: '/admin/roles' }, { label: 'Crear rol' }]" />
     <div class="col-12">
       <p class="text-h4 text-center">Crear nuevo rol</p>
     </div>
@@ -18,7 +19,7 @@
         label="Breve descripcion del rol *"
         hint="Se recomiendo una sola palabra"
         lazy-rules
-        :rules="[(val) => (val && val.length > 0) || 'Ingresa una descripción']"
+        :rules="[(val) => (val && val.length >= 10) || 'Ingresa una descripción (mín. 10 caracteres)']"
       />
 
       <div>
@@ -30,7 +31,7 @@
           "
           :option-label="
             (opt) =>
-              Object(opt) === opt && 'name' in opt ? opt.name : '- Null -'
+              Object(opt) === opt && 'name' in opt ? opt.name : 'Seleccionar'
           "
           emit-value
           map-options
@@ -38,7 +39,7 @@
           options-dense
           use-chips
           filled
-          hint="Selecciona los permisos que tendra el rol"
+          hint="Selecciona los permisos que tendrá el rol"
           color="primary"
           :loading="false"
           clear-icon
@@ -52,9 +53,9 @@
       </div>
 
       <div>
-        <q-btn label="Submit" type="submit" color="primary" />
+        <q-btn label="Crear" type="submit" color="primary" />
         <q-btn
-          label="Reset"
+          label="Reiniciar"
           type="reset"
           color="primary"
           flat
@@ -70,11 +71,14 @@
 </template>
 
 <script>
+import PageBreadcrumbs from "src/components/PageBreadcrumbs.vue";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { mapActions, mapState } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 let $q;
 export default {
+  components: { PageBreadcrumbs },
   data() {
     return {
       form: {
@@ -92,10 +96,7 @@ export default {
         await this.getPermissions();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -103,16 +104,10 @@ export default {
       try {
         await this.createRole(this.form);
         this.onReset();
-        this.$q.notify({
-          type: "positive",
-          message: `Rol creado correctamente`,
-        });
+        notifySuccess(`Rol creado correctamente`);
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },

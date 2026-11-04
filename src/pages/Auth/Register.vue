@@ -26,12 +26,11 @@
               <q-btn round flat icon="fas fa-arrow-left" to="/" />
             </div>
             <div class="col-6 text-right q-px-md" style="font-size: 2em">
-              <q-btn
-                round
-                color="primary"
-                icon="fas fa-solid fa-cloud-moon"
-                to="/"
-              />
+              <img 
+                :src="$q.dark.isActive ? '/vibeerlogowithouttext.png' : '/viberlogowithouttext-black.png'" 
+                @click="$router.push('/')" 
+                style="height: 64px; cursor: pointer; vertical-align: middle;"
+              >
             </div>
           </div>
           <q-form
@@ -42,7 +41,7 @@
               Regístrate
             </p>
             <p class="text-center q-mb-sm text-weight-light">
-              Se parte de esta nueva experiencia de contratación de servicios
+              Sé parte de esta nueva experiencia de contratación de servicios
               musicales
             </p>
 
@@ -72,12 +71,27 @@
               </template>
             </q-input>
 
+            <div class="row items-center q-pt-sm">
+              <q-checkbox v-model="acceptTerms" color="primary" />
+              <div class="text-body2 q-ml-sm" style="flex: 1;">
+                He leído y acepto los 
+                <router-link :to="{ name: 'legal.terms' }" class="text-primary text-weight-medium" target="_blank">
+                  Términos y condiciones de uso
+                </router-link> 
+                y la 
+                <router-link :to="{ name: 'legal.privacy' }" class="text-primary text-weight-medium" target="_blank">
+                  Política de privacidad
+                </router-link>.
+              </div>
+            </div>
+
             <div class="q-pt-sm">
               <q-btn
                 class="full-width"
                 color="primary"
                 label="Crear mi cuenta"
                 type="submit"
+                :disable="!acceptTerms"
                 v-if="loading"
               >
               </q-btn>
@@ -160,13 +174,6 @@
                   </q-btn>
                 </div>
               </div>
-
-              <p class="text-center q-mt-md">
-                Al continuar, estás aceptando los
-                <u>Términos y condiciones de uso</u>. Consulta nuestra
-                <u>Política de privacidad</u>.
-              </p>
-
               <div class="text-center">
                 ¿Ya tienes una cuenta?
                 <router-link class="text-primary" to="/login">
@@ -185,6 +192,7 @@ import { useQuasar } from "quasar";
 import { mapActions } from "vuex";
 import { ref } from "vue";
 import { mapGetters } from "vuex";
+import { notifySuccess, notifyError, notifyWarning } from "src/utils/notify";
 
 let $q;
 
@@ -193,6 +201,7 @@ export default {
   data() {
     return {
       isPwd: ref(true),
+      acceptTerms: false,
       user: {
         name: "Miguel Angel Gómez Gómez",
         email: "angel@gmail.com",
@@ -208,38 +217,27 @@ export default {
     ...mapActions("auth", ["doLoginGmail"]),
     ...mapActions("auth", ["doLoginFacebook"]),
     async submitForm() {
+      if (!this.acceptTerms) {
+        notifyWarning("Debes aceptar los Términos y Condiciones para continuar.");
+        return;
+      }
       this.loading = false;
       if (!this.user.email || !this.user.password || !this.user.name) {
-        $q.notify({
-          type: "negative",
-          message: "Los datos no son validos.",
-        });
+        notifyError("Los datos no son validos.");
       } else if (this.user.password.length < 4) {
-        $q.notify({
-          type: "negative",
-          message: "La contraseña debe de ser mayor a 6 carácteres.",
-        });
+        notifyError("La contraseña debe de ser mayor a 6 carácteres.");
       } else {
         try {
           await this.registerUser(this.user);
-          $q.notify({
-            type: "positive",
-            message: "Usuario registrado",
-          });
+          notifySuccess("Usuario registrado");
           const toPath = this.$route.query.to || "/login";
           this.$router.push(toPath);
           this.loading = true;
         } catch (err) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.errors.email,
-          });
+          notifyError(err.response.data.errors.email);
 
           if (err.response.data.error) {
-            $q.notify({
-              type: "negative",
-              message: err.response.data.error,
-            });
+            notifyError(err.response.data.error);
           }
           this.loading = true;
         }

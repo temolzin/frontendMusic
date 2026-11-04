@@ -7,10 +7,10 @@
       v-if="showCard == true"
     >
       <div class="q-ma-md">
-        <p class="text-h6 q-mb-sm">No tienes ni una tarjeta guardada 😥</p>
+        <p class="text-h6 q-mb-sm">No tienes métodos de pago registrados. Agrega alguno para comenzar.</p>
         <p class="q-mt-none">
-          Guarda tus tarjetas de Credito o Devito es 100% seguro y confiable ✔.
-          Recuerda que no se te pedira el Cvv, hasta que realices alguna renta
+          Guarda tus tarjetas de crédito o débito. Es 100% seguro y confiable.
+          Recuerda que no se te pedirá el CVV/CVC o código de seguridad hasta que realices alguna renta
           de algún servicio.
         </p>
       </div>
@@ -25,6 +25,7 @@
 <script>
 import { mapGetters, mapActions, mapState } from "vuex";
 import { useQuasar } from "quasar";
+import { notifyError } from "src/utils/notify";
 
 let $q = useQuasar();
 
@@ -42,15 +43,12 @@ export default {
     async getCard() {
       try {
         await this.getCards();
-        if (this.cards == "") {
+        if (!Array.isArray(this.cards) || this.cards.length === 0) {
           this.showInfo = true;
         }
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.message,
-          });
+          notifyError(err.message);
         }
       }
     },

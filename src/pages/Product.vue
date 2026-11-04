@@ -3,7 +3,7 @@
     <q-card style="min-width: 350px">
       <q-card-section>
         <div class="text-h6">
-          Edit product "{{ stateProduct.product.name }}"
+          Editar producto "{{ stateProduct.product.name }}"
         </div>
       </q-card-section>
 
@@ -13,23 +13,23 @@
             dense
             v-model="editForm.name"
             autofocus
-            label="Name product"
-            :rules="[(val) => !!val || 'Field is required']"
+            label="Nombre del producto"
+            :rules="[(val) => !!val || 'Campo obligatorio']"
           />
           <q-input
             dense
             v-model="editForm.price"
-            label="Price product"
-            :rules="[(val) => !!val || 'Field is required']"
+            label="Precio del producto"
+            :rules="[(val) => !!val || 'Campo obligatorio']"
           />
         </form>
       </q-card-section>
 
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat label="Cancel" v-close-popup />
+        <q-btn flat label="Cancelar" v-close-popup />
         <q-btn
           flat
-          label="Submit"
+          label="Enviar"
           type="submit"
           v-on:click="upProduct"
           v-close-popup
@@ -40,11 +40,11 @@
 
   <section>
     <div class="q-pa-md q-gutter-sm">
-      <q-btn class="" label="Create" color="primary" @click="prompt = true" />
+      <q-btn class="" label="Crear" color="primary" @click="prompt = true" />
       <q-dialog v-model="prompt" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Create new product</div>
+            <div class="text-h6">Crear nuevo producto</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -53,23 +53,22 @@
                 dense
                 v-model="form.name"
                 autofocus
-                label="Name product"
-                :rules="[(val) => !!val || 'Field is required']"
+                label="Nombre del producto"
+                :rules="[(val) => !!val || 'Campo obligatorio']"
               />
               <q-input
                 dense
                 v-model="form.price"
-                label="Price product"
-                :rules="[(val) => !!val || 'Field is required']"
+                label="Precio del producto"
+                :rules="[(val) => !!val || 'Campo obligatorio']"
               />
             </form>
           </q-card-section>
-
           <q-card-actions align="right" class="text-primary">
-            <q-btn flat label="Cancel" v-close-popup />
+            <q-btn flat label="Cancelar" v-close-popup />
             <q-btn
               flat
-              label="Submit"
+              label="Enviar"
               type="submit"
               v-on:click="createPro"
               v-close-popup
@@ -86,9 +85,9 @@
         <thead>
           <tr>
             <th class="text-left">Id</th>
-            <th class="text-left">Name</th>
-            <th class="text-left">Price</th>
-            <th class="text-left">Actions</th>
+            <th class="text-left">Nombre</th>
+            <th class="text-left">Precio</th>
+            <th class="text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -123,6 +122,7 @@
 import { useQuasar } from "quasar";
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
+import { notifySuccess, notifyError } from "src/utils/notify";
 
 export default {
   name: "Dashboard",
@@ -165,10 +165,7 @@ export default {
         await this.getProducts();
       } catch (err) {
         if (err.response.data.message) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.message,
-          });
+          notifyError(err.response.data.message);
         }
       }
     },
@@ -178,23 +175,17 @@ export default {
         this.$q
           .dialog({
             title: "Mensaje de confirmación",
-            message: "¿Estas seguro de eliminar el registro?",
+            message: "¿Estás seguro de eliminar el registro?",
             cancel: true,
             persistent: true,
           })
           .onOk(() => {
             try {
               this.deleteProduct(id);
-              this.$q.notify({
-                type: "positive",
-                message: `Producto eliminado correctamente`,
-              });
+              notifySuccess(`Producto eliminado correctamente`);
             } catch (err) {
               if (err.response.data.message) {
-                  $q.notify({
-                  type: "negative",
-                  message: err.response.data.message,
-                });
+                  notifyError(err.response.data.message);
               }
             }
           });
@@ -204,12 +195,13 @@ export default {
     },
 
     async createPro() {
-      await this.createProduct(this.form);
-      this.clearForm();
-      this.$q.notify({
-        type: "positive",
-        message: `Producto creado correctamente`,
-      });
+      try {
+        await this.createProduct(this.form);
+        this.clearForm();
+        notifySuccess(`Producto creado correctamente`);
+      } catch (err) {
+        notifyError(err.response?.data?.message ?? err.response?.data?.error ?? "No se pudo crear el producto");
+      }
     },
 
     async showProduct(id) {
@@ -221,10 +213,7 @@ export default {
         this.edit = true;
       } catch (err) {
         if (err.response.data.error) {
-          $q.notify({
-            type: "negative",
-            message: err.response.data.error,
-          });
+          notifyError(err.response.data.error);
         }
       }
     },
@@ -237,11 +226,7 @@ export default {
         };
         this.edit = true;
         await this.updateProduct(product);
-        this.$q.notify({
-          type: "positive",
-          message:
-            `Producto ` + this.editForm.name + ` actualizado correctamente`,
-        });
+        notifySuccess(`Producto ` + this.editForm.name + ` actualizado correctamente`);
       } catch (error) {
         console.error(error);
       }

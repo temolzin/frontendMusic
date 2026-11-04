@@ -23,7 +23,7 @@
               tu artista favorito para un evento inolvidable. Regístrate ahora y comienza a planificar tu experiencia única con nosotros.
               ¡No esperes más, el escenario está listo para ti!
             </div>
-            <q-btn outline label="Ver más" class="q-mt-md" to="/login"/>
+            <q-btn outline label="Ver más" class="q-mt-md" :to="isLoggedIn ? '/artist-list' : '/register'"/>
           </div>
       </q-carousel-slide>
 
@@ -43,37 +43,38 @@
               impulsar tu carrera artística y hacerte conocido en todo el mundo! Contáctanos hoy mismo y
               te registraremos para darle alas a tu sueño musical.
             </div>
-            <q-btn outline label="Ver más" class="q-mt-md" to="/login"/>
+            <q-btn v-if="!isLoggedIn" outline label="Ver más" class="q-mt-md" to="/login" />
+            <q-btn v-if="isLoggedIn && userRole === 'artista'" outline label="Ver más" class="q-mt-md" @click="scrollToGrupo" />
           </div>
       </q-carousel-slide>
     </q-carousel>
   </div>
 
-  <div class="q-pa-md row items-start q-gutter-md">
+  <div class="q-pa-md row items-stretch justify-center q-mt-lg" style="gap: 35px;">
 
     <q-card class="my-card" flat bordered>
       <q-card-section horizontal>
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 1</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Regístrate con nosostros</div>
-          <div class="text-caption text-black">
-               Ingresa a nuestra app y regístrate de manera rápida y sencilla.
-               Solo necesitas unos minutos  para crear tu cuenta y estará todo listo.
+          <div class="text-caption">
+              Ingresa a nuestra app y regístrate de manera rápida y sencilla.
+              Solo necesitas unos minutos  para crear tu cuenta y estará todo listo.
           </div>
         </q-card-section>
 
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="https://cdn.pixabay.com/photo/2018/07/12/21/32/subscribe-3534409_640.jpg"
+            src="https://cdn.pixabay.com/photo/2018/07/12/21/32/subscribe-3534409_1280.jpg"
           />
         </q-card-section>
       </q-card-section>
 
       <q-separator />
-      <q-card-actions>
+      <q-card-actions v-if="!isLoggedIn">
         <q-btn flat color="primary" to="/register">
-          GO
+          Ir
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -83,24 +84,24 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 2</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Explora Nuestro Catálogo</div>
-          <div class="text-caption text-black">
-            Descubre a tus artistas favoritos en nuestro amplio catálogo.
-            Tenemos a todos tus artistas favoritos en un solo lugar desde los,
-            mas famosos.
+          <div class="text-caption">
+            <div class="text-caption">
+            Descubre a tus artistas favoritos en nuestro catálogo. Tenemos a los mejores exponentes de la música listos para tu evento.
+          </div>
           </div>
         </q-card-section>
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="https://cdn.pixabay.com/photo/2016/11/22/19/15/hand-1850120_640.jpg"
+            src="https://cdn.pixabay.com/photo/2016/11/22/19/15/hand-1850120_1280.jpg"
           />
         </q-card-section>
       </q-card-section>
 
       <q-separator />
       <q-card-actions>
-        <q-btn flat color="primary" to="/login">
-          GO
+        <q-btn flat color="primary" :to="getRouteFor(2)">
+          Ir
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -110,22 +111,22 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 3</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Selecciona a tu Artista</div>
-          <div class="text-caption text-black">
+          <div class="text-caption">
             Elige a tu artista favorito Ya sea un concierto privado, una aparición especial o una charla exclusiva, nosotros lo haremos posible.
-          </div>
+          </div> 
         </q-card-section>
 
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="https://cdn.pixabay.com/photo/2018/09/20/15/35/directory-3691159_640.jpg"
+            src="https://cdn.pixabay.com/photo/2018/09/20/15/35/directory-3691159_1280.jpg"
           />
         </q-card-section>
       </q-card-section>
       <q-separator />
       <q-card-actions>
-        <q-btn flat color="primary" to="/login">
-          GO
+        <q-btn flat color="primary" :to="getRouteFor(3)">
+          Ir
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -135,33 +136,33 @@
         <q-card-section class="q-pt-xs">
           <div class="text-overline">Paso 4</div>
           <div class="text-h6 q-mt-sm q-mb-xs">Contrata a tu Artista Favorito!</div>
-          <div class="text-caption text-black">
-             Una vez que estés completamente satisfecho con todos los detalles,
-             confirma desde nuestra aplicación, de forma rápida y segura.
+          <div class="text-caption">
+            Una vez que estés completamente satisfecho con todos los detalles,
+            confirma desde nuestra aplicación de forma rápida y segura.
           </div>
         </q-card-section>
 
         <q-card-section class="col-5 flex flex-center">
           <q-img
             class="rounded-borders"
-            src="https://cdn.pixabay.com/photo/2015/11/26/07/47/hands-1063442_640.jpg"
+            src="https://cdn.pixabay.com/photo/2015/11/26/07/47/hands-1063442_1280.jpg"
           />
         </q-card-section>
       </q-card-section>
 
       <q-separator />
       <q-card-actions>
-        <q-btn flat color="primary" to="/login">
-          GO
+        <q-btn flat color="primary" :to="getRouteFor(4)">
+          Ir
         </q-btn>
       </q-card-actions>
     </q-card>
 
-    <q-card class="groupMusical">
+    <q-card id="register-group" class="groupMusical" v-if="userRole === 'artista'">
       <q-item>
         <q-item-section avatar>
           <q-avatar>
-            <img src="https://cdn.pixabay.com/photo/2020/10/20/09/25/band-5669941_640.jpg">
+            <img src="https://cdn.pixabay.com/photo/2020/10/20/09/25/band-5669941_1280.jpg">
           </q-avatar>
         </q-item-section>
 
@@ -173,7 +174,7 @@
       <q-card-section horizontal>
         <q-img
           class="col-5"
-          src="https://cdn.pixabay.com/photo/2018/03/31/23/27/people-3279617_640.jpg"
+          src="https://cdn.pixabay.com/photo/2018/03/31/23/27/people-3279617_1280.jpg"
         />
         <q-card-section>
           ¡Potencia tu carrera musical con nuestra innovadora aplicación para grupos musicales!
@@ -192,7 +193,7 @@
           7715678903
         </q-btn>
         <q-btn flat color="primary">
-          Reserve
+          Reservar
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -200,15 +201,49 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref } from "vue";
+import { mapState } from "vuex"; 
 
 export default {
-  setup () {
+  data() {
     return {
       slide: ref('style'),
+      isLoggedIn: Boolean(localStorage.getItem('token')) 
+    };
+  },
+  computed: {
+    ...mapState({
+      authState: (state) => state.auth || {}
+    }),
+    userRole() {
+      return this.authState?.me?.role?.[0]
+        ? String(this.authState.me.role[0]).trim().toLowerCase() 
+        : '';
+    }
+  },
+  methods: {
+    scrollToGrupo() {
+      document.getElementById('register-group')?.scrollIntoView({ behavior: 'smooth' });
+    },
+    getRouteFor(Step) {
+      const ruoteClient = {
+        2: '/client/musical-genders',
+        3: '/client/store',
+        4: '/client/shopping-cart'
+      };
+
+      const routeOtherRole = {
+        2: '/artist-list',
+        3: '/artist-list',
+        4: '/artist-list'
+      };
+
+      return !this.isLoggedIn 
+        ? '/login' 
+        : (this.userRole === 'cliente' ? ruoteClient[Step] : routeOtherRole[Step]);
     }
   }
-}
+};
 </script>
 
 <style lang="css" scoped>

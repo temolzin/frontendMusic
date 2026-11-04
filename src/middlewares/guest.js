@@ -1,7 +1,6 @@
-export default function guest({ to, next, Router }) {
+export default function guest({ to, next }) {
   if (localStorage.getItem("token")) {
-    return Router.push({ name: "dashboardH" });
-  } else{ 
-    next();
+    return next({ name: "dashboardH" });
   }
+  return next();
 }
