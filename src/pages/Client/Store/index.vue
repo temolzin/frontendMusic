@@ -50,14 +50,14 @@
       </q-card>
     </q-dialog>
 
-    <div class="col-lg-2 col-md-6 col-sm-12 col-xs-12">
+    <div class="col-12">
       <q-card class=" no-shadow" bordered>
         <q-card-section class="text-center text-h6 text-white bg-primary">
             <q-icon name="filter_list"/>
             Filtros
           </q-card-section>
         <q-card-section class="row q-col-gutter-sm">
-          <div class="col-6 col-md-2 col-lg-3 filter">
+          <div class="col-12 col-sm-6 col-md-3 filter">
             <q-input rounded outlined borderless  debounce="300" v-model="filterName"
               placeholder="Buscar en artistas...">
               <template v-slot:append>
@@ -65,13 +65,13 @@
               </template>
             </q-input>
           </div>
-          <div class="col-6 col-md-6 col-lg-3 filter q-col-gutter-sm">
+          <div class="col-12 col-sm-6 col-md-3 filter q-col-gutter-sm">
             <q-select rounded outlined v-model="filterZone" label="Zona" :options="zonas()" />
           </div>
-          <div class="col-6 col-md-4 col-lg-3 filter">
+          <div class="col-12 col-sm-6 col-md-3 filter">
             <q-select rounded outlined v-model="filterGender" label="Género Musical" :options="generosMusicales()" />
           </div>
-          <div class="col-6 col-md-3 col-lg-3 filter">
+          <div class="col-12 col-sm-6 col-md-3 filter">
             <q-range v-model="filterPrice" :min="0" :max="80000" :step="1" :left-label-value="'$ ' + filterPrice.min"
               :right-label-value="'$ ' + filterPrice.max" label-always color="dark-blue" />
           </div>
@@ -80,13 +80,13 @@
     </div>
 
     <div class="row q-col-gutter-sm">
-      <div class="col-lg-12 col-md-7 col-sm-12 col-xs-12">
-        <q-table grid card-class="bg-primary text-white" :rows="filteredData()" :columns="columns" row-key="name"
+      <div class="col-12">
+        <q-table class="artist-grid-table" grid card-class="bg-primary text-white" :rows="filteredData()" :columns="columns" row-key="name"
           no-data-label="Sin registros" no-results-label="Ningún registro coincidente"
           :rows-per-page-label="'Artistas por página:'" :rows-per-page-options="[10, 20, 30, 0]"
           v-model:pagination="pagination">
           <template v-slot:item="props">
-            <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+            <div class="artist-card-column q-pa-xs col-xs-12 col-sm-6 col-md-4">
               <q-card class="my-card q-ma-sm" v-show="!skeleton">
                 <q-img :src="props.row.image" class="imageArtist" />
 
@@ -455,6 +455,22 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.artist-card-column {
+  min-width: 0;
+  padding: 8px;
+}
+
+.artist-card-column .my-card {
+  width: 100%;
+  height: 100%;
+}
+
+.imageArtist {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
 @media (max-width: 767px) {
   #text {
     font-size: 11px;
