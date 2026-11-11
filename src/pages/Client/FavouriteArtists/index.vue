@@ -12,7 +12,7 @@
         no-data-label="Sin registros"
         no-results-label="Ningún registro coincidente"
         rows-per-page-label="Favoritos por página"
-        :rows-per-page-options="[10, 20, 30, 0]"
+        :rows-per-page-options="[12, 24, 36, 0]"
       >
         <template v-slot:top-left>
           <p class="q-mt-sm q-mb-sm text-h4" v-if="skeleton == false">
@@ -139,7 +139,7 @@ export default {
       columns,
       skeleton: true,
       pagination: {
-        rowsPerPage: 10
+        rowsPerPage: 12
       }
     };
   },
