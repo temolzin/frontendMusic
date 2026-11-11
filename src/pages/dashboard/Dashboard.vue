@@ -387,7 +387,9 @@ export default {
     },
   },
   created() {
-    this.gettFavouriteArtists();
+    if (this.getMe?.role?.[0] === 'cliente') {
+      this.gettFavouriteArtists();
+    }
     if (this.getMe?.role?.[0] === 'artista') {
       this.loadStats();
     }

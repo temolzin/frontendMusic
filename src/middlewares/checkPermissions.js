@@ -9,8 +9,15 @@ export default async function checkPermissions({ next, to }) {
     try {
       await Store.dispatch("auth/getMeUser");
     } catch (err) {
-      window.localStorage.removeItem("token");
-      return next({ path: "/session-expired" });
+      if (err?.response?.status === 401) {
+        window.localStorage.removeItem("token");
+        return next({ path: "/session-expired" });
+      }
+
+      // Un error distinto de 401 (red, 500, etc.) no invalida la sesión.
+      if (!Store.getters["auth/getMe"]?.id) {
+        return next();
+      }
     }
   }
 
