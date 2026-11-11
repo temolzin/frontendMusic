@@ -46,14 +46,14 @@
                   <q-tab name="history" label="Historial de Liquidaciones" />
                 </q-tabs>
               </div>
-              <div v-if="activeTab === 'history'" class="col-12 col-md-auto">
+              <div class="col-12 col-md-auto">
                 <q-input
                   dense
                   debounce="100"
-                  v-model="searchFilter"
+                  v-model="activeSearch"
                   color="primary"
                   style="min-width: 280px"
-                  placeholder="Buscar en liquidaciones..."
+                  :placeholder="activeTab === 'pending' ? 'Buscar en liquidaciones pendientes...' : 'Buscar en liquidaciones...'"
                 >
                   <template v-slot:append>
                     <q-icon name="search" />
@@ -66,7 +66,7 @@
 
         <div v-if="activeTab === 'pending'">
           <q-table
-            :rows="pendingPayouts || []"
+            :rows="filteredPending"
             :columns="columns"
             row-key="sale_id"
             :loading="loadingPending"
@@ -389,6 +389,7 @@ export default {
       historyColumns,
       loadingPending: false,
       searchFilter: "",
+      searchPending: "",
       applyFeeMap: {},
     };
   },
@@ -401,6 +402,43 @@ export default {
       payoutLogs: "getPayoutLogs",
     }),
     ...mapState("payoutLogs", ["loadingHistory"]),
+
+    activeSearch: {
+      get() {
+        return this.activeTab === "pending" ? this.searchPending : this.searchFilter;
+      },
+      set(value) {
+        if (this.activeTab === "pending") {
+          this.searchPending = value;
+        } else {
+          this.searchFilter = value;
+        }
+      },
+    },
+
+    filteredPending() {
+      const rows = this.pendingPayouts || [];
+
+      if (!this.searchPending) {
+        return rows;
+      }
+
+      const filter = this.searchPending.toLowerCase().trim().replace(/^#/, "");
+
+      return rows.filter((row) => {
+        const saleId = String(row.sale_id || "").toLowerCase();
+        const artistName = String(row.artist?.name || "").toLowerCase();
+        const eventDate = String(row.event_date || "").toLowerCase();
+        const eventDateShort = this.formatDateShort(row.event_date).toLowerCase();
+        const eventHour = String(row.event_hour || "").toLowerCase();
+
+        return saleId.includes(filter)
+          || artistName.includes(filter)
+          || eventDate.includes(filter)
+          || eventDateShort.includes(filter)
+          || eventHour.includes(filter);
+      });
+    },
 
     filteredHistory() {
       if (!this.payoutLogs || this.payoutLogs.length === 0) {
