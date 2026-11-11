@@ -1,7 +1,7 @@
 import { api } from "boot/axios";
 
 export const getMusicalGenders = async ({ commit }) => {
-  await api.get("/api/admin/musical-genders").then((response) => {
+  await api.get("/api/musical-genders").then((response) => {
     commit("setMusicalGenders", response.data.musicalGenders);
   });
 };
