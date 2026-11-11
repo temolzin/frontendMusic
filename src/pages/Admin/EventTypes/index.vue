@@ -244,7 +244,7 @@ export default {
       formEdit: false,
       formCreate: false,
       pagination: {
-        sortBy: "created_at",
+        sortBy: "id",
         descending: true,
         rowsPerPage: 10,
       },
