@@ -39,7 +39,6 @@ export const init = async ({ commit, dispatch }) => {
     try {
       await dispatch("getMeUser");
     } catch (err) {
-      // Solo una sesión inválida (401) debe eliminar el token.
       if (err?.response?.status === 401) {
         commit("removeToken");
         api.defaults.headers.common.Authorization = "";

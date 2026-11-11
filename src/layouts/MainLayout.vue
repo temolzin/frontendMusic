@@ -384,7 +384,6 @@ async fetchShoppingCartCount() {
       await this.getCountListShoppingCard();
     }
   } catch (err) {
-    // El interceptor de Axios ya gestiona los 401 (refresh + sesión expirada).
     const message = err?.response?.data?.message || "No se pudo cargar el carrito.";
     notifyError(message);
   }

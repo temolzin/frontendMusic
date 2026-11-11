@@ -52,7 +52,6 @@ function getTokenExpiryMs(accessToken) {
   }
 }
 
-// Renueva el token una sola vez para todas las peticiones que reciban 401 a la vez.
 function refreshAccessToken() {
   if (!refreshPromise) {
     refreshPromise = api
@@ -77,14 +76,12 @@ function scheduleRefresh(expiresInSeconds) {
   if (refreshTimer) clearTimeout(refreshTimer);
   if (expiresInSeconds === null || expiresInSeconds === undefined) return;
 
-  // Un margen de 30 segundos para renovar antes de que el token expire.
   const refreshIn = Math.max(1, Number(expiresInSeconds) - 30) * 1000;
   refreshTimer = setTimeout(async () => {
     if (!getStoredToken()) return;
     try {
       await refreshAccessToken();
     } catch {
-      // refreshAccessToken ya limpia la sesión cuando la renovación falla.
     }
   }, refreshIn);
 }
@@ -115,16 +112,11 @@ api.interceptors.response.use(
     const url = error.config?.url || "";
     const config = error.config || {};
 
-    // Un 401 en login, registro o recuperación de contraseña no significa
-    // que la sesión actual haya dejado de ser válida.
     if (status !== 401 || isAuthEndpoint(url)) {
       return Promise.reject(error);
     }
 
-    // Solo intentamos renovar la sesión una vez por petición.
     if (config._retry) {
-      // El token renovado tampoco fue aceptado: es un problema de permisos,
-      // no una sesión inválida, así que no cerramos la sesión.
       return Promise.reject(error);
     }
 

@@ -14,7 +14,6 @@ export default async function checkPermissions({ next, to }) {
         return next({ path: "/session-expired" });
       }
 
-      // Un error distinto de 401 (red, 500, etc.) no invalida la sesión.
       if (!Store.getters["auth/getMe"]?.id) {
         return next();
       }
