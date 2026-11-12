@@ -579,11 +579,10 @@ export default {
               await this.deleteMusicalGender(id);
               notifySuccess(`Genero Musical ${name} eliminado correctamente`);
             } catch (err) {
-              if (err?.response?.data?.message) {
-                notifyError(err.response.data.message);
-              } else {
-                notifyError(`No se pudo eliminar el género musical`);
-              }
+              notifyError(
+                err?.response?.data?.message ||
+                  `No se pudo eliminar el género musical`
+              );
             }
           });
       } catch (error) {
