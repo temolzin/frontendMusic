@@ -139,9 +139,9 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: `Quasar App`,
-        short_name: `Quasar App`,
-        description: `A Quasar Framework app`,
+        name: `Vibeer`,
+        short_name: `Vibeer`,
+        description: `Plataforma de contratacion de artistas`,
         display: "standalone",
         orientation: "portrait",
         background_color: "#ffffff",
