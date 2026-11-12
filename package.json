@@ -2,7 +2,7 @@
   "name": "proyecto-musica",
   "version": "0.0.1",
   "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "productName": "Vibeer",
   "author": "PenelopeGalicia <2518160097pgaliciag@gmail.com>",
   "private": true,
   "scripts": {
