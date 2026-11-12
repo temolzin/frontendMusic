@@ -57,7 +57,7 @@
               </template>
               <template v-slot:body-cell-against="props">
                 <q-td :props="props">
-                  <div class="text-weight-medium">{{ props.row.artist_sale?.artist?.name || 'N/A' }}</div>
+                  <div class="text-weight-medium">{{ props.row.artist_sale?.customer?.name || 'N/A' }}</div>
                   <div class="text-caption text-grey">Orden #{{ props.row.artist_sale_id }}</div>
                 </q-td>
               </template>
@@ -179,7 +179,7 @@ export default {
 
       columnsRaised: [
         { name: 'category', label: 'Categoría', field: 'category', align: 'center' },
-        { name: 'against', label: 'Artista involucrado', field: 'against', align: 'center' },
+        { name: 'against', label: 'Cliente involucrado', field: 'against', align: 'center' },
         { name: 'date', label: 'Fecha del reporte', field: 'created_at', align: 'center' },
         { name: 'status', label: 'Estado', field: 'status', align: 'center' },
         { name: 'actions', label: 'Acciones', field: 'actions', align: 'center' },
