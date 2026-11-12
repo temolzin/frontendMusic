@@ -16,12 +16,14 @@
         </div>
       </q-carousel-slide>
 
-      <q-carousel-slide name="tv" class="column no-wrap flex-center cursor-pointer"
-        @click="showVideo = true">
-        <div class="absolute-center text-center">
-          <q-icon name="play_circle_filled" size="64px" class="text-white" />
-          <div class="text-white text-subtitle1 q-mt-sm">Ver video promocional</div>
-        </div>
+      <q-carousel-slide name="tv" class="column no-wrap flex-center">
+        <iframe
+          src="https://www.youtube.com/embed/kOkQ4T5WO9E"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          style="width: 100%; height: 100%; border: 0;"
+        />
       </q-carousel-slide>
       <q-carousel-slide name="layers" class="column no-wrap flex-center"
         img-src="https://cdn.pixabay.com/photo/2015/05/07/11/02/guitar-756326_1280.jpg">
@@ -36,19 +38,6 @@
         </div>
       </q-carousel-slide>
     </q-carousel>
-
-    <q-dialog v-model="showVideo" maximized>
-      <q-card class="bg-black">
-        <q-bar>
-          <q-space />
-          <q-btn dense flat icon="close" color="white" v-close-popup />
-        </q-bar>
-        <q-video
-          class="full-height"
-          src="https://www.youtube.com/embed/kOkQ4T5WO9E?autoplay=1"
-        />
-      </q-card>
-    </q-dialog>
 
     <div class="col-12">
       <q-card class=" no-shadow" bordered>
@@ -195,7 +184,7 @@ export default {
       slug: null,
       skeleton: true,
       searchSlug: null,
-      slide: ref("style"),
+      slide: ref("tv"),
       autoplay: 10000,
       showVideo: false,
       listCarrito: [],
@@ -387,6 +376,7 @@ export default {
     },
     zonas() {
       let zones = ["Todos"];
+      if (!Array.isArray(this.stateArtistList)) return zones;
       this.stateArtistList.forEach(artist => {
         zones.push(artist.zone);
       });
@@ -394,6 +384,7 @@ export default {
     },
     generosMusicales() {
       let genders = ["Todos"];
+      if (!Array.isArray(this.stateArtistList)) return genders;
       this.stateArtistList.forEach(artist => {
         artist.musical_genders.forEach(gender => {
           genders.push(gender.name);
@@ -403,6 +394,7 @@ export default {
     },
     filteredData() {
       let filtered = this.stateArtistList;
+      if (!Array.isArray(filtered)) return [];
       if (this.filterName) {
         filtered = filtered.filter(item =>
           item.name.toLowerCase().includes(this.filterName.toLowerCase())
