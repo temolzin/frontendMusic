@@ -300,10 +300,6 @@
               <div class="col-12 col-sm-auto" style="max-width: 280px">
                 <p class="text-weight-bold">Contacto</p>
                 <p>
-                  <q-icon name="home" size="15px" class="q-mb-xs" /> Calle la Palma,
-                  Núm. Ext. 9, Col. Purificación, Teotihuacán, Méx. 55804
-                </p>
-                <p>
                   <q-icon name="email" size="15px" class="q-mb-xs" />
                   <a href="mailto:info@rootheim.com" class="text-grey-5"> info@rootheim.com </a>
                 </p>
