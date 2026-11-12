@@ -16,7 +16,7 @@
             <q-card-section class="col-2 flex flex-center">
               <q-btn round>
                 <q-avatar size="80px">
-                  <img :src="getBackendImageUrl(getMe.image)" />
+                  <img :src="getBackendImageUrl(getMe.image)" referrerpolicy="no-referrer" />
                 </q-avatar>
               </q-btn>
             </q-card-section>

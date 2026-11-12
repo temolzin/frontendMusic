@@ -247,6 +247,7 @@
       },
       zonas() {
         let zones = ["Todos"];
+        if (!Array.isArray(this.stateArtistList)) return zones;
         this.stateArtistList.forEach(artist => {
           zones.push(artist.zone);
         });
@@ -254,6 +255,7 @@
       },
       generosMusicales() {
         let genders = ["Todos"];
+        if (!Array.isArray(this.stateArtistList)) return genders;
         this.stateArtistList.forEach(artist => {
           artist.musical_genders.forEach(gender => {
             genders.push(gender.name);
@@ -263,7 +265,7 @@
       },
       filteredData() {
         let filtered = this.stateArtistList;
-
+        if (!Array.isArray(filtered)) return [];
         if (this.$route.query.offers === 'true') {
           filtered = filtered.filter(a => a.offers && a.offers.length > 0);
         }

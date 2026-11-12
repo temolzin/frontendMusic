@@ -3,14 +3,14 @@
         <template v-slot:label>
             <div class="row items-center no-wrap">
             <q-avatar size="40px">
-                <img :src="getBackendImageUrl(getMe.image)" />
+                <img :src="getBackendImageUrl(getMe.image)" referrerpolicy="no-referrer" />
             </q-avatar>
             </div>
         </template>
         <div class="row no-wrap q-ma-md">
             <div class="column items-center">
             <q-avatar size="82px">
-                <img :src="getBackendImageUrl(getMe.image)" class="" />
+                <img :src="getBackendImageUrl(getMe.image)" class="" referrerpolicy="no-referrer" />
             </q-avatar>
             <div class="text-subtitle1 q-mt-md q-mb-xs">
                 {{ getMe.name }}
