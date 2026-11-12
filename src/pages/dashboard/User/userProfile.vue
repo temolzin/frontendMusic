@@ -33,6 +33,7 @@
                     counter
                     @rejected="onRejected"
                     lazy-rules
+                    @update:model-value="onImageSelected"
                   >
                     <template v-slot:prepend>
                       <q-icon name="cloud_upload" @click.stop />
@@ -231,7 +232,7 @@ export default {
   name: "userProfile",
   data() {
     return {
-      image_profile: [],
+      image_profile: null,
       formUpdateMain: {
         name: "",
         email: "",
@@ -274,7 +275,7 @@ export default {
     },
     async onSubmitImageProfle() {
       try {
-        if (this.image_profile.length == 0) {
+        if (!this.image_profile) {
           notifyError(`Ningún archivo seleccionado`);
         } else {
           if (this.image_profile.size > 1000000) {
@@ -316,7 +317,23 @@ export default {
     },
     onRejected() {
       notifyError(`El archivo no ha superado las restricciones de validación`);
-      this.image_profile = [];
+      this.image_profile = null;
+    },
+    onImageSelected(file) {
+      if (!file) {
+        this.image_profile = null;
+        return;
+      }
+      if (!file.type || !file.type.startsWith("image/")) {
+        notifyError(`El archivo seleccionado no es una imagen válida`);
+        this.image_profile = null;
+        return;
+      }
+      if (file.size > 1000000) {
+        notifyError(`La imagen excede el tamaño permitido (máx. 1MB)`);
+        this.image_profile = null;
+        return;
+      }
     },
     getBackendImageUrl(image) {
       const baseURL = this.$q.config.backendUrl;
