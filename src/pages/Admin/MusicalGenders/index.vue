@@ -455,7 +455,7 @@ export default {
         },
         {
           label: "Morado",
-          value: "accent",
+          value: "purple",
           icon: "circle",
         },
         {
@@ -526,7 +526,7 @@ export default {
         this.formEdit = true;
         this.form.id = props.row.id;
         this.form.name = props.row.name;
-        this.form.color = props.row.color;
+        this.form.color = props.row.color === "accent" ? "purple" : props.row.color;
         this.form.description = props.row.description;
         this.form.image = null;
         this.form.image_url = props.row.image;
