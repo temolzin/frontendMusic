@@ -200,8 +200,8 @@
       return {
         columns,
         skeleton: true,
-        showFilters: false,
-        filterName: '',
+        showFilters: Boolean(this.$route?.query?.search),
+        filterName: this.$route?.query?.search || '',
         filterZone: '',
         filterGender: '',
         filterPrice: ref({
@@ -216,7 +216,12 @@
     watch: {
       '$route.query': {
         immediate: true,
-        handler() {
+        handler(query) {
+          const search = query?.search;
+          if (typeof search === "string" && search !== this.filterName) {
+            this.filterName = search;
+            this.showFilters = true;
+          }
           this.getArtistss();
         }
       }
