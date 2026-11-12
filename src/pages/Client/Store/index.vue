@@ -16,13 +16,13 @@
         </div>
       </q-carousel-slide>
 
-      <q-carousel-slide name="tv" class="column no-wrap flex-center">
+      <q-carousel-slide name="tv" class="video-slide" style="padding: 0; background: #000;">
         <iframe
           src="https://www.youtube.com/embed/kOkQ4T5WO9E"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
-          style="width: 100%; height: 100%; border: 0;"
+          style="display: block; width: 100%; height: 100%; border: 0;"
         />
       </q-carousel-slide>
       <q-carousel-slide name="layers" class="column no-wrap flex-center"
