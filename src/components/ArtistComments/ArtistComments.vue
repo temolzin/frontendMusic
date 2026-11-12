@@ -69,8 +69,7 @@
               <img
                 v-if="comment.user && comment.user.image"
                 :src="getBackendImageUrl(comment.user && comment.user.image)"
-                alt="Foto de usuario"
-              />
+                alt="Foto de usuario" referrerpolicy="no-referrer" />
               <span v-else class="ql-placeholder">♪</span>
             </div>
             <div class="col">
@@ -128,8 +127,7 @@
             <img
               v-if="readerComment && readerComment.user && readerComment.user.image"
               :src="getBackendImageUrl(readerComment && readerComment.user && readerComment.user.image)"
-              alt="Foto de usuario"
-            />
+              alt="Foto de usuario" referrerpolicy="no-referrer" />
             <span v-else class="ql-placeholder">♪</span>
           </div>
           <div class="col">

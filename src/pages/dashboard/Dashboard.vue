@@ -4,7 +4,7 @@
       <q-item>
         <q-item-section avatar>
           <q-avatar>
-            <img :src="getBackendImageUrl(getMe.image)" />
+            <img :src="getBackendImageUrl(getMe.image)" referrerpolicy="no-referrer" />
           </q-avatar>
         </q-item-section>
 
