@@ -640,7 +640,9 @@ export default {
 
   created() {
     this.getArtistss();
-    this.fetchShoppingCartCount();
+    if (this.getMe?.role?.[0] === 'cliente') {
+      this.fetchShoppingCartCount();
+    }
     const user = this.getMe;
     const saved = user?.id ? localStorage.getItem(`darkMode_${user.id}`) : null;
     const isDark = saved === 'true';

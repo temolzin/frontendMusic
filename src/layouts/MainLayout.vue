@@ -379,7 +379,7 @@ export default {
     },
 async fetchShoppingCartCount() {
   try {
-    if (this.isAuthenticated) {
+    if (this.isAuthenticated && this.getMe?.role?.[0] === 'cliente') {
       await this.getCountListShoppingCard();
     }
   } catch (err) {
