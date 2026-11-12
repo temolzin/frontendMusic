@@ -640,7 +640,7 @@ export default {
 
   created() {
     this.getArtistss();
-    if (this.$can("view-shopping-cart")) {
+    if (this.getMe?.role?.[0] === 'cliente') {
       this.fetchShoppingCartCount();
     }
     const user = this.getMe;
