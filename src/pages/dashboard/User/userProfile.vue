@@ -145,6 +145,9 @@
               lazy-rules
               :rules="[
                 (val) => (val && val.length > 0) || 'Por favor, ingresa la nueva contraseña',
+                (val) =>
+                  (val && val !== formUpdatePassword.currentPassword) ||
+                  'La nueva contraseña no puede ser igual a la actual',
               ]"
             >
               <template v-slot:append>
@@ -264,6 +267,13 @@ export default {
     },
     async onSubmitPassword() {
       try {
+        if (
+          this.formUpdatePassword.newPassword ===
+          this.formUpdatePassword.currentPassword
+        ) {
+          notifyError(`La nueva contraseña no puede ser igual a la actual`);
+          return;
+        }
         await this.updatePassword(this.formUpdatePassword);
         notifySuccess(`Contraseña actualizada`);
         this.clearPasswordForm();
