@@ -215,6 +215,7 @@ import { mapActions, mapGetters } from "vuex";
 import { notifySuccess, notifyError } from "src/utils/notify";
 import { genreTextColor } from "src/utils/badgeStyles";
 import SystemComments from "src/components/SystemComments/SystemComments";
+import can from "src/helpers/can";
 
 let $q;
 export default {
@@ -233,24 +234,22 @@ export default {
     ...mapActions("lastArtist", ["getLatestArtists"]),
     ...mapActions("UsersSuscribe", ["setEmail"]),
     getArtistRoute(stateArtist) {
-      const isLoggedIn = Boolean(this.getToken);
-      const role = this.userRole;
-
-      if (!isLoggedIn) {
-        return "/artist-list";
-      }
-
-      if (role !== "cliente") {
-        return "/artist-list";
-      }
-
       const musicalGender = stateArtist?.musical_genders?.[0]?.slug;
+      const hasArtistDetail =
+        Boolean(stateArtist?.slug) && Boolean(musicalGender);
+      const isLoggedIn = Boolean(this.getToken);
+      const canViewArtistDetail =
+        isLoggedIn &&
+        (this.userRole === "cliente" || can("view-groups-by-genders"));
 
-      if (!musicalGender || !stateArtist?.slug) {
-        return "/artist-list";
+      if (canViewArtistDetail && hasArtistDetail) {
+        return `/client/musical-genders/${musicalGender}/${stateArtist.slug}`;
       }
 
-      return `/client/musical-genders/${musicalGender}/${stateArtist.slug}`;
+      return {
+        path: "/artist-list",
+        query: { search: stateArtist?.name || "" },
+      };
     },
     async gettLatestArtists() {
       try {
