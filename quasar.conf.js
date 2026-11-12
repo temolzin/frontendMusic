@@ -141,7 +141,7 @@ module.exports = configure(function (ctx) {
       manifest: {
         name: `Vibeer`,
         short_name: `Vibeer`,
-        description: `Vibeer`,
+        description: `Plataforma de contratacion de artistas`,
         display: "standalone",
         orientation: "portrait",
         background_color: "#ffffff",
