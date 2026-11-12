@@ -113,9 +113,16 @@
                       size="sm"
                       @click="removeMusicalGender(props)"
                       icon="delete"
+                      :disable="props.row.artists_count > 0"
                       v-if="auth.role[0] == 'administrador'"
                     >
-                      <q-tooltip class="bg-negative text-body2">Eliminar</q-tooltip>
+                      <q-tooltip class="bg-negative text-body2">
+                        {{
+                          props.row.artists_count > 0
+                            ? "No se puede eliminar: tiene artistas asociados"
+                            : "Eliminar"
+                        }}
+                      </q-tooltip>
                     </q-btn>
                   </q-item-label>
                   <q-item-label v-else-if="col.name === 'created_at'">
@@ -567,14 +574,15 @@ export default {
             ok: "Confirmar",
             persistent: true,
           })
-          .onOk(() => {
+          .onOk(async () => {
             try {
-              this.deleteMusicalGender(id);
+              await this.deleteMusicalGender(id);
               notifySuccess(`Genero Musical ${name} eliminado correctamente`);
             } catch (err) {
-              if (err.response.data.message) {
-                notifyError(err.response.data.message);
-              }
+              notifyError(
+                err?.response?.data?.message ||
+                  `No se pudo eliminar el género musical`
+              );
             }
           });
       } catch (error) {
