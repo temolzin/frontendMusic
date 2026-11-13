@@ -410,7 +410,9 @@ export default {
     },
 
     lineChartOptions() {
+      const dark = this.$q.dark.isActive;
       return {
+        theme: { mode: dark ? "dark" : "light" },
         chart: {
           toolbar: { show: false },
           fontFamily: "inherit",
@@ -426,7 +428,7 @@ export default {
         yaxis: { labels: { formatter: (value) => this.formatCompact(value) } },
         tooltip: { y: { formatter: (value) => formatCurrency(value) } },
         legend: { position: "top" },
-        grid: { borderColor: "#e0e0e0" },
+        grid: { borderColor: dark ? "#424242" : "#e0e0e0" },
       };
     },
 
@@ -435,8 +437,13 @@ export default {
     },
 
     barChartOptions() {
+      const dark = this.$q.dark.isActive;
       return {
-        chart: { toolbar: { show: false }, fontFamily: "inherit" },
+        theme: { mode: dark ? "dark" : "light" },
+        chart: {
+          toolbar: { show: false },
+          fontFamily: "inherit",
+        },
         colors: ["#673ab7"],
         plotOptions: { bar: { borderRadius: 4, columnWidth: "55%" } },
         dataLabels: { enabled: false },
@@ -444,7 +451,7 @@ export default {
         yaxis: { labels: { formatter: (value) => this.formatCompact(value) } },
         tooltip: { y: { formatter: (value) => formatCurrency(value) } },
         legend: { show: false },
-        grid: { borderColor: "#e0e0e0" },
+        grid: { borderColor: dark ? "#424242" : "#e0e0e0" },
       };
     },
 
@@ -458,6 +465,7 @@ export default {
 
     donutChartOptions() {
       return {
+        theme: { mode: this.$q.dark.isActive ? "dark" : "light" },
         chart: { fontFamily: "inherit" },
         labels: this.reportData?.genres.map((g) => g.name) || [],
         legend: { position: "bottom" },
@@ -481,6 +489,7 @@ export default {
 
     eventTypeDonutChartOptions() {
       return {
+        theme: { mode: this.$q.dark.isActive ? "dark" : "light" },
         chart: { fontFamily: "inherit" },
         labels: (this.reportData?.event_types || []).map((g) => g.name),
         legend: { position: "bottom" },
