@@ -238,8 +238,8 @@
       </div>
     </div>
 
-    <div v-if="!loading && reportData" class="row q-col-gutter-md q-mt-md">
-      <div class="col-12 col-lg-7">
+    <div v-if="!loading && reportData" class="row q-col-gutter-md q-mt-md items-stretch">
+      <div class="col-12">
       <q-card flat bordered>
         <q-item>
           <q-item-section>
@@ -267,8 +267,8 @@
           </q-card-section>
         </q-card>
       </div>
-<div class="col-12 col-lg-5">
-  <q-card flat bordered>
+      <div class="col-12 col-md-6">
+  <q-card flat bordered class="full-height">
     <q-item>
       <q-item-section>
         <q-item-label class="text-h6 text-weight-bolder">Distribución por género</q-item-label>
@@ -279,11 +279,9 @@
       <apexchart type="donut" height="300" :options="donutChartOptions" :series="donutChartSeries" />
     </q-card-section>
 </q-card>
-</div>
       </div>
-      <div class="row q-col-gutter-md q-mt-md">
-        <div class="col-12 col-lg-5">
-          <q-card flat bordered>
+      <div class="col-12 col-md-6">
+          <q-card flat bordered class="full-height">
             <q-item>
               <q-item-section>
                 <q-item-label class="text-h6 text-weight-bolder">Distribución por tipo de evento</q-item-label>
@@ -294,8 +292,8 @@
               <apexchart type="donut" height="300" :options="eventTypeDonutChartOptions" :series="eventTypeDonutChartSeries" />
             </q-card-section>
           </q-card>
-        </div>
       </div>
+    </div>
     </div>
   </div>
 </template>
