@@ -164,6 +164,21 @@
             </q-card-section>
           </q-card>
         </div>
+        <div v-if="openpayConfigured" class="col-12 col-sm-6 col-md">
+          <q-card flat bordered class="kpi-card">
+            <q-card-section class="column justify-between full-height">
+              <div>
+                <div class="row items-center no-wrap q-mb-sm">
+                  <q-avatar rounded icon="account_balance" color="teal-8" text-color="white" size="36px" class="q-mr-sm" />
+                  <span class="text-body2 text-weight-medium">Saldo en OpenPay</span>
+                </div>
+                <div class="kpi-value text-weight-bolder">
+                  {{ openpayBalanceLoading ? "Cargando..." : openpayBalance === null ? "No disponible" : formatCurrency(openpayBalance) }}
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
         <div class="col-12 col-sm-4 col-md">
           <q-card flat bordered class="kpi-card">
             <q-card-section class="column justify-between full-height">
@@ -335,6 +350,9 @@ export default {
       fromDateBackup: null,
       toDateBackup: null,
       loading: false,
+      openpayConfigured: false,
+      openpayBalance: null,
+      openpayBalanceLoading: false,
       periodOptions: [
         { label: "Semana", value: "week" },
         { label: "Mes", value: "month" },
@@ -634,6 +652,34 @@ export default {
       }
     },
 
+    async loadOpenpayBalance() {
+      this.openpayBalanceLoading = true;
+      try {
+        const balanceResponse = await this.$api.get("/api/admin/openpay-balance");
+        const balanceData = balanceResponse.data?.data;
+        if (!balanceResponse.data?.success || typeof balanceData?.configured !== "boolean") {
+          throw new Error("La respuesta del saldo de OpenPay no es válida.");
+        }
+        this.openpayConfigured = balanceData.configured;
+        if (!this.openpayConfigured) {
+          this.openpayBalance = null;
+          return;
+        }
+
+        const rawBalance = balanceData.balance;
+        const balance = Number(rawBalance);
+        if (rawBalance === null || rawBalance === undefined || rawBalance === "" || !Number.isFinite(balance)) {
+          throw new Error("La respuesta del saldo de OpenPay no es válida.");
+        }
+        this.openpayBalance = balance;
+      } catch (error) {
+        this.openpayBalance = null;
+        notifyError("Error al cargar el saldo de OpenPay.");
+      } finally {
+        this.openpayBalanceLoading = false;
+      }
+    },
+
     exportName(ext) {
       const range = this.fromDate && this.toDate
         ? `${this.fromDate}-${this.toDate}`
@@ -764,6 +810,7 @@ export default {
 
   mounted() {
     this.loadReport();
+    this.loadOpenpayBalance();
   },
 };
 </script>
