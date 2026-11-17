@@ -127,163 +127,161 @@
       </div>
     </div>
     <div ref="reportBody">
-    <div v-if="!loading && reportData" class="row q-col-gutter-md items-stretch">
-      <div class="col-12 col-sm-6 col-md">
-        <q-card flat bordered class="kpi-card">
-          <q-card-section class="column justify-between full-height">
-            <div>
-              <div class="row items-center no-wrap q-mb-sm">
-                <q-avatar rounded icon="account_balance_wallet" color="blue-8" text-color="white" size="36px" class="q-mr-sm" />
-                <span class="text-body2 text-weight-medium">Ventas netas</span>
+      <div v-if="!loading && reportData" class="row q-col-gutter-md items-stretch">
+        <div class="col-12 col-sm-6 col-md">
+          <q-card flat bordered class="kpi-card">
+            <q-card-section class="column justify-between full-height">
+              <div>
+                <div class="row items-center no-wrap q-mb-sm">
+                  <q-avatar rounded icon="account_balance_wallet" color="blue-8" text-color="white" size="36px" class="q-mr-sm" />
+                  <span class="text-body2 text-weight-medium">Ventas netas</span>
+                </div>
+                <div class="kpi-value text-weight-bolder">{{ formatCurrency(kpis.net_sales) }}</div>
               </div>
-              <div class="kpi-value text-weight-bolder">{{ formatCurrency(kpis.net_sales) }}</div>
-            </div>
-            <div class="trend-container">
-              <div :class="getTrendClass(kpis.net_sales_trend)" class="text-caption text-weight-bold">
-                <q-icon :name="getTrendIcon(kpis.net_sales_trend)" /> {{ kpis.net_sales_trend }}
+              <div class="trend-container">
+                <div :class="getTrendClass(kpis.net_sales_trend)" class="text-caption text-weight-bold">
+                  <q-icon :name="getTrendIcon(kpis.net_sales_trend)" /> {{ kpis.net_sales_trend }}
+                </div>
               </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-12 col-sm-6 col-md">
-        <q-card flat bordered class="kpi-card">
-          <q-card-section class="column justify-between full-height">
-            <div>
-              <div class="row items-center no-wrap q-mb-sm">
-                <q-avatar rounded icon="trending_up" color="green-8" text-color="white" size="36px" class="q-mr-sm" />
-                <span class="text-body2 text-weight-medium">Ganancias de la plataforma</span>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-12 col-sm-6 col-md">
+          <q-card flat bordered class="kpi-card">
+            <q-card-section class="column justify-between full-height">
+              <div>
+                <div class="row items-center no-wrap q-mb-sm">
+                  <q-avatar rounded icon="trending_up" color="green-8" text-color="white" size="36px" class="q-mr-sm" />
+                  <span class="text-body2 text-weight-medium">Ganancias de la plataforma</span>
+                </div>
+                <div class="kpi-value text-weight-bolder">{{ formatCurrency(kpis.platform_earnings) }}</div>
               </div>
-              <div class="kpi-value text-weight-bolder">{{ formatCurrency(kpis.platform_earnings) }}</div>
-            </div>
-            <div class="trend-container">
-              <div :class="getTrendClass(kpis.platform_earnings_trend)" class="text-caption text-weight-bold">
-                <q-icon :name="getTrendIcon(kpis.platform_earnings_trend)" /> {{ kpis.platform_earnings_trend }}
+              <div class="trend-container">
+                <div :class="getTrendClass(kpis.platform_earnings_trend)" class="text-caption text-weight-bold">
+                  <q-icon :name="getTrendIcon(kpis.platform_earnings_trend)" /> {{ kpis.platform_earnings_trend }}
+                </div>
               </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-12 col-sm-4 col-md">
-        <q-card flat bordered class="kpi-card">
-          <q-card-section class="column justify-between full-height">
-            <div>
-              <div class="row items-center no-wrap q-mb-sm">
-                <q-avatar rounded icon="event_available" color="orange-8" text-color="white" size="36px" class="q-mr-sm" />
-                <span class="text-body2 text-weight-medium">Eventos realizados</span>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-12 col-sm-4 col-md">
+          <q-card flat bordered class="kpi-card">
+            <q-card-section class="column justify-between full-height">
+              <div>
+                <div class="row items-center no-wrap q-mb-sm">
+                  <q-avatar rounded icon="event_available" color="orange-8" text-color="white" size="36px" class="q-mr-sm" />
+                  <span class="text-body2 text-weight-medium">Eventos realizados</span>
+                </div>
+                <div class="kpi-value text-weight-bolder">{{ kpis.events }}</div>
               </div>
-              <div class="kpi-value text-weight-bolder">{{ kpis.events }}</div>
-            </div>
-            <div class="trend-container">
-              <div :class="getTrendClass(kpis.events_trend)" class="text-caption text-weight-bold">
-                <q-icon :name="getTrendIcon(kpis.events_trend)" /> {{ kpis.events_trend }}
+              <div class="trend-container">
+                <div :class="getTrendClass(kpis.events_trend)" class="text-caption text-weight-bold">
+                  <q-icon :name="getTrendIcon(kpis.events_trend)" /> {{ kpis.events_trend }}
+                </div>
               </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-12 col-sm-4 col-md">
-        <q-card flat bordered class="kpi-card">
-          <q-card-section class="column justify-between full-height">
-            <div>
-              <div class="row items-center no-wrap q-mb-sm">
-                <q-avatar rounded icon="groups" color="purple-8" text-color="white" size="36px" class="q-mr-sm" />
-                <span class="text-body2 text-weight-medium">Contrataciones</span>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-12 col-sm-4 col-md">
+          <q-card flat bordered class="kpi-card">
+            <q-card-section class="column justify-between full-height">
+              <div>
+                <div class="row items-center no-wrap q-mb-sm">
+                  <q-avatar rounded icon="groups" color="purple-8" text-color="white" size="36px" class="q-mr-sm" />
+                  <span class="text-body2 text-weight-medium">Contrataciones</span>
+                </div>
+                <div class="kpi-value text-weight-bolder">{{ kpis.contracts }}</div>
               </div>
-              <div class="kpi-value text-weight-bolder">{{ kpis.contracts }}</div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-12 col-sm-4 col-md">
-        <q-card flat bordered class="kpi-card">
-          <q-card-section class="column justify-between full-height">
-            <div>
-              <div class="row items-center no-wrap q-mb-sm">
-                <q-avatar rounded icon="point_of_sale" color="teal-8" text-color="white" size="36px" class="q-mr-sm" />
-                <span class="text-body2 text-weight-medium">Ticket promedio</span>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-12 col-sm-4 col-md">
+          <q-card flat bordered class="kpi-card">
+            <q-card-section class="column justify-between full-height">
+              <div>
+                <div class="row items-center no-wrap q-mb-sm">
+                  <q-avatar rounded icon="point_of_sale" color="teal-8" text-color="white" size="36px" class="q-mr-sm" />
+                  <span class="text-body2 text-weight-medium">Ticket promedio</span>
+                </div>
+                <div class="kpi-value text-weight-bolder">{{ formatCurrency(kpis.avg_ticket) }}</div>
               </div>
-              <div class="kpi-value text-weight-bolder">{{ formatCurrency(kpis.avg_ticket) }}</div>
-            </div>
-          </q-card-section>
-        </q-card>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
-    </div>
-    <div v-if="!loading && reportData" class="row q-col-gutter-md q-mt-md items-stretch">
-      <div class="col-12 col-lg-7">
-        <q-card flat bordered class="full-height">
-          <q-item>
-            <q-item-section>
-              <q-item-label class="text-h6 text-weight-bolder">Evolución de ganancias</q-item-label>
-              <q-item-label caption>Ventas netas vs. ganancias de la plataforma por período</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-card-section>
-            <apexchart type="area" height="300" :options="lineChartOptions" :series="lineChartSeries" />
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-12 col-lg-5">
-        <q-card flat bordered class="full-height">
-          <q-item>
-            <q-item-section>
-              <q-item-label class="text-h6 text-weight-bolder">Top artistas</q-item-label>
-              <q-item-label caption>Los 5 mejores por ventas netas</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-card-section>
-            <apexchart type="bar" height="300" :options="barChartOptions" :series="barChartSeries" />
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-
-    <div v-if="!loading && reportData" class="row q-col-gutter-md q-mt-md">
-      <div class="col-12 col-lg-7">
-      <q-card flat bordered>
-        <q-item>
-          <q-item-section>
-            <q-item-label class="text-h6 text-weight-bolder">Desglose por período</q-item-label>
-            <q-item-label caption>Detalle de ventas netas por período</q-item-label>
-          </q-item-section>
-        </q-item>
-          <q-card-section class="q-pa-none">
-            <q-table
-              :rows="breakdownTableRows"
-              :columns="breakdownColumns"
-              row-key="label"
-              flat
-              hide-pagination
-              :pagination="{ rowsPerPage: 0 }"
-              class="no-shadow"
-            >
-              <template v-slot:body-cell-net_sales="props">
-                <q-td :props="props"> {{ formatCurrency(props.row.net_sales) }} </q-td>
-              </template>
-              <template v-slot:body-cell-platform_earnings="props">
-                <q-td :props="props"> {{ formatCurrency(props.row.platform_earnings) }} </q-td>
-              </template>
-            </q-table>
-          </q-card-section>
-        </q-card>
-      </div>
-<div class="col-12 col-lg-5">
-  <q-card flat bordered>
-    <q-item>
-      <q-item-section>
-        <q-item-label class="text-h6 text-weight-bolder">Distribución por género</q-item-label>
-        <q-item-label caption>Ventas netas agrupadas por género musical</q-item-label>
-      </q-item-section>
-    </q-item>
-    <q-card-section>
-      <apexchart type="donut" height="300" :options="donutChartOptions" :series="donutChartSeries" />
-    </q-card-section>
-</q-card>
-</div>
-      </div>
-      <div class="row q-col-gutter-md q-mt-md">
+      <div v-if="!loading && reportData" class="row q-col-gutter-md q-mt-md items-stretch">
+        <div class="col-12 col-lg-7">
+          <q-card flat bordered class="full-height">
+            <q-item>
+              <q-item-section>
+                <q-item-label class="text-h6 text-weight-bolder">Evolución de ganancias</q-item-label>
+                <q-item-label caption>Ventas netas vs. ganancias de la plataforma por período</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-card-section>
+              <apexchart type="area" height="300" :options="lineChartOptions" :series="lineChartSeries" />
+            </q-card-section>
+          </q-card>
+        </div>
         <div class="col-12 col-lg-5">
+          <q-card flat bordered class="full-height">
+            <q-item>
+              <q-item-section>
+                <q-item-label class="text-h6 text-weight-bolder">Top artistas</q-item-label>
+                <q-item-label caption>Los 5 mejores por ventas netas</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-card-section>
+              <apexchart type="bar" height="300" :options="barChartOptions" :series="barChartSeries" />
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+
+      <div v-if="!loading && reportData" class="row q-col-gutter-md q-mt-md items-stretch">
+        <div class="col-12">
           <q-card flat bordered>
+            <q-item>
+              <q-item-section>
+                <q-item-label class="text-h6 text-weight-bolder">Desglose por período</q-item-label>
+                <q-item-label caption>Detalle de ventas netas por período</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-card-section class="q-pa-none">
+              <q-table
+                :rows="breakdownTableRows"
+                :columns="breakdownColumns"
+                row-key="label"
+                flat
+                hide-pagination
+                :pagination="{ rowsPerPage: 0 }"
+                class="no-shadow"
+              >
+                <template v-slot:body-cell-net_sales="props">
+                  <q-td :props="props"> {{ formatCurrency(props.row.net_sales) }} </q-td>
+                </template>
+                <template v-slot:body-cell-platform_earnings="props">
+                  <q-td :props="props"> {{ formatCurrency(props.row.platform_earnings) }} </q-td>
+                </template>
+              </q-table>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-12 col-md-6">
+          <q-card flat bordered class="full-height">
+            <q-item>
+              <q-item-section>
+                <q-item-label class="text-h6 text-weight-bolder">Distribución por género</q-item-label>
+                <q-item-label caption>Ventas netas agrupadas por género musical</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-card-section>
+              <apexchart type="donut" height="300" :options="donutChartOptions" :series="donutChartSeries" />
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-12 col-md-6">
+          <q-card flat bordered class="full-height">
             <q-item>
               <q-item-section>
                 <q-item-label class="text-h6 text-weight-bolder">Distribución por tipo de evento</q-item-label>
