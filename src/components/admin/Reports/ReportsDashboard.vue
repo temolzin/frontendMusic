@@ -127,14 +127,14 @@
       </div>
     </div>
     <div ref="reportBody">
-      <div v-if="!loading && reportData" class="row q-col-gutter-md items-stretch">
-        <div class="col-12 col-sm-6 col-md">
-          <q-card flat bordered class="kpi-card">
+      <div v-if="!loading && reportData" class="row q-col-gutter-md items-stretch justify-center">
+        <div class="col-12 col-sm-6 col-md-4">
+          <q-card flat bordered class="kpi-card full-height q-mx-auto">
             <q-card-section class="column justify-between full-height">
               <div>
                 <div class="row items-center no-wrap q-mb-sm">
                   <q-avatar rounded icon="account_balance_wallet" color="blue-8" text-color="white" size="36px" class="q-mr-sm" />
-                  <span class="text-body2 text-weight-medium">Ventas netas</span>
+                  <span class="kpi-label text-body2 text-weight-medium">Ventas netas</span>
                 </div>
                 <div class="kpi-value text-weight-bolder">{{ formatCurrency(kpis.net_sales) }}</div>
               </div>
@@ -146,13 +146,13 @@
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-12 col-sm-6 col-md">
-          <q-card flat bordered class="kpi-card">
+        <div class="col-12 col-sm-6 col-md-4">
+          <q-card flat bordered class="kpi-card full-height q-mx-auto">
             <q-card-section class="column justify-between full-height">
               <div>
                 <div class="row items-center no-wrap q-mb-sm">
                   <q-avatar rounded icon="trending_up" color="green-8" text-color="white" size="36px" class="q-mr-sm" />
-                  <span class="text-body2 text-weight-medium">Ganancias de la plataforma</span>
+                  <span class="kpi-label text-body2 text-weight-medium">Ganancias de la plataforma</span>
                 </div>
                 <div class="kpi-value text-weight-bolder">{{ formatCurrency(kpis.platform_earnings) }}</div>
               </div>
@@ -164,13 +164,28 @@
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-12 col-sm-4 col-md">
-          <q-card flat bordered class="kpi-card">
+        <div v-if="openpayConfigured" class="col-12 col-sm-6 col-md-4">
+          <q-card flat bordered class="kpi-card full-height q-mx-auto">
+            <q-card-section class="column justify-between full-height">
+              <div>
+                <div class="row items-center no-wrap q-mb-sm">
+                  <q-avatar rounded icon="account_balance" color="teal-8" text-color="white" size="36px" class="q-mr-sm" />
+                  <span class="kpi-label text-body2 text-weight-medium">Saldo en OpenPay</span>
+                </div>
+                <div class="kpi-value text-weight-bolder">
+                  {{ openpayBalanceLoading ? "Cargando..." : openpayBalance === null ? "No disponible" : formatCurrency(openpayBalance) }}
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+          <q-card flat bordered class="kpi-card full-height q-mx-auto">
             <q-card-section class="column justify-between full-height">
               <div>
                 <div class="row items-center no-wrap q-mb-sm">
                   <q-avatar rounded icon="event_available" color="orange-8" text-color="white" size="36px" class="q-mr-sm" />
-                  <span class="text-body2 text-weight-medium">Eventos realizados</span>
+                  <span class="kpi-label text-body2 text-weight-medium">Eventos realizados</span>
                 </div>
                 <div class="kpi-value text-weight-bolder">{{ kpis.events }}</div>
               </div>
@@ -182,26 +197,26 @@
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-12 col-sm-4 col-md">
-          <q-card flat bordered class="kpi-card">
+        <div class="col-12 col-sm-6 col-md-4">
+          <q-card flat bordered class="kpi-card full-height q-mx-auto">
             <q-card-section class="column justify-between full-height">
               <div>
                 <div class="row items-center no-wrap q-mb-sm">
                   <q-avatar rounded icon="groups" color="purple-8" text-color="white" size="36px" class="q-mr-sm" />
-                  <span class="text-body2 text-weight-medium">Contrataciones</span>
+                  <span class="kpi-label text-body2 text-weight-medium">Contrataciones</span>
                 </div>
                 <div class="kpi-value text-weight-bolder">{{ kpis.contracts }}</div>
               </div>
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-12 col-sm-4 col-md">
-          <q-card flat bordered class="kpi-card">
+        <div class="col-12 col-sm-6 col-md-4">
+          <q-card flat bordered class="kpi-card full-height q-mx-auto">
             <q-card-section class="column justify-between full-height">
               <div>
                 <div class="row items-center no-wrap q-mb-sm">
                   <q-avatar rounded icon="point_of_sale" color="teal-8" text-color="white" size="36px" class="q-mr-sm" />
-                  <span class="text-body2 text-weight-medium">Ticket promedio</span>
+                  <span class="kpi-label text-body2 text-weight-medium">Ticket promedio</span>
                 </div>
                 <div class="kpi-value text-weight-bolder">{{ formatCurrency(kpis.avg_ticket) }}</div>
               </div>
@@ -335,6 +350,9 @@ export default {
       fromDateBackup: null,
       toDateBackup: null,
       loading: false,
+      openpayConfigured: false,
+      openpayBalance: null,
+      openpayBalanceLoading: false,
       periodOptions: [
         { label: "Semana", value: "week" },
         { label: "Mes", value: "month" },
@@ -634,6 +652,34 @@ export default {
       }
     },
 
+    async loadOpenpayBalance() {
+      this.openpayBalanceLoading = true;
+      try {
+        const balanceResponse = await this.$api.get("/api/admin/openpay-balance");
+        const balanceData = balanceResponse.data?.data;
+        if (!balanceResponse.data?.success || typeof balanceData?.configured !== "boolean") {
+          throw new Error("La respuesta del saldo de OpenPay no es válida.");
+        }
+        this.openpayConfigured = balanceData.configured;
+        if (!this.openpayConfigured) {
+          this.openpayBalance = null;
+          return;
+        }
+
+        const rawBalance = balanceData.balance;
+        const balance = Number(rawBalance);
+        if (rawBalance === null || rawBalance === undefined || rawBalance === "" || !Number.isFinite(balance)) {
+          throw new Error("La respuesta del saldo de OpenPay no es válida.");
+        }
+        this.openpayBalance = balance;
+      } catch (error) {
+        this.openpayBalance = null;
+        notifyError("Error al cargar el saldo de OpenPay.");
+      } finally {
+        this.openpayBalanceLoading = false;
+      }
+    },
+
     exportName(ext) {
       const range = this.fromDate && this.toDate
         ? `${this.fromDate}-${this.toDate}`
@@ -745,8 +791,13 @@ export default {
     buildKpiBlock(row) {
       const inner = row.cloneNode(true);
       inner.style.cssText = "display:flex;flex-wrap:wrap;align-items:stretch;";
+      const count = inner.children.length;
+      const fullRows = Math.floor(count / 3);
+      const lastRowCount = count % 3 || Math.min(count, 3);
+      const lastRowStart = fullRows * 3;
       Array.from(inner.children).forEach((c, i) => {
-        const w = i < 3 ? "33.33333" : "50";
+        const columns = i < lastRowStart ? 3 : lastRowCount;
+        const w = String(100 / columns);
         c.style.cssText += `;width:${w}%;flex:0 0 ${w}%;max-width:${w}%;`;
       });
       const wrapper = document.createElement("div");
@@ -764,13 +815,23 @@ export default {
 
   mounted() {
     this.loadReport();
+    this.loadOpenpayBalance();
   },
 };
 </script>
 
 <style scoped>
 .kpi-card {
+  width: 100%;
+  max-width: 360px;
+  height: 100%;
+  min-height: 160px;
   border-radius: 12px;
+}
+
+.kpi-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .trend-container {
