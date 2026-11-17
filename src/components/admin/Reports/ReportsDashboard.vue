@@ -240,13 +240,13 @@
 
     <div v-if="!loading && reportData" class="row q-col-gutter-md q-mt-md items-stretch">
       <div class="col-12">
-      <q-card flat bordered>
-        <q-item>
-          <q-item-section>
-            <q-item-label class="text-h6 text-weight-bolder">Desglose por período</q-item-label>
-            <q-item-label caption>Detalle de ventas netas por período</q-item-label>
-          </q-item-section>
-        </q-item>
+        <q-card flat bordered>
+          <q-item>
+            <q-item-section>
+              <q-item-label class="text-h6 text-weight-bolder">Desglose por período</q-item-label>
+              <q-item-label caption>Detalle de ventas netas por período</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-card-section class="q-pa-none">
             <q-table
               :rows="breakdownTableRows"
@@ -268,30 +268,30 @@
         </q-card>
       </div>
       <div class="col-12 col-md-6">
-  <q-card flat bordered class="full-height">
-    <q-item>
-      <q-item-section>
-        <q-item-label class="text-h6 text-weight-bolder">Distribución por género</q-item-label>
-        <q-item-label caption>Ventas netas agrupadas por género musical</q-item-label>
-      </q-item-section>
-    </q-item>
-    <q-card-section>
-      <apexchart type="donut" height="300" :options="donutChartOptions" :series="donutChartSeries" />
-    </q-card-section>
-</q-card>
+        <q-card flat bordered class="full-height">
+          <q-item>
+            <q-item-section>
+              <q-item-label class="text-h6 text-weight-bolder">Distribución por género</q-item-label>
+              <q-item-label caption>Ventas netas agrupadas por género musical</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-card-section>
+            <apexchart type="donut" height="300" :options="donutChartOptions" :series="donutChartSeries" />
+          </q-card-section>
+        </q-card>
       </div>
       <div class="col-12 col-md-6">
-          <q-card flat bordered class="full-height">
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-h6 text-weight-bolder">Distribución por tipo de evento</q-item-label>
-                <q-item-label caption>Ventas netas agrupadas por tipo de evento</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-card-section>
-              <apexchart type="donut" height="300" :options="eventTypeDonutChartOptions" :series="eventTypeDonutChartSeries" />
-            </q-card-section>
-          </q-card>
+        <q-card flat bordered class="full-height">
+          <q-item>
+            <q-item-section>
+              <q-item-label class="text-h6 text-weight-bolder">Distribución por tipo de evento</q-item-label>
+              <q-item-label caption>Ventas netas agrupadas por tipo de evento</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-card-section>
+            <apexchart type="donut" height="300" :options="eventTypeDonutChartOptions" :series="eventTypeDonutChartSeries" />
+          </q-card-section>
+        </q-card>
       </div>
     </div>
     </div>
