@@ -127,8 +127,8 @@
       </div>
     </div>
     <div ref="reportBody">
-      <div v-if="!loading && reportData" class="row q-col-gutter-md items-stretch">
-        <div class="col-12 col-sm-6 col-md-4">
+      <div v-if="!loading && reportData" class="row q-col-gutter-md items-stretch justify-center">
+        <div class="col-12 col-sm-6 col-md-3">
           <q-card flat bordered class="kpi-card full-height">
             <q-card-section class="column justify-between full-height">
               <div>
@@ -146,7 +146,7 @@
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-12 col-sm-6 col-md-4">
+        <div class="col-12 col-sm-6 col-md-3">
           <q-card flat bordered class="kpi-card full-height">
             <q-card-section class="column justify-between full-height">
               <div>
@@ -164,7 +164,7 @@
             </q-card-section>
           </q-card>
         </div>
-        <div v-if="openpayConfigured" class="col-12 col-sm-6 col-md-4">
+        <div v-if="openpayConfigured" class="col-12 col-sm-6 col-md-3">
           <q-card flat bordered class="kpi-card full-height">
             <q-card-section class="column justify-between full-height">
               <div>
@@ -179,7 +179,7 @@
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-12 col-sm-6 col-md-4">
+        <div class="col-12 col-sm-6 col-md-3">
           <q-card flat bordered class="kpi-card full-height">
             <q-card-section class="column justify-between full-height">
               <div>
@@ -197,7 +197,7 @@
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-12 col-sm-6 col-md-4">
+        <div class="col-12 col-sm-6 col-md-3">
           <q-card flat bordered class="kpi-card full-height">
             <q-card-section class="column justify-between full-height">
               <div>
@@ -210,7 +210,7 @@
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-12 col-sm-6 col-md-4">
+        <div class="col-12 col-sm-6 col-md-3">
           <q-card flat bordered class="kpi-card full-height">
             <q-card-section class="column justify-between full-height">
               <div>
@@ -823,7 +823,7 @@ export default {
 <style scoped>
 .kpi-card {
   height: 100%;
-  min-height: 190px;
+  min-height: 160px;
   border-radius: 12px;
 }
 
