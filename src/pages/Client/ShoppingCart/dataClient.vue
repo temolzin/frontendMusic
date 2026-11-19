@@ -1592,9 +1592,6 @@ export default defineComponent({
         return condition && (notifyError(message), true);
       };
 
-      // Saved cards are returned masked (****1234), so the visible digits are
-      // not the real card length. The backend tokenizes them with the stored
-      // number, so skip the length checks for them.
       const isSavedCard = Boolean(this.selectedCard?.id);
       const digits = (this.selectedCard?.number_card?.match(/\d/g) || []).length;
       const expLen = this.expectedCardLength(this.selectedCard?.number_card || '');
@@ -1796,8 +1793,6 @@ export default defineComponent({
       }, 1500);
     },
 
-    // Saved cards only expose a masked number to the browser, so the token is
-    // created by the backend from the stored number (keeps the PAN off the wire).
     async payWithSavedCard() {
       try {
         const paymentData = this.buildCardPaymentPayload({
