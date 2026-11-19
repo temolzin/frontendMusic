@@ -157,6 +157,9 @@
                     <q-select
                       dense
                       outlined
+                      behavior="menu"
+                      options-dense
+                      popup-content-class="event-type-menu"
                       class="full-width"
                       v-model="formClient.event_type_id"
                       :options="eventTypeOptions"

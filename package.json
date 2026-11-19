@@ -6,6 +6,8 @@
   "author": "PenelopeGalicia <2518160097pgaliciag@gmail.com>",
   "private": true,
   "scripts": {
+    "dev": "quasar dev",
+    "build": "quasar build",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
