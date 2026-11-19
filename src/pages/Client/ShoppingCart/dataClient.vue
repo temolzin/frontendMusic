@@ -1597,7 +1597,7 @@ export default defineComponent({
       const expLen = isSavedCard ? 16 : this.expectedCardLength(this.selectedCard?.number_card || '');
       
       validateAndNotify(!this.selectedCard?.number_card, "Debes seleccionar una tarjeta")
-      || (isSavedCard ? false : validateAndNotify(digits !== expLen, `El numero de tarjeta debe tener ${expLen} digitos. Actualmente tiene ${digits}`))
+      || (isSavedCard ? false : validateAndNotify(digits !== expLen, `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`))
       || validateAndNotify(!this.selectedCard?.expiration_date || this.selectedCard.expiration_date.length !== 5, "La fecha de expiraciÃ³n debe estar en formato mm/YY")
       || (() => {
         const [month] = this.selectedCard.expiration_date.split("/");
@@ -1640,7 +1640,7 @@ export default defineComponent({
           }
         } catch (keysErr) {
           this.$q.loading.hide();
-          notifyError("Vibeer no pudo procesar tu pago: los pagos con tarjeta no estÃ¡n disponibles en este momento. Contacta a soporte.", { timeout: 6000 });
+          notifyError("Vibeer no pudo procesar tu pago: los pagos con tarjeta no están disponibles en este momento. Contacta a soporte.", { timeout: 6000 });
           return;
         }
 
