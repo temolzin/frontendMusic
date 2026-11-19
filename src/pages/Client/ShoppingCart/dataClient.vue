@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <q-page class="q-pa-sm">
     <PageBreadcrumbs :items="[{ label: 'Mi Carrito', icon: 'shopping_cart', to: '/client/shopping-cart' }, { label: 'Finalizar compra' }]" />
     <div class="row q-col-gutter-sm">
@@ -17,10 +17,10 @@
                 <strong>Completa los datos de tu pedido:</strong>
                 <ul class="q-pl-md q-mt-xs q-mb-none">
                   <li class="q-mb-xs">
-                    Llena tus <strong>datos personales</strong> (nombre, apellidos, correo y teléfono).
+                    Llena tus <strong>datos personales</strong> (nombre, apellidos, correo y telÃ©fono).
                   </li>
                   <li class="q-mb-xs">
-                    Indica el <strong>domicilio</strong> donde será el evento o usa el <strong>mapa</strong> para ubicarlo.
+                    Indica el <strong>domicilio</strong> donde serÃ¡ el evento o usa el <strong>mapa</strong> para ubicarlo.
                   </li>
                   <li class="q-mb-xs">
                     Selecciona la <strong>fecha</strong> y la <strong>hora</strong> del evento.
@@ -29,7 +29,7 @@
                     Selecciona el <strong>tipo de evento</strong> para que el artista llegue preparado.
                   </li>
                   <li v-if="shoppingCardDetail.length > 1">
-                    Asigna la <strong>hora de presentación</strong> de cada artista para que se presenten uno tras otro.
+                    Asigna la <strong>hora de presentaciÃ³n</strong> de cada artista para que se presenten uno tras otro.
                   </li>
                 </ul>
               </div>
@@ -42,7 +42,7 @@
                       label="Nombre *" :rules="[
                         (val) => !!val || 'El nombre es requerido',
                         (val) => val.trim().length >= 3 || 'El nombre debe tener al menos 3 caracteres',
-                        (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El nombre solo puede contener letras'
+                        (val) => /^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±A-ZÃÃ‰ÃÃ“ÃšÃ‘\s]+$/.test(val) || 'El nombre solo puede contener letras'
                       ]" required />
                   </q-item>
                 </div>
@@ -52,7 +52,7 @@
                       label="Apellidos *" :rules="[
                         (val) => !!val || 'Los apellidos son requeridos',
                         (val) => val.trim().length >= 3 || 'Los apellidos deben tener al menos 3 caracteres',
-                        (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'Los apellidos solo pueden contener letras'
+                        (val) => /^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±A-ZÃÃ‰ÃÃ“ÃšÃ‘\s]+$/.test(val) || 'Los apellidos solo pueden contener letras'
                       ]" required />
                   </q-item>
                 </div>
@@ -61,19 +61,19 @@
                     <q-input dense outlined type="email" v-model="formClient.email" class="full-width" label="Email*"
                       :rules="[
                         (val) => !!val || 'El email es requerido',
-                        (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || 'Email inválido'
+                        (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || 'Email invÃ¡lido'
                       ]" required />
                   </q-item>
                 </div>
                 <div class="col-12 col-sm-6">
                   <q-item>
                     <q-input dense outlined type="tel" v-model="formClient.phone" class="full-width"
-                      label="Teléfono *" maxlength="10"
+                      label="TelÃ©fono *" maxlength="10"
                       @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
                       :rules="[
-                        (val) => !!val || 'El teléfono es requerido',
-                        (val) => val.toString().length === 10 || 'El teléfono debe tener exactamente 10 dígitos',
-                        (val) => /^[0-9]+$/.test(val) || 'Solo se permiten números'
+                        (val) => !!val || 'El telÃ©fono es requerido',
+                        (val) => val.toString().length === 10 || 'El telÃ©fono debe tener exactamente 10 dÃ­gitos',
+                        (val) => /^[0-9]+$/.test(val) || 'Solo se permiten nÃºmeros'
                       ]" required />
                   </q-item>
                 </div>
@@ -81,7 +81,7 @@
                   <q-item>
                     <q-toggle
                       v-model="googleMapsEnabled"
-                      label="¿Deseas ubicar tu evento en el mapa?"
+                      label="Â¿Deseas ubicar tu evento en el mapa?"
                       color="primary"
                       @update:model-value="onToggleMap"
                     />
@@ -104,7 +104,7 @@
                       :disable="googleMapsEnabled && formClient.city"
                       :rules="googleMapsEnabled && formClient.city ? [] : [
                         (val) => !!val || 'La ciudad es requerida',
-                        (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'La ciudad solo puede contener letras'
+                        (val) => /^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±A-ZÃÃ‰ÃÃ“ÃšÃ‘\s]+$/.test(val) || 'La ciudad solo puede contener letras'
                       ]" required />
                   </q-item>
                 </div>
@@ -115,7 +115,7 @@
                       :disable="googleMapsEnabled && formClient.state_city"
                       :rules="googleMapsEnabled && formClient.state_city ? [] : [
                         (val) => !!val || 'El estado es requerido',
-                        (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El estado solo puede contener letras'
+                        (val) => /^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±A-ZÃÃ‰ÃÃ“ÃšÃ‘\s]+$/.test(val) || 'El estado solo puede contener letras'
                       ]" required />
                   </q-item>
                 </div>
@@ -125,8 +125,8 @@
                       label="Codigo Postal" maxlength="5" @keypress="(e) => !/[0-9]/.test(e.key) && e.preventDefault()"
                       :disable="false"
                       :rules="[
-                        (val) => /^[0-9]+$/.test(val) || 'Solo se permiten números',
-                        (val) => val.toString().length === 5 || 'El código postal debe tener exactamente 5 dígitos'
+                        (val) => /^[0-9]+$/.test(val) || 'Solo se permiten nÃºmeros',
+                        (val) => val.toString().length === 5 || 'El cÃ³digo postal debe tener exactamente 5 dÃ­gitos'
                       ]" required />
                   </q-item>
                 </div>
@@ -135,8 +135,8 @@
                     <q-input dense outlined type="text" v-model="formClient.country" label="Pais *" class="full-width"
                       :disable="googleMapsEnabled && formClient.country"
                       :rules="googleMapsEnabled && formClient.country ? [] : [
-                        (val) => !!val || 'El país es requerido',
-                        (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El país solo puede contener letras'
+                        (val) => !!val || 'El paÃ­s es requerido',
+                        (val) => /^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±A-ZÃÃ‰ÃÃ“ÃšÃ‘\s]+$/.test(val) || 'El paÃ­s solo puede contener letras'
                       ]" required />
                   </q-item>
                 </div>
@@ -144,7 +144,7 @@
                   <q-item>
                     <q-card flat bordered class="full-width">
                       <q-card-section class="q-pa-sm text-center text-grey-7">
-                        <small>Arrastra el marcador para ajustar la ubicación</small>
+                        <small>Arrastra el marcador para ajustar la ubicaciÃ³n</small>
                       </q-card-section>
                       <q-card-section class="q-pa-sm">
                         <div ref="mapContainer" style="width: 100%; height: 320px; border-radius: 4px;"></div>
@@ -184,7 +184,7 @@
                       class="full-width"
                       label="Describe el tipo de evento *"
                       :rules="[
-                        (val) => !!val && val.trim().length >= 3 || 'Describe tu evento (mínimo 3 caracteres)'
+                        (val) => !!val && val.trim().length >= 3 || 'Describe tu evento (mÃ­nimo 3 caracteres)'
                       ]"
                       required
                     />
@@ -263,10 +263,10 @@
                 <template v-if="shoppingCardDetail.length > 1">
                   <div class="col-12 q-mt-lg q-mb-sm">
                     <div class="text-h6 text-primary text-weight-bold">
-                      Hora de presentación
+                      Hora de presentaciÃ³n
                     </div>
                     <div class="text-caption text-grey-7 q-mt-xs">
-                      Cada artista tiene su propia hora de inicio, así pueden presentarse uno tras otro.
+                      Cada artista tiene su propia hora de inicio, asÃ­ pueden presentarse uno tras otro.
                     </div>
                   </div>
                   <div class="col-12">
@@ -339,19 +339,19 @@
                 <q-icon name="info" color="blue" size="sm" />
               </template>
               <div class="text-body2">
-                <strong>Elige cómo quieres pagar:</strong>
+                <strong>Elige cÃ³mo quieres pagar:</strong>
                 <ul class="q-pl-md q-mt-xs q-mb-none">
                   <li class="q-mb-xs">
                     <strong>Pagar con Tarjeta:</strong> selecciona una tarjeta guardada o agrega una nueva, verifica los datos y captura el <strong>CVV</strong>.
                   </li>
                   <li class="q-mb-xs">
-                    <strong>Pagar en Efectivo:</strong> elige un punto de pago; la <strong>referencia</strong> se generará después de que el artista acepte el evento.
+                    <strong>Pagar en Efectivo:</strong> elige un punto de pago; la <strong>referencia</strong> se generarÃ¡ despuÃ©s de que el artista acepte el evento.
                   </li>
                 </ul>
               </div>
             </q-banner>
             <div class="q-mb-lg">
-              <div class="text-h6 q-mb-md">Selecciona tu método de pago:</div>
+              <div class="text-h6 q-mb-md">Selecciona tu mÃ©todo de pago:</div>
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
                   <q-btn 
@@ -362,7 +362,7 @@
                     class="full-width"
                     style="border-radius: 8px; font-weight: bold;"
                     :style="paymentMethod === 'card' ? 'border-color: #1976d2; background-color: #e3f2fd;' : 'border-color: #ccc; background-color: transparent;'"
-                    label="💳 Pagar con Tarjeta" 
+                    label="ðŸ’³ Pagar con Tarjeta" 
                     @click="paymentMethod = 'card'; model = null" 
                   />
                 </div>
@@ -376,7 +376,7 @@
                     class="full-width"
                     style="border-radius: 8px; font-weight: bold;"
                     :style="paymentMethod === 'cash' ? 'border-color: #1976d2; background-color: #e3f2fd;' : 'border-color: #ccc; background-color: transparent;'"
-                    :label="shoppingCartTotal + totalExtraKmCost > 29999 ? '💰 Excede límite de efectivo ($29,999)' : '💰 Pagar en Efectivo'" 
+                    :label="shoppingCartTotal + totalExtraKmCost > 29999 ? 'ðŸ’° Excede lÃ­mite de efectivo ($29,999)' : 'ðŸ’° Pagar en Efectivo'" 
                     @click="paymentMethod = 'cash'; selectedCard = {id: '', name: '', number_card: '', expiration_date: ''}; cvv = ''" 
                   />
                 </div>
@@ -441,19 +441,19 @@
                         :rules="[
                           (val) => !!val || 'El campo nombre es requerido',
                           (val) => val.trim().length >= 3 || 'El nombre debe tener al menos 3 caracteres',
-                          (val) => /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(val) || 'El nombre solo puede contener letras y espacios'
+                          (val) => /^[a-zÃ¡Ã©Ã­Ã³ÃºÃ±A-ZÃÃ‰ÃÃ“ÃšÃ‘\s]+$/.test(val) || 'El nombre solo puede contener letras y espacios'
                         ]" />
 
                       <q-input 
                         dense 
                         v-model="form.number_card" 
-                        label="Número de tarjeta" 
+                        label="NÃºmero de tarjeta" 
                         :rules="[
-                          (val) => !!val || 'El campo número de tarjeta es requerido',
+                          (val) => !!val || 'El campo nÃºmero de tarjeta es requerido',
                           (val) => {
                             if (!val) return true;
                             const digits = (val.match(/\d/g) || []).length;
-                            const expLen = this.expectedCardLength(val); if (digits !== expLen) return `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
+                            const expLen = this.expectedCardLength(val); if (digits !== expLen) return `Debe tener ${expLen} dÃ­gitos. Actualmente tiene ${digits}`;
                             const clean = val.replace(/[\s-]/g, '');
                             if (!/^\d+$/.test(clean)) return false;
                             let sum = 0;
@@ -464,7 +464,7 @@
                               sum += digit;
                               shouldDouble = !shouldDouble;
                             }
-                            return sum % 10 === 0 || 'Número de tarjeta inválido';
+                            return sum % 10 === 0 || 'NÃºmero de tarjeta invÃ¡lido';
                           }
                         ]"
                       />
@@ -475,11 +475,11 @@
                       <q-input 
                         dense 
                         v-model="form.expiration_date" 
-                        label="Fecha de expiración" 
+                        label="Fecha de expiraciÃ³n" 
                         mask="##/##" 
                         fill-mask 
                           :rules="[
-                            (val) => !!val || 'La fecha de expiración es requerida',
+                            (val) => !!val || 'La fecha de expiraciÃ³n es requerida',
                             (val) => {
                               if (!val || val.length !== 5) return 'Formato: mm/YY';
                               const [month, year] = val.split('/');
@@ -489,8 +489,8 @@
                               const currentMonth = new Date().getMonth() + 1;
   
                               if (monthNum < 1 || monthNum > 12) return 'Mes debe ser 01-12';
-                              if (yearNum < currentYear) return `El año debe ser mayor o igual a ${currentYear}`;
-                              if (yearNum === currentYear && monthNum < currentMonth) return 'La tarjeta ya expiró';
+                              if (yearNum < currentYear) return `El aÃ±o debe ser mayor o igual a ${currentYear}`;
+                              if (yearNum === currentYear && monthNum < currentMonth) return 'La tarjeta ya expirÃ³';
                               
                               return true;
                             }
@@ -537,7 +537,7 @@
               </div>
               <div class="col-12 col-sm-6">
                 <q-item>
-                  <q-input dense outlined class="full-width" label="Número de la Tarjeta"
+                  <q-input dense outlined class="full-width" label="NÃºmero de la Tarjeta"
                     :model-value="maskCardNumber(selectedCard.number_card)" readonly
                     :rules="[
                       () => !!selectedCard.number_card || 'Campo requerido',
@@ -545,7 +545,7 @@
                         if (!selectedCard.number_card) return true;
                         const digits = (selectedCard.number_card.match(/\d/g) || []).length;
                         const expLen = this.expectedCardLength(selectedCard.number_card);
-                        return digits === expLen || `Debe tener ${expLen} dígitos. Actualmente tiene ${digits}`;
+                        return digits === expLen || `Debe tener ${expLen} dÃ­gitos. Actualmente tiene ${digits}`;
                       }
                     ]"/>
                 </q-item>
@@ -553,7 +553,7 @@
               <div class="col-12 col-sm-6">
                 <q-item>
                   <q-input dense outlined class="full-width" v-model="selectedCard.expiration_date"
-                    label="Fecha de Expiración" mask="##/##" fill-mask :rules="[
+                    label="Fecha de ExpiraciÃ³n" mask="##/##" fill-mask :rules="[
                       (val) => !!val || 'Campo requerido',
                       (val) => {
                         if (!val || val.length !== 5) return 'Formato: mm/YY';
@@ -564,8 +564,8 @@
                         const currentMonth = new Date().getMonth() + 1;
 
                         if (monthNum < 1 || monthNum > 12) return 'Mes debe ser 01-12';
-                        if (yearNum < currentYear) return `El año debe ser mayor o igual a ${currentYear}`;
-                        if (yearNum === currentYear && monthNum < currentMonth) return 'La tarjeta ya expiró';
+                        if (yearNum < currentYear) return `El aÃ±o debe ser mayor o igual a ${currentYear}`;
+                        if (yearNum === currentYear && monthNum < currentMonth) return 'La tarjeta ya expirÃ³';
 
                         return true;
                       }
@@ -580,7 +580,7 @@
                       (val) => {
                         if (!val) return true;
                         const expected = this.getExpectedCvvLength(this.selectedCard?.number_card || '');
-                        return val.toString().length === expected || (expected === 4 ? 'Esta tarjeta requiere un CVV de 4 dígitos' : 'Esta tarjeta requiere un CVV de 3 dígitos');
+                        return val.toString().length === expected || (expected === 4 ? 'Esta tarjeta requiere un CVV de 4 dÃ­gitos' : 'Esta tarjeta requiere un CVV de 3 dÃ­gitos');
                       }
                     ]" />
                 </q-item>
@@ -602,7 +602,7 @@
               <div class="col-12">
                 <q-item>
                   <q-checkbox dense outlined class="full-width"
-                    label="Desea recordar los datos de la tarjeta de crédito para la próxima Compra"
+                    label="Desea recordar los datos de la tarjeta de crÃ©dito para la prÃ³xima Compra"
                     v-model="card_detail.checkbox" />
                 </q-item>
               </div>
@@ -631,7 +631,7 @@
                     Verifica que los <strong>artistas</strong>, las <strong>horas</strong> y el <strong>total</strong> sean correctos.
                   </li>
                   <li class="q-mb-xs">
-                    Confirma tus <strong>datos de contacto</strong> y el método de pago elegido.
+                    Confirma tus <strong>datos de contacto</strong> y el mÃ©todo de pago elegido.
                   </li>
                   <li class="q-mb-xs">
                     Haz clic en <strong>Confirmar Orden</strong> para enviar la solicitud.
@@ -648,18 +648,18 @@
                 <q-icon name="info" color="blue" size="sm" />
               </template>
               <div class="text-body2">
-                <strong>Pasos a seguir para la confirmación de su evento:</strong>
+                <strong>Pasos a seguir para la confirmaciÃ³n de su evento:</strong>
                 <ul class="q-pl-md q-mt-xs q-mb-none">
                   <li class="q-mb-xs">
-                    <strong>Aprobación del Artista:</strong> Al finalizar esta orden, la solicitud será enviada al artista, quien deberá revisar los detalles y 
+                    <strong>AprobaciÃ³n del Artista:</strong> Al finalizar esta orden, la solicitud serÃ¡ enviada al artista, quien deberÃ¡ revisar los detalles y 
                     <strong>aceptar o rechazar</strong> el evento para formalizar el compromiso.
                   </li>
                   <li v-if="paymentMethod === 'cash'">
-                    <strong>Referencia de Pago:</strong> Dado que ha seleccionado pago en efectivo, la referencia para depositar se le generará y mostrará 
-                    <strong>únicamente después</strong> de que el artista acepte la solicitud.
+                    <strong>Referencia de Pago:</strong> Dado que ha seleccionado pago en efectivo, la referencia para depositar se le generarÃ¡ y mostrarÃ¡ 
+                    <strong>Ãºnicamente despuÃ©s</strong> de que el artista acepte la solicitud.
                   </li>
                   <li v-if="paymentMethod === 'card'">
-                    <strong>Retención de Fondos:</strong> Su método de pago será verificado, pero el cargo definitivo estará sujeto a la confirmación de asistencia por parte del artista.
+                    <strong>RetenciÃ³n de Fondos:</strong> Su mÃ©todo de pago serÃ¡ verificado, pero el cargo definitivo estarÃ¡ sujeto a la confirmaciÃ³n de asistencia por parte del artista.
                   </li>
                 </ul>
               </div>
@@ -671,7 +671,7 @@
                   <thead>
                     <tr>
                       <th class="text-left">Artista / Grupo</th>
-                      <th class="text-center">Duración</th>
+                      <th class="text-center">DuraciÃ³n</th>
                       <th class="text-right">Subtotal</th>
                     </tr>
                   </thead>
@@ -753,7 +753,7 @@
                             <div v-for="(product, index) in shoppingCardDetail" :key="'rev-hour-' + index" class="col-6">
                               <div class="column">
                                 <span class="text-caption ellipsis">{{ castProduct(product).artist?.name || 'Artista ' + (index + 1) }}</span>
-                                <span class="text-caption text-weight-bold">{{ artistHours[castProduct(product).artist_id] || '—' }}</span>
+                                <span class="text-caption text-weight-bold">{{ artistHours[castProduct(product).artist_id] || 'â€”' }}</span>
                               </div>
                             </div>
                           </div>
@@ -792,7 +792,7 @@
                   <q-separator class="q-my-sm" />
                   <div class="row items-center q-mb-sm">
                     <q-icon name="dialpad" color="primary" size="xs" class="q-mr-sm" />
-                    <span class="text-caption text-grey-7">Número</span>
+                    <span class="text-caption text-grey-7">NÃºmero</span>
                     <span class="text-caption text-weight-medium q-ml-sm">{{ maskCardNumber(selectedCard.number_card) }}</span>
                   </div>
                   <div class="row items-center q-mb-sm">
@@ -812,7 +812,7 @@
                 <div v-if="paymentMethod === 'cash'">
                   <div class="row items-center q-mb-sm">
                     <q-icon name="payments" color="positive" size="xs" class="q-mr-sm" />
-                    <span class="text-caption text-grey">Método</span>
+                    <span class="text-caption text-grey">MÃ©todo</span>
                     <span class="text-caption text-weight-medium q-ml-sm">Efectivo</span>
                   </div>
                   <div class="row items-center q-mb-sm">
@@ -1082,11 +1082,11 @@ export default defineComponent({
       const knownPatterns = [
         {
           test: /api key|merchant.?id/i,
-          message: "Las credenciales de pago no son válidas o no están configuradas. Contacta a soporte.",
+          message: "Las credenciales de pago no son vÃ¡lidas o no estÃ¡n configuradas. Contacta a soporte.",
         },
         {
           test: /session.?id|device.?data/i,
-          message: "No se pudo verificar el dispositivo para procesar el pago. Recarga la página e intenta de nuevo.",
+          message: "No se pudo verificar el dispositivo para procesar el pago. Recarga la pÃ¡gina e intenta de nuevo.",
         },
         {
           test: /rate limit|too many requests/i,
@@ -1094,7 +1094,7 @@ export default defineComponent({
         },
         {
           test: /network|timeout|connection/i,
-          message: "No se pudo conectar con el procesador de pagos. Verifica tu conexión e intenta de nuevo.",
+          message: "No se pudo conectar con el procesador de pagos. Verifica tu conexiÃ³n e intenta de nuevo.",
         },
       ];
 
@@ -1105,12 +1105,12 @@ export default defineComponent({
 
       return rawMessage
         .replace(/cvv2/gi, "CVV")
-        .replace(/card number/gi, "número de tarjeta")
-        .replace(/verification digit/gi, "dígito de verificación")
-        .replace(/expiration year/gi, "año de expiración")
-        .replace(/expiration month/gi, "mes de expiración")
+        .replace(/card number/gi, "nÃºmero de tarjeta")
+        .replace(/verification digit/gi, "dÃ­gito de verificaciÃ³n")
+        .replace(/expiration year/gi, "aÃ±o de expiraciÃ³n")
+        .replace(/expiration month/gi, "mes de expiraciÃ³n")
         .replace(/holder name/gi, "nombre del titular")
-        .replace(/invalid/gi, "inválido")
+        .replace(/invalid/gi, "invÃ¡lido")
         .replace(/must be/gi, "debe ser")
         .replace(/length/gi, "longitud")
         .replace(/wrong/gi, "incorrecto")
@@ -1224,7 +1224,7 @@ export default defineComponent({
 
       if (changed) {
         this.artistHours = map;
-        notifyInfo('La hora ajustada ya era usada por otro artista, así que se liberó para evitar el cruce de presentaciones.');
+        notifyInfo('La hora ajustada ya era usada por otro artista, asÃ­ que se liberÃ³ para evitar el cruce de presentaciones.');
       }
     },
 
@@ -1268,14 +1268,14 @@ export default defineComponent({
         }
       } catch (err) {
         console.error('Error loading occupied dates:', err.message);
-        notifyWarning('No se pudieron cargar las fechas ocupadas. Por favor, verifica que el artista sea válido.');
+        notifyWarning('No se pudieron cargar las fechas ocupadas. Por favor, verifica que el artista sea vÃ¡lido.');
       }
     },
 
     spanishLocale() {
       return {
-        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        daysShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        days: ['Domingo', 'Lunes', 'Martes', 'MiÃ©rcoles', 'Jueves', 'Viernes', 'SÃ¡bado'],
+        daysShort: ['Dom', 'Lun', 'Mar', 'MiÃ©', 'Jue', 'Vie', 'SÃ¡b'],
         months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
         monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
         firstDayOfWeek: 1
@@ -1326,12 +1326,12 @@ export default defineComponent({
     
     validateStep2() {
       !this.paymentMethod
-        ? notifyError("Debes seleccionar un método de pago")
+        ? notifyError("Debes seleccionar un mÃ©todo de pago")
         : this.paymentMethod === 'card'
           ? !this.selectedCard || !this.selectedCard.number_card
             ? notifyError("Debes seleccionar una tarjeta")
             : !this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4
-              ? (notifyError("El CVV debe tener 3 o 4 dígitos"),
+              ? (notifyError("El CVV debe tener 3 o 4 dÃ­gitos"),
                  this.$nextTick(() => this.$refs.cvvInput?.validate()))
               : (this.step = 3)
           : this.paymentMethod === 'cash'
@@ -1435,7 +1435,7 @@ export default defineComponent({
         this.loadQuickBuyArtist(artistDataEncoded, hoursParam)
         : await this.getListShoppingCard().then(async () => {
             this.shoppingCardDetail.length === 0
-              ? (notifyWarning("Tu carrito está vacío. Agrega artistas antes de continuar."),
+              ? (notifyWarning("Tu carrito estÃ¡ vacÃ­o. Agrega artistas antes de continuar."),
                 this.$router.push("/client/shopping-cart"))
                 : (this.occupiedDates = [], await Promise.all(
                     this.shoppingCardDetail
@@ -1468,7 +1468,7 @@ export default defineComponent({
           this.formClient.city = o.city || '';
           this.formClient.state_city = o.state || '';
           this.formClient.zip_code = o.zip_code || '';
-          this.formClient.country = 'México';
+          this.formClient.country = 'MÃ©xico';
           this.latitude = o.latitude || null;
           this.longitude = o.longitude || null;
           this.latitude && this.longitude && this.$nextTick(() => this.fetchExtraKmPreview());
@@ -1496,25 +1496,25 @@ export default defineComponent({
       }
 
       if (!cardData.number_card) {
-        notifyError("El número de tarjeta es requerido");
+        notifyError("El nÃºmero de tarjeta es requerido");
         return;
       }
 
       const digits = (cardData.number_card.match(/\d/g) || []).length;
       const expLen = this.expectedCardLength(cardData.number_card);
       if (digits !== expLen) {
-        notifyError(`El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`);
+        notifyError(`El nÃºmero de tarjeta debe tener ${expLen} dÃ­gitos. Actualmente tiene ${digits}`);
         return;
       }
 
       const cardClean = cardData.number_card.replace(/[\s-]/g, '');
       if (!this.luhnCheck(cardClean)) {
-        notifyError("El número de tarjeta no es válido (validación Luhn)");
+        notifyError("El nÃºmero de tarjeta no es vÃ¡lido (validaciÃ³n Luhn)");
         return;
       }
 
       if (!cardData.expiration_date) {
-        notifyError("La fecha de expiración es requerida");
+        notifyError("La fecha de expiraciÃ³n es requerida");
         return;
       }
 
@@ -1583,7 +1583,7 @@ export default defineComponent({
         if (response.data.success) {
         }
       } catch (error) {
-        console.error("Error guardando dirección:", error);
+        console.error("Error guardando direcciÃ³n:", error);
         throw error;
       }
     },
@@ -1592,26 +1592,27 @@ export default defineComponent({
         return condition && (notifyError(message), true);
       };
 
-      const digits = (this.selectedCard?.number_card?.match(/\d/g) || []).length;
-      const expLen = this.expectedCardLength(this.selectedCard?.number_card || '');
+      const isSavedCard = !!this.selectedCard?.id;
+      const digits = isSavedCard ? 16 : (this.selectedCard?.number_card?.match(/\d/g) || []).length;
+      const expLen = isSavedCard ? 16 : this.expectedCardLength(this.selectedCard?.number_card || '');
       
       validateAndNotify(!this.selectedCard?.number_card, "Debes seleccionar una tarjeta")
-      || validateAndNotify(digits !== expLen, `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`)
-      || validateAndNotify(!this.selectedCard?.expiration_date || this.selectedCard.expiration_date.length !== 5, "La fecha de expiración debe estar en formato mm/YY")
+      || (isSavedCard ? false : validateAndNotify(digits !== expLen, `El numero de tarjeta debe tener ${expLen} digitos. Actualmente tiene ${digits}`))
+      || validateAndNotify(!this.selectedCard?.expiration_date || this.selectedCard.expiration_date.length !== 5, "La fecha de expiraciÃ³n debe estar en formato mm/YY")
       || (() => {
         const [month] = this.selectedCard.expiration_date.split("/");
         const monthNum = parseInt(month, 10);
         return validateAndNotify(monthNum < 1 || monthNum > 12, "El mes debe estar entre 01 y 12");
       })()
-      || validateAndNotify(!this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4, "El CVV debe tener 3 o 4 dígitos")
-      || (() => {
+      || validateAndNotify(!this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4, "El CVV debe tener 3 o 4 dÃ­gitos")
+      || (isSavedCard ? false : (() => {
         const expectedCvvLength = this.getExpectedCvvLength(this.selectedCard.number_card);
         return validateAndNotify(this.cvv.toString().length !== expectedCvvLength,
           expectedCvvLength === 4
-            ? "Esta tarjeta requiere un CVV de 4 dígitos"
-            : "Esta tarjeta requiere un CVV de 3 dígitos");
+            ? "Esta tarjeta requiere un CVV de 4 dÃ­gitos"
+            : "Esta tarjeta requiere un CVV de 3 dÃ­gitos");
       })()
-      || validateAndNotify(typeof OpenPay === "undefined", "Error: OpenPay no está cargado. Recarga la página.") || this.processPay();
+      || validateAndNotify(typeof OpenPay === "undefined", "Error: OpenPay no estÃ¡ cargado. Recarga la pÃ¡gina.") || this.processPay();
     },
 
     payCash() {
@@ -1639,7 +1640,12 @@ export default defineComponent({
           }
         } catch (keysErr) {
           this.$q.loading.hide();
-          notifyError("Vibeer no pudo procesar tu pago: los pagos con tarjeta no están disponibles en este momento. Contacta a soporte.", { timeout: 6000 });
+          notifyError("Vibeer no pudo procesar tu pago: los pagos con tarjeta no estÃ¡n disponibles en este momento. Contacta a soporte.", { timeout: 6000 });
+          return;
+        }
+
+        if (this.selectedCard && this.selectedCard.id) {
+          await this.processSavedCardPayment(openpayKeys);
           return;
         }
 
@@ -1651,7 +1657,7 @@ export default defineComponent({
         try {
           deviceDataId = OpenPay.deviceData?.generateSessionId?.() ?? OpenPay.deviceData?.setup?.("formId") ?? null;
         } catch (e) {
-          console.warn('Device data setup fallido, continuando sin él:', e);
+          console.warn('Device data setup fallido, continuando sin Ã©l:', e);
         }
 
         const card_number = this.selectedCard.number_card.replace(/[\s-]/g, "");
@@ -1675,7 +1681,7 @@ export default defineComponent({
           async (response) => {
             try {
               if (!response || !response.data || !response.data.id) {
-                throw new Error("No se recibió token válido de OpenPay");
+                throw new Error("No se recibiÃ³ token vÃ¡lido de OpenPay");
               }
 
               const token = response.data.id;
@@ -1778,6 +1784,81 @@ export default defineComponent({
       }
     },
 
+    async processSavedCardPayment(openpayKeys) {
+      try {
+        const artistList = this.isQuickBuy
+          ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours, event_hour: this.formClient.event_hour }]
+          : this.shoppingCardDetail.map((element) => ({
+              artist_id: element.artist_id,
+              hours: element.hours,
+              event_hour: this.artistHours[element.artist_id] || this.formClient.event_hour
+            }));
+
+        const paymentData = {
+          saved_card_id: this.selectedCard.id,
+          cvv: this.cvv,
+          amount: Math.round(this.shoppingCartTotal * 100),
+          customer_name: this.formClient.first_name + " " + this.formClient.first_last,
+          customer_email: this.formClient.email,
+          customer_phone: this.formClient.phone,
+          phone: this.formClient.phone,
+          order_details: {
+            first_name: this.formClient.first_name,
+            last_name: this.formClient.first_last,
+            email: this.formClient.email,
+            phone: this.formClient.phone,
+            address: this.formClient.adress_line2,
+            city: this.formClient.city,
+            state: this.formClient.state_city,
+            zip_code: this.formClient.zip_code,
+            country: "MX",
+            event_date: this.formClient.event_date,
+            event_hour: this.formClient.event_hour,
+            latitude: this.latitude,
+            longitude: this.longitude,
+            google_place_id: this.googlePlaceId,
+            event_type_id: this.formClient.event_type_id,
+            event_type_detail: this.isOtherEventType ? this.formClient.event_type_detail.trim() : null,
+          },
+          latitude: this.latitude,
+          longitude: this.longitude,
+          google_place_id: this.googlePlaceId,
+          event_date: this.formClient.event_date,
+          event_hour: this.formClient.event_hour,
+          artistList: artistList,
+          description: `Compra de servicios musicales - Total: ${this.formatCurrency(this.shoppingCartTotal)}`,
+        };
+
+        const paymentResponse = await this.createPayment(paymentData);
+
+        if (this.address_detail.checkbox) {
+          try {
+            await this.saveAddress();
+          } catch (err) {
+            console.error("Error saving address:", err);
+          }
+        }
+
+        this.$q.loading.hide();
+        platformEvents.reservationRegistered();
+
+        this.onReset();
+        setTimeout(() => {
+          this.$router.push("/client/shopping-cart/view-my-order-details");
+        }, 1500);
+      } catch (err) {
+        this.$q.loading.hide();
+
+        let errorMessage =
+          err.response?.data?.error?.description ??
+          err.response?.data?.message ??
+          err.message ??
+          "Error al procesar el pago";
+
+        notifyError(errorMessage, { timeout: 5000 });
+      }
+    },
+
     async processCashPay() {
       if (!this.formClient.email || !this.formClient.phone || !this.shoppingCartTotal) {
         notifyError('Por favor, completa los campos del cliente.');
@@ -1797,7 +1878,7 @@ export default defineComponent({
 
       if (this.shoppingCartTotal + this.totalExtraKmCost > maxLimit) {
         notifyWarning(
-          `El límite máximo para pagos en efectivo en ${selectedStore} es de ${formatCurrency(maxLimit)}. Por favor, utilice tarjeta.`,
+          `El lÃ­mite mÃ¡ximo para pagos en efectivo en ${selectedStore} es de ${formatCurrency(maxLimit)}. Por favor, utilice tarjeta.`,
           { timeout: 6000 }
         );
         return;
@@ -1949,7 +2030,7 @@ export default defineComponent({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           }),
-          () => reject(new Error('No se pudo obtener la ubicación')),
+          () => reject(new Error('No se pudo obtener la ubicaciÃ³n')),
           { timeout: 5000, enableHighAccuracy: true }
         );
       });
@@ -1998,7 +2079,7 @@ export default defineComponent({
       this.formClient.city = componentMap['administrative_area_level_1'] || componentMap['administrative_area_level_2'] || '';
       this.formClient.state_city = componentMap['locality'] || componentMap['sublocality'] || componentMap['postal_town'] || '';
       this.formClient.zip_code = componentMap['postal_code'] || '';
-      this.formClient.country = componentMap['country'] || 'México';
+      this.formClient.country = componentMap['country'] || 'MÃ©xico';
       this.$nextTick(() => this.fetchExtraKmPreview());
     },
 
