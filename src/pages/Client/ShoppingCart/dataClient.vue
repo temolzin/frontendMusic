@@ -1653,12 +1653,7 @@ export default defineComponent({
         OpenPay.setApiKey(openpayKeys.openpay_public_key);
         OpenPay.setSandboxMode(openpayKeys.openpay_sandbox_mode ?? true);
 
-        let deviceDataId = null;
-        try {
-          deviceDataId = OpenPay.deviceData?.generateSessionId?.() ?? OpenPay.deviceData?.setup?.("formId") ?? null;
-        } catch (e) {
-          console.warn('Device data setup fallido, continuando sin él:', e);
-        }
+        const deviceDataId = this.resolveDeviceSessionId();
 
         const card_number = this.selectedCard.number_card.replace(/[\s-]/g, "");
         const [month, year] = this.selectedCard.expiration_date.split('/');
@@ -1793,11 +1788,22 @@ export default defineComponent({
       }, 1500);
     },
 
+    resolveDeviceSessionId() {
+      try {
+        const sessionId = OpenPay.deviceData?.generateSessionId?.() ?? OpenPay.deviceData?.setup?.("formId") ?? null;
+        return typeof sessionId === "string" && sessionId.length > 0 && sessionId.length <= 32 ? sessionId : null;
+      } catch (e) {
+        console.warn('Device data setup fallido, continuando sin él:', e);
+        return null;
+      }
+    },
+
     async payWithSavedCard() {
       try {
         const paymentData = this.buildCardPaymentPayload({
           saved_card_id: this.selectedCard.id,
           cvv: this.cvv.toString(),
+          deviceSessionId: this.resolveDeviceSessionId(),
         });
 
         await this.completeCardPayment(paymentData);
