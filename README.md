@@ -51,23 +51,17 @@ To run this project, you will need:
 
 4. Start the development server:
     ```bash
-    npm run dev
+    quasar dev
     ```
 
     The app will open at http://localhost:8080.
 
-    By default, development requests use the local API at http://localhost:8000.
-    To use another backend, set `BACKEND_URL` when starting Quasar:
-
-    ```powershell
-    $env:BACKEND_URL="http://127.0.0.1:8000"; npm run dev
-    ```
-
 ### Configuration ⚙️
 
-- **Backend API URL**: Development defaults to `http://localhost:8000`.
-- **Production API URL**: Defaults to `https://sgmback.rootheim.com`.
-- Override either with the `BACKEND_URL` environment variable.
+- **Backend API URL**: Edit `src/boot/axios.js` and change the base URL:
+    ```js
+    const api = axios.create({ baseURL: "http://localhost:8000/" });
+    ```
 
 ### Additional Commands
 

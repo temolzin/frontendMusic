@@ -1,8 +1,7 @@
 import { boot } from "quasar/wrappers";
 import axios from "axios";
 
-const backendUrl = (process.env.BACKEND_URL || "http://localhost:8000").replace(/\/+$/, "");
-const api = axios.create({ baseURL: `${backendUrl}/` });
+const api = axios.create({ baseURL: "https://sgmback.rootheim.com/" });
 
 const AUTH_ENDPOINTS = [
   "/api/login",

@@ -266,7 +266,7 @@ export default {
     },
 
     buildUrl(file) {
-      const baseUrl = api.defaults.baseURL || this.$q.config.backendUrl;
+      const baseUrl = api.defaults.baseURL || 'http://localhost:8000';
       const cleanBaseUrl = baseUrl.replace(/\/api$/, '');
       return `${cleanBaseUrl}/storage/${file.id}/${file.file_name}`;
     },

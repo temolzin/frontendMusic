@@ -41,11 +41,6 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       vueRouterMode: "history", // available values: 'hash', 'history'
-      env: {
-        BACKEND_URL:
-          process.env.BACKEND_URL ||
-          (ctx.dev ? "http://localhost:8000" : "https://sgmback.rootheim.com"),
-      },
 
       // transpile: false,
       // publicPath: '/',
@@ -85,9 +80,7 @@ module.exports = configure(function (ctx) {
       plugins: [],
       config: {
         dark: 'auto',
-        backendUrl:
-          process.env.BACKEND_URL ||
-          (ctx.dev ? 'http://localhost:8000' : 'https://sgmback.rootheim.com'),
+        backendUrl: 'https://sgmback.rootheim.com',
         OpenPayID: '',
         OpenPayKey: '', 
         OpenPaySanboxMode: true
