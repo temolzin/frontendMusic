@@ -338,18 +338,19 @@ export default {
       }
     },
     async saveOpenpayKeys() {
+      const secret = this.openpayForm.openpay_secret;
+
+      if (!secret && !this.openpaySecretSet) {
+        notifyError("La llave secreta es requerida");
+        return;
+      }
+
       const payload = {
         openpay_id: this.openpayForm.openpay_id,
         openpay_public_key: this.openpayForm.openpay_public_key,
         openpay_sandbox_mode: this.openpayForm.openpay_sandbox_mode,
+        ...(secret ? { openpay_secret: secret } : {}),
       };
-
-      if (this.openpayForm.openpay_secret) {
-        payload.openpay_secret = this.openpayForm.openpay_secret;
-      } else if (!this.openpaySecretSet) {
-        notifyError("La llave secreta es requerida");
-        return;
-      }
 
       this.openpayLoading = true;
       try {
