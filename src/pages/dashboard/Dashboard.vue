@@ -96,11 +96,19 @@
           dense
           :type="showSecret ? 'text' : 'password'"
           :placeholder="openpaySecretSet ? '••••••••' : 'Sin configurar'"
-          :hint="openpaySecretSet ? 'Déjala vacía para conservar la actual' : 'Requerida'"
+          :hint="openpaySecretSet ? 'Llave guardada. Déjala vacía para conservar la actual' : 'Requerida'"
           autocomplete="new-password"
           class="q-mb-md"
         >
           <template #append>
+            <q-icon
+              v-if="openpaySecretSet"
+              name="check_circle"
+              color="positive"
+              class="q-mr-xs"
+            >
+              <q-tooltip>La llave secreta está guardada</q-tooltip>
+            </q-icon>
             <q-icon
               :name="showSecret ? 'visibility_off' : 'visibility'"
               class="cursor-pointer"
@@ -360,7 +368,9 @@ export default {
         notifySuccess("Credenciales guardadas correctamente");
         this.openpayModal = false;
       } catch (e) {
-        notifyError(e.response?.data?.message || "Error al guardar las credenciales");
+        const errors = e.response?.data?.errors;
+        const firstError = errors ? Object.values(errors)[0]?.[0] : null;
+        notifyError(firstError || e.response?.data?.message || "Error al guardar las credenciales");
       } finally {
         this.openpayLoading = false;
       }

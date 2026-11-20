@@ -1639,22 +1639,13 @@ export default defineComponent({
           return;
         }
 
-        let openpayKeys;
-        try {
-          const keysRes = await this.$api.get('/api/openpay-keys/public');
-          openpayKeys = keysRes.data.data;
-          if (!openpayKeys || !openpayKeys.openpay_id || !openpayKeys.openpay_public_key) {
-            throw new Error('missing-keys');
-          }
-        } catch (keysErr) {
+        const configured = await this.configureOpenPay();
+
+        if (!configured) {
           this.$q.loading.hide();
           notifyError("Vibeer no pudo procesar tu pago: los pagos con tarjeta no están disponibles en este momento. Contacta a soporte.", { timeout: 6000 });
           return;
         }
-
-        OpenPay.setId(openpayKeys.openpay_id);
-        OpenPay.setApiKey(openpayKeys.openpay_public_key);
-        OpenPay.setSandboxMode(openpayKeys.openpay_sandbox_mode ?? true);
 
         const deviceDataId = this.resolveDeviceSessionId();
 
@@ -1791,7 +1782,26 @@ export default defineComponent({
       }, 1500);
     },
 
+    async configureOpenPay() {
+      try {
+        const keysRes = await this.$api.get('/api/openpay-keys/public');
+        const keys = keysRes.data.data;
+
+        if (!keys?.openpay_id || !keys?.openpay_public_key) return false;
+
+        OpenPay.setId(keys.openpay_id);
+        OpenPay.setApiKey(keys.openpay_public_key);
+        OpenPay.setSandboxMode(keys.openpay_sandbox_mode ?? true);
+
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+
     resolveDeviceSessionId() {
+      if (typeof OpenPay === "undefined") return null;
+
       try {
         const sessionId = OpenPay.deviceData?.generateSessionId?.() ?? OpenPay.deviceData?.setup?.("formId") ?? null;
         return typeof sessionId === "string" && sessionId.length > 0 && sessionId.length <= 32 ? sessionId : null;
@@ -1803,6 +1813,8 @@ export default defineComponent({
 
     async payWithSavedCard() {
       try {
+        await this.configureOpenPay();
+
         const paymentData = this.buildCardPaymentPayload({
           saved_card_id: this.selectedCard.id,
           cvv: this.cvv.toString(),
