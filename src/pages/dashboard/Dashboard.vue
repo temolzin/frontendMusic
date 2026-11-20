@@ -95,6 +95,9 @@
           outlined
           dense
           :type="showSecret ? 'text' : 'password'"
+          :placeholder="openpaySecretSet ? '••••••••' : 'Sin configurar'"
+          :hint="openpaySecretSet ? 'Déjala vacía para conservar la actual' : 'Requerida'"
+          autocomplete="new-password"
           class="q-mb-md"
         >
           <template #append>
@@ -268,6 +271,7 @@ export default {
       showCard: true,
       openpayModal: false,
       showSecret: false,
+      openpaySecretSet: false,
       openpayLoading: false,
       openpayForm: {
         openpay_id: "",
@@ -324,22 +328,39 @@ export default {
         const res = await this.$api.get("/api/admin/openpay-keys");
         if (res.data.success && res.data.data) {
           this.openpayForm.openpay_id = res.data.data.openpay_id;
-          this.openpayForm.openpay_secret = res.data.data.openpay_secret;
+          this.openpayForm.openpay_secret = "";
           this.openpayForm.openpay_public_key = res.data.data.openpay_public_key;
           this.openpayForm.openpay_sandbox_mode = res.data.data.openpay_sandbox_mode ?? true;
+          this.openpaySecretSet = res.data.data.openpay_secret_set === true;
         }
       } catch (e) {
         console.error("Error cargando keys OpenPay", e);
       }
     },
     async saveOpenpayKeys() {
+      const secret = this.openpayForm.openpay_secret;
+
+      if (!secret && !this.openpaySecretSet) {
+        notifyError("La llave secreta es requerida");
+        return;
+      }
+
+      const payload = {
+        openpay_id: this.openpayForm.openpay_id,
+        openpay_public_key: this.openpayForm.openpay_public_key,
+        openpay_sandbox_mode: this.openpayForm.openpay_sandbox_mode,
+        ...(secret ? { openpay_secret: secret } : {}),
+      };
+
       this.openpayLoading = true;
       try {
-        await this.$api.put("/api/admin/openpay-keys", this.openpayForm);
+        await this.$api.put("/api/admin/openpay-keys", payload);
+        this.openpaySecretSet = true;
+        this.openpayForm.openpay_secret = "";
         notifySuccess("Credenciales guardadas correctamente");
         this.openpayModal = false;
       } catch (e) {
-        notifyError("Error al guardar las credenciales");
+        notifyError(e.response?.data?.message || "Error al guardar las credenciales");
       } finally {
         this.openpayLoading = false;
       }

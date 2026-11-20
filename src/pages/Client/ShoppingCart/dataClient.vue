@@ -157,6 +157,9 @@
                     <q-select
                       dense
                       outlined
+                      behavior="menu"
+                      options-dense
+                      popup-content-class="event-type-menu"
                       class="full-width"
                       v-model="formClient.event_type_id"
                       :options="eventTypeOptions"
@@ -1592,11 +1595,12 @@ export default defineComponent({
         return condition && (notifyError(message), true);
       };
 
+      const isSavedCard = Boolean(this.selectedCard?.id);
       const digits = (this.selectedCard?.number_card?.match(/\d/g) || []).length;
       const expLen = this.expectedCardLength(this.selectedCard?.number_card || '');
       
       validateAndNotify(!this.selectedCard?.number_card, "Debes seleccionar una tarjeta")
-      || validateAndNotify(digits !== expLen, `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`)
+      || (!isSavedCard && validateAndNotify(digits !== expLen, `El número de tarjeta debe tener ${expLen} dígitos. Actualmente tiene ${digits}`))
       || validateAndNotify(!this.selectedCard?.expiration_date || this.selectedCard.expiration_date.length !== 5, "La fecha de expiración debe estar en formato mm/YY")
       || (() => {
         const [month] = this.selectedCard.expiration_date.split("/");
@@ -1604,14 +1608,14 @@ export default defineComponent({
         return validateAndNotify(monthNum < 1 || monthNum > 12, "El mes debe estar entre 01 y 12");
       })()
       || validateAndNotify(!this.cvv || this.cvv.toString().length < 3 || this.cvv.toString().length > 4, "El CVV debe tener 3 o 4 dígitos")
-      || (() => {
+      || (!isSavedCard && (() => {
         const expectedCvvLength = this.getExpectedCvvLength(this.selectedCard.number_card);
         return validateAndNotify(this.cvv.toString().length !== expectedCvvLength,
           expectedCvvLength === 4
             ? "Esta tarjeta requiere un CVV de 4 dígitos"
             : "Esta tarjeta requiere un CVV de 3 dígitos");
-      })()
-      || validateAndNotify(typeof OpenPay === "undefined", "Error: OpenPay no está cargado. Recarga la página.") || this.processPay();
+      })())
+      || (!isSavedCard && validateAndNotify(typeof OpenPay === "undefined", "Error: OpenPay no está cargado. Recarga la página.")) || this.processPay();
     },
 
     payCash() {
@@ -1630,6 +1634,11 @@ export default defineComponent({
       });
 
       try {
+        if (this.selectedCard?.id) {
+          await this.payWithSavedCard();
+          return;
+        }
+
         let openpayKeys;
         try {
           const keysRes = await this.$api.get('/api/openpay-keys/public');
@@ -1647,12 +1656,7 @@ export default defineComponent({
         OpenPay.setApiKey(openpayKeys.openpay_public_key);
         OpenPay.setSandboxMode(openpayKeys.openpay_sandbox_mode ?? true);
 
-        let deviceDataId = null;
-        try {
-          deviceDataId = OpenPay.deviceData?.generateSessionId?.() ?? OpenPay.deviceData?.setup?.("formId") ?? null;
-        } catch (e) {
-          console.warn('Device data setup fallido, continuando sin él:', e);
-        }
+        const deviceDataId = this.resolveDeviceSessionId();
 
         const card_number = this.selectedCard.number_card.replace(/[\s-]/g, "");
         const [month, year] = this.selectedCard.expiration_date.split('/');
@@ -1678,89 +1682,21 @@ export default defineComponent({
                 throw new Error("No se recibió token válido de OpenPay");
               }
 
-              const token = response.data.id;
-              const artistList = this.isQuickBuy 
-                ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours, event_hour: this.formClient.event_hour }]
-                : this.shoppingCardDetail.map((element) => ({ 
-                    artist_id: element.artist_id, 
-                    hours: element.hours,
-                    event_hour: this.artistHours[element.artist_id] || this.formClient.event_hour
-                  }));
+              const paymentData = this.buildCardPaymentPayload({
+                token: response.data.id,
+                deviceSessionId: deviceDataId,
+              });
 
-              const paymentData = {
-                token: token,
-                amount: Math.round(this.shoppingCartTotal * 100),
-                customer_name: this.formClient.first_name + " " + this.formClient.first_last,
-                customer_email: this.formClient.email,
-                customer_phone: this.formClient.phone,
-                phone: this.formClient.phone,
-                order_details: {
-                  first_name: this.formClient.first_name,
-                  last_name: this.formClient.first_last,
-                  email: this.formClient.email,
-                  phone: this.formClient.phone,
-                  address: this.formClient.adress_line2,
-                  city: this.formClient.city,
-                  state: this.formClient.state_city,
-                  zip_code: this.formClient.zip_code,
-                  country: "MX",
-                  event_date: this.formClient.event_date,
-                  event_hour: this.formClient.event_hour,
-                  latitude: this.latitude,
-                  longitude: this.longitude,
-                  google_place_id: this.googlePlaceId,
-                  event_type_id: this.formClient.event_type_id,
-                  event_type_detail: this.isOtherEventType ? this.formClient.event_type_detail.trim() : null,
-                },
-                latitude: this.latitude,
-                longitude: this.longitude,
-                google_place_id: this.googlePlaceId,
-                event_date: this.formClient.event_date,
-                event_hour: this.formClient.event_hour,
-                artistList: artistList,
-                description: `Compra de servicios musicales - Total: ${this.formatCurrency(this.shoppingCartTotal)}`,
-                deviceSessionId: deviceDataId
-              };
-
-              const paymentResponse = await this.createPayment(paymentData);
-
-              if (this.address_detail.checkbox) {
-                try {
-                  await this.saveAddress();
-                } catch (err) {
-                  console.error("Error saving address:", err);
-                }
-              }
-
-              if (this.card_detail.checkbox && this.selectedCard && !this.selectedCard.id) {
-                try {
-                  const cardToSave = {
-                    name: this.selectedCard.name,
-                    number_card: (this.selectedCard.number_card || '').replace(/[\s-]/g, ''),
-                    expiration_date: this.selectedCard.expiration_date,
-                  };
-                  await this.createCard(cardToSave);
-                } catch (err) {
-                  console.error("Error saving card:", err);
-                }
-              }
-
-              this.$q.loading.hide();
-              platformEvents.reservationRegistered();
-
-              this.onReset();
-              setTimeout(() => {
-                this.$router.push("/client/shopping-cart/view-my-order-details");
-              }, 1500);
+              await this.completeCardPayment(paymentData);
             } catch (err) {
               this.$q.loading.hide();
-              
+
               let errorMessage =
                 err.response?.data?.error?.description ??
                 err.response?.data?.message ??
                 err.message ??
                 "Error al procesar el pago";
-              
+
               notifyError(errorMessage, { timeout: 5000 });
             }
           },
@@ -1775,6 +1711,115 @@ export default defineComponent({
       } catch (err) {
         this.$q.loading.hide();
         notifyError(err.message || "Vibeer no pudo procesar tu pago. Intenta de nuevo.");
+      }
+    },
+
+    buildCardPaymentPayload(cardFields) {
+      const artistList = this.isQuickBuy
+        ? [{ artist_id: this.quickBuyData.artist_id, hours: this.quickBuyData.hours, event_hour: this.formClient.event_hour }]
+        : this.shoppingCardDetail.map((element) => ({
+            artist_id: element.artist_id,
+            hours: element.hours,
+            event_hour: this.artistHours[element.artist_id] || this.formClient.event_hour
+          }));
+
+      return {
+        ...cardFields,
+        amount: Math.round(this.shoppingCartTotal * 100),
+        customer_name: this.formClient.first_name + " " + this.formClient.first_last,
+        customer_email: this.formClient.email,
+        customer_phone: this.formClient.phone,
+        phone: this.formClient.phone,
+        order_details: {
+          first_name: this.formClient.first_name,
+          last_name: this.formClient.first_last,
+          email: this.formClient.email,
+          phone: this.formClient.phone,
+          address: this.formClient.adress_line2,
+          city: this.formClient.city,
+          state: this.formClient.state_city,
+          zip_code: this.formClient.zip_code,
+          country: "MX",
+          event_date: this.formClient.event_date,
+          event_hour: this.formClient.event_hour,
+          latitude: this.latitude,
+          longitude: this.longitude,
+          google_place_id: this.googlePlaceId,
+          event_type_id: this.formClient.event_type_id,
+          event_type_detail: this.isOtherEventType ? this.formClient.event_type_detail.trim() : null,
+        },
+        latitude: this.latitude,
+        longitude: this.longitude,
+        google_place_id: this.googlePlaceId,
+        event_date: this.formClient.event_date,
+        event_hour: this.formClient.event_hour,
+        artistList: artistList,
+        description: `Compra de servicios musicales - Total: ${this.formatCurrency(this.shoppingCartTotal)}`,
+      };
+    },
+
+    async completeCardPayment(paymentData) {
+      await this.createPayment(paymentData);
+
+      if (this.address_detail.checkbox) {
+        try {
+          await this.saveAddress();
+        } catch (err) {
+          console.error("Error saving address:", err);
+        }
+      }
+
+      if (this.card_detail.checkbox && this.selectedCard && !this.selectedCard.id) {
+        try {
+          const cardToSave = {
+            name: this.selectedCard.name,
+            number_card: (this.selectedCard.number_card || '').replace(/[\s-]/g, ''),
+            expiration_date: this.selectedCard.expiration_date,
+          };
+          await this.createCard(cardToSave);
+        } catch (err) {
+          console.error("Error saving card:", err);
+        }
+      }
+
+      this.$q.loading.hide();
+      platformEvents.reservationRegistered();
+
+      this.onReset();
+      setTimeout(() => {
+        this.$router.push("/client/shopping-cart/view-my-order-details");
+      }, 1500);
+    },
+
+    resolveDeviceSessionId() {
+      try {
+        const sessionId = OpenPay.deviceData?.generateSessionId?.() ?? OpenPay.deviceData?.setup?.("formId") ?? null;
+        return typeof sessionId === "string" && sessionId.length > 0 && sessionId.length <= 32 ? sessionId : null;
+      } catch (e) {
+        console.warn('Device data setup fallido, continuando sin él:', e);
+        return null;
+      }
+    },
+
+    async payWithSavedCard() {
+      try {
+        const paymentData = this.buildCardPaymentPayload({
+          saved_card_id: this.selectedCard.id,
+          cvv: this.cvv.toString(),
+          deviceSessionId: this.resolveDeviceSessionId(),
+        });
+
+        await this.completeCardPayment(paymentData);
+      } catch (err) {
+        this.$q.loading.hide();
+
+        const errorMessage =
+          err.response?.data?.error?.description ??
+          err.response?.data?.message ??
+          err.message ??
+          "Error al procesar el pago";
+
+        notifyError(errorMessage, { timeout: 5000 });
       }
     },
 

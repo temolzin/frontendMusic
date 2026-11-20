@@ -70,3 +70,8 @@
     font-size: 15px;
     background: #546E7A;
 }
+
+.event-type-menu {
+    max-width: min(420px, calc(100vw - 32px));
+    max-height: 320px;
+}

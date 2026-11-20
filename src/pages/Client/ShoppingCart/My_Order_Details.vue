@@ -52,8 +52,12 @@
                   <tr class="gt-xs">
                     <td class="text-center" style="width: 15%;">
                       <div class="text-center q-py-sm">
-                        <q-img :src="purchase.artist?.image" loading="lazy" width="90px" height="90px"
-                          style="object-fit: cover" class="rounded-circle q-responsive shadow-1" />
+                        <q-img
+                          :src="purchase.artist?.image"
+                          loading="lazy"
+                          fit="cover"
+                          class="purchase-artist-image purchase-artist-image-desktop shadow-1"
+                        />
                       </div>
                     </td>
                     <td class="text-left q-py-md" style="width: 25%;">
@@ -95,7 +99,12 @@
                       <q-card class="q-pa-md shadow-1" bordered>
                         <div class="row q-col-gutter-sm items-center q-mb-md">
                           <div class="col-auto">
-                            <q-img :src="purchase.artist?.image" loading="lazy" width="60px" height="60px" style="object-fit: cover" class="rounded-circle shadow-1" />
+                            <q-img
+                              :src="purchase.artist?.image"
+                              loading="lazy"
+                              fit="cover"
+                              class="purchase-artist-image purchase-artist-image-mobile shadow-1"
+                            />
                           </div>
                           <div class="col">
                             <div class="text-caption text-grey">Artista</div>
@@ -146,12 +155,10 @@
           <q-separator class="q-my-md" />
           <q-card-section v-if="selectedPurchase" class="q-pt-none">
             <div class="row items-center q-mb-md">
-              <q-img 
-                :src="selectedPurchase.artist?.image" 
-                width="60px" 
-                height="60px" 
-                style="border-radius: 50%; object-fit: cover"
-                class="q-mr-md shadow-1"
+              <q-img
+                :src="selectedPurchase.artist?.image"
+                fit="cover"
+                class="purchase-artist-image purchase-artist-image-modal q-mr-md shadow-1"
               />
               <div>
                 <div class="text-subtitle1 text-weight-bold">{{ selectedPurchase.artist?.name || 'N/A' }}</div>
@@ -1032,6 +1039,29 @@ export default {
 <style scoped>
 .table-responsive {
   width: 100%;
+}
+
+.purchase-artist-image {
+  display: block;
+  overflow: hidden;
+  border-radius: 50% !important;
+  background: #ececec;
+}
+
+.purchase-artist-image-desktop {
+  width: 90px;
+  height: 90px;
+}
+
+.purchase-artist-image-mobile {
+  width: 60px;
+  height: 60px;
+}
+
+.purchase-artist-image-modal {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
 }
 
 :deep(.q-message-avatar) {
