@@ -360,7 +360,9 @@ export default {
         notifySuccess("Credenciales guardadas correctamente");
         this.openpayModal = false;
       } catch (e) {
-        notifyError(e.response?.data?.message || "Error al guardar las credenciales");
+        const errors = e.response?.data?.errors;
+        const firstError = errors ? Object.values(errors)[0]?.[0] : null;
+        notifyError(firstError || e.response?.data?.message || "Error al guardar las credenciales");
       } finally {
         this.openpayLoading = false;
       }
